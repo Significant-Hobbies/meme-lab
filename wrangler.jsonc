@@ -29,7 +29,7 @@
     {
       "binding": "DB",
       "database_name": "meme-lab-feedback",
-      "database_id": "5d85d86c-6383-4409-be18-d3ac05042d69",
+      "database_id": "490137b7-a3f8-4426-83e5-211867031d6f",
       "migrations_dir": "migrations"
     }
   ],

@@ -1,0 +1,19 @@
+# Meme Lab
+
+> Paste a comment and get the meme that fits it best.
+
+Site: https://memes.significanthobbies.com
+
+## Pages
+
+- `/` — paste a comment, get the best-matching meme
+- `/collection.html` — browse the meme catalogue
+- `/how-it-works.html` — how recommendations are made
+
+## How it works
+
+A Cloudflare Worker serves a static app backed by a Vectorize index of
+catalogued memes (BGE embeddings) plus a D1 feedback store. Recommendations
+expire and are pruned by a daily scheduled job.
+
+Maintained by Sarthak Agrawal: https://sarthakagrawal.dev
