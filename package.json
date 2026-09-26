@@ -34,7 +34,7 @@
     "eval:stage-3000:validate": "node scripts/validate-stage-3000-eval.mjs",
     "build:public": "npm run build:public-catalogue && npm run build:expansion && npm run build:stage-1000 && npm run build:stage-3000",
     "dev:public": "npm run build:public && wrangler dev",
-    "deploy:public": "npm run build:public && wrangler deploy",
+    "deploy:public": "npm run build:public && wrangler deploy --tag $(git rev-parse HEAD)",
     "types:worker": "wrangler types worker-configuration.d.ts",
     "test": "node --test tests/*.test.mjs",
     "check": "node scripts/check-package.mjs && node scripts/check-expansion.mjs",
