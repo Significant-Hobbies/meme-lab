@@ -10,6 +10,43 @@ const TYPESAFE_MODEL='typesafe/jev-latest';
 const RETRIEVAL_FALLBACK_MODEL='vector-retrieval-fallback';
 const SITE_ORIGIN='https://memes.significanthobbies.com';
 const PUBLIC_ROUTES=['/','/collection','/how-it-works'];
+const MARKDOWN_ALTERNATES={'/':'/index.md','/collection':'/collection.md','/collection.html':'/collection.md','/how-it-works':'/how-it-works.md','/how-it-works.html':'/how-it-works.md'};
+
+function wantsMarkdown(request) {
+  const accept=(request.headers.get('accept')||'').toLowerCase();
+  if(!accept.includes('text/markdown')&&!accept.includes('text/x-markdown')) return false;
+  if(!accept.includes('text/html')) return true;
+  const mdIndex=accept.indexOf('text/markdown');
+  const htmlIndex=accept.indexOf('text/html');
+  if(mdIndex===-1) return false;
+  if(htmlIndex===-1) return true;
+  return mdIndex<htmlIndex;
+}
+
+function forHead(request,response) {
+  if(request.method!=='HEAD') return response;
+  return new Response(null,{status:response.status,statusText:response.statusText,headers:response.headers});
+}
+
+function agentCatalog(origin=SITE_ORIGIN) {
+  return {
+    name:'Meme Lab',
+    version:'1',
+    url:origin,
+    llms:`${origin}/llms.txt`,
+    llmsFull:`${origin}/llms-full.txt`,
+    sitemap:`${origin}/sitemap.xml`,
+    robots:`${origin}/robots.txt`,
+    markdown:{suffix:'.md',negotiation:true},
+    surfaces:[
+      {id:'home',url:`${origin}/`,md:`${origin}/index.md`,kind:'static',description:'Paste a comment and get the best-matching meme.'},
+      {id:'collection',url:`${origin}/collection`,md:`${origin}/collection.md`,kind:'collection',description:'Searchable catalogue of 3,000 meme and reaction-GIF references.'},
+      {id:'how-it-works',url:`${origin}/how-it-works`,md:`${origin}/how-it-works.md`,kind:'static',description:'How retrieval, ranking and evaluation work.'},
+      {id:'meme',url:`${origin}/memes/{id}`,md:`${origin}/memes/{id}.md`,kind:'dynamic',description:'One reference page per catalogued meme; replace {id} with a sitemap meme id.'}
+    ],
+    auth:{public:true,notes:'Public surfaces need no authentication. The /api/recommend and /api/feedback endpoints are POST-only and excluded.'}
+  };
+}
 
 function json(data,status=200,extraHeaders={}) {
   return Response.json(data,{status,headers:{
@@ -45,8 +82,8 @@ function pageResponse(body,{status=200,indexable=true,cacheControl='public, max-
   return new Response(body,{status,headers});
 }
 
-function textResponse(body,{contentType='text/plain; charset=utf-8',cacheControl='public, max-age=21600'}={}) {
-  return new Response(body,{headers:secureHeaders(new Headers({'Cache-Control':cacheControl,'Content-Type':contentType}))});
+function textResponse(body,{status=200,contentType='text/plain; charset=utf-8',cacheControl='public, max-age=21600'}={}) {
+  return new Response(body,{status,headers:secureHeaders(new Headers({'Cache-Control':cacheControl,'Content-Type':contentType}))});
 }
 
 function publicMemePath(record) {
@@ -92,6 +129,7 @@ function memePage(record) {
   <meta property="og:url" content="${canonical}">
   ${previewUrl?`<meta property="og:image" content="${previewUrl}">`:''}
   <meta name="twitter:card" content="summary_large_image">
+  <link rel="alternate" type="text/markdown" href="${canonical}.md" title="Markdown version">
   <script type="application/ld+json">${structuredData(schema)}</script>
   <link rel="stylesheet" href="/app.css">
 </head>
@@ -139,6 +177,33 @@ function memePage(record) {
 
 function notFoundPage() {
   return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex, nofollow"><title>Meme not found | Meme Lab</title><link rel="stylesheet" href="/app.css"></head><body><main class="not-found"><p class="eyebrow">404</p><h1>That meme is not in the collection.</h1><p class="intro">Browse the live catalogue or try another situation.</p><a class="primary" href="/collection">Browse the collection <span aria-hidden="true">&rarr;</span></a></main></body></html>`;
+}
+
+function memeMarkdown(record) {
+  const canonical=`${SITE_ORIGIN}${publicMemePath(record)}`;
+  const media=record.preview_url||record.media_url||record.image_url||'';
+  const sourceNote=record.media_status==='approved'?'Approved media source':'Source preview; redistribution rights are not established';
+  const lines=[
+    `# ${record.name} — Meme Lab`,
+    '',
+    record.message,
+    '',
+    `- What it expresses: ${record.relational_pattern}`,
+    `- Example: ${record.example_context}`,
+    `- When not to use it: ${record.near_miss_context}`
+  ];
+  if(record.tags?.length) lines.push(`- Tags: ${record.tags.join(', ')}`);
+  if(media) lines.push(`- Media: ${media}`);
+  if(record.image_url) lines.push(`- Source: ${record.image_url} (${sourceNote})`);
+  lines.push(`- Page: ${canonical}`,`- Collection: ${SITE_ORIGIN}/collection`,'');
+  return lines.join('\n');
+}
+
+function memeNotFound(request,asMarkdown) {
+  if(asMarkdown||wantsMarkdown(request)) {
+    return textResponse('# Not found\n\nThat meme is not in the collection.\n',{status:404,contentType:'text/markdown; charset=utf-8',cacheControl:'no-store'});
+  }
+  return pageResponse(notFoundPage(),{status:404,indexable:false,cacheControl:'no-store'});
 }
 
 function sitemap() {
@@ -313,19 +378,39 @@ function secureAsset(response) {
 export default {
   async fetch(request,env) {
     const url=new URL(request.url);
-    if(request.method==='GET'&&url.pathname==='/robots.txt') return textResponse(`User-agent: *\nAllow: /\nDisallow: /api/\n\nSitemap: ${SITE_ORIGIN}/sitemap.xml\n`);
-    if(request.method==='GET'&&url.pathname==='/sitemap.xml') return textResponse(sitemap(),{contentType:'application/xml; charset=utf-8'});
-    if(request.method==='GET'&&url.pathname.startsWith('/memes/')) {
-      let id;
-      try { id=decodeURIComponent(url.pathname.slice('/memes/'.length).replace(/\/$/,'')); }
-      catch { return pageResponse(notFoundPage(),{status:404,indexable:false,cacheControl:'no-store'}); }
-      const record=catalogueById.get(id);
-      if(!record) return pageResponse(notFoundPage(),{status:404,indexable:false,cacheControl:'no-store'});
-      const canonicalPath=publicMemePath(record);
-      if(url.pathname!==canonicalPath) return Response.redirect(`${SITE_ORIGIN}${canonicalPath}`,301);
-      return pageResponse(memePage(record));
+    const isRead=request.method==='GET'||request.method==='HEAD';
+    if(isRead&&url.pathname==='/robots.txt') return forHead(request,textResponse(`User-agent: *\nAllow: /\nDisallow: /api/\n\nSitemap: ${SITE_ORIGIN}/sitemap.xml\n`));
+    if(isRead&&url.pathname==='/sitemap.xml') return forHead(request,textResponse(sitemap(),{contentType:'application/xml; charset=utf-8'}));
+    if(isRead&&url.pathname==='/api/ai') {
+      const origin=url.origin;
+      return forHead(request,textResponse(`${JSON.stringify(agentCatalog(origin),null,2)}\n`,{contentType:'application/json; charset=utf-8',cacheControl:'public, max-age=300'}));
     }
-    if(url.pathname==='/api/health'&&request.method==='GET') return json({status:'ok',catalogue:catalogue.length});
+    if(isRead&&url.pathname.startsWith('/memes/')) {
+      let slug=url.pathname.slice('/memes/'.length).replace(/\/$/,'');
+      const markdownPath=slug.endsWith('.md');
+      if(markdownPath) slug=slug.slice(0,-3);
+      let id;
+      try { id=decodeURIComponent(slug); }
+      catch { return forHead(request,memeNotFound(request,markdownPath)); }
+      const record=catalogueById.get(id);
+      if(!record) return forHead(request,memeNotFound(request,markdownPath));
+      if(markdownPath||wantsMarkdown(request)) {
+        return forHead(request,textResponse(memeMarkdown(record),{contentType:'text/markdown; charset=utf-8'}));
+      }
+      const canonicalPath=publicMemePath(record);
+      if(url.pathname!==canonicalPath) return forHead(request,Response.redirect(`${SITE_ORIGIN}${canonicalPath}`,301));
+      return forHead(request,pageResponse(memePage(record)));
+    }
+    if(url.pathname==='/api/health'&&isRead) return forHead(request,json({status:'ok',catalogue:catalogue.length}));
+    const markdownAlternate=MARKDOWN_ALTERNATES[url.pathname];
+    if(isRead&&markdownAlternate&&wantsMarkdown(request)) {
+      const mdUrl=new URL(url);
+      mdUrl.pathname=markdownAlternate;
+      const mdAsset=await env.ASSETS.fetch(new Request(mdUrl.toString(),request));
+      if(mdAsset.ok) {
+        return forHead(request,new Response(mdAsset.body,{status:200,headers:secureHeaders(new Headers({'Cache-Control':'public, max-age=21600','Content-Type':'text/markdown; charset=utf-8'}))}));
+      }
+    }
     if(url.pathname==='/api/recommend'&&request.method==='POST') {
       const origin=request.headers.get('origin');
       if(origin&&origin!==url.origin) return json({error:'Cross-origin requests are blocked.'},403);

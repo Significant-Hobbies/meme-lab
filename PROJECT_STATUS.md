@@ -18,6 +18,7 @@
 - The SEO build provides a server-rendered page for every one of the 3,000 meme references, plus self-referencing canonical metadata, Open Graph metadata, JSON-LD, `robots.txt`, and a 3,003-URL sitemap.
 - Successful recommendations link the best match and all four backups to those stable catalogue pages. Raw submitted comments remain private 30-day feedback data and are never placed in public URLs, metadata, page source, or the sitemap.
 - API and 404 responses remain explicitly `noindex`; public product and meme pages are indexable.
+- Agent surfaces are complete: `llms.txt`, `llms-full.txt`, `/api/ai`, `index.md`/`collection.md`/`how-it-works.md`, per-meme `/memes/<id>.md`, and `Accept: text/markdown` negotiation on every HTML and meme route. All worker-rendered routes answer HEAD with GET parity.
 
 ## Correcting the 3,000 catalogue
 

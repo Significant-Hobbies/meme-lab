@@ -1,19 +1,24 @@
 # Meme Lab
 
-> Paste a comment and get the meme that fits it best.
+> Personal meme picker: paste a complete comment or situation and get the best-matching meme first, four honestly ranked backups, ordinal fit labels, and an honest confidence — from a 3,000-reference catalogue of named memes and usage-backed reaction GIFs.
 
 Site: https://memes.significanthobbies.com
 
 ## Pages
 
-- `/` — paste a comment, get the best-matching meme
-- `/collection.html` — browse the meme catalogue
-- `/how-it-works.html` — how recommendations are made
+- https://memes.significanthobbies.com/ — paste a comment, get the best-matching meme
+- https://memes.significanthobbies.com/collection — searchable catalogue of 3,000 meme and GIF references
+- https://memes.significanthobbies.com/how-it-works — retrieval, ranking, and evaluation notes
+- https://memes.significanthobbies.com/memes/{id} — one reference page per catalogued meme (append `.md` for Markdown)
 
-## How it works
+## Agent surfaces
 
-A Cloudflare Worker serves a static app backed by a Vectorize index of
-catalogued memes (BGE embeddings) plus a D1 feedback store. Recommendations
-expire and are pruned by a daily scheduled job.
+- https://memes.significanthobbies.com/api/ai — JSON catalog of machine-readable surfaces
+- https://memes.significanthobbies.com/llms-full.txt — expanded product brief
+- https://memes.significanthobbies.com/index.md — homepage as Markdown
+- https://memes.significanthobbies.com/collection.md — collection as Markdown
+- https://memes.significanthobbies.com/how-it-works.md — method page as Markdown
+- https://memes.significanthobbies.com/sitemap.xml — 3,003 public URLs
+- Send `Accept: text/markdown` on any HTML or meme page for its Markdown version.
 
 Maintained by Sarthak Agrawal: https://sarthakagrawal.dev

@@ -599,3 +599,40 @@ test('health reports the full live catalogue',async()=>{
   const response=await worker.fetch(new Request('https://example.test/api/health'),env);
   assert.deepEqual(await response.json(),{status:'ok',catalogue:3000});
 });
+
+test('agent surfaces serve /api/ai, markdown alternates, and meme markdown',async()=>{
+  const catalog=await worker.fetch(new Request('https://example.test/api/ai'),env);
+  assert.equal(catalog.status,200);
+  assert.equal(catalog.headers.get('content-type'),'application/json; charset=utf-8');
+  const ai=await catalog.json();
+  assert.equal(ai.name,'Meme Lab');
+  assert(ai.surfaces.length>=4);
+  assert(ai.surfaces.every(surface=>surface.md.startsWith('https://')));
+
+  const negotiated=await worker.fetch(new Request('https://example.test/memes/absolute-cinema',{headers:{accept:'text/markdown'}}),env);
+  assert.equal(negotiated.status,200);
+  assert.equal(negotiated.headers.get('content-type'),'text/markdown; charset=utf-8');
+  const md=await negotiated.text();
+  assert.match(md,/^# Absolute Cinema — Meme Lab/);
+  assert.match(md,/memes\.significanthobbies\.com\/memes\/absolute-cinema/);
+
+  const explicit=await worker.fetch(new Request('https://example.test/memes/absolute-cinema.md'),env);
+  assert.equal(explicit.status,200);
+  assert.equal(explicit.headers.get('content-type'),'text/markdown; charset=utf-8');
+
+  const missingMd=await worker.fetch(new Request('https://example.test/memes/not-in-the-catalogue.md'),env);
+  assert.equal(missingMd.status,404);
+  assert.equal(missingMd.headers.get('content-type'),'text/markdown; charset=utf-8');
+});
+
+test('HEAD matches GET status on every worker-rendered route',async()=>{
+  for(const path of ['/robots.txt','/sitemap.xml','/api/ai','/api/health','/memes/absolute-cinema','/memes/absolute-cinema.md','/memes/not-in-the-catalogue']) {
+    const get=await worker.fetch(new Request(`https://example.test${path}`),env);
+    const head=await worker.fetch(new Request(`https://example.test${path}`,{method:'HEAD'}),env);
+    assert.equal(head.status,get.status,path);
+    assert.equal(await head.text(),'');
+  }
+  const negotiated=await worker.fetch(new Request('https://example.test/memes/absolute-cinema',{method:'HEAD',headers:{accept:'text/markdown'}}),env);
+  assert.equal(negotiated.status,200);
+  assert.equal(negotiated.headers.get('content-type'),'text/markdown; charset=utf-8');
+});

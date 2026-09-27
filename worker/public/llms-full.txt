@@ -1,0 +1,66 @@
+# Meme Lab — expanded brief
+
+Site: https://memes.significanthobbies.com
+Canonical name: Meme Lab
+
+## What it is
+
+Meme Lab is a personal meme picker built and maintained by Sarthak Agrawal.
+A user pastes one complete comment or situation; the product returns the
+best-matching meme first, four honestly ranked backups, ordinal fit labels,
+and an honest confidence level.
+
+## Catalogue
+
+- 3,000 references total: 1,805 named meme templates and 1,195 usage-backed
+  reaction GIFs.
+- GIFs come from the GIF Reply research dataset (1.56M observed
+  conversation-to-GIF replies); each selected GIF has at least 108 observed
+  uses.
+- Every record carries message, relational pattern, example context,
+  near-miss context, tags, media type, preview/source URLs, provenance,
+  evidence state, and rights state.
+- A checked-in 41-item canonical coverage manifest tracks recognizable gaps.
+
+## How matching works
+
+- Two BGE embedding views (meaning, example) over a Cloudflare Vectorize
+  index; reciprocal-rank fusion; 10 of 30 shortlist slots reserved for the
+  original core set.
+- TypeSafe Jev scores all 30 candidates on five ordered fit levels in one
+  request; scores map to public fit labels.
+- Multi-person comments run three lenses (My reaction, Their side, The
+  situation) with a final ordinal rescore.
+- Serious help, grief, apology, care, and factual requests are abstained
+  on before humour is considered.
+- If Jev is rate-limited, five semantic-retrieval matches are returned with
+  low confidence; no large text-generation model is substituted.
+
+## Pages
+
+- / — the picker
+- /collection — searchable catalogue
+- /how-it-works — retrieval, ranking, evaluation notes
+- /memes/{id} — one reference page per catalogued meme (append .md for Markdown)
+
+## Agent surfaces
+
+- /api/ai — JSON catalog of machine-readable surfaces
+- /llms.txt — summary and link map
+- /index.md, /collection.md, /how-it-works.md — Markdown alternates
+- /memes/{id}.md — Markdown per meme record
+- Accept: text/markdown is honored on all HTML and meme pages
+- /sitemap.xml — 3,003 public URLs; /robots.txt — allows all, disallows /api/
+
+## Privacy
+
+Submitted comments are used only for the recommendation, never placed in
+public URLs, metadata, page source, or the sitemap. One-tap feedback is kept
+30 days and pruned daily.
+
+## Evaluation caveats
+
+Labels are assistant-authored and not human-validated; metrics are
+directional. See /how-it-works for the shadow-set methodology.
+
+Maintainer: Sarthak Agrawal — https://sarthakagrawal.dev
