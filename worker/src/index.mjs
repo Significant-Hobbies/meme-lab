@@ -2,6 +2,7 @@ import {catalogue} from './catalogue.stage3000.generated.mjs';
 import {hasMultiplePerspectives,humourBelongs,needsSeriousHandling,rankCandidates,rankCandidatesByPerspective,requiresFactualAnswer} from './classification.mjs';
 import {MAX_RECOMMENDATIONS,presentSelection,selectionFromRanking} from './recommendation.mjs';
 import {retrieveCandidates} from './retrieval.mjs';
+import {pingFor} from './ping.mjs';
 
 const allowedIds=new Set(catalogue.map(record=>record.id));
 const catalogueById=new Map(catalogue.map(record=>[record.id,record]));
@@ -72,7 +73,7 @@ function secureHeaders(headers=new Headers()) {
   headers.set('Referrer-Policy','no-referrer');
   headers.set('X-Frame-Options','DENY');
   headers.set('Permissions-Policy','camera=(), microphone=(), geolocation=()');
-  headers.set('Content-Security-Policy',"default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' https://i.imgflip.com https://api.memegen.link https://media.giphy.com; connect-src 'self'; object-src 'none'; base-uri 'none'; frame-ancestors 'none'; form-action 'self'");
+  headers.set('Content-Security-Policy',"default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' https://i.imgflip.com https://api.memegen.link https://media.giphy.com; connect-src 'self' https://ingest.sassmaker.com; object-src 'none'; base-uri 'none'; frame-ancestors 'none'; form-action 'self'");
   return headers;
 }
 
@@ -131,6 +132,7 @@ function memePage(record) {
   <meta name="twitter:card" content="summary_large_image">
   <link rel="alternate" type="text/markdown" href="${canonical}.md" title="Markdown version">
   <script type="application/ld+json">${structuredData(schema)}</script>
+  <script src="/app-health-log.js" defer></script>
   <link rel="stylesheet" href="/app.css">
 </head>
 <body class="page-meme">
@@ -246,7 +248,7 @@ async function persistRecommendation(env,recommendation,comment,model=CLASSIFIER
     .run();
 }
 
-async function saveFeedback(request,env) {
+async function saveFeedback(request,env,ctx) {
   if(request.headers.get('content-type')?.split(';')[0]!=='application/json') return json({error:'Expected JSON.'},415);
   const contentLength=Number(request.headers.get('content-length')??0);
   if(contentLength>2000) return json({error:'Request too large.'},413);
@@ -264,10 +266,11 @@ async function saveFeedback(request,env) {
     .bind(crypto.randomUUID(),body.request_id,body.verdict,body.candidate_id,new Date().toISOString())
     .run();
   console.log(JSON.stringify({event:'feedback',verdict:body.verdict}));
+  ctx?.waitUntil(pingFor(env)('feedback.submitted',{title:`verdict: ${body.verdict}`,props:{verdict:body.verdict}}));
   return json({saved:true,verdict:body.verdict});
 }
 
-async function recommend(request,env) {
+async function recommend(request,env,ctx) {
   if(request.headers.get('content-type')?.split(';')[0]!=='application/json') return json({error:'Expected JSON.'},415);
   const contentLength=Number(request.headers.get('content-length')??0);
   if(contentLength>5000) return json({error:'Request too large.'},413);
@@ -363,6 +366,7 @@ async function recommend(request,env) {
       feedback_enabled=false;
       console.error(JSON.stringify({event:'recommendation_store',status:'error',error:safeError(error)}));
     }
+    ctx?.waitUntil(pingFor(env)('recommendation.created',{title:`decision: ${selection.decision}`,props:{decision:selection.decision,confidence:selection.confidence,candidates:selection.candidates.length,ranking_mode,classifier_gate}}));
     return json({...recommendation,feedback_enabled});
   } catch(error) {
     console.error(JSON.stringify({event:'recommendation',status:'error',duration_ms:Date.now()-started,error:safeError(error)}));
@@ -376,7 +380,7 @@ function secureAsset(response) {
 }
 
 export default {
-  async fetch(request,env) {
+  async fetch(request,env,ctx) {
     const url=new URL(request.url);
     const isRead=request.method==='GET'||request.method==='HEAD';
     if(isRead&&url.pathname==='/robots.txt') return forHead(request,textResponse(`User-agent: *\nAllow: /\nDisallow: /api/\n\nSitemap: ${SITE_ORIGIN}/sitemap.xml\n`));
@@ -414,12 +418,12 @@ export default {
     if(url.pathname==='/api/recommend'&&request.method==='POST') {
       const origin=request.headers.get('origin');
       if(origin&&origin!==url.origin) return json({error:'Cross-origin requests are blocked.'},403);
-      return recommend(request,env);
+      return recommend(request,env,ctx);
     }
     if(url.pathname==='/api/feedback'&&request.method==='POST') {
       const origin=request.headers.get('origin');
       if(origin&&origin!==url.origin) return json({error:'Cross-origin requests are blocked.'},403);
-      return saveFeedback(request,env);
+      return saveFeedback(request,env,ctx);
     }
     if(url.pathname.startsWith('/api/')) return json({error:'Not found.'},404);
     return secureAsset(await env.ASSETS.fetch(request));
