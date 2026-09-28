@@ -65,10 +65,19 @@ export async function retrieveCandidates(env,comment,topK=30) {
     coreReserve>0?retrieveViewPair(env,vector,coreReserve,{core:true}):[]
   ]);
   const seen=new Set();
-  const candidates=mergeWithReserve(broadMatches,coreMatches,{limit:topK,reserve:coreReserve})
+  let candidates=mergeWithReserve(broadMatches,coreMatches,{limit:topK,reserve:coreReserve})
     .map(match=>byId.get(match.catalogue_id))
     .filter(record=>record&&!seen.has(record.id)&&seen.add(record.id))
     .slice(0,topK);
+  // Older Vectorize uploads may lack searchable metadata indexes. Keep the
+  // matcher usable until those vectors can be reindexed with view/core filters.
+  if(candidates.length===0) {
+    const unfiltered=await env.MEME_INDEX.query(vector,{topK:Math.min(50,topK*2),returnMetadata:'all'});
+    candidates=(unfiltered?.matches??[])
+      .map(match=>byId.get(match.metadata?.catalogue_id))
+      .filter(record=>record&&!seen.has(record.id)&&seen.add(record.id))
+      .slice(0,topK);
+  }
   if(candidates.length===0) throw new Error('Semantic retrieval returned no known memes.');
   return candidates;
 }

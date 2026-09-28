@@ -142,6 +142,24 @@ test('production retrieval queries broad and core indexed views and returns uniq
   assert.deepEqual(records.map(record=>record.id),['this-is-fine','first-try','waiting-skeleton']);
 });
 
+test('production retrieval falls back to known unfiltered vectors when metadata indexes are absent',async()=>{
+  const filters=[];
+  const retrievalEnv={
+    AI:{run:async()=>({data:[[1,0,0]]})},
+    MEME_INDEX:{query:async(_vector,options)=>{
+      filters.push(options.filter);
+      return options.filter?{matches:[]}:{matches:[
+        {id:'meme-meaning-a',metadata:{catalogue_id:'waiting-skeleton'}},
+        {id:'meme-example-a',metadata:{catalogue_id:'waiting-skeleton'}},
+        {id:'meme-example-b',metadata:{catalogue_id:'this-is-fine'}}
+      ]};
+    }}
+  };
+  const records=await retrieveCandidates(retrievalEnv,'A situation worth testing.',3);
+  assert.deepEqual(records.map(record=>record.id),['waiting-skeleton','this-is-fine']);
+  assert.deepEqual(filters,[{view:'meaning'},{view:'example'},{core:true,view:'meaning'},{core:true,view:'example'},undefined]);
+});
+
 test('public worker saves one-tap feedback for an existing recommendation',async()=>{
   const requestId=crypto.randomUUID();
   const response=await worker.fetch(new Request('https://example.test/api/feedback',{method:'POST',headers:{'Content-Type':'application/json','Origin':'https://example.test'},body:JSON.stringify({request_id:requestId,verdict:'landed',candidate_id:'waiting-skeleton'})}),env);
