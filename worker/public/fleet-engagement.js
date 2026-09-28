@@ -13,6 +13,12 @@
     if (event.target?.id === 'meme-form') window.appHealth?.track('paired_run_started');
   }, true);
 
+  document.addEventListener('click', (event) => {
+    if (event.target instanceof Element && event.target.closest('#feedback [data-verdict]')) {
+      window.appHealth?.track('feedback_choice_clicked');
+    }
+  }, true);
+
   if (document.querySelector('saas-maker-newsletter-capture')) return;
   const extension = document.querySelector('fleet-footer-extension') || document.createElement('fleet-footer-extension');
   const capture = document.createElement('saas-maker-newsletter-capture');
