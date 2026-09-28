@@ -73,7 +73,7 @@ function secureHeaders(headers=new Headers()) {
   headers.set('Referrer-Policy','no-referrer');
   headers.set('X-Frame-Options','DENY');
   headers.set('Permissions-Policy','camera=(), microphone=(), geolocation=()');
-  headers.set('Content-Security-Policy',"default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' https://i.imgflip.com https://api.memegen.link https://media.giphy.com; connect-src 'self' https://ingest.sassmaker.com; object-src 'none'; base-uri 'none'; frame-ancestors 'none'; form-action 'self'");
+  headers.set('Content-Security-Policy',"default-src 'self'; script-src 'self' https://sassmaker.com https://health.sassmaker.com; style-src 'self' 'unsafe-inline'; img-src 'self' https://i.imgflip.com https://api.memegen.link https://media.giphy.com; connect-src 'self' https://ingest.sassmaker.com https://api.sassmaker.com; object-src 'none'; base-uri 'none'; frame-ancestors 'none'; form-action 'self'");
   return headers;
 }
 
@@ -133,6 +133,7 @@ function memePage(record) {
   <link rel="alternate" type="text/markdown" href="${canonical}.md" title="Markdown version">
   <script type="application/ld+json">${structuredData(schema)}</script>
   <script src="/app-health-log.js" defer></script>
+  <script src="/fleet-engagement.js" defer></script>
   <link rel="stylesheet" href="/app.css">
 </head>
 <body class="page-meme">
@@ -173,6 +174,8 @@ function memePage(record) {
     <a href="/collection">Browse all 3,000 meme references</a>
     <span>Match the situation, then pick the perspective.</span>
   </footer>
+  <script src="https://sassmaker.com/project-strip.js" data-project="meme-lab" defer></script>
+  <script src="https://sassmaker.com/ai-chat-footer.js" data-name="Meme Lab" defer></script>
 </body>
 </html>`;
 }
