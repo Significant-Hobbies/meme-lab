@@ -109,3 +109,9 @@ Annotations are drafts and evaluation labels are not human ground truth. Meme me
 The app listens on `127.0.0.1`, makes no model request until asked, and does not prefetch remote images. Media loads contact the original provider. Pasting an exported prompt into another service shares its content. Local run files contain your full pasted conversations in plaintext; do not commit or share them accidentally. To reset, stop the server and remove the JSON event files inside `runs/`, retaining `.gitkeep`. There is no production authentication; do not expose this server through a tunnel or bind it publicly.
 
 Keep `.env` out of Git. Original assets/annotations are never edited by the app. The preserved screenshot has outdated 50-reference counts; use the JSON catalogue and current UI for the 60-reference release. [Audit addendum](docs/audit_addendum.md) explains the discrepancy and what is still unverified.
+
+When the optional `APP_HEALTH_INGEST_KEY` Worker secret is configured, API
+endpoint measurements can be sent to App Health. Those measurements contain
+only the fixed API route, method, response status, and duration; request paths,
+query values, prompts, feedback, and identities are not included. Reporting is
+disabled when the key is absent and never delays an API response.

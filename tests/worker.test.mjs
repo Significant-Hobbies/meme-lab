@@ -168,6 +168,62 @@ test('public worker saves one-tap feedback for an existing recommendation',async
   assert(stored.some(entry=>entry.sql.includes('INSERT INTO feedback')));
 });
 
+test('configured App Health endpoint telemetry measures supported routes without request values',async()=>{
+  const originalFetch=globalThis.fetch;
+  const requests=[];
+  const context={pending:[],waitUntil(promise){this.pending.push(promise);}};
+  const telemetryEnv={...env,APP_HEALTH_INGEST_KEY:'test-private-key',APP_HEALTH_ENVIRONMENT:'test'};
+  globalThis.fetch=async(url,options)=>{
+    requests.push({url,options});
+    return new Response(null,{status:202});
+  };
+  try {
+    const unconfiguredContext={pending:[],waitUntil(promise){this.pending.push(promise);}};
+    const unconfiguredHealth=await worker.fetch(new Request('https://example.test/api/health'),env,unconfiguredContext);
+    assert.equal(unconfiguredHealth.status,200);
+    assert.equal(unconfiguredContext.pending.length,0);
+
+    const health=await worker.fetch(new Request('https://example.test/api/health?private=query-value'),telemetryEnv,context);
+    assert.equal(health.status,200);
+    await Promise.all(context.pending.splice(0));
+
+    const recommendation=await worker.fetch(new Request('https://example.test/api/recommend?private=query-value',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({comment:'PRIVATE_PROMPT_SENTINEL'}),
+    }),telemetryEnv,context);
+    assert.equal(recommendation.status,200);
+    const recommendationBody=await recommendation.json();
+    await Promise.all(context.pending.splice(0));
+
+    const feedback=await worker.fetch(new Request('https://example.test/api/feedback?private=query-value',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({request_id:recommendationBody.request_id,verdict:'landed',candidate_id:'waiting-skeleton'}),
+    }),telemetryEnv,context);
+    assert.equal(feedback.status,200);
+    await Promise.all(context.pending.splice(0));
+
+    const unknown=await worker.fetch(new Request('https://example.test/api/private/PRIVATE_PATH_SENTINEL'),telemetryEnv,context);
+    assert.equal(unknown.status,404);
+    assert.equal(context.pending.length,0);
+
+    const endpointRequests=requests.filter(request=>request.url==='https://ingest.sassmaker.com/v1/ingest');
+    assert.equal(endpointRequests.length,3);
+    const events=endpointRequests.flatMap(request=>JSON.parse(request.options.body).events);
+    assert.deepEqual(events.map(event=>[event.method,event.route,event.status_code]),[
+      ['GET','/api/health',200],
+      ['POST','/api/recommend',200],
+      ['POST','/api/feedback',200],
+    ]);
+    assert(events.every(event=>Number.isFinite(event.duration_ms)&&event.duration_ms>=0));
+    const payloads=endpointRequests.map(request=>request.options.body).join('\n');
+    assert.doesNotMatch(payloads,/PRIVATE_PROMPT_SENTINEL|PRIVATE_PATH_SENTINEL|query-value|request_id|verdict|candidate_id/);
+  } finally {
+    globalThis.fetch=originalFetch;
+  }
+});
+
 test('public worker rejects empty, oversized, cross-origin, and unknown API requests',async()=>{
   const empty=await worker.fetch(new Request('https://example.test/api/recommend',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({comment:'   '})}),env);
   assert.equal(empty.status,400);

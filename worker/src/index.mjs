@@ -2,7 +2,7 @@ import {catalogue} from './catalogue.stage3000.generated.mjs';
 import {hasMultiplePerspectives,humourBelongs,needsSeriousHandling,rankCandidates,rankCandidatesByPerspective,requiresFactualAnswer} from './classification.mjs';
 import {MAX_RECOMMENDATIONS,presentSelection,selectionFromRanking} from './recommendation.mjs';
 import {retrieveCandidates} from './retrieval.mjs';
-import {pingFor} from './ping.mjs';
+import {endpointFor,pingFor} from './ping.mjs';
 
 const allowedIds=new Set(catalogue.map(record=>record.id));
 const catalogueById=new Map(catalogue.map(record=>[record.id,record]));
@@ -382,6 +382,28 @@ function secureAsset(response) {
   return new Response(response.body,{status:response.status,statusText:response.statusText,headers});
 }
 
+function queueEndpointMeasurement(request,env,ctx,route,status_code,startedAt) {
+  if(!env.APP_HEALTH_INGEST_KEY||typeof ctx?.waitUntil!=='function') return;
+  ctx.waitUntil(endpointFor(env)({
+    method:request.method,
+    route,
+    status_code,
+    duration_ms:Date.now()-startedAt
+  }));
+}
+
+async function withEndpointMeasurement(request,env,ctx,route,handler) {
+  const startedAt=Date.now();
+  try {
+    const response=await handler();
+    queueEndpointMeasurement(request,env,ctx,route,response.status,startedAt);
+    return response;
+  } catch(error) {
+    queueEndpointMeasurement(request,env,ctx,route,500,startedAt);
+    throw error;
+  }
+}
+
 export default {
   async fetch(request,env,ctx) {
     const url=new URL(request.url);
@@ -408,7 +430,7 @@ export default {
       if(url.pathname!==canonicalPath) return forHead(request,Response.redirect(`${SITE_ORIGIN}${canonicalPath}`,301));
       return forHead(request,pageResponse(memePage(record)));
     }
-    if(url.pathname==='/api/health'&&isRead) return forHead(request,json({status:'ok',catalogue:catalogue.length}));
+    if(url.pathname==='/api/health'&&isRead) return withEndpointMeasurement(request,env,ctx,'/api/health',()=>forHead(request,json({status:'ok',catalogue:catalogue.length})));
     const markdownAlternate=MARKDOWN_ALTERNATES[url.pathname];
     if(isRead&&markdownAlternate&&wantsMarkdown(request)) {
       const mdUrl=new URL(url);
@@ -419,14 +441,18 @@ export default {
       }
     }
     if(url.pathname==='/api/recommend'&&request.method==='POST') {
-      const origin=request.headers.get('origin');
-      if(origin&&origin!==url.origin) return json({error:'Cross-origin requests are blocked.'},403);
-      return recommend(request,env,ctx);
+      return withEndpointMeasurement(request,env,ctx,'/api/recommend',()=>{
+        const origin=request.headers.get('origin');
+        if(origin&&origin!==url.origin) return json({error:'Cross-origin requests are blocked.'},403);
+        return recommend(request,env,ctx);
+      });
     }
     if(url.pathname==='/api/feedback'&&request.method==='POST') {
-      const origin=request.headers.get('origin');
-      if(origin&&origin!==url.origin) return json({error:'Cross-origin requests are blocked.'},403);
-      return saveFeedback(request,env,ctx);
+      return withEndpointMeasurement(request,env,ctx,'/api/feedback',()=>{
+        const origin=request.headers.get('origin');
+        if(origin&&origin!==url.origin) return json({error:'Cross-origin requests are blocked.'},403);
+        return saveFeedback(request,env,ctx);
+      });
     }
     if(url.pathname.startsWith('/api/')) return json({error:'Not found.'},404);
     return secureAsset(await env.ASSETS.fetch(request));
