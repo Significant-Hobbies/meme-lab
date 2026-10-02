@@ -1,0 +1,101 @@
+{
+  "date": "2026-10-02",
+  "source": "Official Anna CLI local harness, Chrome DevTools",
+  "fixtures": "Synthetic canvas PNGs labeled DEVELOPER UI FIXTURE / NO MODEL OUTPUT; no provider-result claim",
+  "viewportWidths": [
+    390,
+    768,
+    1440
+  ],
+  "horizontalOverflow": false,
+  "fileInputDecoding": "PNG inputs prepared and displayed; synthetic File injection, not native OS chooser proof",
+  "consentGatesGeneration": true,
+  "invalidSvg": {
+    "ariaInvalid": true,
+    "generationBlocked": true,
+    "resultHidden": true
+  },
+  "clear": {
+    "fileCounts": [
+      0,
+      0
+    ],
+    "consent": false,
+    "rangeDefaults": [
+      25,
+      10,
+      40,
+      40
+    ],
+    "faceSize": 40,
+    "generationBlocked": true
+  },
+  "faceResize": {
+    "before": {
+      "x": 0.35,
+      "y": 0.28,
+      "width": 0.3,
+      "height": 0.32
+    },
+    "after": {
+      "x": 0.3,
+      "y": 0.23,
+      "width": 0.4,
+      "height": 0.43
+    },
+    "centerDelta": [
+      0,
+      0.005
+    ]
+  },
+  "APS": "Real files.list confirmed empty output library; saved reference rows untouched",
+  "hostedVerification": "Pending original browser recovery; fallback Google OAuth rejected browser",
+  "workingDraft": {
+    "revision": 8,
+    "version": "1.2.0",
+    "files": 12,
+    "bytes": 117192,
+    "contentHash": "1054e25f8621de8518c87c6e7ea16907233eddcafa9acdf2fb700a07c73d562a"
+  },
+  "frozenCandidate": "1.1.0 pending_review; not replaced; is_published=false",
+  "nativeViewport": {
+    "width": 960,
+    "height": 694,
+    "generateBottom": 582.95,
+    "generateVisible": true
+  },
+  "previewEnlargement": [
+    {
+      "viewport": 390,
+      "compact": [
+        160,
+        200
+      ],
+      "expanded": [
+        330,
+        412.5
+      ],
+      "restored": true,
+      "overflow": false
+    },
+    {
+      "viewport": 768,
+      "compact": [
+        215,
+        268.75
+      ],
+      "expanded": [
+        448,
+        560
+      ],
+      "restored": true,
+      "overflow": false
+    }
+  ],
+  "visualReview": {
+    "critique": 32,
+    "audit": 18,
+    "remainingVisualFindings": 0,
+    "hostedRuntime": "pending"
+  }
+}

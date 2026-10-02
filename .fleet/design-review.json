@@ -62,17 +62,30 @@
     }
   },
   "evidence": {
-    "screenshots": [],
+    "screenshots": [
+      {
+        "width": 390,
+        "path": "anna/artifacts/personalized/editor-390.png"
+      },
+      {
+        "width": 768,
+        "path": "anna/artifacts/personalized/editor-768.png"
+      },
+      {
+        "width": 1440,
+        "path": "anna/artifacts/personalized/editor-1440.png"
+      }
+    ],
     "projectCheck": {
       "command": "npm test; npm run check; anna-app validate --strict; git diff --check; hosted Anna editor verification",
       "status": "pending"
     },
     "critique": {
-      "score": 0,
+      "score": 32,
       "maximum": 40
     },
     "audit": {
-      "score": 0,
+      "score": 18,
       "maximum": 20
     },
     "unresolved": {
@@ -113,6 +126,6 @@
   },
   "ownerFeedback": {
     "decision": "keep",
-    "note": "Owner explicitly selected A \u00b7 Reference Desk for the personalized meme editor on 2026-10-02."
+    "note": "Owner explicitly selected A \u00b7 Reference Desk for the personalized meme editor on 2026-10-02. Browser screenshots use labeled synthetic UI fixtures; hosted image/storage verification remains pending."
   }
 }
