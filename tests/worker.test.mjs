@@ -19,7 +19,7 @@ const directScoreAnswer=(score=4)=>({
   confidence:1,
   probabilities:Object.fromEntries(Array.from({length:5},(_,index)=>[String(index),index===Math.round(score)?1:0]))
 });
-const budget={idFromName:name=>name,get:()=>({fetch:async(url,options)=>{const body=JSON.parse(options.body);const vector=url.endsWith('try-debit-vectorize');const amount=vector?body.dimensions:body.neurons;return Response.json({allowed:true,used:amount,remaining:10000,[vector?'monthKey':'dayKey']:new Date().toISOString().slice(0,vector?7:10)});}})};
+const budget={idFromName:name=>name,get:()=>({fetch:async(url,options)=>{const body=JSON.parse(options.body);const vector=url.endsWith('try-debit-vectorize');const amount=vector?body.dimensions:body.neurons;return Response.json({allowed:true,used:amount,remaining:(vector?45_000_000:9500)-amount,retryAfter:0,baselineVerified:true,[vector?'monthKey':'dayKey']:new Date().toISOString().slice(0,vector?7:10)});}})};
 const env={
   NEURON_BUDGET:budget,
   AI:{run:async(model,input)=>{
