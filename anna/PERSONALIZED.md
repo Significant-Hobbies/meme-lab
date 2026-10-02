@@ -2,7 +2,7 @@
 
 Tracking: https://github.com/Significant-Hobbies/meme-lab/issues/19
 
-Owner selected A · Reference Desk. The editor and image engine are implemented and uploaded to Anna’s mutable working draft (app 389, revision 8). Frozen 1.1.0 remains pending review. This feature is not Store-published or fully verified inside the hosted app.
+Owner selected A · Reference Desk. The editor and image engine are implemented and uploaded to Anna’s mutable working draft (app 389, revision 9). Frozen 1.1.0 remains pending review. This feature is not Store-published or fully verified inside the hosted app.
 
 ## Consumer flow
 
@@ -18,18 +18,18 @@ Raw images, prompts, photo filenames and signed URLs are not written to analytic
 
 ## Evidence and outstanding checks
 
-- Full suite: 148 tests passed after the source review corrections. Package/catalogue checks and diff whitespace checks pass. Tests cover one request, invalid input before spend, stale work, permissions/quota errors without fallback, private upload confirmation, conditional deletion and share cancellation.
+- Full suite: 149 tests passed after the source review corrections. Package/catalogue checks and diff whitespace checks pass. Tests cover one request, invalid input before spend, stale work, permissions/quota errors without fallback, private upload confirmation, conditional deletion and share cancellation.
 - Browser canvas fixture: 768 × 960 PNG, zero changed pixels outside the experimental face area; this is compositing proof, not identity proof.
 - Four completed real Anna image requests using public NASA portraits. All reported google/gemini-2.5-flash-image. Full-template requests 1 and 4 visibly used the supplied identity and kept both captions; cropped requests 2 and 3 failed identity fidelity. A GPT Image hint in request 3 still resolved to Gemini, so GPT Image availability is not established. This tiny exploratory sample is not a reliability rate.
 - Final request reported 10,893 ms latency, 1,965 tokens and quotaConsumed 0.01 in unspecified provider units. No money amount is inferred. Actual output was 896 × 1152 despite response metadata claiming 1024 × 1024; browser decoding is authoritative.
 - Direct output display/download succeeds; localhost anonymous image fetch fails. Observed R2 preflight allows https://anna.partners and rejects localhost. Hosted fetch/save/download and responsive render verification are still required. Chrome automation disconnected during that verification.
-- Mutable upload succeeded with 12 files, 115,007 bytes and content hash 8e577bcf35c31f87a32b2b8ac2b87f16a7f9f6d1dbf02e2b423e00e75461feb1. This includes the source review corrections.
+- Mutable upload succeeded with 12 files, 117,394 bytes and content hash 1e5c4a109c6fe85b4df3380670334383a5c514d52142a40879360c98474b563b. This includes the source review corrections.
 
 Replay: `node --test tests/anna-personalize.test.mjs tests/anna-creations.test.mjs`.
 
 NASA fixture sources: https://www.nasa.gov/image-article/official-portrait-of-neil-armstrong/ and https://www.nasa.gov/former-astronaut-sally-ride/. These are developer fixtures, not a bundled consumer template library.
 
-Source finish review requested by the Impeccable skill found pagination, mobile control adjacency, share user-activation and persistence gaps. Those source fixes are applied; actual render review remains pending. The one mechanical detector pass reports three missing-src warnings for hidden dynamic image slots. They are intentionally hidden until a real image is assigned. No finished-design score is claimed.
+Source finish review requested by the Impeccable skill found pagination, mobile control adjacency, share user-activation and persistence gaps. Those source fixes are applied; local render review passed and hosted runtime review remains pending. The one mechanical detector pass reports three missing-src warnings for hidden dynamic image slots. They are intentionally hidden until a real image is assigned. Visual critique is 32/40; end-to-end completion is not claimed.
 
 ## Browser follow-up on 2 October
 
@@ -40,3 +40,7 @@ The independent critique progressed from 27/40 to 32/40 after substantive fixes;
 The fallback Anna session was signed out. Normal Google OAuth sign-in was attempted with the owner's already authorized Gmail account; Google returned 'Couldn’t sign you in / This browser or app may not be secure'. No security bypass, password access, cookie copying or credential-file reads were performed. The original signed-in browser connection is still needed for real hosted image delivery, save/reload/download/removal and final listing screenshots. The local 1.2.0 metadata is prepared but has not been synced to replace the submitted 1.1.0 listing.
 
 Final viewport check: at 960 × 694, Generate is visible within the ready-state workbench. Enlarge previews changes mobile images from 160 × 200 to 330 × 412.5 and tablet images from 215 × 268.75 to 448 × 560; Compact previews restores both without horizontal overflow. These are synthetic local UI checks, not native generation/storage proof.
+
+## Storage service follow-up without browser restart
+
+The official CLI APS bridge completed a real private-file round trip using a disposable 68-byte PNG: upload/finalize, library listing, byte-identical retrieval, conditional soft deletion and an empty final listing. No image generation call was made. An OPTIONS request allowed the Anna origin; this is server preflight evidence, not a browser delivery claim. The bridge returned `{ok:true,path}` on removal, versus the documented hosted `{deleted:true}`; the app now accepts either explicit confirmation and rejects mismatched paths/ambiguous responses. Regression coverage and the repeated service check pass. Evidence: `artifacts/personalized/storage-service-check.json`. Hosted generator, host-mediated disk download and user sharing remain unverified.

@@ -51,11 +51,11 @@
   "APS": "Real files.list confirmed empty output library; saved reference rows untouched",
   "hostedVerification": "Pending original browser recovery; fallback Google OAuth rejected browser",
   "workingDraft": {
-    "revision": 8,
+    "revision": 9,
     "version": "1.2.0",
     "files": 12,
-    "bytes": 117192,
-    "contentHash": "1054e25f8621de8518c87c6e7ea16907233eddcafa9acdf2fb700a07c73d562a"
+    "bytes": 117394,
+    "contentHash": "1e5c4a109c6fe85b4df3380670334383a5c514d52142a40879360c98474b563b"
   },
   "frozenCandidate": "1.1.0 pending_review; not replaced; is_published=false",
   "nativeViewport": {
@@ -97,5 +97,6 @@
     "audit": 18,
     "remainingVisualFindings": 0,
     "hostedRuntime": "pending"
-  }
+  },
+  "storageServiceCheck": "storage-service-check.json: passed; service evidence, not hosted browser proof"
 }

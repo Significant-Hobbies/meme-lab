@@ -34,3 +34,13 @@ test('library exposes the opaque next cursor and passes it to the next page',asy
   const first=await listSavedMemePage(anna);assert.equal(first.nextCursor,'opaque-next-page');
   const second=await listSavedMemePage(anna,{cursor:first.nextCursor});assert.equal(second.nextCursor,null);assert.equal(calls[1].cursor,'opaque-next-page');assert.equal(calls[1].prefix,'creations/');
 });
+
+test('removal accepts exact-path APS confirmation but rejects ambiguous success',async()=>{
+  const entry={path:`creations/${id}.png`,etag:'version1'};
+  const anna={files:{delete:async args=>{assert.deepEqual(args,{path:entry.path,if_match:entry.etag});return {ok:true,path:entry.path};}}};
+  assert.equal(await removeSavedMeme(anna,entry),'removed');
+  for(const result of [{ok:true},{ok:true,path:'other-app/private.png'},{ok:false,path:entry.path},{deleted:false}]){
+    anna.files.delete=async()=>result;
+    await assert.rejects(removeSavedMeme(anna,entry),/did not confirm removal/);
+  }
+});

@@ -1,0 +1,21 @@
+{
+  "date": "2026-10-02T12:23:40.786Z",
+  "surface": "Official Anna CLI harness to real APS; Node service test, not hosted browser proof",
+  "noModelCall": true,
+  "priorAttempt": "First fixture was soft-deleted; confirmation mismatch fixed. Empty listing confirmed before repeat.",
+  "beforeCount": 0,
+  "uploadConfirmed": {
+    "bytes": 68,
+    "hasEtag": true
+  },
+  "listContainsOwnFixture": true,
+  "downloadedBytesMatch": true,
+  "annaOriginPreflight": {
+    "status": 204,
+    "allowedOrigin": "https://anna.partners"
+  },
+  "softRemovalConfirmed": true,
+  "afterCount": 0,
+  "fixtureAbsent": true,
+  "status": "passed"
+}

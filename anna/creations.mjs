@@ -24,7 +24,9 @@ export async function downloadSavedMeme(anna,path) {
 export async function removeSavedMeme(anna,entry) {
   if(typeof entry?.etag!=='string'||!entry.etag)throw new Error('Refresh the saved meme before removing it.');
   const result=await anna.files.delete({path:validPath(entry?.path),if_match:entry.etag});
-  if(result?.deleted!==true)throw new Error('Anna did not confirm removal.');
+  // Hosted RPC documents deleted:true; the official CLI APS bridge returns
+  // ok:true plus the exact removed path. Both explicitly confirm this entry.
+  if(result?.deleted!==true&&!(result?.ok===true&&result.path===entry.path))throw new Error('Anna did not confirm removal.');
   return 'removed';
 }
 export async function listSavedMemePage(anna,{cursor}={}) {
