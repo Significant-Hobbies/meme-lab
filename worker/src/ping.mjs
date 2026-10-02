@@ -5,6 +5,8 @@
 const DEFAULT_URL = 'https://ingest.sassmaker.com/v1/logs';
 const DEFAULT_ENDPOINT_URL = 'https://ingest.sassmaker.com/v1/ingest';
 const API_ENDPOINTS = {
+  '/api/anna/shortlist': ['POST'],
+  '/api/anna/events': ['POST'],
   '/api/health': ['GET', 'HEAD'],
   '/api/recommend': ['POST'],
   '/api/feedback': ['POST'],
