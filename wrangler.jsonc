@@ -39,6 +39,16 @@
   "triggers": {
     "crons": ["15 3 * * *"]
   },
+  "ratelimits": [
+    {
+      "name": "ANNA_SEARCH_LIMITER",
+      "namespace_id": "389001",
+      "simple": {
+        "limit": 120,
+        "period": 60
+      }
+    }
+  ],
   "observability": {
     "enabled": true,
     "logs": {

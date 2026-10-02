@@ -6,3 +6,6 @@ results/
 node_modules/
 .wrangler/
 .DS_Store
+
+# Anna CLI local identity/cache (not part of the app bundle).
+anna/.anna/

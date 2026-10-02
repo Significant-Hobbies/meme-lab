@@ -1,0 +1,60 @@
+{
+  "schema": 2,
+  "required_executas": [],
+  "optional_executas": [],
+  "host_capabilities": [
+    "llm.complete",
+    "aps.kv"
+  ],
+  "system_prompt_addendum": "Meme Lab selects an existing reaction meme for a pasted comment or situation. Open the main app view with payload {comment: the user's situation} when requested. The app retrieves grounded references and ranks through Anna's LLM. Do not claim generated images, guaranteed humour, verified redistribution rights or guaranteed earnings. Serious requests should receive a sincere response rather than a meme. Never include the user's situation in shared URLs.",
+  "tags": [
+    "memes",
+    "reactions",
+    "creative"
+  ],
+  "ui": {
+    "bundle": {
+      "format": "static-spa",
+      "entry": "index.html",
+      "external_origins": [
+        "https://memes.significanthobbies.com",
+        "https://i.imgflip.com",
+        "https://api.memegen.link",
+        "https://media.giphy.com"
+      ]
+    },
+    "views": [
+      {
+        "name": "main",
+        "title": "Meme Lab",
+        "default": true,
+        "min_size": {
+          "w": 320,
+          "h": 320
+        },
+        "default_size": {
+          "w": 960,
+          "h": 720
+        },
+        "max_size": {
+          "w": 1920,
+          "h": 1600
+        },
+        "resizable": true,
+        "movable": true,
+        "single_instance": true
+      }
+    ],
+    "host_api": {
+      "llm": [
+        "complete"
+      ],
+      "storage": [
+        "get",
+        "set",
+        "list",
+        "delete"
+      ]
+    }
+  }
+}

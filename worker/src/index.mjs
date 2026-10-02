@@ -4,6 +4,8 @@ import {MAX_RECOMMENDATIONS,presentSelection,selectionFromRanking} from './recom
 import {retrieveCandidates} from './retrieval.mjs';
 import {BudgetUnavailableError} from './ai-budget.mjs';
 import {endpointFor,pingFor} from './ping.mjs';
+import {annaEvent} from './anna-events.mjs';
+import {annaShortlist} from './anna-shortlist.mjs';
 
 const allowedIds=new Set(catalogue.map(record=>record.id));
 const catalogueById=new Map(catalogue.map(record=>[record.id,record]));
@@ -410,6 +412,8 @@ export default {
   async fetch(request,env,ctx) {
     const url=new URL(request.url);
     const isRead=request.method==='GET'||request.method==='HEAD';
+    if(url.pathname==='/api/anna/shortlist') return withEndpointMeasurement(request,env,ctx,'/api/anna/shortlist',()=>annaShortlist(request,env));
+    if(url.pathname==='/api/anna/events') return withEndpointMeasurement(request,env,ctx,'/api/anna/events',()=>annaEvent(request,env,ctx));
     if(isRead&&url.pathname==='/robots.txt') return forHead(request,textResponse(`User-agent: *\nAllow: /\nDisallow: /api/\n\nSitemap: ${SITE_ORIGIN}/sitemap.xml\n`));
     if(isRead&&url.pathname==='/sitemap.xml') return forHead(request,textResponse(sitemap(),{contentType:'application/xml; charset=utf-8'}));
     if(isRead&&url.pathname==='/api/ai') {
