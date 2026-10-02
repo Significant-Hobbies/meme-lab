@@ -12,7 +12,8 @@ async function reserve(env,path,amount,periodKey) {
     if(!response.ok) throw new Error();
     const result=await response.json();
     const key=path==='try-debit'?'dayKey':'monthKey';
-    if(result.allowed!==true||result[key]!==periodKey||!Number.isSafeInteger(result.used)||result.used<amount||!Number.isSafeInteger(result.remaining)||result.remaining<0) throw new Error();
+    const cap=path==='try-debit'?9500:45_000_000;
+    if(result.allowed!==true||result[key]!==periodKey||result.retryAfter!==0||!Number.isSafeInteger(result.used)||result.used<amount||!Number.isSafeInteger(result.remaining)||result.remaining<0||result.used+result.remaining!==cap||(path==='try-debit-vectorize'&&result.baselineVerified!==true)) throw new Error();
   } catch { throw new BudgetUnavailableError(); }
 }
 

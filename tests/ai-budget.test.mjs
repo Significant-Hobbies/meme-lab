@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {BudgetUnavailableError,reserveRetrievalBudget} from '../worker/src/ai-budget.mjs';
 function namespace(handle) { return {idFromName:name=>{assert.equal(name,'global-budget');return name;},get:()=>({fetch:handle})}; }
-function allowed(url,body) { const vector=url.endsWith('try-debit-vectorize');return Response.json({allowed:true,used:vector?body.dimensions:body.neurons,remaining:10_000,[vector?'monthKey':'dayKey']:new Date().toISOString().slice(0,vector?7:10)}); }
+function allowed(url,body) { const vector=url.endsWith('try-debit-vectorize');return Response.json({allowed:true,used:vector?body.dimensions:body.neurons,remaining:(vector?45_000_000:9500)-(vector?body.dimensions:body.neurons),retryAfter:0,baselineVerified:true,[vector?'monthKey':'dayKey']:new Date().toISOString().slice(0,vector?7:10)}); }
 test('reserves all five Vectorize queries before UTF8-safe embedding admission',async()=>{
   const calls=[];
   await reserveRetrievalBudget({NEURON_BUDGET:namespace(async(url,options)=>{const body=JSON.parse(options.body);calls.push({url,body});return allowed(url,body);})},'🙂'.repeat(500));
