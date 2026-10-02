@@ -44,6 +44,12 @@
 - Local Qwen writes meaning-specific message, social-dynamic, example, near-miss, and tag metadata. These annotations remain assistant-authored pending owner feedback.
 - Production still uses bounded retrieval: two BGE embedding views return 30 candidates, with ten shortlist slots reserved for the original 1,000. The Worker calls TypeSafe Jev directly and independently rates all 30 with five ordered fit levels in one request. Multi-person comments batch three perspective lenses into one request, fill remaining slots with the strongest unused matches, and receive one final ordinal rescore. The UI shows fit labels rather than probabilities. If Jev is rate-limited, the Worker returns five semantic-retrieval matches marked low confidence and weak fit; it never invokes a large text-generation model.
 
+### Free AI gateway source integration
+
+- Issue [Free AI #83](https://github.com/sass-maker/free-ai/issues/83) migration is prepared on a clean branch. It moves the Worker BGE CLS embedding call and managed classifier requests behind the private `FREE_AI` service binding; query admission, existing candidate-ID/category validators, direct-run response contracts, and exact stored vectors remain unchanged.
+- The migration replaces managed TypeSafe/classifier.dev classification with gateway `model:auto` JSON output. Jev's probability calibration cannot be preserved by this adapter; only the request intent and locally validated fit/perspective output rules are carried forward.
+- This is source/CI work only. No merge, deployment, vector write, or live production behavior change is claimed.
+
 ## Evaluation
 
 - The existing fresh 60-case shadow set remains the independent regression check: 45 humour and 15 no-meme prompts.

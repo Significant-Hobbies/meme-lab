@@ -58,7 +58,7 @@ test('Anna performs the contextual ranking once without cookies or a provider fa
 test('public shortlist is bounded, stateless and independent of classification and feedback',async()=>{
   const env={
     NEURON_BUDGET:budget,
-    AI:{run:async(model)=>{assert.equal(model,EMBEDDING_MODEL);return{data:[[1,0,0]]};}},
+    FREE_AI:{run:async(project,model,input)=>{assert.equal(project,'meme-lab');assert.equal(model,EMBEDDING_MODEL);assert.equal(input.pooling,'cls');return{data:[[1,0,0]]};}},
     MEME_INDEX:{query:async()=>({matches:[{id:'vector',metadata:{catalogue_id:'waiting-skeleton'}}]})},
     DB:{prepare:()=>assert.fail('Anna retrieval must not write feedback.')},
     CLASSIFIER_FETCH:()=>assert.fail('Contextual ranking belongs to Anna.')

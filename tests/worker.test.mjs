@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import worker from '../worker/src/index.mjs';
-import {FIT_LABELS,hasMultiplePerspectives,humourBelongs,needsSeriousHandling,PERSPECTIVES,rankCandidates,rankCandidatesByPerspective,requiresFactualAnswer} from '../worker/src/classification.mjs';
+import {createGatewayClassifierFetch,FIT_LABELS,hasMultiplePerspectives,humourBelongs,needsSeriousHandling,PERSPECTIVES,rankCandidates,rankCandidatesByPerspective,requiresFactualAnswer} from '../worker/src/classification.mjs';
 import {MINIMUM_VISIBLE_FIT,MINIMUM_VISIBLE_PERSPECTIVE_FIT,validateSelection,normalizeSelection,normalizeRankedSelection,validateRankedSelection,presentSelection,selectionFromRanking} from '../worker/src/recommendation.mjs';
 import {CORE_RESERVE,EMBEDDING_MODEL,mergeWithReserve,retrieveCandidates} from '../worker/src/retrieval.mjs';
 import {reciprocalRankFuse} from '../worker/src/rank-fusion.mjs';
@@ -22,9 +22,13 @@ const directScoreAnswer=(score=4)=>({
 const budget={idFromName:name=>name,get:()=>({fetch:async(url,options)=>{const body=JSON.parse(options.body);const vector=url.endsWith('try-debit-vectorize');const amount=vector?body.dimensions:body.neurons;return Response.json({allowed:true,used:amount,remaining:(vector?45_000_000:9500)-amount,retryAfter:0,baselineVerified:true,[vector?'monthKey':'dayKey']:new Date().toISOString().slice(0,vector?7:10)});}})};
 const env={
   NEURON_BUDGET:budget,
-  AI:{run:async(model,input)=>{
-    if(model===EMBEDDING_MODEL) return {data:[[1,0,0]]};
-    assert.fail(`Unexpected Workers AI model: ${model} with ${JSON.stringify(input)}`);
+  FREE_AI:{run:async(project,model,input)=>{
+    assert.equal(project,'meme-lab');
+    assert.equal(model,EMBEDDING_MODEL);
+    assert.deepEqual(Object.keys(input),['text','pooling']);
+    assert.equal(input.pooling,'cls');
+    assert.equal(typeof input.text[0],'string');
+    return {data:[[1,0,0]]};
   }},
   MEME_INDEX:{query:async()=>({matches:[{id:'meme-0021',score:.92,metadata:{catalogue_id:'waiting-skeleton'}}]})},
   CLASSIFIER_FETCH:async(_url,options)=>{
@@ -58,31 +62,25 @@ test('public worker returns a validated known meme without exposing prompt data'
   assert.equal(body.confidence,'high');
   assert.equal(body.feedback_enabled,true);
   assert(!JSON.stringify(body).includes('CATALOGUE_JSON'));
-  assert.equal(stored.find(entry=>entry.sql.includes('INSERT INTO recommendations'))?.values[4],'classifier.dev/jev-fast');
+  assert.equal(stored.find(entry=>entry.sql.includes('INSERT INTO recommendations'))?.values[4],'free-ai:auto');
 });
 
-test('configured TypeSafe key sends one authenticated direct Jev request without entering the response',async()=>{
-  let authorization;
+test('managed classification uses the gateway even when the legacy static TypeSafe key is configured',async()=>{
   let endpoint;
-  let questionCount;
   const keyedEnv={
     ...env,
     TYPESAFE_API_KEY:'test-typesafe-key',
     CLASSIFIER_FETCH:async(url,options)=>{
       endpoint=url;
-      authorization=new Headers(options.headers).get('authorization');
       const body=JSON.parse(options.body);
-      questionCount=Object.keys(body.questions).length;
-      return Response.json({model:'jev-test',answers:Object.fromEntries(Object.keys(body.questions).map((id,index)=>[id,directScoreAnswer(index===0?4:Math.max(0,3-index/20))]))});
+      return Response.json(ordinalBatch(body));
     }
   };
   const response=await worker.fetch(new Request('https://example.test/api/recommend',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({comment:'I waited all day for a reply.'})}),keyedEnv);
   assert.equal(response.status,200);
-  assert.equal(endpoint,'https://api.typesafe.ai/v1/systemone');
-  assert.equal(questionCount,1);
-  assert.equal(authorization,'Bearer test-typesafe-key');
+  assert.equal(endpoint,'https://classifier.dev/v1/classify');
   assert.doesNotMatch(JSON.stringify(await response.json()),/test-typesafe-key/);
-  assert.equal(stored.findLast(entry=>entry.sql.includes('INSERT INTO recommendations'))?.values[4],'typesafe/jev-latest');
+  assert.equal(stored.findLast(entry=>entry.sql.includes('INSERT INTO recommendations'))?.values[4],'free-ai:auto');
 });
 
 test('static prior only breaks close calls after relevance chooses the eligible candidates',()=>{
@@ -129,7 +127,7 @@ test('production retrieval queries broad and core indexed views and returns uniq
   const filters=[];
   const retrievalEnv={
     NEURON_BUDGET:budget,
-    AI:{run:async()=>({data:[[1,0,0]]})},
+    FREE_AI:{run:async(project,model,input)=>{assert.equal(project,'meme-lab');assert.equal(model,EMBEDDING_MODEL);assert.deepEqual(input,{text:['A situation worth testing.'],pooling:'cls'});return {data:[[1,0,0]]};}},
     MEME_INDEX:{query:async(_vector,options)=>{
       filters.push(options.filter);
       if(options.filter.core) return options.filter.view==='meaning'
@@ -145,11 +143,21 @@ test('production retrieval queries broad and core indexed views and returns uniq
   assert.deepEqual(records.map(record=>record.id),['this-is-fine','first-try','waiting-skeleton']);
 });
 
+test('production retrieval requires the private gateway and fails before direct AI when absent',async()=>{
+  let directCalls=0;
+  await assert.rejects(retrieveCandidates({
+    NEURON_BUDGET:budget,
+    AI:{run:async()=>{directCalls+=1;return{data:[[1,0,0]]};}},
+    MEME_INDEX:{query:async()=>({matches:[]})}
+  },'A situation worth testing.',3),/Free AI gateway binding is unavailable/);
+  assert.equal(directCalls,0);
+});
+
 test('production retrieval falls back to known unfiltered vectors when metadata indexes are absent',async()=>{
   const filters=[];
   const retrievalEnv={
     NEURON_BUDGET:budget,
-    AI:{run:async()=>({data:[[1,0,0]]})},
+    FREE_AI:{run:async(project,model,input)=>{assert.equal(project,'meme-lab');assert.equal(model,EMBEDDING_MODEL);assert.deepEqual(input,{text:['A situation worth testing.'],pooling:'cls'});return {data:[[1,0,0]]};}},
     MEME_INDEX:{query:async(_vector,options)=>{
       filters.push(options.filter);
       return options.filter?{matches:[]}:{matches:[
@@ -352,6 +360,22 @@ test('classifier gate only runs for high-precision serious cues',async()=>{
     return Response.json({results:[{label:labels[1],scores:{[labels[0]]:.02,[labels[1]]:.98}}]});
   };
   assert.equal(await humourBelongs('Please help me after a loss.',{fetchImpl}),false);
+});
+
+test('managed classifier uses attributed Free AI JSON mode and preserves validated response shape',async()=>{
+  let captured;
+  const fetchImpl=createGatewayClassifierFetch({async fetch(request){captured=request;return Response.json({choices:[{message:{content:JSON.stringify({results:[{label_index:2,scores:FIT_LABELS.map((_,index)=>index/4)}]})}}]});}});
+  const response=await fetchImpl('https://classifier.dev/v1/classify',{method:'POST',signal:AbortSignal.timeout(3000),body:JSON.stringify({inputs:['comment'],labels:FIT_LABELS.map(({label})=>label),instructions:'keep roles'})});
+  const result=await response.json();
+  const gatewayBody=await captured.json();
+  assert.equal(captured.url,'https://fleet-gateway.internal/v1/chat/completions');
+  assert.equal(captured.headers.get('x-gateway-project-id'),'meme-lab');
+  assert.equal(gatewayBody.model,'auto');
+  assert.equal(gatewayBody.response_format.type,'json_object');
+  assert.equal(gatewayBody.stream,false);
+  assert.equal(gatewayBody.messages[0].content.includes('keep roles'),true);
+  assert.equal(result.results[0].label,FIT_LABELS[2].label);
+  assert.deepEqual(result.results[0].scores,Object.fromEntries(FIT_LABELS.map(({label},index)=>[label,index/4])));
 });
 
 test('public worker abstains directly on an explicit factual form request',async()=>{
@@ -609,19 +633,18 @@ test('a failed perspective lens falls back to general ranking without invented p
 });
 
 test('classifier throttling returns a low-confidence retrieval fallback without invoking text generation',async()=>{
-  const aiModels=[];
+  const gatewayCalls=[];
   const noFallbackEnv={
     ...env,
-    AI:{run:async model=>{
-      aiModels.push(model);
-      if(model===EMBEDDING_MODEL) return {data:[[1,0,0]]};
-      throw new Error(`Unexpected text-generation fallback: ${model}`);
+    FREE_AI:{run:async(project,model,input)=>{
+      gatewayCalls.push({project,model,input});
+      return {data:[[1,0,0]]};
     }},
     CLASSIFIER_FETCH:async()=>new Response('Rate limited.',{status:429})
   };
   const response=await worker.fetch(new Request('https://example.test/api/recommend',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({comment:'The tests failed again after I changed absolutely nothing.'})}),noFallbackEnv);
   assert.equal(response.status,200);
-  assert.deepEqual(aiModels,[EMBEDDING_MODEL]);
+  assert.deepEqual(gatewayCalls.map(call=>[call.project,call.model,call.input.pooling]),[['meme-lab',EMBEDDING_MODEL,'cls']]);
   const body=await response.json();
   assert.equal(body.confidence,'low');
   assert.deepEqual(body.candidates.map(candidate=>candidate.fit_label),['weak']);

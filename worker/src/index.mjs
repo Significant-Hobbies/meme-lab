@@ -1,5 +1,5 @@
 import {catalogue} from './catalogue.stage3000.generated.mjs';
-import {hasMultiplePerspectives,humourBelongs,needsSeriousHandling,rankCandidates,rankCandidatesByPerspective,requiresFactualAnswer} from './classification.mjs';
+import {createGatewayClassifierFetch,hasMultiplePerspectives,humourBelongs,needsSeriousHandling,rankCandidates,rankCandidatesByPerspective,requiresFactualAnswer} from './classification.mjs';
 import {MAX_RECOMMENDATIONS,presentSelection,selectionFromRanking} from './recommendation.mjs';
 import {retrieveCandidates} from './retrieval.mjs';
 import {BudgetUnavailableError} from './ai-budget.mjs';
@@ -9,8 +9,7 @@ import {annaShortlist} from './anna-shortlist.mjs';
 
 const allowedIds=new Set(catalogue.map(record=>record.id));
 const catalogueById=new Map(catalogue.map(record=>[record.id,record]));
-const CLASSIFIER_MODEL='classifier.dev/jev-fast';
-const TYPESAFE_MODEL='typesafe/jev-latest';
+const CLASSIFIER_MODEL='free-ai:auto';
 const RETRIEVAL_FALLBACK_MODEL='vector-retrieval-fallback';
 const SITE_ORIGIN='https://memes.significanthobbies.com';
 const PUBLIC_ROUTES=['/','/collection','/how-it-works'];
@@ -289,9 +288,8 @@ async function recommend(request,env,ctx) {
   const started=Date.now();
   try {
     const shortlist=await retrieveCandidates(env,comment,30);
-    const classifierFetch=typeof env.CLASSIFIER_FETCH==='function'?env.CLASSIFIER_FETCH:fetch;
-    const typesafeApiKey=typeof env.TYPESAFE_API_KEY==='string'&&env.TYPESAFE_API_KEY?env.TYPESAFE_API_KEY:undefined;
-    const classifierOptions={fetchImpl:classifierFetch,apiKey:typesafeApiKey};
+    const classifierFetch=typeof env.CLASSIFIER_FETCH==='function'?env.CLASSIFIER_FETCH:createGatewayClassifierFetch(env.FREE_AI);
+    const classifierOptions={fetchImpl:classifierFetch};
     let classifier_gate='not_needed';
     const factualRequest=requiresFactualAnswer(comment);
     const seriousRequest=needsSeriousHandling(comment);
@@ -312,26 +310,23 @@ async function recommend(request,env,ctx) {
         }
         classifier_gate='humour';
       } catch(error) {
-        if(isClassifierThrottled(error)) {
-          classifier_gate='throttled_abstain';
-          const selection={decision:'none',confidence:'low',none_reason:'This may call for a serious response, and the safety check is temporarily unavailable.',candidates:[]};
-          const recommendation=presentSelection(selection);
-          let feedback_enabled=true;
-          try { await persistRecommendation(env,recommendation,comment,'safety-gate-throttled'); }
-          catch(storeError) {
-            feedback_enabled=false;
-            console.error(JSON.stringify({event:'recommendation_store',status:'error',error:safeError(storeError)}));
-          }
-          console.error(JSON.stringify({event:'classifier_gate',status:'throttled_abstain',error:safeError(error)}));
-          return json({...recommendation,feedback_enabled});
+        const throttled=isClassifierThrottled(error);
+        classifier_gate=throttled?'throttled_abstain':'unavailable_abstain';
+        const selection={decision:'none',confidence:'low',none_reason:'This may call for a serious response, and the safety check is temporarily unavailable.',candidates:[]};
+        const recommendation=presentSelection(selection);
+        let feedback_enabled=true;
+        try { await persistRecommendation(env,recommendation,comment,throttled?'safety-gate-throttled':'safety-gate-unavailable'); }
+        catch(storeError) {
+          feedback_enabled=false;
+          console.error(JSON.stringify({event:'recommendation_store',status:'error',error:safeError(storeError)}));
         }
-        classifier_gate='fallback';
-        console.error(JSON.stringify({event:'classifier_gate',status:'fallback',error:safeError(error)}));
+        console.error(JSON.stringify({event:'classifier_gate',status:classifier_gate,error:safeError(error)}));
+        return json({...recommendation,feedback_enabled});
       }
     }
     let ranked;
     let ranking_mode='general';
-    let ranking_model=typesafeApiKey?TYPESAFE_MODEL:CLASSIFIER_MODEL;
+    let ranking_model=CLASSIFIER_MODEL;
     const perspectiveEligible=hasMultiplePerspectives(comment);
     try {
       ranked=perspectiveEligible
