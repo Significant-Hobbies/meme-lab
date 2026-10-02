@@ -16,9 +16,13 @@
     "binding": "ASSETS",
     "run_worker_first": ["/", "/collection", "/collection.html", "/how-it-works", "/how-it-works.html", "/api/*", "/memes/*", "/robots.txt", "/sitemap.xml"]
   },
-  "ai": {
-    "binding": "AI"
-  },
+  "services": [
+    {
+      "binding": "FREE_AI",
+      "service": "free-ai-gateway",
+      "entrypoint": "FleetGateway"
+    }
+  ],
   "durable_objects": {
     "bindings": [{"name":"NEURON_BUDGET","class_name":"NeuronBudgetDO","script_name":"free-ai-gateway"}]
   },

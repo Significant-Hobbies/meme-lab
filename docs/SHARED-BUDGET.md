@@ -1,8 +1,8 @@
 # Shared retrieval budget
 
-Meme Lab uses Free AI gateway issue #80 admission before any embedding, Vectorize query, classifier, or recommendation write. It binds the existing exported `NeuronBudgetDO` from `free-ai-gateway` as `NEURON_BUDGET`, using the account-shared `global-budget` object. No new credentials, database schema, dependency or model change is required.
+Meme Lab uses the private Free AI `FleetGateway` service binding for production BGE embeddings and binds the existing exported `NeuronBudgetDO` as `NEURON_BUDGET` for Vectorize query admission. The gateway reserves Workers AI neurons centrally before invoking BGE; the consumer must not debit neurons a second time. Both use the account-shared `global-budget` object.
 
-The consumer reserves five possible 768-dimensional Vectorize queries, including the metadata fallback, then reserves embedding neurons using UTF-8 bytes plus 32 framing tokens and a 20 percent margin on the published bge-base rate of 6,058 neurons per million tokens (Cloudflare Workers AI pricing checked 2026-10-02). Failed work is not refunded.
+The consumer reserves five possible 768-dimensional Vectorize queries, including the metadata fallback. The native gateway call preserves `pooling: "cls"` for the existing index coordinates. Failed work is not refunded.
 
 A missing binding, failed HTTP call, exhausted quota, stale period, or malformed response returns 503 with Retry-After 60. This happens before paid retrieval work. Existing catalogue and static routes stay available.
 

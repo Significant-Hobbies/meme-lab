@@ -58,7 +58,8 @@ async function retrieveViewPair(env,vector,topK,filter={}) {
 
 export async function retrieveCandidates(env,comment,topK=30) {
   await reserveRetrievalBudget(env,comment);
-  const embedded=await env.AI.run(EMBEDDING_MODEL,{text:[comment],pooling:'cls'});
+  if(!env.FREE_AI||typeof env.FREE_AI.run!=='function') throw new Error('Free AI gateway binding is unavailable.');
+  const embedded=await env.FREE_AI.run('meme-lab',EMBEDDING_MODEL,{text:[comment],pooling:'cls'});
   const vector=embedded?.data?.[0];
   if(!Array.isArray(vector)||vector.length===0) throw new Error('Embedding model returned an invalid vector.');
   const coreReserve=Math.min(CORE_RESERVE,Math.max(0,topK-1));

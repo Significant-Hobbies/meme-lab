@@ -17,13 +17,9 @@ async function reserve(env,path,amount,periodKey) {
   } catch { throw new BudgetUnavailableError(); }
 }
 
-export async function reserveRetrievalBudget(env,comment) {
+export async function reserveRetrievalBudget(env) {
   const now=new Date().toISOString();
   // Reserve all five possible 768-dimensional queries, including the legacy
   // metadata fallback. Never refund failed work: that keeps admission conservative.
   await reserve(env,'try-debit-vectorize',5*768,now.slice(0,7));
-  // UTF-8 bytes upper-bound text tokens; include special-token framing and a
-  // 20% margin over bge-base's published 6,058 neurons per million input tokens.
-  const neurons=Math.ceil((new TextEncoder().encode(comment).length+32)*6058/1_000_000*1.2);
-  await reserve(env,'try-debit',neurons,now.slice(0,10));
 }
