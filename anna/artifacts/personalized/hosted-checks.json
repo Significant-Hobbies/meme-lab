@@ -1,0 +1,34 @@
+{
+  "date": "2026-10-02",
+  "appId": 389,
+  "workingRevision": 10,
+  "source": "actual signed-in Anna hosted editor",
+  "fixtures": "public NASA portraits; developer-only",
+  "model": "google/gemini-2.5-flash-image",
+  "quality": {
+    "revision9": "failed requested identity; valid delivery and retained captions",
+    "revision10": "visually adopted requested identity, retained both captions and recognizable meme format",
+    "limitation": "exploratory sample; generative scene changes; no reliability rate"
+  },
+  "checks": {
+    "annaOriginDelivery": "passed",
+    "decodedDimensions": [
+      896,
+      1152
+    ],
+    "privateSave": "passed",
+    "reopenLibrary": "passed",
+    "hostMediatedDownloadToDisk": "passed; final PNG visually inspected",
+    "keepMemeCancelsRemoval": "passed",
+    "confirmedRemovalAndEmptyReload": "passed on disposable first output",
+    "shareUnavailableFallback": "passed",
+    "recipientDelivery": "not verified"
+  },
+  "artifact": "hosted-editor-final.jpg",
+  "workingBundle": {
+    "files": 12,
+    "bytes": 117857,
+    "sha256": "f264f1be243ee4134a0c4ce17ce11ee0137da9031732a6a923db79e33a52ac80"
+  },
+  "monetization": "internal tests do not establish qualified MAU or earnings"
+}

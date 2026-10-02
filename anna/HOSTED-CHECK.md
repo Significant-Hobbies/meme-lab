@@ -1,10 +1,5 @@
-# Hosted check without restarting Codex
+# Hosted verification replay
 
-Open https://anna.partners/developer in your usual signed-in browser. Select Meme Lab (@significant-hobbies) and its working draft preview, version 1.2.0 revision 9. The submitted/frozen 1.1.0 does not include Make this me. If the Console offers only 1.1.0, stop and report that; do not publish or change the review candidate to obtain a preview.
+These checks were completed by the agent on 2 October in Anna app 389, mutable 1.2.0 revision 10. The owner does not need to perform them. Evidence: [PERSONALIZED.md](PERSONALIZED.md), [hosted-checks.json](artifacts/personalized/hosted-checks.json). Store approval remains separate.
 
-1. Open Make this me. Add a static meme you have permission to edit and a clear permitted identity photo. Target the original face, confirm consent and generate once (uses Anna image quota).
-2. Check whether the result uses the photo identity and retains recognizable meme format/captions. Save to Anna.
-3. Reload/reopen the draft. Verify the image remains in My personal memes. Download PNG and open the downloaded file; compare it with the saved image.
-4. Remove that test creation using Confirm removal; reload and check it is absent. Optional: Share image, then cancel; cancellation must not claim sharing succeeded.
-
-Report which steps passed or the exact visible error. A result screenshot can help assess likeness/format; crop out unrelated private information. Do not share signed URLs, tokens or credentials. These checks do not establish grant-qualified usage or earnings.
+For future regressions: upload a permitted static template/photo, select the face and consent, generate once, review identity and captions, save, reopen and download the saved PNG, then remove a disposable output with confirmation and reopen. Test sharing cancellation or the truthful download fallback. Public NASA portraits are developer fixtures, not a consumer template library. Never include signed URLs or credentials in evidence.

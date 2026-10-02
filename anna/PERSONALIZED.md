@@ -2,7 +2,7 @@
 
 Tracking: https://github.com/Significant-Hobbies/meme-lab/issues/19
 
-Owner selected A · Reference Desk. The editor and image engine are implemented and uploaded to Anna’s mutable working draft (app 389, revision 9). Frozen 1.1.0 remains pending review. This feature is not Store-published or fully verified inside the hosted app.
+Owner selected A · Reference Desk. The editor and image engine are implemented and verified in Anna’s hosted mutable working draft (app 389, revision 10). Frozen 1.1.0 remains pending review until the verified 1.2.0 candidate replaces it. This feature is not Store-published.
 
 ## Consumer flow
 
@@ -44,3 +44,11 @@ Final viewport check: at 960 × 694, Generate is visible within the ready-state 
 ## Storage service follow-up without browser restart
 
 The official CLI APS bridge completed a real private-file round trip using a disposable 68-byte PNG: upload/finalize, library listing, byte-identical retrieval, conditional soft deletion and an empty final listing. No image generation call was made. An OPTIONS request allowed the Anna origin; this is server preflight evidence, not a browser delivery claim. The bridge returned `{ok:true,path}` on removal, versus the documented hosted `{deleted:true}`; the app now accepts either explicit confirmation and rejects mismatched paths/ambiguous responses. Regression coverage and the repeated service check pass. Evidence: `artifacts/personalized/storage-service-check.json`. Hosted generator, host-mediated disk download and user sharing remain unverified.
+
+## Completed hosted verification on 2 October
+
+The signed-in Chrome session became controllable through a fresh attached tab, without restarting Chrome or other agent threads, bypassing Google security, or copying credentials. Two actual hosted generations used the same public NASA developer fixtures and face bounds. Revision 9 delivered a valid PNG but retained the wrong identity. A stronger identity-replacement prompt in revision 10 visibly produced the requested Neil Armstrong identity while preserving both captions and the recognizable astronaut meme. Both requests routed to google/gemini-2.5-flash-image; newer advisory model hints did not establish availability. The sample is exploratory, not a reliability benchmark, and scene/pose details still changed.
+
+Actual Anna-origin output decoding succeeded at 896 × 1152. Save to Anna confirmed private storage. Reload/reopen loaded the saved preview at the same dimensions. Host-mediated downloads completed to disk and the final PNG was visually inspected. Keep meme canceled removal; Confirm removal removed the disposable first output and a reload showed an empty library. The successful second output was saved for the owner. Sharing reported its unavailable state and directed download/attachment; no recipient delivery is claimed.
+
+Evidence: `artifacts/personalized/hosted-checks.json` and the clean hosted screenshot `artifacts/personalized/hosted-editor-final.jpg`. Working revision 10: 12 files, 117857 bytes, SHA-256 f264f1be243ee4134a0c4ce17ce11ee0137da9031732a6a923db79e33a52ac80. Earlier sections describe the troubleshooting chronology; their pending-browser statements are superseded by this completed check.
