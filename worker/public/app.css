@@ -116,6 +116,10 @@ textarea::placeholder{color:#8994a6}
 footer{display:flex;width:min(100% - 40px,1180px);margin:0 auto;padding:20px 0 28px;border-top:1px solid var(--line);justify-content:space-between;color:var(--muted);font-size:12px}
 footer a{color:var(--blue);font-weight:750;text-decoration:none}
 
+/* Keep settled capture consent above the shared fixed Feedback launcher
+   (44px target + 20px bottom offset + 24px focus/hover clearance). */
+fleet-footer-extension:has(saas-maker-newsletter-capture){padding-bottom:calc(88px + env(safe-area-inset-bottom,0px))}
+
 .page-main{padding-top:48px}
 .page-intro{max-width:860px;margin:0 0 38px}
 .page-intro .intro{margin-bottom:24px}
