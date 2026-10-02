@@ -10,7 +10,7 @@
 - Tracking: [Personalized photo memes #19](https://github.com/Significant-Hobbies/meme-lab/issues/19). Owner selected A · Reference Desk.
 - Upload meme/photo, choose face, one Anna generation, original/result review, private output files, host-mediated download and native image share/fallback are implemented. No new dependencies or Cloudflare resources.
 - Two whole-template model experiments produced the requested identity and preserved captions; cropped identity experiments failed. Actual route was Gemini 2.5 Flash Image. This is an AI remix, not guaranteed pixel-exact replacement.
-- Mutable Anna draft uploaded at revision 5; further review corrections require another upload. Frozen 1.1.0 remains pending review and unchanged.
+- Mutable Anna draft uploaded at revision 6 with the source review corrections. Frozen 1.1.0 remains pending review and unchanged.
 - Hosted editor rendering, real image retrieval, persistence, download and removal remain unverified because the browser automation connection failed. Do not submit this feature or mark design checks complete until those pass.
 - Source review fixed library pagination, adjacent face controls, sharing activation and concurrent-save deduplication. Full evidence and privacy boundaries: [anna/PERSONALIZED.md](anna/PERSONALIZED.md).
 

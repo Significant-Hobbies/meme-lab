@@ -2,7 +2,7 @@
 
 Tracking: https://github.com/Significant-Hobbies/meme-lab/issues/19
 
-Owner selected A · Reference Desk. The editor and image engine are implemented and uploaded to Anna’s mutable working draft (app 389, revision 5). Frozen 1.1.0 remains pending review. This feature is not Store-published or fully verified inside the hosted app.
+Owner selected A · Reference Desk. The editor and image engine are implemented and uploaded to Anna’s mutable working draft (app 389, revision 6). Frozen 1.1.0 remains pending review. This feature is not Store-published or fully verified inside the hosted app.
 
 ## Consumer flow
 
@@ -23,7 +23,7 @@ Raw images, prompts, photo filenames and signed URLs are not written to analytic
 - Four completed real Anna image requests using public NASA portraits. All reported google/gemini-2.5-flash-image. Full-template requests 1 and 4 visibly used the supplied identity and kept both captions; cropped requests 2 and 3 failed identity fidelity. A GPT Image hint in request 3 still resolved to Gemini, so GPT Image availability is not established. This tiny exploratory sample is not a reliability rate.
 - Final request reported 10,893 ms latency, 1,965 tokens and quotaConsumed 0.01 in unspecified provider units. No money amount is inferred. Actual output was 896 × 1152 despite response metadata claiming 1024 × 1024; browser decoding is authoritative.
 - Direct output display/download succeeds; localhost anonymous image fetch fails. Observed R2 preflight allows https://anna.partners and rejects localhost. Hosted fetch/save/download and responsive render verification are still required. Chrome automation disconnected during that verification.
-- Mutable upload succeeded with 12 files, 110,552 bytes and content hash 9c80166759e8365e8e6febcbdff03ba43fe46f74a4216a30f6b3a39ee96c6e4e. Subsequent source corrections require another upload before final validation.
+- Mutable upload succeeded with 12 files, 111,880 bytes and content hash cc54fc160fb5b1ae4803462227002485cca1787616927325d3bfc56e6f218b63. This includes the source review corrections.
 
 Replay: `node --test tests/anna-personalize.test.mjs tests/anna-creations.test.mjs`.
 
