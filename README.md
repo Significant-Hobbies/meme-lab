@@ -113,3 +113,7 @@ endpoint measurements can be sent to App Health. Those measurements contain
 only the fixed API route, method, response status, and duration; request paths,
 query values, prompts, feedback, and identities are not included. Reporting is
 disabled when the key is absent and never delays an API response.
+
+## Anna personalized memes
+
+The Anna working draft adds a user-uploaded photo/meme remix editor in the owner-selected Reference Desk direction. Generation uses Anna’s image API; private outputs use own-app files. The feature remains under verification and is not Store-published. See [implementation and evidence](anna/PERSONALIZED.md) and [issue #19](https://github.com/Significant-Hobbies/meme-lab/issues/19).

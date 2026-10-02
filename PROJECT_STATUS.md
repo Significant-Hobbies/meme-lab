@@ -5,6 +5,15 @@
 
 ## Live product
 
+### Anna personalized memes: hosted verified, release in progress
+
+- Tracking: [Personalized photo memes #19](https://github.com/Significant-Hobbies/meme-lab/issues/19). Owner selected A · Reference Desk.
+- Upload meme/photo, choose face, one Anna generation, original/result review, private output files, host-mediated download and native image share/fallback are implemented. No new dependencies or Cloudflare resources.
+- Two whole-template model experiments produced the requested identity and preserved captions; cropped identity experiments failed. Actual route was Gemini 2.5 Flash Image. This is an AI remix, not guaranteed pixel-exact replacement.
+- Mutable Anna draft revision 10 is verified in the signed-in hosted app: requested identity and both captions, private save/reload, real disk download, cancellation/confirmed removal and honest unavailable-share fallback. The first hosted prompt retained the wrong identity; the strengthened prompt corrected it in the same exploratory fixture. No recipient-delivery or model-reliability claim.
+- Local editor rendering and interaction checks passed at 390/768/1440 with labeled synthetic fixtures. Clean real hosted output evidence: anna/artifacts/personalized/hosted-editor-final.jpg. Frozen Store candidate remains 1.1.0 pending review until 1.2.0 submission; this feature is not Store-live.
+- Source review fixed pagination, full-width face targeting and center-preserving size controls, targeting-before-generation, sharing activation, concurrent-save deduplication and removal confirmation. Full evidence and privacy boundaries: [anna/PERSONALIZED.md](anna/PERSONALIZED.md).
+
 ### Anna sharing pilot: version 1.1.0 pending review
 
 - Tracking: [Anna monetization pilot #12](https://github.com/Significant-Hobbies/meme-lab/issues/12).
@@ -69,3 +78,5 @@
 - At 30,000, add movie-dialogue reactions as a separate corpus and route each input to meme, dialogue, or none before corpus-specific retrieval.
 
 Tracking: [public beta #1](https://github.com/sarthakagrawal927/meme-lab/issues/1), [catalogue expansion #2](https://github.com/sarthakagrawal927/meme-lab/issues/2), [verified meme and GIF rebuild #4](https://github.com/sarthakagrawal927/meme-lab/issues/4), [canonical retrieval gaps #5](https://github.com/sarthakagrawal927/meme-lab/issues/5), [crawlable catalogue #6](https://github.com/sarthakagrawal927/meme-lab/issues/6).
+
+- 2 October follow-up: real APS upload/list/byte-retrieval/conditional removal passed through the official CLI harness without restarting Codex. Fixed its exact-path removal response compatibility; 149 tests pass. Hosted generation and disk-download proof subsequently passed; see anna/PERSONALIZED.md.

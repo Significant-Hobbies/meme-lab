@@ -1,3 +1,4 @@
+import {initializePersonalEditor} from './personal-editor.mjs';
 import {decorateResults,initializeInteractions} from './interactions.mjs';
 import {reportEvent} from './engagement.mjs';
 import {recommendOnAnna} from './ranking.mjs';
@@ -150,3 +151,4 @@ const annaReady=import('/static/anna-apps/_sdk/latest/index.js')
   });
 annaReady.catch(()=>{ status.textContent='Open this app inside Anna to enable AI matching.'; });
 initializeInteractions(annaReady);
+initializePersonalEditor(annaReady);

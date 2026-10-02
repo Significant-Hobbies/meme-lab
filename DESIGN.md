@@ -40,3 +40,7 @@ Use a two-column best-result layout and a compact grid of up to four backups whe
 ## Evidence
 
 Design-workflow artifacts live in `artifacts/design/`; the current receipt is `.fleet/design-review.json`.
+
+## Anna personalized editor
+
+The owner selected A · Reference Desk on 2026-10-02. Make this me inherits navy/white/cobalt navigation and compact native form controls. Desktop places upload and face-selection controls beside an original/result comparison. Narrow screens put controls first and retain a paired comparison; tablet widths retain paired previews. Enlarge previews stacks full-width images on phone/tablet and expands desktop frames; Compact previews restores the paired layout. Desktop image frames preserve the uploaded aspect ratio while capping their displayed height to keep targeting and generation together; shorter desktop windows use a smaller cap. The face outline, click-to-center and one face-size control identify the requested character; resizing preserves its center. Precise keyboard-adjustable geometry lives under a native Fine-tune disclosure spanning the full preview width. Targeting precedes consent and generation at every width. Generated results require a visible review prompt before Save to Anna, Download PNG or Share image. My personal memes is a private output library, separate from saved catalogue references; removal requires a second deliberate confirmation. Empty, loading, cancelled, provider-error, saved and unsupported-sharing states use truthful text rather than success placeholders.
