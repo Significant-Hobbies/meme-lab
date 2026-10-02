@@ -58,7 +58,7 @@ After administrator approval, use the official CLI from this directory:
 
 ```sh
 npm exec --yes --package=@anna-ai/cli@0.1.57 -- anna-app apps status meme-lab --json
-npm exec --yes --package=@anna-ai/cli@0.1.57 -- anna-app apps release 1.0.0 --json
+npm exec --yes --package=@anna-ai/cli@0.1.57 -- anna-app apps release 1.1.0 --json
 ```
 
 Verify Store visibility and an ordinary user's install after release. Do not replace the frozen bundle without cutting and reviewing a new version. No earnings are established by an install or review submission.
@@ -69,7 +69,7 @@ The new candidate adds per-reference native share (when supported), an explicit 
 
 Anonymous interaction events contain only an allowlisted event name. The Worker rejects extra fields and marks these as client-reported counts. Existing App Health delivery is optional/configuration dependent; an accepted HTTP event does not prove ingestion. Anna’s native Open/Use and AI-session dashboard is separate. On 2 October it showed one install and WAU/MAU of one from owner testing, with dev traffic excluded; no qualified audience or earnings are established.
 
-The owner explicitly approved and deployed `ANNA_SEARCH_LIMITER`: 120 requests/minute per IP and route at each Cloudflare location, namespace 389001. It covers only Anna shortlist and interaction events. Shared-IP users share admission. It is not authentication, a globally exact quota, or a spending cap. Worker version `eda91210-ed55-4f22-af17-ff3b4a2ff568` was deployed with current origin/main `7da4fe2` plus issue 12 uncommitted worktree changes.
+The owner explicitly approved and deployed `ANNA_SEARCH_LIMITER`: 120 requests/minute per IP and route at each Cloudflare location, namespace 389001. It covers only Anna shortlist and interaction events. Shared-IP users share admission. It is not authentication, a globally exact quota, or a spending cap. Worker release receipt: version `3e726ecd-da97-48a8-84a6-e4023df4a87c` deployed from exact merged main `f35132adce2d9f611a10d5e68b8ffd2de05fbc84` after PR #16 passed PR/main CI.
 
 Replay the recorded model diagnostic with `node scripts/summarize-anna-eval.mjs`. The 30 expected cases are assistant-authored and not human validated. Real model outcomes are recorded separately in `artifacts/evaluation-live.json`; the comparison is a regression diagnostic, not proof of humour, retention or monetization.
 
