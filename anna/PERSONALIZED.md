@@ -52,3 +52,7 @@ The signed-in Chrome session became controllable through a fresh attached tab, w
 Actual Anna-origin output decoding succeeded at 896 × 1152. Save to Anna confirmed private storage. Reload/reopen loaded the saved preview at the same dimensions. Host-mediated downloads completed to disk and the final PNG was visually inspected. Keep meme canceled removal; Confirm removal removed the disposable first output and a reload showed an empty library. The successful second output was saved for the owner. Sharing reported its unavailable state and directed download/attachment; no recipient delivery is claimed.
 
 Evidence: `artifacts/personalized/hosted-checks.json` and the clean hosted screenshot `artifacts/personalized/hosted-editor-final.jpg`. Working revision 10: 12 files, 117857 bytes, SHA-256 f264f1be243ee4134a0c4ce17ce11ee0137da9031732a6a923db79e33a52ac80. Earlier sections describe the troubleshooting chronology; their pending-browser statements are superseded by this completed check.
+
+## Release receipt
+
+PR20 merged; PR/main CI passed. Exact main ee329fd299c7e6be6f5bbf8ef69f70693acbe1c4 deployed as Worker ee837165-3337-4776-aeae-a5a0c169f5ab at100%. Public privacy200, health3,000 and new event202 verified. Anna1.2.0 version1027/bundle962 is now the pinned review candidate, pending_review and not published. Listing metadata and clean actual hosted screenshot synced. Release preflight explicitly refuses pending_review until admin approval. Full receipt: artifacts/personalized/release-receipt.json. No owner browser action is required.
