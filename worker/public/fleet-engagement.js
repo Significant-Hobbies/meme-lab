@@ -31,7 +31,7 @@
     'allow-kind-selection': '',
     source: 'fleet-footer',
     'privacy-url': 'https://sassmaker.com/privacy',
-    theme: 'dark',
+    theme: 'light',
   })) capture.setAttribute(name, value);
   extension.append(capture);
   if (!extension.isConnected) document.body.append(extension);
