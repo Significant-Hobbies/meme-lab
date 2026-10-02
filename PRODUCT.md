@@ -20,6 +20,10 @@ Runtime ranking is deliberately bounded:
 
 ## Evidence boundary
 
+### Anna edition
+
+The owner-approved Anna pilot preserves the Reference Desk UI and semantic retrieval. A stateless shortlist endpoint retrieves up to 30 catalogue references; Anna's user-configured LLM independently rates them and selects one primary result and four backups. This is a separate runtime from the public website's Jev ranking. It uses a bounded completion, validates every returned catalogue ID and ordinal rating, and reports permission/quota/provider failures without another paid provider fallback. Wrong backups retain their actual label. Comments are not stored by the shortlist endpoint or included in shared reference links; Anna and model-provider processing follow their own policies. The sharing pilot saves reference IDs/names and a last-visit day in Anna’s private per-user app storage, never situations. Each reference has its own storage key so saves in different windows do not overwrite one another. All five reactions offer share/copy and save actions. Anonymous allowlisted interaction events support experiment measurement; they are unverified client counts, not people or revenue. Anna supplies signed-in host model/storage access; retrieval remains public with a scoped 120-per-minute IP-and-route admission limit per Cloudflare location, not authentication or a global spending cap. Store publication requires account activation, an installed-app live test and administrator approval; a prepared local bundle is not a published app.
+
 Catalogue metadata, strength, quality, uniqueness, and evaluation labels are model-authored unless explicitly marked otherwise. They are useful engineering evidence, not human-validated cultural truth. Reaction popularity comes from observed conversational use; media provenance and rights state remain separate, and usage evidence does not imply redistribution permission.
 
 ## Next decision

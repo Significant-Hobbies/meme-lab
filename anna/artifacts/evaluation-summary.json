@@ -1,0 +1,27 @@
+{
+  "evaluatedAt": "2026-10-02T08:09:42.861Z",
+  "groundTruth": "assistant-authored, not human validated",
+  "cases": 30,
+  "reactionCases": 22,
+  "top1": 19,
+  "top5": 21,
+  "seriousCases": 8,
+  "seriousAbstentions": 8,
+  "errors": [],
+  "misses": [
+    {
+      "id": "canonical-gap-012",
+      "comment": "I am quietly sipping tea while watching drama that has nothing to do with me.",
+      "expected": [
+        "but-thats-none-of-my-business-neutral"
+      ],
+      "returned": [
+        "gif-3okip8knutjjl3zt0i",
+        "562391530-chill-guy",
+        "gif-31udilmnnqojnkkokb",
+        "gif-3o6ztqbpye9nzbldvg",
+        "gif-j4wdc1b10abwg"
+      ]
+    }
+  ]
+}

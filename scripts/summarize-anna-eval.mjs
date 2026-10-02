@@ -1,0 +1,12 @@
+import {readFileSync,writeFileSync} from 'node:fs';
+const input=process.argv[2]??'anna/artifacts/evaluation-live.json';
+const records=JSON.parse(readFileSync(input,'utf8'));
+const expected=JSON.parse(readFileSync('anna/evaluation-cases.json','utf8'));
+if(records.length!==expected.length||new Set(records.map(r=>r.id)).size!==expected.length)throw new Error('Diagnostic is incomplete or contains duplicate cases.');
+for(const record of records)if(!expected.some(e=>e.id===record.id))throw new Error('Unexpected diagnostic case.');
+const reaction=records.filter(r=>r.expected_decision!=='none');
+const serious=records.filter(r=>r.expected_decision==='none');
+const hit=(r,limit)=>r.observed.ids.slice(0,limit).some(id=>r.acceptable_ids.includes(id));
+const summary={evaluatedAt:new Date().toISOString(),groundTruth:'assistant-authored, not human validated',cases:records.length,reactionCases:reaction.length,top1:reaction.filter(r=>hit(r,1)).length,top5:reaction.filter(r=>hit(r,5)).length,seriousCases:serious.length,seriousAbstentions:serious.filter(r=>r.observed.decision==='none').length,errors:records.filter(r=>r.observed.decision==='error').map(r=>r.id),misses:reaction.filter(r=>!hit(r,5)).map(r=>({id:r.id,comment:r.comment,expected:r.acceptable_ids,returned:r.observed.ids}))};
+console.log(JSON.stringify(summary,null,2));
+writeFileSync('anna/artifacts/evaluation-summary.json',JSON.stringify(summary,null,2)+'\n');
