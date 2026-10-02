@@ -40,3 +40,7 @@ Use a two-column best-result layout and a compact grid of up to four backups whe
 ## Evidence
 
 Design-workflow artifacts live in `artifacts/design/`; the current receipt is `.fleet/design-review.json`.
+
+## Anna personalized editor
+
+The owner selected A · Reference Desk on 2026-10-02. Make this me inherits navy/white/cobalt navigation and compact native form controls. Desktop places upload and face-selection controls beside an original/result comparison. Narrow screens put controls first and retain a paired comparison; intermediate widths stack the previews. The face outline and keyboard-adjustable ranges identify the requested character. Generated results require a visible review prompt before Save to Anna, Download PNG or Share image. My personal memes is a private output library, separate from saved catalogue references. Empty, loading, cancelled, provider-error, saved and unsupported-sharing states use truthful text rather than success placeholders.

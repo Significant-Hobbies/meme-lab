@@ -1,0 +1,24 @@
+<section id="personal-editor" class="personal-editor" aria-labelledby="personal-title" hidden>
+  <div class="personal-heading"><div><p class="eyebrow">YOUR FACE, SAME MEME</p><h1 id="personal-title" tabindex="-1">Make this me.</h1><p class="intro">Bring a meme and a clear photo. Put yourself in the joke, then review it before sharing.</p></div><button id="personal-close" class="reference-action" type="button">Back to reactions</button></div>
+  <div class="personal-workbench">
+    <form id="personal-form" class="personal-controls">
+      <label class="personal-upload" for="personal-template"><strong>Meme image</strong><span>Choose a static meme you can edit.</span><input id="personal-template" type="file" accept="image/jpeg,image/png,image/webp" required></label>
+      <label class="personal-upload" for="personal-photo"><strong>Your photo</strong><span>One clear face works best.</span><input id="personal-photo" type="file" accept="image/jpeg,image/png,image/webp" required></label>
+      <img id="personal-photo-preview" class="personal-portrait" alt="Your chosen identity photo" hidden>
+
+      <label class="personal-consent"><input id="personal-consent" type="checkbox" required><span>I can use and edit these images, and have permission to use this person’s photo.</span></label>
+      <button id="personal-generate" class="primary" type="submit" disabled>Generate my meme <span aria-hidden="true">→</span></button>
+      <p class="personal-note">One image request uses your Anna image quota. Photos go to Anna and its image provider. This is a new AI remix; review likeness, captions and layout.</p>
+      <button id="personal-clear" class="reference-action" type="button">Clear this editor</button>
+    </form>
+    <div class="personal-preview">
+      <div class="personal-comparison"><figure><figcaption>Original <span id="personal-dimensions"></span></figcaption><div id="personal-original-surface" class="personal-media"><p id="personal-original-empty">Your meme goes here.<br><span>The face area will appear on the original.</span></p><img id="personal-original" alt="Original meme" hidden><div id="personal-face-area" aria-hidden="true" hidden></div></div>      <fieldset id="personal-region" disabled><legend>Choose the face to replace</legend><p>Click the original to center the face area, or adjust below.</p><label>Left <input id="face-x" type="range" min="0" max="98" value="25"><output id="face-x-value">25%</output></label><label>Top <input id="face-y" type="range" min="0" max="98" value="10"><output id="face-y-value">10%</output></label><label>Width <input id="face-width" type="range" min="2" max="75" value="40"><output id="face-width-value">40%</output></label><label>Height <input id="face-height" type="range" min="2" max="75" value="40"><output id="face-height-value">40%</output></label></fieldset></figure><figure><figcaption>Your version <span id="personal-model"></span></figcaption><div class="personal-media"><p id="personal-output-empty">You’re the punchline.<br><span>Add both images to create your version.</span></p><img id="personal-output" alt="Your AI-personalized meme" hidden></div></figure></div>
+      <p id="personal-status" class="personal-status" role="status" aria-live="polite"></p>
+      <div id="personal-output-actions" class="reference-actions" hidden><button id="personal-save" class="reference-action" type="button">Save to Anna</button><button id="personal-download" class="reference-action" type="button">Download PNG</button><button id="personal-share" class="reference-action" type="button">Share image</button></div>
+      <p id="personal-saved-note" class="personal-note" hidden>Saved privately in your Anna account. Sharing an image is a separate action.</p>
+    </div>
+  </div>
+  <div class="personal-library-heading"><div><h2>My personal memes</h2><p>Saved versions, ready for the next group chat.</p></div><button id="personal-refresh" class="reference-action" type="button">Refresh</button></div>
+  <p id="personal-library-empty" class="personal-note">Save your first remix to keep it here.</p><div id="personal-library" class="personal-library"></div><button id="personal-more" class="reference-action" type="button" hidden>Load more personal memes</button><p id="personal-library-status" class="personal-note" role="status"></p>
+  <p class="personal-note">Clearing this editor removes its local previews. Anna and the image provider govern uploaded-photo retention. Animated memes are not supported yet. <a href="./privacy.html" target="_blank" rel="noopener noreferrer">Privacy and sources</a></p>
+</section>

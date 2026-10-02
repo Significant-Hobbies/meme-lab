@@ -6,7 +6,7 @@
     "llm.complete",
     "aps.kv"
   ],
-  "system_prompt_addendum": "Meme Lab selects an existing reaction meme for a pasted comment or situation. Open the main app view with payload {comment: the user's situation} when requested. The app retrieves grounded references and ranks through Anna's LLM. Do not claim generated images, guaranteed humour, verified redistribution rights or guaranteed earnings. Serious requests should receive a sincere response rather than a meme. Never include the user's situation in shared URLs.",
+  "system_prompt_addendum": "Meme Lab finds existing reaction references for situations and can personalize a user-supplied static meme using a permitted photo through Anna image generation. Open with payload {comment: the user situation} for matching, or {action: personalize} for the image editor. Photos are chosen explicitly inside the app. Never promise exact likeness, identical background pixels, verified catalogue export rights or guaranteed earnings. Never include situations or photos in shared URLs. Serious requests should receive a sincere response rather than a meme.",
   "tags": [
     "memes",
     "reactions",
@@ -54,7 +54,35 @@
         "set",
         "list",
         "delete"
+      ],
+      "image": [
+        "generate"
+      ],
+      "upload": [
+        "inline"
+      ],
+      "files": [
+        "upload_init",
+        "upload_finalize",
+        "download",
+        "download_url",
+        "list",
+        "delete"
       ]
-    }
+    },
+    "csp_overrides": {
+      "img-src": [
+        "https:",
+        "blob:"
+      ],
+      "connect-src": [
+        "https:",
+        "blob:"
+      ]
+    },
+    "form_factors": [
+      "desktop",
+      "mobile"
+    ]
   }
 }

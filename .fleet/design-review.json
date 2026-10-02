@@ -1,8 +1,8 @@
 {
   "$schema": "fleet.design-review.v1",
   "version": 1,
-  "project": "meme_lab",
-  "target": "Meme Lab public playground professional redesign",
+  "project": "meme-lab",
+  "target": "Anna personalized meme editor: Reference Desk A",
   "surfaceMode": "operate",
   "mode": "overhaul",
   "register": "product",
@@ -17,20 +17,28 @@
       "Editorial image contact sheets"
     ],
     "probes": [
-      {"id": "cutting-room", "path": "design-probes/professional-cutting-room.html"},
-      {"id": "reference-desk", "path": "design-probes/professional-reference-desk.html"},
-      {"id": "contact-sheet", "path": "design-probes/professional-contact-sheet.html"}
+      {
+        "id": "reference-desk-personalized",
+        "path": "anna/artifacts/personalized/directions.html"
+      },
+      {
+        "id": "postcard",
+        "path": "anna/artifacts/personalized/directions.html"
+      },
+      {
+        "id": "remix-contact-sheet",
+        "path": "anna/artifacts/personalized/directions.html"
+      }
     ],
-    "selected": "reference-desk",
+    "selected": "reference-desk-personalized",
     "approval": "approved",
-    "before": "artifacts/design/after-doodles-1440.png",
+    "before": "anna/artifacts/anna-current-main-result.jpg",
     "library": {
       "strategy": "upstream-first",
-      "primary": "preline",
+      "primary": "existing-project-native",
       "sources": [
-        "https://preline.co/docs/sidebar.html",
-        "https://preline.co/docs/textarea.html",
-        "https://preline.co/docs/card.html"
+        "https://github.com/Significant-Hobbies/meme-lab/blob/7b1fcf97f62ae6f275763705d91a6ce7d693e4d4/worker/public/index.html",
+        "https://github.com/Significant-Hobbies/meme-lab/blob/7b1fcf97f62ae6f275763705d91a6ce7d693e4d4/worker/public/app.css"
       ],
       "runtime": "existing",
       "customReplacement": {
@@ -40,56 +48,45 @@
       }
     },
     "contract": {
-      "purpose": "Turn one pasted comment or situation into a useful meme immediately without making the operating surface feel juvenile.",
+      "purpose": "Let people appear in a recognizable meme using a chosen photo, review the remix, and save or share it.",
       "purposeSource": "PRODUCT.md",
       "canonicalPurpose": "Meme Lab turns one pasted comment or situation into a useful meme immediately.",
       "purposeAlignment": "match",
       "driftNote": "",
-      "audience": "The owner first, with a public playground for lightweight feedback.",
-      "job": "Describe one complete situation, inspect the best meme and four honest alternatives, and record whether the recommendation fits.",
-      "thesis": "A restrained reference workspace replaces doodles, candy-colored tiles, and oversized marketing composition while keeping the task immediate.",
-      "system": "Navy navigation, white working surfaces, cobalt actions, quiet semantic states, compact typography, modest corners, and uniform media fields cover all three public pages.",
-      "signature": "The ranked result behaves like a reference record: real meme media, fit label, perspective, catalogue signals, and four compact alternatives.",
-      "risk": "Professional restraint can drift toward generic software, so meme media remains visually dominant and perspective-aware ranking stays explicit."
+      "audience": "People sharing personal reactions in group chats, plus the owner evaluating the Anna pilot.",
+      "job": "Upload a permitted static meme and photo, select the character, generate one personal version, and review before sharing.",
+      "thesis": "The original and personal version sit side by side in a restrained Reference Desk workspace.",
+      "system": "Inherited navy navigation, white surfaces, cobalt actions, compact native forms and modest corners; paired original/remix workspace and private image library.",
+      "signature": "A visible face-area selector on the original pairs with a private library of ready-to-share personal memes.",
+      "risk": "AI may change captions, expression or background; the comparison makes review explicit before sharing."
     }
   },
   "evidence": {
-    "screenshots": [
-      {
-        "width": 390,
-        "path": "artifacts/design/after-390.png"
-      },
-      {
-        "width": 768,
-        "path": "artifacts/design/after-768.png"
-      },
-      {
-        "width": 1440,
-        "path": "artifacts/design/after-1440.png"
-      }
-    ],
+    "screenshots": [],
     "projectCheck": {
-      "command": "npm test && npm run check && git diff --check && pnpm exec wrangler deploy --dry-run",
-      "status": "pass"
+      "command": "npm test; npm run check; anna-app validate --strict; git diff --check; hosted Anna editor verification",
+      "status": "pending"
     },
     "critique": {
-      "score": 36,
+      "score": 0,
       "maximum": 40
     },
     "audit": {
-      "score": 18,
+      "score": 0,
       "maximum": 20
     },
     "unresolved": {
       "p0": 0,
-      "p1": 0
+      "p1": 1
     },
     "detector": {
       "posture": "advisory",
-      "findings": [],
-      "command": "node /Users/sarthak/Desktop/fleet/.agents/skills/impeccable/scripts/detect.mjs --json worker/public/index.html worker/public/collection.html worker/public/how-it-works.html worker/public/app.css",
-      "status": "pass",
-      "count": 0
+      "findings": [
+        "Three static missing-src warnings are hidden dynamic photo/original/output images. Each remains hidden until its real source is assigned; no placeholder image is shown."
+      ],
+      "command": "node /Users/sarthak/Desktop/fleet/.agents/skills/impeccable/scripts/detect.mjs --json anna/bundle/index.html anna/bundle/app.css",
+      "status": "advisory",
+      "count": 3
     },
     "comprehension": {
       "status": "not-applicable",
@@ -116,6 +113,6 @@
   },
   "ownerFeedback": {
     "decision": "keep",
-    "note": "Owner asked to avoid overengineering and approved the recommended simple Reference Desk direction."
+    "note": "Owner explicitly selected A \u00b7 Reference Desk for the personalized meme editor on 2026-10-02."
   }
 }

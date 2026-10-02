@@ -1,6 +1,6 @@
 import {annaHeaders,annaJson,readAnnaBody,annaAdmission} from './anna-http.mjs';
 import {pingFor} from './ping.mjs';
-const allowed=new Set(['run_meme','run_none','run_error','link_copied','share_completed','saved_reference','removed_reference','return_visit']);
+const allowed=new Set(['run_meme','run_none','run_error','link_copied','share_completed','saved_reference','removed_reference','return_visit','created_meme','saved_creation','download_started','image_share_completed']);
 export async function annaEvent(request,env,ctx) {
   if(request.method==='OPTIONS')return new Response(null,{status:204,headers:annaHeaders});
   if(request.method!=='POST')return annaJson({error:'Use POST.'},405);
