@@ -19,7 +19,9 @@ const directScoreAnswer=(score=4)=>({
   confidence:1,
   probabilities:Object.fromEntries(Array.from({length:5},(_,index)=>[String(index),index===Math.round(score)?1:0]))
 });
+const budget={idFromName:name=>name,get:()=>({fetch:async(url,options)=>{const body=JSON.parse(options.body);const vector=url.endsWith('try-debit-vectorize');const amount=vector?body.dimensions:body.neurons;return Response.json({allowed:true,used:amount,remaining:10000,[vector?'monthKey':'dayKey']:new Date().toISOString().slice(0,vector?7:10)});}})};
 const env={
+  NEURON_BUDGET:budget,
   AI:{run:async(model,input)=>{
     if(model===EMBEDDING_MODEL) return {data:[[1,0,0]]};
     assert.fail(`Unexpected Workers AI model: ${model} with ${JSON.stringify(input)}`);
@@ -126,6 +128,7 @@ test('core reserve keeps twenty broad slots and ten core slots in a top-thirty s
 test('production retrieval queries broad and core indexed views and returns unique catalogue records',async()=>{
   const filters=[];
   const retrievalEnv={
+    NEURON_BUDGET:budget,
     AI:{run:async()=>({data:[[1,0,0]]})},
     MEME_INDEX:{query:async(_vector,options)=>{
       filters.push(options.filter);
@@ -145,6 +148,7 @@ test('production retrieval queries broad and core indexed views and returns uniq
 test('production retrieval falls back to known unfiltered vectors when metadata indexes are absent',async()=>{
   const filters=[];
   const retrievalEnv={
+    NEURON_BUDGET:budget,
     AI:{run:async()=>({data:[[1,0,0]]})},
     MEME_INDEX:{query:async(_vector,options)=>{
       filters.push(options.filter);
@@ -710,3 +714,18 @@ test('HEAD matches GET status on every worker-rendered route',async()=>{
   assert.equal(negotiated.status,200);
   assert.equal(negotiated.headers.get('content-type'),'text/markdown; charset=utf-8');
 });
+
+for(const mode of ['missing','denied','malformed','http-error','throws']) {
+  test(`budget ${mode} prevents all recommendation work`,async()=>{
+    let calls=0;
+    const blocked={...env,AI:{run:async()=>{calls++;}},MEME_INDEX:{query:async()=>{calls++;}},CLASSIFIER_FETCH:async()=>{calls++;},DB:{prepare:()=>{calls++;}}};
+    blocked.NEURON_BUDGET=mode==='missing'?undefined:{idFromName:name=>name,get:()=>({fetch:async()=>{
+      if(mode==='throws') throw new Error('unavailable');
+      return Response.json(mode==='malformed'?{allowed:'true'}:{allowed:false},{status:mode==='http-error'?503:200});
+    }})};
+    const response=await worker.fetch(new Request('https://example.test/api/recommend',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({comment:'Waiting for approval.'})}),blocked);
+    assert.equal(response.status,503);
+    assert.equal(response.headers.get('retry-after'),'60');
+    assert.equal(calls,0);
+  });
+}

@@ -2,6 +2,7 @@ import {catalogue} from './catalogue.stage3000.generated.mjs';
 import {hasMultiplePerspectives,humourBelongs,needsSeriousHandling,rankCandidates,rankCandidatesByPerspective,requiresFactualAnswer} from './classification.mjs';
 import {MAX_RECOMMENDATIONS,presentSelection,selectionFromRanking} from './recommendation.mjs';
 import {retrieveCandidates} from './retrieval.mjs';
+import {BudgetUnavailableError} from './ai-budget.mjs';
 import {endpointFor,pingFor} from './ping.mjs';
 
 const allowedIds=new Set(catalogue.map(record=>record.id));
@@ -372,6 +373,7 @@ async function recommend(request,env,ctx) {
     ctx?.waitUntil(pingFor(env)('recommendation.created',{title:`decision: ${selection.decision}`,props:{decision:selection.decision,confidence:selection.confidence,candidates:selection.candidates.length,ranking_mode,classifier_gate}}));
     return json({...recommendation,feedback_enabled});
   } catch(error) {
+    if(error instanceof BudgetUnavailableError) return json({error:'Meme matching is temporarily unavailable. Try again shortly.'},503,{'Retry-After':'60'});
     console.error(JSON.stringify({event:'recommendation',status:'error',duration_ms:Date.now()-started,error:safeError(error)}));
     return json({error:'The meme picker had a wobble. Try again.'},502);
   }
