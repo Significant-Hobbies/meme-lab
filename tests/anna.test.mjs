@@ -92,8 +92,9 @@ test('explicit sincere apologies abstain before retrieval or AI while comic apol
   for(const comment of ['My cat owes me an apology for stealing dinner.','I need a funny apology, not a sincere apology.','Sincerely shocked at this silly cat.'])assert.equal(requiresSincereResponse(comment),false);
 });
 
-test('Anna retrieval preserves the current shared spending guard',async()=>{
+test('shared budget denial returns retry guidance and CORS before any embedding',async()=>{
   let embeddings=0;
-  const response=await worker.fetch(new Request('https://example.test/api/anna/shortlist',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({comment:'Waiting forever for an approval.'})}),{AI:{run:async()=>{embeddings++;}}});
-  assert.equal(response.status,503);assert.equal(embeddings,0);
+  const budget={idFromName:name=>name,get:()=>({fetch:async url=>Response.json({allowed:false,used:0,remaining:45_000_000,retryAfter:60,baselineVerified:true,monthKey:new Date().toISOString().slice(0,7)})})};
+  const response=await worker.fetch(new Request('https://example.test/api/anna/shortlist',{method:'POST',headers:{'Content-Type':'application/json','Origin':'https://anna.partners'},body:JSON.stringify({comment:'Waiting forever for an approval.'})}),{NEURON_BUDGET:budget,AI:{run:async()=>{embeddings++;}}});
+  assert.equal(response.status,503);assert.equal(response.headers.get('Retry-After'),'60');assert.equal(response.headers.get('Access-Control-Allow-Origin'),'*');assert.equal(embeddings,0);
 });

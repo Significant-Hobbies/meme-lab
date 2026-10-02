@@ -1,6 +1,7 @@
 import {retrieveCandidates} from './retrieval.mjs';
 import {presentSelection} from './recommendation.mjs';
 import {hasMultiplePerspectives,needsSeriousHandling,requiresFactualAnswer} from './classification.mjs';
+import {BudgetUnavailableError} from './ai-budget.mjs';
 
 import {annaHeaders,annaJson as json,readAnnaBody,annaAdmission} from './anna-http.mjs';
 
@@ -31,9 +32,10 @@ export async function annaShortlist(request,env) {
         near_miss_context:record.near_miss_context
       }))
     });
-  } catch {
+  } catch(error) {
     // Do not log or persist the submitted comment.
     console.error(JSON.stringify({event:'anna_shortlist',status:'unavailable'}));
-    return json({error:'Meme search is temporarily unavailable. Try again shortly.'},503);
+    const headers=error instanceof BudgetUnavailableError?{'Retry-After':'60'}:{};
+    return json({error:'Meme search is temporarily unavailable. Try again shortly.'},503,headers);
   }
 }
