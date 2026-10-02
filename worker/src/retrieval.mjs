@@ -1,5 +1,6 @@
 import {catalogue} from './catalogue.stage3000.generated.mjs';
 import {reciprocalRankFuse} from './rank-fusion.mjs';
+import {reserveRetrievalBudget} from './ai-budget.mjs';
 
 export {reciprocalRankFuse} from './rank-fusion.mjs';
 
@@ -56,6 +57,7 @@ async function retrieveViewPair(env,vector,topK,filter={}) {
 }
 
 export async function retrieveCandidates(env,comment,topK=30) {
+  await reserveRetrievalBudget(env,comment);
   const embedded=await env.AI.run(EMBEDDING_MODEL,{text:[comment],pooling:'cls'});
   const vector=embedded?.data?.[0];
   if(!Array.isArray(vector)||vector.length===0) throw new Error('Embedding model returned an invalid vector.');
