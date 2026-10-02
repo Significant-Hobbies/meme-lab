@@ -5,16 +5,17 @@
 
 ## Live product
 
-### Anna personalized memes: hosted verified, release in progress
+### Anna personalized memes: 1.2.0 submitted for Store review
 
 - Tracking: [Personalized photo memes #19](https://github.com/Significant-Hobbies/meme-lab/issues/19). Owner selected A · Reference Desk.
 - Upload meme/photo, choose face, one Anna generation, original/result review, private output files, host-mediated download and native image share/fallback are implemented. No new dependencies or Cloudflare resources.
 - Two whole-template model experiments produced the requested identity and preserved captions; cropped identity experiments failed. Actual route was Gemini 2.5 Flash Image. This is an AI remix, not guaranteed pixel-exact replacement.
-- Mutable Anna draft revision 10 is verified in the signed-in hosted app: requested identity and both captions, private save/reload, real disk download, cancellation/confirmed removal and honest unavailable-share fallback. The first hosted prompt retained the wrong identity; the strengthened prompt corrected it in the same exploratory fixture. No recipient-delivery or model-reliability claim.
-- Local editor rendering and interaction checks passed at 390/768/1440 with labeled synthetic fixtures. Clean real hosted output evidence: anna/artifacts/personalized/hosted-editor-final.jpg. Frozen Store candidate remains 1.1.0 pending review until 1.2.0 submission; this feature is not Store-live.
+- PR #20 is merged as main ee329fd299c7e6be6f5bbf8ef69f70693acbe1c4; PR and main CI passed (main run37009616570). Exact-source Worker deployed at100% as ee837165-3337-4776-aeae-a5a0c169f5ab. Public health reports3,000 records, updated image-retention privacy HTTP200, personalized event endpoint HTTP202 (client-reported internal smoke test, not people). Existing shared gateway and rate-limit bindings are preserved.
+- Actual hosted revision10 verified requested identity with both captions, private save/reopen, real PNG disk download, canceled/confirmed removal and honest unavailable-share fallback. The first hosted prompt retained the wrong identity; the strengthened prompt corrected the same exploratory fixture. No reliability-rate or recipient-delivery claim. Responsive UI checks passed at390/768/1440; critique32/40, audit18/20 and Fleet design validator pass.
+- Frozen1.2.0 version1027/bundle962:12files/117857bytes, manifest SHA256 c8fe3021f938bf4cd37272505cf604347c326e2e392620dc6743eaeeb7fa947f. It replaces1.1.0 as the pinned review candidate. Updated listing and actual hosted screenshot uploaded. Anna confirms pending_review/is_published=false and release preflight refuses publication before APPROVED. Remaining gate: Anna admin approval, then release and public Store install verification. No owner action or earnings established. Release receipt: anna/artifacts/personalized/release-receipt.json.
 - Source review fixed pagination, full-width face targeting and center-preserving size controls, targeting-before-generation, sharing activation, concurrent-save deduplication and removal confirmation. Full evidence and privacy boundaries: [anna/PERSONALIZED.md](anna/PERSONALIZED.md).
 
-### Anna sharing pilot: version 1.1.0 pending review
+### Anna sharing pilot: historical 1.1.0 review candidate (superseded)
 
 - Tracking: [Anna monetization pilot #12](https://github.com/Significant-Hobbies/meme-lab/issues/12).
 - Anna app `389` / `meme-lab` under `@significant-hobbies`: frozen version `1.1.0`, version ID `1019`, bundle ID `955`, seven files / 60,558 bytes. Bundle manifest SHA-256 `2723342aafb6a71cfe9280f2fa7410932906971b3d2b2b99e5bb725d31d6be84`. Cut from working revision 4, content hash `1ba9d7546ea620a6a0201c0a6895c47c90f7136ed288035887a6f4c045063032`. Submitted for review on 2 October; **not public in the Store**. Frozen 1.0.0 remains intact.
@@ -26,7 +27,7 @@
 - Checks: 134 repository tests, package/catalogue checks, strict Anna manifest validation, Wrangler dry-run and Fleet design validator passed. Preserve lane: critique 35/40, audit 17/20, no unresolved P0/P1. Responsive screenshots at 390/768/1440 re-render actual Anna result DOM with the bundled CSS; runtime behavior was checked separately.
 - Owner approved Google sign-in, Developer Terms and a revocable 90-day official CLI token scoped to `dev.session.mint`. No credentials included in source/bundle; no production dependencies added. Owner approved source integration; PR #16 is merged and both PR/main CI passed.
 - Deployment concurrency: main `7da4fe2` replaced the Anna-only deployment during testing. The final combined deployment preserves main’s shared AI/Vectorize admission and patched Undici tooling, restores Anna routes and verifies shortlist HTTP 200 / 30 references, events HTTP 202, privacy HTTP 200 after its canonical redirect. The owner approved source integration after this replacement was observed; PR #16 preserves the Anna routes in main.
-- Remaining external gate: Anna administrator approval, then release `1.1.0` and verify an ordinary Store installation. Clean current-main release worktree: `/tmp/meme-lab-anna-release-20261002`; original isolated integration/evaluation worktree: `/tmp/meme-lab-anna-20261002`.
+- Historical release gate (superseded by1.2.0 above): Anna administrator approval, then release `1.1.0` and verify an ordinary Store installation. Clean current-main release worktree: `/tmp/meme-lab-anna-release-20261002`; original isolated integration/evaluation worktree: `/tmp/meme-lab-anna-20261002`.
 
 - Paste one complete comment or situation and receive the best meme first, four backups, ordinal fit labels, and honest confidence.
 - Multi-person comments now return distinct viewpoints where available: **My reaction**, **Their side**, and **The situation**.

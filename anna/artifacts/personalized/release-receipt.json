@@ -1,0 +1,39 @@
+{
+  "date": "2026-10-02",
+  "pullRequest": 20,
+  "sourceCommit": "ee329fd299c7e6be6f5bbf8ef69f70693acbe1c4",
+  "mainCI": {
+    "id": 37009616570,
+    "conclusion": "success"
+  },
+  "worker": {
+    "name": "meme-lab-play",
+    "version": "ee837165-3337-4776-aeae-a5a0c169f5ab",
+    "trafficPercent": 100,
+    "tag": "ee329fd299c7e6be6f5bbf8ef69f70693acbe1c4",
+    "health": {
+      "status": "ok",
+      "catalogue": 3000
+    },
+    "privacyHttp": 200,
+    "personalizedEventHttp": 202,
+    "eventMeasurement": "client_reported; internal smoke test"
+  },
+  "anna": {
+    "appId": 389,
+    "version": "1.2.0",
+    "versionId": 1027,
+    "bundleId": 962,
+    "files": 12,
+    "bytes": 117857,
+    "sha256Manifest": "c8fe3021f938bf4cd37272505cf604347c326e2e392620dc6743eaeeb7fa947f",
+    "workingContentHash": "f264f1be243ee4134a0c4ce17ce11ee0137da9031732a6a923db79e33a52ac80",
+    "reviewCandidate": "1.2.0",
+    "status": "pending_review",
+    "isPublished": false,
+    "listing": "metadata and three actual runtime screenshots synced; first screenshot is verified personal editor",
+    "releasePreflight": "app status is pending_review; release not permitted until APPROVED"
+  },
+  "remaining": "Anna admin approval, release and ordinary public Store installation verification",
+  "earnings": "none established"
+}
