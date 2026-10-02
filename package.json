@@ -8,6 +8,7 @@
     "node": ">=22"
   },
   "scripts": {
+    "build:anna": "node scripts/build-anna.mjs",
     "start": "node server.mjs",
     "build:public-catalogue": "node scripts/build-public-catalogue.mjs",
     "build:expansion": "node scripts/build-expansion.mjs",

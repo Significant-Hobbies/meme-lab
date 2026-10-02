@@ -1,0 +1,16 @@
+{
+  "slug": "meme-lab",
+  "version": "1.1.0",
+  "name": "Meme Lab",
+  "tagline": "Find the reaction meme that fits your situation.",
+  "description": "Paste a comment or describe what happened. Meme Lab searches a 3,000-reference catalogue, then uses your Anna AI model to pick one best reaction and four ranked alternatives. See honest fit labels, different perspectives when relevant, and original source links. Serious requests get a sincere no-meme response.\n\nNo image generation or caption editing. Images and GIFs are remote source previews; provenance does not establish redistribution permission. Share or copy any of the five reactions as a stable public reference link without your comment. Save favourites privately in your Anna account to use again.\n\nYour comment is sent to Meme Lab's search service for retrieval and to your Anna-configured AI provider for ranking. Meme Lab's search endpoint does not store comments. Saved reference IDs/names and a last-visit day live in Anna's private app storage. Anonymous client-reported run, save and share counts help evaluate the pilot; they do not identify you or establish qualified users. Anna and your AI provider process requests under their own policies. There is no separate Meme Lab subscription; Anna AI usage may consume your credits or BYOK quota.",
+  "category": "entertainment",
+  "homepage_url": "https://memes.significanthobbies.com",
+  "support_url": "https://github.com/Significant-Hobbies/meme-lab/issues",
+  "privacy_url": "https://memes.significanthobbies.com/anna-privacy.html",
+  "screenshots": [
+    "artifacts/anna-sharing-composer.jpg",
+    "artifacts/anna-real-result.jpg",
+    "artifacts/anna-sharing-result.jpg"
+  ]
+}

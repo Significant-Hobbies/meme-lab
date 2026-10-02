@@ -1,0 +1,110 @@
+{
+  "$schema": "fleet.design-review.v1",
+  "version": 1,
+  "project": "meme-lab-anna",
+  "target": "Meme Lab Anna sharing and saved reactions, Reference Desk",
+  "surfaceMode": "operate",
+  "mode": "preserve",
+  "register": "product",
+  "context": {
+    "product": "PRODUCT.md",
+    "design": "DESIGN.md"
+  },
+  "direction": {
+    "references": [],
+    "probes": [],
+    "selected": "reference-desk",
+    "approval": "not-required",
+    "before": "anna/artifacts/before-website.jpg",
+    "library": {
+      "strategy": "upstream-first",
+      "primary": "existing-project-system",
+      "sources": [],
+      "runtime": "existing",
+      "customReplacement": {
+        "used": false,
+        "authorization": "not-required",
+        "reason": ""
+      }
+    },
+    "contract": {
+      "purpose": "Turn one pasted comment or situation into a useful meme immediately.",
+      "purposeSource": "PRODUCT.md",
+      "canonicalPurpose": "Meme Lab turns one pasted comment or situation into a useful meme immediately.",
+      "purposeAlignment": "match",
+      "driftNote": "",
+      "audience": "People selecting reactions for everyday conversations.",
+      "job": "Paste a situation, inspect five grounded reactions, share/copy any reference, and save useful reactions privately.",
+      "thesis": "Preserve the owner-selected restrained Reference Desk interface inside Anna.",
+      "system": "Existing navy navigation, white surfaces, cobalt actions, quiet fit states, system sans and serif input; primary action precedes optional examples to fit Anna windows.",
+      "signature": "Real meme imagery plus ordinal fit and social perspective labels.",
+      "risk": "Remote previews may fail; preserve the name and source link without promising media redistribution rights."
+    }
+  },
+  "evidence": {
+    "screenshots": [
+      {
+        "width": 390,
+        "path": "anna/artifacts/sharing-after-390.jpg"
+      },
+      {
+        "width": 768,
+        "path": "anna/artifacts/sharing-after-768.jpg"
+      },
+      {
+        "width": 1440,
+        "path": "anna/artifacts/sharing-after-1440.jpg"
+      }
+    ],
+    "projectCheck": {
+      "command": "npm test (134 tests); npm run check; anna-app validate --strict; wrangler deploy --dry-run; real Anna save/reload/copy/remove/apology checks",
+      "status": "pass"
+    },
+    "critique": {
+      "score": 35,
+      "maximum": 40
+    },
+    "audit": {
+      "score": 17,
+      "maximum": 20
+    },
+    "unresolved": {
+      "p0": 0,
+      "p1": 0
+    },
+    "detector": {
+      "posture": "advisory",
+      "count": 1,
+      "findings": [
+        "em-dash-overuse in inherited explanatory copy; owner-approved content preserved"
+      ],
+      "status": "advisory"
+    },
+    "comprehension": {
+      "status": "not-applicable",
+      "reviewer": "",
+      "answers": {
+        "product": "",
+        "audience": "",
+        "value": "",
+        "mechanism": "",
+        "proof": "",
+        "nextAction": ""
+      },
+      "purposeScore": {
+        "product": 0,
+        "audience": 0,
+        "value": 0,
+        "mechanism": 0,
+        "proof": 0,
+        "nextAction": 0,
+        "total": 0
+      },
+      "mismatches": []
+    }
+  },
+  "ownerFeedback": {
+    "decision": "keep",
+    "note": "Preserved owner-selected Reference Desk. Inline card actions and saved reference rows reuse established components. Responsive screenshots re-render actual installed Anna result DOM and CSS as a static evidence page; runtime behavior checked separately in Anna."
+  }
+}
