@@ -18,3 +18,17 @@ jobs:
       - run: npm ci
       - run: npm run check
       - run: npm test
+      - name: Build exact-source production package
+        run: |
+          npm run build:public
+          ./node_modules/.bin/wrangler deploy --dry-run --outdir .release/worker
+          git rev-parse HEAD > .release/source-sha.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: production-package-${{ github.sha }}
+          include-hidden-files: true
+          retention-days: 7
+          path: |
+            .release/
+            worker/public/
+            wrangler.jsonc

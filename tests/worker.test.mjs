@@ -375,7 +375,7 @@ test('managed classifier uses attributed Free AI JSON mode and preserves validat
   assert.equal(gatewayBody.stream,false);
   assert.equal(gatewayBody.messages[0].content.includes('keep roles'),true);
   assert.equal(result.results[0].label,FIT_LABELS[2].label);
-  assert.deepEqual(result.results[0].scores,Object.fromEntries(FIT_LABELS.map(({label},index)=>[label,index/4])));
+  assert.deepEqual(result.results[0].scores,Object.fromEntries(FIT_LABELS.map(({label},index)=>[label,index/10])));
 });
 
 test('public worker abstains directly on an explicit factual form request',async()=>{

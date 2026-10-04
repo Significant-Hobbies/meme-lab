@@ -214,11 +214,21 @@ export async function rankCandidates(comment,candidates,{fetchImpl=fetch,timeout
   return scored.sort((left,right)=>right.classifier_score-left.classifier_score||left.retrieval_rank-right.retrieval_rank||left.id.localeCompare(right.id)).slice(0,limit);
 }
 
-export async function rankCandidatesByPerspective(comment,candidates,{fetchImpl=fetch,timeoutMs=5000,limit=3,apiKey}={}) {
+export async function rankCandidatesByPerspective(comment,candidates,{fetchImpl=fetch,timeoutMs=5000,limit=3,apiKey,ordinalPerspectives=false}={}) {
   if(!Array.isArray(candidates)||candidates.length<limit) throw new Error('Perspective ranking needs enough candidates to rank.');
   const labels=candidates.map(record=>`${record.id} | ${record.name}: ${record.message} Social dynamic: ${record.relational_pattern}`);
   let results;
-  if(apiKey) {
+  if(ordinalPerspectives&&!apiKey) {
+    results=await Promise.all(PERSPECTIVES.slice(0,Math.min(3,limit)).map(async perspective=>{
+      const viewpointCandidates=candidates.map(candidate=>({...candidate,perspective:perspective.key,perspective_label:perspective.label}));
+      const scored=await scoreOrdinalCandidates(comment,viewpointCandidates,{
+        fetchImpl,timeoutMs,
+        instructions:`${FIT_INSTRUCTIONS} ${perspective.instructions} Judge every candidate independently for this viewpoint, using the ordinal fit labels.`,
+        inputFor:(text,record)=>`COMMENT: ${text}\nVIEWPOINT: ${record.perspective_label}\nCANDIDATE: ${record.name}. Meaning: ${record.message} Social dynamic: ${record.relational_pattern} Example: ${record.example_context} Avoid: ${record.near_miss_context}`
+      });
+      return {perspective,ranked:rankRelevanceCandidates(scored,{limit:candidates.length})};
+    }));
+  } else if(apiKey) {
     const state={comment,candidates:Object.fromEntries(candidates.map((record,index)=>[`candidate_${index}`,candidateDetails(record)]))};
     const criteria=Object.fromEntries(candidates.map((record,index)=>[`candidate_${index}`,`${record.name}: ${record.message} Social dynamic: ${record.relational_pattern}`]));
     const questions=Object.fromEntries(PERSPECTIVES.slice(0,Math.min(3,limit)).map(perspective=>[perspective.key,{
@@ -278,6 +288,7 @@ export async function rankCandidatesByPerspective(comment,candidates,{fetchImpl=
     selected.push(candidate);
   }
   if(selected.length<limit) throw new Error('Perspective ranking could not produce distinct candidates.');
+  if(ordinalPerspectives&&!apiKey) return selected.slice(0,limit).sort((left,right)=>right.classifier_score-left.classifier_score||left.perspective.localeCompare(right.perspective));
   const rescored=await scoreOrdinalCandidates(comment,selected.slice(0,limit),{
     fetchImpl,timeoutMs,apiKey,
     instructions:`${FIT_INSTRUCTIONS} The input declares the intended viewpoint. Judge the candidate only for that viewpoint; do not silently switch to another participant or to the event itself.`,
