@@ -22,4 +22,7 @@ jobs:
         with:
           node-version: 22
       - name: Check ranked results and all three perspectives
+        env:
+          APP_HEALTH_INGEST_KEY: ${{ secrets.APP_HEALTH_INGEST_KEY }}
+          APP_HEALTH_REPORT_REQUIRED: '1'
         run: node scripts/probe-production-picker.mjs
