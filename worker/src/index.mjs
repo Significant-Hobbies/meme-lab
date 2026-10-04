@@ -327,7 +327,7 @@ async function recommend(request,env,ctx) {
       }
     }
     // Managed inference scores the full 30-candidate batch, within a bounded deadline.
-    const rankingOptions={...classifierOptions,timeoutMs:15000};
+    const rankingOptions={...classifierOptions,timeoutMs:15000,ordinalPerspectives:typeof env.CLASSIFIER_FETCH!=='function'};
     let ranked;
     let ranking_mode='general';
     let ranking_model=CLASSIFIER_MODEL;
