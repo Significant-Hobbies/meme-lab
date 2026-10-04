@@ -1,4 +1,5 @@
 import {pathToFileURL} from 'node:url';
+import {reportPickerProbe} from './report-production-picker.mjs';
 
 export const pickerCases=[
   {id:'general',comment:'I opened the fridge three times hoping new snacks would appear.'},
@@ -31,6 +32,12 @@ export async function probePicker(origin='https://memes.significanthobbies.com',
 
 if(process.argv[1]&&import.meta.url===pathToFileURL(process.argv[1]).href) {
   const result=await probePicker(process.argv[2]);
-  console.log(JSON.stringify(result,null,2));
-  if(result.status!=='passed') process.exitCode=1;
+  const reporting=await reportPickerProbe(result,{
+    key:process.env.APP_HEALTH_INGEST_KEY,
+    release:process.env.GITHUB_SHA,
+    runUrl:`https://github.com/${process.env.GITHUB_REPOSITORY}/actions/runs/${process.env.GITHUB_RUN_ID}`
+  });
+  console.log(JSON.stringify({...result,app_health:reporting},null,2));
+  if(result.status!=='passed'||reporting.status==='failed'
+    ||(process.env.APP_HEALTH_REPORT_REQUIRED==='1'&&reporting.status!=='accepted')) process.exitCode=1;
 }
