@@ -10,6 +10,7 @@ html=html.replace(/  <script[^>]*>[\s\S]*?<\/script>\n/g,'')
   .replace('href="/app.css"','href="./app.css"')
   .replaceAll('href="/"','href="#"')
   .replaceAll('href="/collection"','href="https://memes.significanthobbies.com/collection" target="_blank" rel="noopener noreferrer"')
+  .replaceAll('href="/memes/', 'target="_blank" rel="noopener noreferrer" href="https://memes.significanthobbies.com/memes/')
   .replaceAll('href="/how-it-works"','href="https://memes.significanthobbies.com/how-it-works" target="_blank" rel="noopener noreferrer"')
   .replace('Your comment and returned candidates are kept for 30 days to support feedback.','Your comment goes to Meme Lab’s search service and your Anna AI provider. Meme Lab’s search endpoint does not store it. AI usage may consume Anna credits or your BYOK quota. Anonymous interaction counts help us improve.')
   .replace('then the shortlist is scored on five ordered fit levels.','then your Anna AI model rates the shortlist on five ordered fit levels.')
@@ -23,7 +24,7 @@ html=html.replace('<section id="no-match" class="no-match" hidden>','<section id
 const action='<button id="submit" class="primary" type="submit"><span>Find the meme</span><span aria-hidden="true">→</span></button>';
 html=html.replace(`          ${action}\n`,'').replace('<div class="form-row">',`<div class="form-row">\n          ${action}`);
 let app=await readFile(new URL('worker/public/app.js',root),'utf8');
-const oldRequest="const response=await fetch('/api/recommend',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({comment:value})});\n    const data=await response.json();\n    if(!response.ok) throw new Error(data.error||'Could not find a meme.');";
+const oldRequest="const response=await fetch('/api/recommend',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({comment:value})});\n    responseStatus=response.status;\n    const data=await response.json();\n    if(!response.ok) throw new Error(data.error||'Could not find a meme.');";
 if(!app.includes(oldRequest)) throw new Error('Website recommendation adapter changed; review the Anna build.');
 app=app.replace(oldRequest,'const data=await recommendOnAnna(value,{anna:await annaReady});')
   .replaceAll('href:`/memes/${encodeURIComponent(candidate.id)}`','href:`https://memes.significanthobbies.com/memes/${encodeURIComponent(candidate.id)}`,target:"_blank",rel:"noopener noreferrer"');

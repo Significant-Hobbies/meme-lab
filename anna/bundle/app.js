@@ -105,8 +105,11 @@ async function findMeme() {
   submit.disabled=true;
   submit.querySelector('span').textContent='Finding it…';
   showOnly('loading');
+  const started=Date.now();
+  let responseStatus=0;
   try {
     const data=await recommendOnAnna(value,{anna:await annaReady});
+    if(data.degraded) window.appHealthLog?.('recommendation.degraded',{level:'warn',title:'Meme picker degraded',props:{route:'/api/recommend',duration_ms:Date.now()-started}});
     if(data.decision==='none') {
       currentRecommendation=data;
       $('#no-match-reason').textContent=data.none_reason;
@@ -126,6 +129,7 @@ async function findMeme() {
     showOnly('result');
     result.scrollIntoView({behavior:'smooth',block:'start'});
   } catch(error) {
+    window.appHealthLog?.('recommendation.failed',{level:'error',title:'Meme picker failed',props:{route:'/api/recommend',status_code:responseStatus,duration_ms:Date.now()-started}});
     showOnly('form');
     status.textContent=error.message;
     status.scrollIntoView({behavior:'smooth',block:'nearest'});

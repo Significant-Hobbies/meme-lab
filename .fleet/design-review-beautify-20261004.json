@@ -1,0 +1,310 @@
+{
+  "$schema": "fleet.design-review.v2",
+  "version": 2,
+  "project": "meme-lab",
+  "target": "Shared Meme Lab web picker and Anna photo editor",
+  "surfaceMode": "operate",
+  "mode": "overhaul",
+  "register": "product",
+  "context": {
+    "product": "PRODUCT.md",
+    "design": "DESIGN.md"
+  },
+  "direction": {
+    "productSurfaces": {
+      "scope": "paired",
+      "landing": "https://memes.significanthobbies.com (entry and operating picker)",
+      "app": "Anna Dashboard app389 / Make this me",
+      "reason": "Website is also the public entry surface; Anna hosts the signed-in editor."
+    },
+    "pairedPreview": {
+      "landing": "artifacts/design/beautify-20261004/a-landing.png",
+      "app": "artifacts/design/beautify-20261004/a-app.png"
+    },
+    "source": "comparison",
+    "references": [
+      "Imgflip Meme Generator",
+      "Photopea",
+      "Are.na"
+    ],
+    "probes": [
+      {
+        "id": "a",
+        "name": "Studio",
+        "path": "artifacts/design/beautify-20261004/a.png",
+        "thesis": "Quiet compact controls with equal full-meme canvases.",
+        "layout": "Split situation/composer website; narrow editor tool rail.",
+        "typography": "System sans with compact strong headings.",
+        "surfaces": {
+          "landing": "artifacts/design/beautify-20261004/a-landing.png",
+          "app": "artifacts/design/beautify-20261004/a-app.png"
+        },
+        "compact": "artifacts/design/beautify-20261004/a-phone.png",
+        "note": "One labeled paired capture contains distinct website and Anna screens."
+      },
+      {
+        "id": "b",
+        "name": "Postcard",
+        "path": "artifacts/design/beautify-20261004/b.png",
+        "thesis": "Personal keepsake with an editorial three-phase rhythm.",
+        "layout": "Underlined composer; centered comparison with phase navigation.",
+        "typography": "Georgia display and entered language; sans controls.",
+        "surfaces": {
+          "landing": "artifacts/design/beautify-20261004/b-landing.png",
+          "app": "artifacts/design/beautify-20261004/b-app.png"
+        },
+        "compact": "artifacts/design/beautify-20261004/b-phone.png",
+        "note": "One labeled paired capture contains distinct website and Anna screens."
+      },
+      {
+        "id": "c",
+        "name": "Contact Sheet",
+        "path": "artifacts/design/beautify-20261004/c.png",
+        "thesis": "An image-led dark workspace.",
+        "layout": "Narrow situation column and contact sheet; dominant result beside smaller original.",
+        "typography": "System sans plus monospace controls/metadata.",
+        "surfaces": {
+          "landing": "artifacts/design/beautify-20261004/c-landing.png",
+          "app": "artifacts/design/beautify-20261004/c-app.png"
+        },
+        "compact": "artifacts/design/beautify-20261004/c-phone.png",
+        "note": "One labeled paired capture contains distinct website and Anna screens."
+      }
+    ],
+    "selected": "a",
+    "approval": "approved",
+    "ownerEvidence": {
+      "path": "artifacts/design/beautify-20261004/owner-selection.md",
+      "quote": "ok go with A"
+    },
+    "supplied": "",
+    "before": "artifacts/design/beautify-20261004/before-web.png",
+    "library": {
+      "strategy": "upstream-first",
+      "primary": "healthy-project-native",
+      "sources": [
+        "https://github.com/Significant-Hobbies/meme-lab/blob/main/worker/public/index.html",
+        "https://github.com/Significant-Hobbies/meme-lab/blob/main/anna/personal-editor.html"
+      ],
+      "runtime": "existing",
+      "customReplacement": {
+        "used": false,
+        "authorization": "not-required",
+        "reason": "Adapt existing native inputs, consent, slider, actions and preview components; no replacement primitive."
+      }
+    },
+    "contract": {
+      "purpose": "Meme Lab helps people selecting reactions for everyday conversations find a fitting meme through a corrected catalogue and contextual AI ranking.",
+      "purposeSource": "PRODUCT.md; saas-maker/catalog/projects.json projects[meme-lab].presentation.directory.purposeContract",
+      "canonicalPurpose": "Turn one pasted comment or situation into a useful meme immediately.",
+      "purposeAlignment": "match",
+      "driftNote": "Purpose fields match PRODUCT.md. Anna Store version metadata is operational status and does not change the purpose contract; do not publish a lifecycle claim in the redesigned entry.",
+      "audience": "People choosing conversational reactions and consenting users creating personal photo memes.",
+      "job": "Choose a fitting reaction or review a personal image before exporting.",
+      "thesis": "Studio: quiet compact controls with equal full-meme canvases, restrained navy/white/cobalt identity.",
+      "system": "Direction-specific layouts, type and semantic color roles are recorded in artifacts/design/beautify-20261004/brief.md.",
+      "signature": "Original/result comparison with an explicit face target; recognizable reaction imagery.",
+      "risk": "Restrained chrome may feel quiet; recognizable meme imagery and direct personal workflow supply personality.",
+      "qualityBar": "Readable compact controls, image-first hierarchy, consistent website/Anna identity, full-canvas review, truthful availability, no decorative dashboard or fake proof."
+    }
+  },
+  "evidence": {
+    "platform": "web",
+    "productContinuity": {
+      "status": "pass",
+      "reviewer": "Codex",
+      "report": "artifacts/design/beautify-20261004/product-continuity.md",
+      "surfaces": {
+        "landing": "artifacts/design/beautify-20261004/after-web-1440.png",
+        "app": "artifacts/design/beautify-20261004/after-app-1440.png"
+      },
+      "checks": {
+        "designSystem": {
+          "status": "pass",
+          "observation": "Both rendered surfaces use white canvas, navy type, cobalt actions and restrained hairlines; editor image mats extend the same system."
+        },
+        "identity": {
+          "status": "pass",
+          "observation": "Same Meme Lab wordmark and reaction imagery; face outline and equal comparison give the editor product-specific identity."
+        },
+        "vocabulary": {
+          "status": "pass",
+          "observation": "Find a reaction, Make this me, Original and Your meme describe the two tasks consistently."
+        },
+        "productTruth": {
+          "status": "pass",
+          "observation": "Public picker claims contextual recommendations; photo generation/private saves remain Anna-specific. No public authentication or Store availability claim was added."
+        },
+        "handoff": {
+          "status": "pass",
+          "observation": "Verified public composer to real recommendation; local Anna Find a reaction to Make this me and Back to reactions. Public-to-Anna installation and hosted runtime are outside this UI verification."
+        }
+      }
+    },
+    "slopScale": {
+      "platform": "web",
+      "posture": "advisory",
+      "reason": "",
+      "checkpoints": [
+        {
+          "stage": "directions",
+          "direction": "a",
+          "status": "scanned",
+          "command": "node saas-maker/tooling/scripts/slop-score.mjs http://127.0.0.1:58121/a.html --json",
+          "report": ".fleet-local/slop/beautify-20261004/a.json",
+          "findingsReview": "Uppercase cues separate tasks. Native input and image boundaries are intentional working surfaces; no icon-feature card wall. Preview wrapper affects scoring."
+        },
+        {
+          "stage": "directions",
+          "direction": "b",
+          "status": "scanned",
+          "command": "node saas-maker/tooling/scripts/slop-score.mjs http://127.0.0.1:58121/b.html --json",
+          "report": ".fleet-local/slop/beautify-20261004/b.json",
+          "findingsReview": "Uppercase cues and numbered phases are intentional task separation and actual proposed workflow. Preview wrapper affects scoring."
+        },
+        {
+          "stage": "directions",
+          "direction": "c",
+          "status": "scanned",
+          "command": "node saas-maker/tooling/scripts/slop-score.mjs http://127.0.0.1:58121/c.html --json",
+          "report": ".fleet-local/slop/beautify-20261004/c.json",
+          "findingsReview": "Uppercase cues separate tasks. Native input and image boundaries are intentional working surfaces; no icon-feature card wall. Preview wrapper affects scoring."
+        },
+        {
+          "stage": "iteration",
+          "status": "scanned",
+          "command": "node /Users/sarthak/Desktop/fleet/saas-maker/tooling/scripts/slop-score.mjs http://127.0.0.1:50644/studio-editor --json",
+          "report": ".fleet-local/slop/beautify-20261004/iteration-app.json",
+          "findingsReview": "Website score 0. Editor score 4 flags icon_card_grid; actual image/control groups are intentional product content. Retain them. Final scan predates only phone gutter refinement; fixed 1280px scanner layout is unchanged."
+        },
+        {
+          "stage": "final",
+          "status": "scanned",
+          "command": "node /Users/sarthak/Desktop/fleet/saas-maker/tooling/scripts/slop-score.mjs http://127.0.0.1:50644/studio-editor --json",
+          "report": ".fleet-local/slop/beautify-20261004/final-app.json",
+          "findingsReview": "Website score 0. Editor score 4 flags icon_card_grid; actual image/control groups are intentional product content. Retain them. Final scan predates only phone gutter refinement; fixed 1280px scanner layout is unchanged."
+        }
+      ]
+    },
+    "visualReview": {
+      "status": "pass",
+      "reviewer": "Codex direct rendered review",
+      "direction": "a",
+      "report": "artifacts/design/beautify-20261004/implementation-review.md",
+      "checks": {
+        "hierarchy": {
+          "status": "pass",
+          "observation": "Desktop proposition and composer sit together; Anna image comparison is larger than the tool rail, with review/export adjacent."
+        },
+        "typography": {
+          "status": "pass",
+          "observation": "Shared system sans and navy headings; upload help corrected to regular weight and face-size track widened."
+        },
+        "composition": {
+          "status": "pass",
+          "observation": "Real catalogue rows and equal quiet image mats; aspect ratio and face-coordinate surface preserved."
+        },
+        "identity": {
+          "status": "pass",
+          "observation": "Navy/cobalt wordmark, actual meme imagery and explicit face target align with selected Studio."
+        },
+        "interaction": {
+          "status": "pass",
+          "observation": "Real recommendation and four backups observed. Local Anna fixture verified uploads, consent, position controls, generation, save, share fallback, clear and return. Disk download and hosted persistence are not claimed."
+        },
+        "responsive": {
+          "status": "pass",
+          "observation": "Actual 390/768/1440 captures retain the task with matching client/scroll widths; phone comparison precedes controls. Secondary navigation wraps deliberately."
+        }
+      }
+    },
+    "screenshots": [
+      {
+        "width": 390,
+        "path": "artifacts/design/beautify-20261004/after-web-390.png"
+      },
+      {
+        "width": 390,
+        "path": "artifacts/design/beautify-20261004/after-app-390.png"
+      },
+      {
+        "width": 768,
+        "path": "artifacts/design/beautify-20261004/after-web-768.png"
+      },
+      {
+        "width": 768,
+        "path": "artifacts/design/beautify-20261004/after-app-768.png"
+      },
+      {
+        "width": 1440,
+        "path": "artifacts/design/beautify-20261004/after-web-1440.png"
+      },
+      {
+        "width": 1440,
+        "path": "artifacts/design/beautify-20261004/after-app-1440.png"
+      }
+    ],
+    "projectCheck": {
+      "command": "node scripts/build-anna.mjs && npm run check && npm test (fleet-workspace managed run; 184/184 tests)",
+      "status": "pass"
+    },
+    "critique": {
+      "score": 33,
+      "maximum": 40,
+      "dimensions": {
+        "hierarchy": 7,
+        "typography": 6,
+        "composition": 7,
+        "identity": 7,
+        "interaction": 3,
+        "responsive": 3
+      }
+    },
+    "audit": {
+      "score": 17,
+      "maximum": 20,
+      "dimensions": {
+        "purpose": 4,
+        "accessibility": 5,
+        "behavior": 3,
+        "responsive": 3,
+        "performance": 2
+      }
+    },
+    "unresolved": {
+      "p0": 0,
+      "p1": 0
+    },
+    "detector": {
+      "posture": "advisory",
+      "findings": []
+    },
+    "comprehension": {
+      "status": "pass",
+      "reviewer": "/root/anna_design_review",
+      "report": "artifacts/design/beautify-20261004/comprehension-review.md",
+      "answers": {
+        "product": "Situation-to-meme picker; Anna photo personalization.",
+        "audience": "Everyday conversational reaction and personal-remix users.",
+        "value": "A fitting reaction quickly; a recognizable personal meme.",
+        "mechanism": "Best plus four recommendations; two uploads, face placement, consent, generation and review.",
+        "proof": "Real catalogue and live recommendation; editor shows labelled local replay, not a new provider call.",
+        "nextAction": "Enter a situation or review a personalized result before exporting."
+      },
+      "purposeScore": {
+        "product": 24,
+        "audience": 12,
+        "value": 14,
+        "mechanism": 14,
+        "proof": 11,
+        "nextAction": 14,
+        "total": 89
+      },
+      "mismatches": []
+    }
+  },
+  "ownerFeedback": {
+    "decision": "keep",
+    "note": "Owner selected A \u00b7 Studio: \"ok go with A\". Implementation acceptance remains separate."
+  }
+}
