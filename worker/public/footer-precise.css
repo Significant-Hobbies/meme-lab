@@ -1,0 +1,66 @@
+/* Reset only the authored navigation that the shared C host receives. */
+footer[data-fleet-footer-navigation] {
+  display: grid;
+  width: 100%;
+  gap: 10px;
+  margin: 0;
+  padding: 18px 0 0;
+  border: 0;
+  color: var(--muted);
+  font-family: var(--fleet-footer-loaded-ui, system-ui, sans-serif);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+footer[data-fleet-footer-navigation] nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 20px;
+}
+
+footer[data-fleet-footer-navigation] nav a {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  color: inherit;
+  font-family: var(--fleet-footer-loaded-ui, system-ui, sans-serif);
+  font-size: 14px;
+  font-weight: 500;
+  text-decoration: underline;
+  text-decoration-color: transparent;
+  text-underline-offset: 4px;
+}
+
+footer[data-fleet-footer-navigation] nav a:hover,
+footer[data-fleet-footer-navigation] nav a:focus-visible {
+  color: var(--blue);
+  text-decoration-color: currentColor;
+}
+
+footer[data-fleet-footer-navigation] nav a:focus-visible {
+  outline: 2px solid var(--blue);
+  outline-offset: 3px;
+}
+
+footer[data-fleet-footer-navigation] p {
+  margin: 0;
+  font-family: var(--fleet-footer-loaded-mono, ui-monospace, monospace);
+  font-size: 12px;
+  letter-spacing: .04em;
+}
+
+fleet-footer-extension > [slot="cta"][data-fleet-footer-primary] {
+  font-family: var(--fleet-footer-loaded-ui, system-ui, sans-serif);
+  font-size: 15px;
+  font-weight: 500;
+  line-height: 1.45;
+}
+
+@media (max-width: 520px) {
+  footer[data-fleet-footer-navigation] {
+    width: 100%;
+    gap: 10px;
+    padding-block-start: 14px;
+    flex-direction: initial;
+  }
+}

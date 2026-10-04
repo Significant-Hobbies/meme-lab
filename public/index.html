@@ -6,6 +6,7 @@
   <title>Meme Lab — blind reference experiments</title>
   <link rel="stylesheet" href="/styles.css">
   <link rel="stylesheet" href="/experiment.css">
+  <link rel="stylesheet" href="/footer-precise.css">
   <script>
     if (location.hostname === "memes.significanthobbies.com") {
       (function(c,l,a,r,i,t,y){c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);})(window,document,"clarity","script","ymdudyzrcs");
@@ -236,16 +237,14 @@
         </section>
       </main>
 
-      <footer>
-        <span>Meme Lab · v0.3</span>
-        <span>Small experiments, honest abstentions.</span>
-        <a href="/README.md" target="_blank" rel="noopener">Setup & limitations ↗</a>
+      <footer data-fleet-footer-navigation>
+        <div class="footer-local-copy"><span>Meme Lab · v0.3</span><span>Small experiments, honest abstentions.</span></div>
+        <nav aria-label="Workspace footer navigation"><a href="/">Experiment workspace</a><a href="/review.html">Relevance review</a><a href="/README.md" target="_blank" rel="noopener">Setup &amp; limitations ↗</a></nav>
+        <figure class="footer-atelier"><img src="/footer-art/meme-lab-original-v1.webp" width="2170" height="725" alt="Two reaction-card characters flank a blank comment card." loading="lazy" decoding="async"></figure>
       </footer>
     </div>
   </div>
 
   <script type="module" src="/app.js"></script>
-  <script src="https://sassmaker.com/project-strip.js" data-project="meme-lab" defer></script>
-  <script src="https://sassmaker.com/ai-chat-footer.js" data-name="Meme Lab" defer></script>
 </body>
 </html>

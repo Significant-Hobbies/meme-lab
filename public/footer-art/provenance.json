@@ -1,0 +1,14 @@
+{
+  "product": "meme-lab",
+  "asset": "meme-lab-original-v1.webp",
+  "source": "Original Meme Lab reaction-card illustration; format-only WebP derivative.",
+  "originalSha256": "b0b5131a2046a345c748ac673e6241acdf81936cbbb6eb11966f81f3768ac612",
+  "sha256": "866a3e4e199b13514ce8121ae719857967b4f17114209a43291fc770e972e383",
+  "bytes": 121268,
+  "dimensions": {
+    "width": 2170,
+    "height": 725
+  },
+  "conversion": "cwebp -q 88 -m 6; no composition or content changes",
+  "rights": "Meme Lab original product artwork; no third-party character assets."
+}

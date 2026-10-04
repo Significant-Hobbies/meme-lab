@@ -1,0 +1,105 @@
+@font-face {
+  font-family: "Geist";
+  src: url("/fonts/fleet-footer-precise-v1/geist.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Geist Mono";
+  src: url("/fonts/fleet-footer-precise-v1/geistmono.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Newsreader";
+  src: url("/fonts/fleet-footer-precise-v1/newsreader.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 200 800;
+  font-display: swap;
+}
+
+footer[data-fleet-footer-navigation] {
+  display: grid;
+  width: 100%;
+  gap: 1rem;
+  margin: 0;
+  padding: 1.5rem clamp(1rem, 4vw, 2rem);
+  border-top: 1px solid var(--line, #d9dee7);
+  color: var(--muted, #5f6b7b);
+  font-family: "Geist", system-ui, sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+footer[data-fleet-footer-navigation] .footer-atelier {
+  margin: 0;
+  overflow: hidden;
+  background: #f8f8f6;
+}
+
+footer[data-fleet-footer-navigation] .footer-atelier img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 3 / 1;
+  object-fit: contain;
+}
+
+footer[data-fleet-footer-navigation] .footer-local-copy {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .5rem 1.25rem;
+  font-family: "Geist Mono", monospace;
+  font-size: 12px;
+  letter-spacing: .04em;
+}
+
+footer[data-fleet-footer-navigation] nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .35rem 1.25rem;
+}
+
+footer[data-fleet-footer-navigation] nav a {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  color: inherit;
+  font-family: "Geist", system-ui, sans-serif;
+  font-size: 15px;
+  font-weight: 550;
+  text-underline-offset: .22em;
+}
+
+footer[data-fleet-footer-navigation] nav a:focus-visible {
+  outline: 2px solid #2563eb;
+  outline-offset: 3px;
+}
+
+footer[data-fleet-footer-navigation] > p {
+  margin: 0;
+  font-size: 14px;
+}
+
+@media (max-width: 640px) {
+  footer[data-fleet-footer-navigation] .footer-atelier img {
+    aspect-ratio: 3 / 2;
+    object-fit: cover;
+  }
+
+  footer[data-fleet-footer-navigation] nav {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: .25rem .75rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  footer[data-fleet-footer-navigation] * {
+    scroll-behavior: auto;
+  }
+}

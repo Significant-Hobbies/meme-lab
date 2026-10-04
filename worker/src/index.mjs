@@ -137,7 +137,7 @@ function memePage(record) {
   <script type="application/ld+json">${structuredData(schema)}</script>
   <script src="/app-health-log.js" defer></script>
   <script src="/fleet-engagement.js" defer></script>
-  <link rel="stylesheet" href="/app.css">
+  <link rel="stylesheet" href="/app.css"><link rel="stylesheet" href="/footer-precise.css">
 </head>
 <body class="page-meme">
   <header class="topbar">
@@ -173,12 +173,15 @@ function memePage(record) {
       </div>
     </article>
   </main>
-  <footer>
-    <a href="/collection">Browse all 3,000 meme references</a>
-    <span>Match the situation, then pick the perspective.</span>
-  </footer>
-  <script src="https://sassmaker.com/project-strip.js" data-project="meme-lab" defer></script>
-  <script src="https://sassmaker.com/ai-chat-footer.js" data-name="Meme Lab" defer></script>
+  <fleet-footer-extension data-fleet-footer-project="meme-lab" product-name="Meme Lab" theme="light" surface="web" font-base="/fonts/fleet-footer-precise-v1/" signature-font="newsreader" art-src="/footer-art/meme-lab-original-v1.webp" art-alt="Two reaction-card characters flank a blank comment card." art-width="2170" art-height="725" art-position="50% 50%">
+    <a data-fleet-footer-cta data-fleet-footer-primary slot="cta" href="/collection">Browse all 3,000 meme references <span aria-hidden="true">→</span></a>
+    <footer data-fleet-footer-navigation slot="navigation">
+      <nav aria-label="Footer navigation"><a href="/">Meme Lab home</a><a href="/collection">Collection</a><a href="/how-it-works">How it works</a></nav>
+      <p>Match the situation, then pick the perspective.</p>
+    </footer>
+  </fleet-footer-extension>
+  <script src="https://sassmaker.com/project-strip.js?v=precise-b0adaa67" data-project="meme-lab" data-theme="light" data-host-only="true" defer></script>
+  <script src="https://sassmaker.com/ai-chat-footer.js?v=precise-b0adaa67" data-project="meme-lab" data-name="Meme Lab" data-theme="light" data-surface="web" data-art-src="/footer-art/meme-lab-original-v1.webp" data-art-alt="Two reaction-card characters flank a blank comment card." data-art-width="2170" data-art-height="725" data-art-position="50% 50%" data-host-only="true" data-capture="false" defer></script>
 </body>
 </html>`;
 }
