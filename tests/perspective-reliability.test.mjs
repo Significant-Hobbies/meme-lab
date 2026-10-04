@@ -49,3 +49,10 @@ test('managed adapter normalizes category probability mass and rejects an empty 
   const empty=createGatewayClassifierFetch({fetch:async()=>completion([0,0])});
   await assert.rejects(empty('',init),/empty category scores/);
 });
+
+test('malformed provider scores get one bounded repair attempt, never leak an invalid result',async()=>{
+  let calls=0;
+  const adapter=createGatewayClassifierFetch({fetch:async()=>Response.json({choices:[{message:{content:JSON.stringify({results:[{label_index:1,scores:++calls===1?[0]:[.1,.9]}]})}}]})});
+  const result=await (await adapter('',{body:JSON.stringify({inputs:['fixture'],labels:['a','b']})})).json();
+  assert.equal(calls,2);assert.equal(result.results[0].label,'b');
+});

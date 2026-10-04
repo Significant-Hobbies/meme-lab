@@ -2,6 +2,7 @@ import {pingFor} from './ping.mjs';
 
 export function classifierUnavailable(error) {
   return /\bHTTP (?:429|500|502|503|504)\b/.test(error instanceof Error?error.message:'')
+    ||/^(?:Free AI (?:classifier|gateway) returned (?:invalid|an unexpected|empty)|Classifier returned (?:an unexpected|incomplete|flat)|Free AI classifier could not produce)/.test(error instanceof Error?error.message:'')
     ||error?.name==='TimeoutError'||error?.name==='AbortError';
 }
 
