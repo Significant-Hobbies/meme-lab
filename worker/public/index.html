@@ -27,7 +27,7 @@
   <header class="topbar">
     <a class="brand" href="/" aria-label="Meme Lab home"><span>meme</span>lab</a>
     <nav class="site-nav" aria-label="Main navigation">
-      <a class="active" href="/" aria-current="page">Try it</a>
+      <a class="active" href="/" aria-current="page">Find a reaction</a>
       <a href="/collection">Collection</a>
       <a href="/how-it-works">How it works</a>
     </nav>
@@ -36,29 +36,32 @@
 
   <main>
     <section class="composer" aria-labelledby="page-title">
-      <p class="eyebrow">REACTION MATCHING</p>
+      <div class="composer-intro">
+      <p class="eyebrow">THE RIGHT REACTION</p>
       <h1 id="page-title">Find the meme that fits.</h1>
       <p class="intro">Describe the whole situation. Meme Lab returns one best match and four honestly ranked alternatives.</p>
 
+      </div>
       <form id="meme-form">
-        <label for="comment">The comment</label>
+        <label for="comment">What happened?</label>
         <textarea id="comment" name="comment" maxlength="1000" required placeholder="Paste a real comment, or describe what happened…"></textarea>
         <p class="retention-note">Your comment and returned candidates are kept for 30 days to support feedback.</p>
         <div class="form-row">
-          <div class="examples" aria-label="Example comments">
-            <span>Use a full example</span>
+          <details class="example-picker"><summary>Try an example</summary><div class="examples" aria-label="Example comments">
             <button type="button" data-example="I spent an hour looking for my phone while using its flashlight.">I spent an hour looking for my phone while using its flashlight.</button>
             <button type="button" data-example="My coworker said the meeting could have been an email, then scheduled a follow-up meeting about it.">My coworker said the meeting could have been an email, then scheduled a follow-up meeting about it.</button>
             <button type="button" data-example="My sibling ate the leftovers with my name on them, then asked why I looked upset.">My sibling ate the leftovers with my name on them, then asked why I looked upset.</button>
             <button type="button" data-example="They replied 'k' to the six-paragraph message I spent an hour writing.">They replied “k” to the six-paragraph message I spent an hour writing.</button>
             <button type="button" data-example="The tests finally passed after I changed nothing and ran them again.">The tests finally passed after I changed nothing and ran them again.</button>
             <button type="button" data-example="My friend just lost a family member and asked me to help write a sincere condolence message.">My friend just lost a family member and asked me to help write a sincere condolence message.</button>
-          </div>
+          </div></details>
           <button id="submit" class="primary" type="submit"><span>Find the meme</span><span aria-hidden="true">→</span></button>
         </div>
       </form>
       <p id="status" class="status" role="status" aria-live="polite"></p>
     </section>
+
+    <section class="collection-preview" aria-labelledby="collection-preview-title"><div class="collection-preview-heading"><h2 id="collection-preview-title">From the collection</h2><a href="/collection">Browse all 3,000 →</a></div><div class="collection-preview-grid"><a class="collection-preview-item" href="/memes/success-kid"><img src="https://i.imgflip.com/1bhk.jpg" alt="Success Kid source preview" width="90" height="90" loading="lazy" decoding="async" referrerpolicy="no-referrer"><div><h3>Success Kid</h3><p>A small, satisfying victory.</p></div></a><a class="collection-preview-item" href="/memes/disaster-girl"><img src="https://i.imgflip.com/23ls.jpg" alt="Disaster Girl source preview" width="90" height="90" loading="lazy" decoding="async" referrerpolicy="no-referrer"><div><h3>Disaster Girl</h3><p>Enjoying the chaos.</p></div></a><a class="collection-preview-item" href="/memes/drake-preference"><img src="https://i.imgflip.com/30b1gx.jpg" alt="Drake Hotline Bling source preview" width="90" height="90" loading="lazy" decoding="async" referrerpolicy="no-referrer"><div><h3>Drake Hotline Bling</h3><p>This one. Definitely not that one.</p></div></a></div><p class="collection-preview-note">Source previews · transformation rights are not established.</p></section>
 
     <section id="loading" class="loading-card" hidden aria-label="Finding a meme">
       <div class="loading-image"></div>

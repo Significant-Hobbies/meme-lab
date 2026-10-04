@@ -2,11 +2,11 @@
 
 ## Direction
 
-Meme Lab uses the owner-selected **Reference Desk** system: a restrained navy, white, and cobalt application with quiet status colors and no decorative doodles. It should feel like a focused personal reference tool. The memes provide the personality; the interface stays clear, credible, and simple.
+Meme Lab uses the owner-selected **Studio** system (A, selected 2026-10-04): a restrained navy, white, and cobalt application with quiet status colors and no decorative doodles. It should feel like a focused personal reference tool. The memes provide the personality; the interface stays clear, credible, and simple.
 
 ## Hierarchy
 
-- The comment composer and **Find the meme** action are the first-viewport focus, without an oversized marketing headline.
+- The comment composer and **Find the meme** action are the first-viewport focus, in a split introduction/composer at desktop widths, without an oversized marketing headline.
 - The best match receives the strongest image and type hierarchy.
 - Up to four backups stay compact and clearly secondary in a two-column grid.
 - For multi-person comments, label each result by perspective and introduce the alternatives as other angles on the same moment.
@@ -17,7 +17,7 @@ Meme Lab uses the owner-selected **Reference Desk** system: a restrained navy, w
 ## Interaction rules
 
 - Load image previews automatically from allowlisted providers and fall back to the reference name without blocking the result.
-- Keep the input examples as complete, natural sentences in neutral reference rows rather than colorful tiles.
+- Keep complete, natural input examples in a native Try an example disclosure; use neutral reference rows rather than colorful tiles.
 - Keep result cards immediate and scannable: image, meme name, perspective, fit score, and quiet catalogue signals without generated reasoning.
 - Keep all four ranked backups visible and use their fit scores to make weak options obvious.
 - Keep one-tap feedback close to the result and state its 30-day retention.
@@ -43,4 +43,8 @@ Design-workflow artifacts live in `artifacts/design/`; the current receipt is `.
 
 ## Anna personalized editor
 
-The owner selected A · Reference Desk on 2026-10-02. Make this me inherits navy/white/cobalt navigation and compact native form controls. Desktop places upload and face-selection controls beside an original/result comparison. Narrow screens put controls first and retain a paired comparison; tablet widths retain paired previews. Enlarge previews stacks full-width images on phone/tablet and expands desktop frames; Compact previews restores the paired layout. Desktop image frames preserve the uploaded aspect ratio while capping their displayed height to keep targeting and generation together; shorter desktop windows use a smaller cap. The face outline, click-to-center and one face-size control identify the requested character; resizing preserves its center. Precise keyboard-adjustable geometry lives under a native Fine-tune disclosure spanning the full preview width. Targeting precedes consent and generation at every width. Generated results require a visible review prompt before Save to Anna, Download PNG or Share image. My personal memes is a private output library, separate from saved catalogue references; removal requires a second deliberate confirmation. Empty, loading, cancelled, provider-error, saved and unsupported-sharing states use truthful text rather than success placeholders.
+The owner selected A · Studio on 2026-10-04, refining the earlier Reference Desk direction. Make this me inherits navy/white/cobalt navigation and compact native form controls. Desktop places upload and face-selection controls beside an original/result comparison. Narrow screens place the paired comparison above a two-column upload rail, followed by targeting, consent and generation; tablet widths retain paired previews beside the rail. Enlarge previews stacks full-width images on phone/tablet and expands desktop frames; Compact previews restores the paired layout. Equal desktop image frames preserve the uploaded aspect ratio with a 338 px height cap; shorter desktop windows use a 290 px cap. Empty and ready states keep the same image geometry, so face coordinates remain aligned with the image. The face outline, click-to-center and one face-size control identify the requested character; resizing preserves its center. Precise keyboard-adjustable geometry lives under a native Fine-tune disclosure in the controls rail. Targeting precedes consent and generation at every width. Generated results require a visible review prompt before Save to Anna, Download PNG or Share image. My personal memes is a private output library, separate from saved catalogue references; removal requires a second deliberate confirmation. Empty, loading, cancelled, provider-error, saved and unsupported-sharing states use truthful text rather than success placeholders.
+
+## Studio implementation evidence
+
+The shared public entry and Anna bundle inherit the same picker source, type, navy/cobalt tokens, restrained surfaces and native disclosure behavior. The entry pairs a direct situation composer with three genuine catalogue previews. Source preview rights remain explicit. Anna retains its existing signed-in photo-remix and private-file capabilities; visual consistency does not claim feature parity. The task receipt is `.fleet/design-review-beautify-20261004.json`; rendered implementation evidence lives in `artifacts/design/beautify-20261004/`.

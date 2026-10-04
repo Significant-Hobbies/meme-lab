@@ -9,3 +9,6 @@ node_modules/
 
 # Anna CLI local identity/cache (not part of the app bundle).
 anna/.anna/
+
+# Local design-scanner reports; retained outside the published bundle.
+.fleet-local/

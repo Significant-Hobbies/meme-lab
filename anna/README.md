@@ -2,7 +2,7 @@
 
 Tracking: [#12](https://github.com/Significant-Hobbies/meme-lab/issues/12).
 
-This edition preserves the existing Reference Desk interface. It calls the existing Meme Lab semantic index through `/api/anna/shortlist`, then uses Anna's `llm.complete` for grounded contextual ranking. It requires no Executa agent, provider credentials, additional runtime dependencies. It uses Anna’s default private per-user app storage for saved reference IDs/names and a last-visit day.
+This edition shares the owner-selected Studio interface with the public picker. It calls the existing Meme Lab semantic index through `/api/anna/shortlist`, then uses Anna's `llm.complete` for grounded contextual ranking. It requires no Executa agent, provider credentials, additional runtime dependencies. It uses Anna’s default private per-user app storage for saved reference IDs/names and a last-visit day.
 
 ## Build and check
 
@@ -80,3 +80,7 @@ The recorded diagnostic reached 19/22 expected top-one and 21/22 top-five refere
 ## Current personalized candidate1.2.0
 
 Version1.2.0 supersedes the historical candidates above and is pinned for Anna review. It adds Make this me: a permitted static meme/photo, face selection, one generation, original/result comparison, private output library and PNG download/share fallback. Hosted runtime verification passed; see PERSONALIZED.md and artifacts/personalized/release-receipt.json. Review acceptance is required before release. No Store availability or qualified earnings claimed.
+
+## Studio UI release
+
+The owner selected A · Studio on 5 October 2026. The shared public entry and Anna editor now use the same navy/cobalt identity, compact controls and full-meme comparison. The build still derives the Anna picker from the public source; host-specific AI, authentication and private-file adapters remain separate. Local verification: 184 tests, package checks, actual 390/768/1440 captures and Fleet design review pass. See `../artifacts/design/beautify-20261004/implementation-review.md`. The latest frozen candidate 1.2.1 remains pending review as of the live CLI query on 5 October. Studio is not yet a frozen/public Anna version; no new hosted-generation proof is claimed by the local UI checks.

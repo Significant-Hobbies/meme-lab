@@ -11,7 +11,7 @@
   <header class="topbar">
     <a class="brand" href="#" aria-label="Meme Lab home"><span>meme</span>lab</a>
     <nav class="site-nav" aria-label="Main navigation">
-      <a class="active" href="#" aria-current="page">Try it</a>
+      <a class="active" href="#" aria-current="page">Find a reaction</a>
       <button id="open-personal" type="button">Make this me</button>
       <a href="https://memes.significanthobbies.com/collection" target="_blank" rel="noopener noreferrer">Collection</a>
       <a href="https://memes.significanthobbies.com/how-it-works" target="_blank" rel="noopener noreferrer">How it works</a>
@@ -21,29 +21,32 @@
 
   <main>
     <section class="composer" aria-labelledby="page-title">
-      <p class="eyebrow">REACTION MATCHING</p>
+      <div class="composer-intro">
+      <p class="eyebrow">THE RIGHT REACTION</p>
       <h1 id="page-title">Find the meme that fits.</h1>
       <p class="intro">Describe the whole situation. Meme Lab returns one best match and four honestly ranked alternatives.</p>
 
+      </div>
       <form id="meme-form">
-        <label for="comment">The comment</label>
+        <label for="comment">What happened?</label>
         <textarea id="comment" name="comment" maxlength="1000" required placeholder="Paste a real comment, or describe what happened…"></textarea>
         <p class="retention-note">Your comment goes to Meme Lab’s search service and your Anna AI provider. Meme Lab’s search endpoint does not store it. AI usage may consume Anna credits or your BYOK quota. Anonymous interaction counts help us improve.</p>
         <div class="form-row">
           <button id="submit" class="primary" type="submit"><span>Find the meme</span><span aria-hidden="true">→</span></button>
-          <div class="examples" aria-label="Example comments">
-            <span>Use a full example</span>
+          <details class="example-picker"><summary>Try an example</summary><div class="examples" aria-label="Example comments">
             <button type="button" data-example="I spent an hour looking for my phone while using its flashlight.">I spent an hour looking for my phone while using its flashlight.</button>
             <button type="button" data-example="My coworker said the meeting could have been an email, then scheduled a follow-up meeting about it.">My coworker said the meeting could have been an email, then scheduled a follow-up meeting about it.</button>
             <button type="button" data-example="My sibling ate the leftovers with my name on them, then asked why I looked upset.">My sibling ate the leftovers with my name on them, then asked why I looked upset.</button>
             <button type="button" data-example="They replied 'k' to the six-paragraph message I spent an hour writing.">They replied “k” to the six-paragraph message I spent an hour writing.</button>
             <button type="button" data-example="The tests finally passed after I changed nothing and ran them again.">The tests finally passed after I changed nothing and ran them again.</button>
             <button type="button" data-example="My friend just lost a family member and asked me to help write a sincere condolence message.">My friend just lost a family member and asked me to help write a sincere condolence message.</button>
-          </div>
+          </div></details>
         </div>
       </form>
       <p class="personal-entry"><button id="personal-entry" type="button">Want to be in the meme? Make this me →</button></p><p id="status" class="status" role="status" aria-live="polite"></p>
     </section>
+
+    <section class="collection-preview" aria-labelledby="collection-preview-title"><div class="collection-preview-heading"><h2 id="collection-preview-title">From the collection</h2><a href="https://memes.significanthobbies.com/collection" target="_blank" rel="noopener noreferrer">Browse all 3,000 →</a></div><div class="collection-preview-grid"><a class="collection-preview-item" target="_blank" rel="noopener noreferrer" href="https://memes.significanthobbies.com/memes/success-kid"><img src="https://i.imgflip.com/1bhk.jpg" alt="Success Kid source preview" width="90" height="90" loading="lazy" decoding="async" referrerpolicy="no-referrer"><div><h3>Success Kid</h3><p>A small, satisfying victory.</p></div></a><a class="collection-preview-item" target="_blank" rel="noopener noreferrer" href="https://memes.significanthobbies.com/memes/disaster-girl"><img src="https://i.imgflip.com/23ls.jpg" alt="Disaster Girl source preview" width="90" height="90" loading="lazy" decoding="async" referrerpolicy="no-referrer"><div><h3>Disaster Girl</h3><p>Enjoying the chaos.</p></div></a><a class="collection-preview-item" target="_blank" rel="noopener noreferrer" href="https://memes.significanthobbies.com/memes/drake-preference"><img src="https://i.imgflip.com/30b1gx.jpg" alt="Drake Hotline Bling source preview" width="90" height="90" loading="lazy" decoding="async" referrerpolicy="no-referrer"><div><h3>Drake Hotline Bling</h3><p>This one. Definitely not that one.</p></div></a></div><p class="collection-preview-note">Source previews · transformation rights are not established.</p></section>
 
 <section id="personal-editor" class="personal-editor" aria-labelledby="personal-title" hidden>
   <div class="personal-heading"><div><p class="eyebrow">YOUR FACE, SAME MEME</p><h1 id="personal-title" tabindex="-1">Make this me.</h1><p class="intro">Bring a meme and a clear photo. Put yourself in the joke, then review it before sharing.</p></div><div class="personal-heading-actions"><button id="personal-zoom" class="reference-action" type="button" aria-expanded="false" aria-controls="personal-comparison" disabled>Enlarge previews</button><button id="personal-close" class="reference-action" type="button">Back to reactions</button></div></div>
@@ -53,15 +56,15 @@
       <label class="personal-upload" for="personal-photo"><strong>Your photo</strong><span id="photo-help">One clear face. JPG, PNG or static WebP; up to 8 MB.</span><input id="personal-photo" aria-describedby="photo-help personal-status" type="file" accept="image/jpeg,image/png,image/webp" required></label>
       <img id="personal-photo-preview" class="personal-portrait" alt="Your chosen identity photo" hidden>
 
-      <button id="personal-clear" class="reference-action" type="button">Clear this editor</button>
-    </form>
-    <div class="personal-preview">
-      <div id="personal-comparison" class="personal-comparison"><figure><figcaption>Original <span id="personal-dimensions"></span></figcaption><div id="personal-original-surface" class="personal-media"><p id="personal-original-empty">Your meme goes here.<br><span>The face area will appear on the original.</span></p><img id="personal-original" alt="Original meme" hidden><div id="personal-face-area" aria-hidden="true" hidden></div></div>      </figure><figure><figcaption>Your version <span id="personal-model"></span></figcaption><div class="personal-media"><p id="personal-output-empty">You’re the punchline.<br><span>Add both images to create your version.</span></p><img id="personal-output" alt="Your AI-personalized meme" hidden></div></figure></div>
       <fieldset id="personal-region" disabled><legend>Choose the face to replace</legend><p>Click the original to center the face area, or adjust below.</p><label>Face size <input id="face-size" type="range" min="2" max="75" value="40"><output id="face-size-value">40%</output></label><details><summary>Fine-tune position and shape</summary><label>Left <input id="face-x" type="range" min="0" max="98" value="25"><output id="face-x-value">25%</output></label><label>Top <input id="face-y" type="range" min="0" max="98" value="10"><output id="face-y-value">10%</output></label><label>Width <input id="face-width" type="range" min="2" max="75" value="40"><output id="face-width-value">40%</output></label><label>Height <input id="face-height" type="range" min="2" max="75" value="40"><output id="face-height-value">40%</output></label></details></fieldset>
       <div class="personal-generation">      <label class="personal-consent"><input id="personal-consent" form="personal-form" type="checkbox" required><span>I can use and edit these images, and have permission to use this person’s photo.</span></label>
       <button id="personal-generate" form="personal-form" class="primary" type="submit" disabled>Generate my meme <span aria-hidden="true">→</span></button>
       <p class="personal-note">One image request uses your Anna image quota. Photos go to Anna and its image provider. This is a new AI remix; review likeness, captions and layout.</p>
 </div>
+      <button id="personal-clear" class="reference-action" type="button">Clear this editor</button>
+    </form>
+    <div class="personal-preview">
+      <div id="personal-comparison" class="personal-comparison"><figure><figcaption>Original <span id="personal-dimensions"></span></figcaption><div class="personal-mat"><div id="personal-original-surface" class="personal-media"><p id="personal-original-empty">Your meme goes here.<br><span>The face area will appear on the original.</span></p><img id="personal-original" alt="Original meme" hidden><div id="personal-face-area" aria-hidden="true" hidden></div></div></div>      </figure><figure><figcaption>Your version <span id="personal-model"></span></figcaption><div class="personal-mat"><div class="personal-media"><p id="personal-output-empty">You’re the punchline.<br><span>Add both images to create your version.</span></p><img id="personal-output" alt="Your AI-personalized meme" hidden></div></div></figure></div>
       <p id="personal-status" class="personal-status" role="status" aria-live="polite"></p>
       <div id="personal-output-actions" class="reference-actions" hidden><button id="personal-save" class="reference-action" type="button">Save to Anna</button><button id="personal-download" class="reference-action" type="button">Download PNG</button><button id="personal-share" class="reference-action" type="button">Share image</button><p class="personal-note">Downloading also saves privately to Anna.</p></div>
       <p id="personal-saved-note" class="personal-note" hidden>Saved privately in your Anna account. Sharing an image is a separate action.</p>
