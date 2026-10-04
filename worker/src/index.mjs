@@ -2,6 +2,7 @@ import {catalogue} from './catalogue.stage3000.generated.mjs';
 import {createGatewayClassifierFetch,hasMultiplePerspectives,humourBelongs,needsSeriousHandling,rankCandidates,rankCandidatesByPerspective,requiresFactualAnswer} from './classification.mjs';
 import {MAX_RECOMMENDATIONS,presentSelection,selectionFromRanking} from './recommendation.mjs';
 import {retrieveCandidates} from './retrieval.mjs';
+import {classifierUnavailable,reportPickerHealth} from './recommendation-health.mjs';
 import {BudgetUnavailableError} from './ai-budget.mjs';
 import {endpointFor,pingFor} from './ping.mjs';
 import {annaEvent} from './anna-events.mjs';
@@ -321,7 +322,8 @@ async function recommend(request,env,ctx) {
           console.error(JSON.stringify({event:'recommendation_store',status:'error',error:safeError(storeError)}));
         }
         console.error(JSON.stringify({event:'classifier_gate',status:classifier_gate,error:safeError(error)}));
-        return json({...recommendation,feedback_enabled});
+        reportPickerHealth(env,ctx,'recommendation.degraded',{route:'/api/recommend',classifier_gate,duration_ms:Date.now()-started});
+        return json({...recommendation,feedback_enabled,degraded:true});
       }
     }
     let ranked;
@@ -336,7 +338,7 @@ async function recommend(request,env,ctx) {
     }
     catch(error) {
       console.error(JSON.stringify({event:'classifier_rank',status:'fallback',mode:perspectiveEligible?'perspective':'general',error:safeError(error)}));
-      if(isClassifierThrottled(error)) {
+      if(classifierUnavailable(error)) {
         ranked=retrievalFallback(shortlist);
         ranking_mode='retrieval_fallback';
         ranking_model=RETRIEVAL_FALLBACK_MODEL;
@@ -347,7 +349,7 @@ async function recommend(request,env,ctx) {
         }
         catch(fallbackError) {
           console.error(JSON.stringify({event:'classifier_rank',status:'fallback',mode:'general',error:safeError(fallbackError)}));
-          if(isClassifierThrottled(fallbackError)) {
+          if(classifierUnavailable(fallbackError)) {
             ranked=retrievalFallback(shortlist);
             ranking_mode='retrieval_fallback';
             ranking_model=RETRIEVAL_FALLBACK_MODEL;
@@ -358,7 +360,9 @@ async function recommend(request,env,ctx) {
       }
     }
     const selection=selectionFromRanking(ranked);
-    console.log(JSON.stringify({event:'recommendation',status:'ok',duration_ms:Date.now()-started,decision:selection.decision,confidence:selection.confidence,candidate_count:selection.candidates.length,classifier_gate,classifier_ranked:true,ranking_mode}));
+    const degraded=ranking_mode==='retrieval_fallback'||ranking_mode==='general_fallback';
+    if(degraded) reportPickerHealth(env,ctx,'recommendation.degraded',{route:'/api/recommend',ranking_mode,classifier_gate,duration_ms:Date.now()-started});
+    console.log(JSON.stringify({event:'recommendation',status:degraded?'degraded':'ok',duration_ms:Date.now()-started,decision:selection.decision,confidence:selection.confidence,candidate_count:selection.candidates.length,classifier_gate,classifier_ranked:ranking_mode!=='retrieval_fallback',ranking_mode}));
     const perspectives=new Map((ranked??[]).filter(record=>record.perspective).map(record=>[record.id,{perspective:record.perspective,perspective_label:record.perspective_label}]));
     const recommendation=presentSelection(selection,{perspectives});
     let feedback_enabled=true;
@@ -368,7 +372,7 @@ async function recommend(request,env,ctx) {
       console.error(JSON.stringify({event:'recommendation_store',status:'error',error:safeError(error)}));
     }
     ctx?.waitUntil(pingFor(env)('recommendation.created',{title:`decision: ${selection.decision}`,props:{decision:selection.decision,confidence:selection.confidence,candidates:selection.candidates.length,ranking_mode,classifier_gate}}));
-    return json({...recommendation,feedback_enabled});
+    return json({...recommendation,feedback_enabled,degraded,ranking_mode});
   } catch(error) {
     if(error instanceof BudgetUnavailableError) return json({error:'Meme matching is temporarily unavailable. Try again shortly.'},503,{'Retry-After':'60'});
     console.error(JSON.stringify({event:'recommendation',status:'error',duration_ms:Date.now()-started,error:safeError(error)}));
@@ -382,6 +386,7 @@ function secureAsset(response) {
 }
 
 function queueEndpointMeasurement(request,env,ctx,route,status_code,startedAt) {
+  if(status_code>=500) reportPickerHealth(env,ctx,'endpoint.failed',{method:request.method,route,status_code,duration_ms:Date.now()-startedAt});
   if(!env.APP_HEALTH_INGEST_KEY||typeof ctx?.waitUntil!=='function') return;
   ctx.waitUntil(endpointFor(env)({
     method:request.method,
