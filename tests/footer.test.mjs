@@ -14,8 +14,8 @@ test('public HTML permits embedded footer images while retaining script restrict
     return [name, sources];
   }));
   assert.deepEqual(directives['img-src'], ["'self'", 'data:', 'https://i.imgflip.com', 'https://api.memegen.link', 'https://media.giphy.com']);
-  assert.deepEqual(directives['script-src'], ["'self'", 'https://sassmaker.com', 'https://health.sassmaker.com']);
-  assert.deepEqual(directives['connect-src'], ["'self'", 'https://ingest.sassmaker.com', 'https://api.sassmaker.com']);
+  assert.deepEqual(directives['script-src'], ["'self'", 'https://sassmaker.com', 'https://health.sassmaker.com', 'https://static.cloudflareinsights.com']);
+  assert.deepEqual(directives['connect-src'], ["'self'", 'https://ingest.sassmaker.com', 'https://api.sassmaker.com', 'https://sassmaker.com', 'https://cloudflareinsights.com']);
   assert(!directives['script-src'].includes('data:'));
   assert(!directives['script-src'].includes("'unsafe-eval'"));
   assert.deepEqual(directives['object-src'], ["'none'"]);
