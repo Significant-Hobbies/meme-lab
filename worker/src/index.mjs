@@ -326,14 +326,16 @@ async function recommend(request,env,ctx) {
         return json({...recommendation,feedback_enabled,degraded:true});
       }
     }
+    // Managed inference scores the full 30-candidate batch, within a bounded deadline.
+    const rankingOptions={...classifierOptions,timeoutMs:15000};
     let ranked;
     let ranking_mode='general';
     let ranking_model=CLASSIFIER_MODEL;
     const perspectiveEligible=hasMultiplePerspectives(comment);
     try {
       ranked=perspectiveEligible
-        ? await rankCandidatesByPerspective(comment,shortlist,{...classifierOptions,limit:Math.min(MAX_RECOMMENDATIONS,shortlist.length)})
-        : await rankCandidates(comment,shortlist,{...classifierOptions,limit:Math.min(MAX_RECOMMENDATIONS,shortlist.length)});
+        ? await rankCandidatesByPerspective(comment,shortlist,{...rankingOptions,limit:Math.min(MAX_RECOMMENDATIONS,shortlist.length)})
+        : await rankCandidates(comment,shortlist,{...rankingOptions,limit:Math.min(MAX_RECOMMENDATIONS,shortlist.length)});
       if(perspectiveEligible) ranking_mode='perspective';
     }
     catch(error) {
@@ -344,7 +346,7 @@ async function recommend(request,env,ctx) {
         ranking_model=RETRIEVAL_FALLBACK_MODEL;
       } else if(perspectiveEligible) {
         try {
-          ranked=await rankCandidates(comment,shortlist,{...classifierOptions,limit:Math.min(MAX_RECOMMENDATIONS,shortlist.length)});
+          ranked=await rankCandidates(comment,shortlist,{...rankingOptions,limit:Math.min(MAX_RECOMMENDATIONS,shortlist.length)});
           ranking_mode='general_fallback';
         }
         catch(fallbackError) {
