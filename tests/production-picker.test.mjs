@@ -36,7 +36,7 @@ test('gateway retries a transient 502 once and retains the original abort signal
   assert.equal(calls,2);
 });
 
-test('gateway never retries rate limits, client errors, malformed scores or an aborted deadline',async()=>{
+test('gateway does not retry admission errors or expired deadlines and bounds invalid-output retries',async()=>{
   for(const status of [429,400]) {
     let calls=0;
     const adapter=createGatewayClassifierFetch({fetch:async()=>{calls++;return new Response(null,{status});}});
@@ -46,9 +46,9 @@ test('gateway never retries rate limits, client errors, malformed scores or an a
   let calls=0;
   const invalid=createGatewayClassifierFetch({fetch:async()=>{calls++;return completion([{label_index:4,scores:[1]}]);}});
   await assert.rejects(invalid('',requestInit()),/invalid category scores/);
-  assert.equal(calls,1);
+  assert.equal(calls,2);
   await assert.rejects(invalid('',{...requestInit(),signal:AbortSignal.abort()}),{name:'AbortError'});
-  assert.equal(calls,1);
+  assert.equal(calls,2);
   let unavailableCalls=0;
   const unavailable=createGatewayClassifierFetch({fetch:async()=>{unavailableCalls++;return new Response(null,{status:502});}});
   assert.equal((await unavailable('',requestInit())).status,502);
@@ -99,14 +99,16 @@ test('upstream 502 returns an honest low-confidence semantic fallback and logs d
   } finally {console.warn=original;}
 });
 
-test('invalid ranking output remains a 503 and gets a terminal failure event',async()=>{
-  const errors=[];const original=console.error;console.error=message=>errors.push(JSON.parse(message));
+test('invalid ranking output uses only the honest retrieval fallback and logs degradation',async()=>{
+  const warnings=[];const original=console.warn;console.warn=message=>warnings.push(JSON.parse(message));
   try {
     const response=await worker.fetch(recommend('Private fixture situation.'),{...testEnv,CLASSIFIER_FETCH:async()=>Response.json({results:[]})});
-    assert.equal(response.status,503);
-    assert(errors.some(event=>event.event==='endpoint.failed'&&event.status_code===503));
-    assert.doesNotMatch(JSON.stringify(errors),/Private fixture situation/);
-  } finally {console.error=original;}
+    assert.equal(response.status,200);
+    const body=await response.json();
+    assert.equal(body.degraded,true);assert.equal(body.confidence,'low');assert.equal(body.ranking_mode,'retrieval_fallback');
+    assert(warnings.some(event=>event.event==='recommendation.degraded'));
+    assert.doesNotMatch(JSON.stringify(warnings),/Private fixture situation/);
+  } finally {console.warn=original;}
 });
 
 test('serious input abstains during a ranking-provider outage',async()=>{
