@@ -1,9 +1,27 @@
 # Meme Lab project status
 
-**Updated:** 2 October 2026
+**Updated:** 4 October 2026
 **Lifecycle:** Live personal meme picker with the corrected 3,000-item meme-and-GIF catalogue and crawlable catalogue pages.
 
 ## Live product
+
+### Anna review correction: 1.2.1 candidate
+
+Anna rejected 1.2.0 for a missing Store logo and a reported image-generation
+failure. The existing wordmark is now uploaded as the listing logo. The image
+engine normalizes both references to a bounded square canvas, maps face
+coordinates into it and removes only known padding afterward. This avoids the
+observed provider's aspect-ratio drift without weakening output validation or
+adding automatic retries.
+
+The owner's existing default Cloud Agent completed actual upload, generation,
+private save, full reload and download. The saved download matched the original
+output byte for byte (896 × 1152 PNG); both captions remained visible. One final
+fixture succeeded after three deliberate diagnostic failures; this is not a
+reliability rate. The reviewer's exact generic provider error remains
+unreproduced. See [Cloud review evidence](anna/artifacts/personalized/cloud-review-20261004.md).
+184 tests, package/catalogue checks and strict Anna validation pass.
+Version 1.2.1 is prepared for re-review; public Store approval remains external.
 
 ### Anna personalized memes: 1.2.0 submitted for Store review
 

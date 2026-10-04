@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {PersonalMemeJob,validateImageFile,validateRegion,remoteImageUrl,cropRegion,shareMeme} from '../anna/personalize.mjs';
-import {blendFace,faceAlpha,faceCrop,validateDimensions} from '../anna/image-tools.mjs';
+import {blendFace,faceAlpha,faceCrop,validateDimensions,squarePlacement} from '../anna/image-tools.mjs';
 const blob=()=>new Blob([new Uint8Array(40)],{type:'image/png'});
 const region={x:.2,y:.2,width:.3,height:.4};
 function fixture() {
@@ -28,6 +28,49 @@ test('quota/permission/provider failure is not retried and never produces a resu
   for(const code of ['APP_QUOTA_EXCEEDED','APP_NOT_GRANTED','APP_PROVIDER_ERROR']){
     const {calls,args}=fixture();let attempts=0;args.anna.image.generate=async()=>{attempts++;throw Object.assign(new Error('signed private provider detail'),{code});};
     await assert.rejects(new PersonalMemeJob().generate(args),{code});assert.equal(attempts,1);assert.equal(calls.length,2);
+  }
+});
+test('whole-meme requests preserve portrait and landscape canvases without extra generations',async()=>{
+  for(const [width,height,expected] of [[896,1152,'796x1024'],[1200,800,'1024x683'],[512,512,'1024x1024']]){
+    const {calls,args}=fixture();
+    args.prepare=async input=>({blob:input,width,height});
+    await new PersonalMemeJob().generate(args);
+    const requests=calls.filter(c=>c[0]==='generate');
+    assert.equal(requests.length,1);
+    assert.equal(requests[0][1].size,expected);
+    assert.match(requests[0][1].prompt,new RegExp(width+':'+height+' aspect ratio'));
+  }
+});
+test('invalid decoded dimensions fail before uploads or image quota',async()=>{
+  const {calls,args}=fixture();
+  args.prepare=async input=>({blob:input,width:NaN,height:100});
+  await assert.rejects(new PersonalMemeJob().generate(args),/dimensions/);
+  assert.equal(calls.length,0);
+});
+test('oversized normalized reference fails before either upload',async()=>{
+  const {calls,args}=fixture();
+  args.prepare=async input=>({blob:input,referenceBlob:new Blob([new Uint8Array(8*1024*1024+1)],{type:'image/png'}),width:100,height:80});
+  await assert.rejects(new PersonalMemeJob().generate(args),/8 MB/);assert.equal(calls.length,0);
+});
+test('experimental face-patch retains its square reference canvas',async()=>{
+  const {calls,args}=fixture();
+  args.prepare=async input=>({blob:input,width:1200,height:800});
+  await new PersonalMemeJob().generate({...args,mode:'face-patch'});
+  assert.equal(calls.find(c=>c[0]==='generate')[1].size,'1024x1024');
+});
+test('padded whole-meme references keep target geometry and recover the original canvas without stretching',async()=>{
+  for(const [width,height] of [[896,1152],[1200,800],[512,512]]){
+    const frame=squarePlacement(width,height);
+    assert.equal(frame.width/frame.height,width/height);
+    assert.equal(frame.x*2+frame.width,1);assert.equal(frame.y*2+frame.height,1);
+    const {calls,args}=fixture();
+    args.prepare=async(input,options)=>({blob:input,width,height,...(options.role==='template'?{frame,referenceBlob:blob()}: {})});
+    const output=await new PersonalMemeJob().generate(args);
+    const request=calls.find(c=>c[0]==='generate')[1];
+    assert.equal(request.size,'1024x1024');
+    assert.match(request.prompt,/including identical padding/);
+    assert.ok(request.prompt.includes('x='+(frame.x+region.x*frame.width).toFixed(3)));
+    assert.equal(output.width,width);assert.equal(output.height,height);
   }
 });
 test('missing capability, failed second upload and malformed model output do not fake success',async()=>{

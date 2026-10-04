@@ -44,6 +44,11 @@ export function faceCrop(width,height,region) {
   const top=Math.max(0,Math.min(height-side,(r.y+r.height/2)*height-side/2));
   return {x:left/width,y:top/height,width:side/width,height:side/height};
 }
+export function squarePlacement(width,height) {
+  validateDimensions(width,height);
+  const side=Math.max(width,height);
+  return {x:(side-width)/(2*side),y:(side-height)/(2*side),width:width/side,height:height/side};
+}
 export async function prepareImage(blob,{role,region,mode='format'}) {
   validateImageFile(blob);await assertStatic(blob);
   const bitmap=await createImageBitmap(blob);
@@ -55,10 +60,28 @@ export async function prepareImage(blob,{role,region,mode='format'}) {
     canvas.getContext('2d').drawImage(bitmap,0,0,canvas.width,canvas.height);
     const normalized=await canvasBlob(canvas);
     if(normalized.size>MAX_IMAGE_BYTES)throw new Error('The decoded image is too large. Choose a smaller image.');
+    if(role==='photo') {
+      // Providers can adopt the last reference's aspect ratio despite size.
+      // Give both references the same canvas without cropping the identity.
+      const frame=squarePlacement(canvas.width,canvas.height);
+      const reference=document.createElement('canvas');reference.width=reference.height=Math.max(canvas.width,canvas.height);
+      const ctx=reference.getContext('2d');ctx.fillStyle='#000';ctx.fillRect(0,0,reference.width,reference.height);
+      ctx.drawImage(canvas,frame.x*reference.width,frame.y*reference.height,frame.width*reference.width,frame.height*reference.height);
+      const referenceBlob=await canvasBlob(reference);
+      if(referenceBlob.size>MAX_IMAGE_BYTES)throw new Error('The decoded photo is too large. Choose a smaller photo.');
+      return {blob:normalized,referenceBlob,width:canvas.width,height:canvas.height};
+    }
     if(role==='template'&&mode==='face-patch') {
       const crop=faceCrop(canvas.width,canvas.height,region),reference=document.createElement('canvas');reference.width=reference.height=Math.min(1536,Math.round(crop.width*canvas.width));
       reference.getContext('2d').drawImage(canvas,crop.x*canvas.width,crop.y*canvas.height,crop.width*canvas.width,crop.height*canvas.height,0,0,reference.width,reference.height);
       return {blob:normalized,referenceBlob:await canvasBlob(reference),crop,width:canvas.width,height:canvas.height};
+    }
+    if(role==='template'&&mode==='format') {
+      const frame=squarePlacement(canvas.width,canvas.height);
+      const reference=document.createElement('canvas');reference.width=reference.height=Math.min(1536,Math.max(canvas.width,canvas.height));
+      const ctx=reference.getContext('2d');ctx.fillStyle='#000';ctx.fillRect(0,0,reference.width,reference.height);
+      ctx.drawImage(canvas,frame.x*reference.width,frame.y*reference.height,frame.width*reference.width,frame.height*reference.height);
+      return {blob:normalized,referenceBlob:await canvasBlob(reference),frame,width:canvas.width,height:canvas.height};
     }
     return {blob:normalized,width:canvas.width,height:canvas.height};
   } finally {bitmap.close();}
@@ -83,11 +106,13 @@ export async function composeMeme({original,generatedUrl,region,mode='format'}) 
     validateImageFile(blob);await assertStatic(blob);
     generatedBitmap=await createImageBitmap(blob);validateDimensions(generatedBitmap.width,generatedBitmap.height);
     if(mode==='face-patch'&&Math.abs(generatedBitmap.width/generatedBitmap.height-1)>.05)throw Object.assign(new Error('Anna changed the face crop’s proportions.'),{code:'output_format_mismatch'});
-    if(mode==='format'&&Math.abs((generatedBitmap.width/generatedBitmap.height)/(original.width/original.height)-1)>.15)throw Object.assign(new Error('Anna changed the meme format’s proportions too much.'),{code:'output_format_mismatch'});
+    const expectedAspect=original.frame?1:original.width/original.height;
+    if(mode==='format'&&Math.abs((generatedBitmap.width/generatedBitmap.height)/expectedAspect-1)>.15)throw Object.assign(new Error('Anna changed the meme format’s proportions too much.'),{code:'output_format_mismatch'});
     if(!['format','face-patch'].includes(mode))throw new Error('Unsupported image workflow.');
     const canvas=document.createElement('canvas');canvas.width=original.width;canvas.height=original.height;const ctx=canvas.getContext('2d',{willReadFrequently:true});
     if(mode==='format'){
-      ctx.drawImage(generatedBitmap,0,0,canvas.width,canvas.height);
+      const frame=original.frame||{x:0,y:0,width:1,height:1};
+      ctx.drawImage(generatedBitmap,frame.x*generatedBitmap.width,frame.y*generatedBitmap.height,frame.width*generatedBitmap.width,frame.height*generatedBitmap.height,0,0,canvas.width,canvas.height);
       return await canvasBlob(canvas);
     }
     originalBitmap=await createImageBitmap(original.blob);

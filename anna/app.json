@@ -1,10 +1,11 @@
 {
   "slug": "meme-lab",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "name": "Meme Lab",
   "tagline": "Find your reaction. Put yourself in the meme.",
   "description": "Describe a situation and find one best reaction plus four honestly ranked alternatives from a 3,000-reference catalogue. Share stable source-reference links without your comment and keep useful reactions privately in your Anna account. Serious requests receive a sincere no-meme response.\n\nMake this me: upload a static meme you can edit and a clear photo you have permission to use. Choose the face, generate one personal remix through Anna, and compare the original and result before sharing. AI can change likeness, captions and scene details; this is not a pixel-exact face swap. Save generated PNGs privately, download them through Anna, or share image files where your browser supports it. Download also saves privately to Anna. Animated meme editing is not supported. Catalogue media are source previews, not an automatic editing-template library; provenance does not establish redistribution or transformation rights.\n\nComments go to Meme Lab's search service and your Anna AI provider; the search endpoint does not store comments. Image uploads go directly to Anna and its image provider after browser normalization and metadata stripping. Clearing the editor removes local previews, not remote source uploads. Anna and provider retention policies apply. Generated outputs use your private own-app file storage; removing an output does not remove source uploads or recipient copies. Anonymous client-reported event names contain no photos, situations or prompts and do not establish qualified users or earnings. Anna model and file usage can consume your credits, BYOK or storage quota. No separate Meme Lab subscription or automatic paid-provider fallback.",
   "category": "entertainment",
+  "logo_file": "artifacts/store-logo.png",
   "homepage_url": "https://memes.significanthobbies.com",
   "support_url": "https://github.com/Significant-Hobbies/meme-lab/issues",
   "privacy_url": "https://memes.significanthobbies.com/anna-privacy.html",

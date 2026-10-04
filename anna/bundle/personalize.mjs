@@ -32,6 +32,14 @@ export function cropRegion(region,crop) {
   if(mapped.x<-.000001||mapped.y<-.000001||mapped.width<=0||mapped.height<=0||mapped.x+mapped.width>1.000001||mapped.y+mapped.height>1.000001)throw new Error('Choose a tighter face area.');
   return mapped;
 }
+// Keep generation near 1K while preserving the template's canvas. Never request
+// a square whole-image remix and then reject it as a distorted portrait.
+export function generationSize(width,height,{mode='format'}={}) {
+  if(!Number.isInteger(width)||!Number.isInteger(height)||width<1||height<1||width>8192||height>8192||width*height>16_000_000)throw new Error('Invalid meme image dimensions.');
+  if(mode==='face-patch')return '1024x1024';
+  const scale=1024/Math.max(width,height);
+  return `${Math.max(1,Math.round(width*scale))}x${Math.max(1,Math.round(height*scale))}`;
+}
 export function imageError(error) {
   const code=String(error?.code||'');
   if(code==='image_delivery_failed')return 'Anna created an image, but the app could not load it. Reopen Meme Lab inside Anna and try again; the completed generation may have used quota.';
@@ -55,7 +63,10 @@ export class PersonalMemeJob {
       onStage('Preparing images');
       const input=await prepare(photo,{role:'photo'});fresh();
       const base=await prepare(template,{role:'template',region:area,mode});fresh();
-      const prompt=identityPrompt(mode==='face-patch'?cropRegion(area,base.crop):area,{mode});
+      validateImageFile(input.referenceBlob||input.blob);validateImageFile(base.referenceBlob||base.blob);
+      const size=generationSize(base.width,base.height,{mode:base.frame?'face-patch':mode});
+      const target=base.frame?{x:base.frame.x+area.x*base.frame.width,y:base.frame.y+area.y*base.frame.height,width:area.width*base.frame.width,height:area.height*base.frame.height}:area;
+      const prompt=identityPrompt(mode==='face-patch'?cropRegion(area,base.crop):target,{mode})+(base.frame?' Reference 1 is a SQUARE canvas with black padding around the meme. Return the entire square canvas, including identical padding. Do not remove the padding, crop, zoom or rearrange the meme. The app removes only this padding afterward.':mode==='format'?` Output canvas: ${size} pixels, matching reference 1's ${base.width}:${base.height} aspect ratio. Preserve the full canvas; do not make it square.`:'');
       const upload=async(asset,purpose)=>{
         const content_b64=await encode(asset.referenceBlob||asset.blob);fresh();
         const result=await anna.upload.inline({filename:purpose==='image_input'?'portrait.png':'template.png',mime_type:asset.blob.type,content_b64,purpose});fresh();
@@ -66,7 +77,7 @@ export class PersonalMemeJob {
       const photoUrl=await upload(input,'image_input');
       onStage('Creating your face in the meme');
       // One user-requested image, no automatic retry and no separate provider.
-      const result=await anna.image.generate({prompt,n:1,reference_image_urls:[templateUrl,photoUrl],size:'1024x1024',modelPreferences:{hints:[{name:'Nano Banana 2'},{name:'Nano Banana Pro'},{name:'Nano Banana'},{name:'GPT Image'}]}},{timeoutMs:120000});fresh();
+      const result=await anna.image.generate({prompt,n:1,reference_image_urls:[templateUrl,photoUrl],size,modelPreferences:{hints:[{name:'Nano Banana 2'},{name:'Nano Banana Pro'},{name:'Nano Banana'},{name:'GPT Image'}]}},{timeoutMs:120000});fresh();
       if(!Array.isArray(result?.images)||result.images.length!==1)throw new Error('Anna did not return one image.');
       const generated=remoteImageUrl(result.images[0]?.url);
       onStage(mode==='format'?'Preparing your meme for review':'Preserving the original meme around your face');
