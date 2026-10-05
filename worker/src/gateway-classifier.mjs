@@ -51,6 +51,7 @@ async function decodeClassifierResponse(response,inputs,labels,labelIndexes) {
     throw new Error('Free AI classifier returned invalid structured output.');
   }
   if(!Array.isArray(parsed?.results)||parsed.results.length!==inputs.length) throw new Error('Free AI classifier returned an unexpected result count.');
+  const ordinalFit=labels.length===5&&labels.every((label,index)=>typeof label==='string'&&label.startsWith(`${index} | `));
   const results=parsed.results.map(result=>{
     // Accept previous object-shaped answers too; validate either representation
     // before exposing any scores to ranking.
@@ -58,7 +59,12 @@ async function decodeClassifierResponse(response,inputs,labels,labelIndexes) {
     if(!Number.isInteger(result?.label_index)||!labelIndexes.includes(result.label_index)||!Array.isArray(result.scores)||result.scores.length!==labels.length||result.scores.some(score=>typeof score!=='number'||!Number.isFinite(score)||score<0||score>1)) throw new Error('Free AI classifier returned invalid category scores.');
     const total=result.scores.reduce((sum,score)=>sum+score,0);
     if(total<=0) throw new Error('Free AI classifier returned empty category scores.');
-    return {label:labels[result.label_index],scores:Object.fromEntries(labels.map((label,index)=>[label,result.scores[index]/total]))};
+    // The redundant generated index sometimes contradicts its own scores.
+    // Derive ordinal fit from the validated distribution; an exact tie keeps
+    // the lower fit level. Preserve the separate safety gate's categorical
+    // decision and the generic perspective contract.
+    const winner=ordinalFit?result.scores.reduce((best,score,index)=>score>result.scores[best]?index:best,0):result.label_index;
+    return {label:labels[winner],scores:Object.fromEntries(labels.map((label,index)=>[label,result.scores[index]/total]))};
   });
   return Response.json({results},{status:200});
 }
