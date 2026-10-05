@@ -16,7 +16,9 @@ test('gateway supports the 30-label perspective contract and rejects oversized i
   const adapter=createGatewayClassifierFetch({fetch:async request=>{
     calls++;
     assert.equal(request.headers.get('x-gateway-project-id'),'meme-lab');
-    assert.equal((await request.json()).response_format.type,'json_object');
+    const body=await request.json();
+    assert.equal(body.response_format.type,'json_schema');
+    assert.equal(body.response_format.json_schema.strict,true);
     return completion([{label_index:29,scores:Array.from({length:30},(_,index)=>index/30)}]);
   }});
   const response=await adapter('',requestInit(30));

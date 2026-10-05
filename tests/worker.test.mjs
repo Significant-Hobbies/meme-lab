@@ -362,7 +362,7 @@ test('classifier gate only runs for high-precision serious cues',async()=>{
   assert.equal(await humourBelongs('Please help me after a loss.',{fetchImpl}),false);
 });
 
-test('managed classifier uses attributed Free AI JSON mode and preserves validated response shape',async()=>{
+test('managed classifier uses attributed Free AI schema output and preserves validated response shape',async()=>{
   let captured;
   const fetchImpl=createGatewayClassifierFetch({async fetch(request){captured=request;return Response.json({choices:[{message:{content:JSON.stringify({results:[{label_index:2,scores:FIT_LABELS.map((_,index)=>index/4)}]})}}]});}});
   const response=await fetchImpl('https://classifier.dev/v1/classify',{method:'POST',signal:AbortSignal.timeout(3000),body:JSON.stringify({inputs:['comment'],labels:FIT_LABELS.map(({label})=>label),instructions:'keep roles'})});
@@ -371,7 +371,8 @@ test('managed classifier uses attributed Free AI JSON mode and preserves validat
   assert.equal(captured.url,'https://fleet-gateway.internal/v1/chat/completions');
   assert.equal(captured.headers.get('x-gateway-project-id'),'meme-lab');
   assert.equal(gatewayBody.model,'auto');
-  assert.equal(gatewayBody.response_format.type,'json_object');
+  assert.equal(gatewayBody.response_format.type,'json_schema');
+  assert.equal(gatewayBody.response_format.json_schema.strict,true);
   assert.equal(gatewayBody.stream,false);
   assert.equal(gatewayBody.messages[0].content.includes('keep roles'),true);
   assert.equal(result.results[0].label,FIT_LABELS[4].label);

@@ -13,7 +13,16 @@ test('compact full-batch answers preserve all ordinal probabilities and input or
     calls++;
     const body=await request.json();
     assert.equal(body.model,'auto');assert.equal(body.max_tokens,2000);
-    assert.deepEqual(body.response_format,{type:'json_object'});
+    assert.equal(body.response_format.type,'json_schema');
+    assert.equal(body.response_format.json_schema.strict,true);
+    const schema=body.response_format.json_schema.schema;
+    assert.deepEqual(schema.required,['results']);assert.equal(schema.additionalProperties,false);
+    assert.equal(schema.properties.results.minItems,30);assert.equal(schema.properties.results.maxItems,30);
+    assert.equal(schema.properties.results.items.minItems,6);assert.equal(schema.properties.results.items.maxItems,6);
+    assert.equal(schema.properties.results.items.items.type,'number');
+    assert.equal(schema.properties.results.items.prefixItems,undefined);
+    assert.equal(request.headers.get('x-gateway-force-provider'),null);
+    assert.equal(request.headers.get('x-gateway-force-model'),null);
     return completion(tuples);
   }});
   const body=await (await adapter('',init())).json();
@@ -26,7 +35,13 @@ test('compact full-batch answers preserve all ordinal probabilities and input or
 
 test('compact perspective answers retain all 30 label scores',async()=>{
   const labels=Array.from({length:30},(_,i)=>`candidate ${i}`);
-  const adapter=createGatewayClassifierFetch({fetch:async()=>completion([[29,...labels.map((_,i)=>i===29?1:0)]])});
+  const adapter=createGatewayClassifierFetch({fetch:async request=>{
+    const body=await request.json();const schema=body.response_format.json_schema.schema;
+    assert.equal(schema.properties.results.maxItems,1);
+    assert.equal(schema.properties.results.items.maxItems,31);
+    assert.equal(schema.properties.results.items.items.maximum,29);
+    return completion([[29,...labels.map((_,i)=>i===29?1:0)]]);
+  }});
   const body=await (await adapter('',{body:JSON.stringify({inputs:['comment'],labels})})).json();
   assert.equal(body.results[0].label,'candidate 29');
   assert.equal(Object.keys(body.results[0].scores).length,30);

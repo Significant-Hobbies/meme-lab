@@ -10,9 +10,11 @@ export function createGatewayClassifierFetch(binding,projectId='meme-lab') {
     const labelIndexes=labels.map((_,index)=>index);
     // Tuples avoid repeating field names for every candidate in the bounded
     // completion. Decode them back into the unchanged classifier contract.
-    const schema={type:'object',additionalProperties:false,required:['results'],properties:{results:{type:'array',minItems:inputs.length,maxItems:inputs.length,items:{type:'array',minItems:labels.length+1,maxItems:labels.length+1,prefixItems:[{type:'integer',enum:labelIndexes}],items:{type:'number',minimum:0,maximum:1}}}}};
+    // Uniform numeric arrays avoid tuple-only schema keywords across providers.
+    // The decoder still requires an integer category and probabilities in [0,1].
+    const schema={type:'object',additionalProperties:false,required:['results'],properties:{results:{type:'array',minItems:inputs.length,maxItems:inputs.length,items:{type:'array',minItems:labels.length+1,maxItems:labels.length+1,items:{type:'number',minimum:0,maximum:Math.max(1,labels.length-1)}}}}};
     const prompt=`Classify each input independently. Return compact JSON without indentation or commentary. Each results entry is one flat array [label_index,score_0,score_1,...], with exactly ${labels.length+1} numbers. Return label_index using only the listed label indexes. Return scores in the same order as the labels; each score must be between 0 and 1 and scores must form a probability distribution summing to 1, not all be equal. Use at most three decimal places per score. label_index must identify the highest-probability label. Preserve input order. Follow this output shape: ${JSON.stringify(schema)}\nInstructions: ${String(source.instructions||'').slice(0,3000)}\nLabels by index: ${JSON.stringify(labels.map((label,index)=>({index,label})))}\nInputs: ${JSON.stringify(inputs)}`;
-    const body=JSON.stringify({model:'auto',stream:false,response_format:{type:'json_object'},messages:[{role:'user',content:prompt}],max_tokens:2000});
+    const body=JSON.stringify({model:'auto',stream:false,response_format:{type:'json_schema',json_schema:{name:'classifier_results',strict:true,schema}},messages:[{role:'user',content:prompt}],max_tokens:2000});
     for(let attempt=0;attempt<2;attempt++) {
       init.signal?.throwIfAborted();
       try {
