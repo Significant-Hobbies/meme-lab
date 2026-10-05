@@ -374,7 +374,7 @@ test('managed classifier uses attributed Free AI JSON mode and preserves validat
   assert.equal(gatewayBody.response_format.type,'json_object');
   assert.equal(gatewayBody.stream,false);
   assert.equal(gatewayBody.messages[0].content.includes('keep roles'),true);
-  assert.equal(result.results[0].label,FIT_LABELS[2].label);
+  assert.equal(result.results[0].label,FIT_LABELS[4].label);
   assert.deepEqual(result.results[0].scores,Object.fromEntries(FIT_LABELS.map(({label},index)=>[label,index/10])));
 });
 

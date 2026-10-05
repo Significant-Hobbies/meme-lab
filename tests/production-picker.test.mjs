@@ -85,6 +85,24 @@ const testEnv={
 };
 const recommend=comment=>new Request('https://example.test/api/recommend',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({comment})});
 
+test('public confidence follows ordinal probabilities while genuine weak results stay low',async()=>{
+  for(const strong of [true,false]){
+    let calls=0;
+    const adapter=createGatewayClassifierFetch({fetch:async request=>{
+      calls++;
+      const {messages}=await request.json();
+      const inputs=JSON.parse(messages[0].content.split('\nInputs: ')[1]);
+      return completion(inputs.map((_,index)=>strong&&index===0?[1,0,.01,.01,.43,.55]:[4,.7+index/1000,.2-index/1000,.1,0,0]));
+    }});
+    const response=await worker.fetch(recommend('The meeting could have been an email.'),{...testEnv,CLASSIFIER_FETCH:adapter});
+    const body=await response.json();
+    assert.equal(response.status,200);assert.equal(body.degraded,false);assert.equal(calls,1);
+    assert.equal(body.confidence,strong?'high':'low');
+    assert.equal(body.candidates[0].fit_label,strong?'exact':'weak');
+    if(strong)assert.equal(body.candidates[0].score,88);
+  }
+});
+
 test('upstream 502 returns an honest low-confidence semantic fallback and logs degradation',async()=>{
   const warnings=[];const original=console.warn;console.warn=message=>warnings.push(JSON.parse(message));
   try {
