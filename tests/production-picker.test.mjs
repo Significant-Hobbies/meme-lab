@@ -72,6 +72,20 @@ test('real perspective ranking accepts 30 candidates through the managed adapter
   assert.deepEqual(requests.map(request=>request.labels),[30,30,30,5]);
 });
 
+test('equally strong final perspective fits retain the five independently ranked memes',async()=>{
+  let calls=0;
+  const fetchImpl=async(_url,init)=>{
+    const {labels,inputs}=JSON.parse(init.body);calls++;
+    if(labels.length===5)return Response.json({results:inputs.map(()=>({label:labels[3],scores:Object.fromEntries(labels.map((label,index)=>[label,index===3?1:0]))}))});
+    const winner=(calls-1)%3;
+    return Response.json({results:[{label:labels[winner],scores:Object.fromEntries(labels.map((label,index)=>[label,index===winner?0.9:0.01]))}]});
+  };
+  const ranked=await rankCandidatesByPerspective('I told my coworker the deadline was today and he started another coffee break.',catalogue.slice(0,30),{fetchImpl,limit:5});
+  assert.equal(calls,4);assert.equal(ranked.length,5);assert.equal(new Set(ranked.map(x=>x.id)).size,5);
+  assert.deepEqual(new Set(ranked.map(x=>x.perspective)),new Set(['self','other','situation']));
+  assert(ranked.every(x=>x.fit_label==='strong'&&x.classifier_score===.75));
+});
+
 const budget={idFromName:name=>name,get:()=>({fetch:async(url,options)=>{
   const body=JSON.parse(options.body);const vector=url.endsWith('try-debit-vectorize');const amount=vector?body.dimensions:body.neurons;
   return Response.json({allowed:true,used:amount,remaining:(vector?45_000_000:9500)-amount,retryAfter:0,baselineVerified:true,[vector?'monthKey':'dayKey']:new Date().toISOString().slice(0,vector?7:10)});
@@ -155,6 +169,17 @@ test('functional probe rejects an HTTP 200 fallback and missing perspectives',as
   for(const body of [{...success,degraded:true},{...success,confidence:'low'},{...success,candidates:candidates.map(candidate=>({...candidate,perspective:'best_match'}))}]) {
     assert.equal((await probePicker('https://example.test',async()=>Response.json(body))).status,'failed');
   }
+});
+
+test('probe distinguishes low confidence from fallback and missing perspectives without private fields',async()=>{
+  const candidates=Array.from({length:5},(_,index)=>({id:`candidate-${index}`,media_url:'https://example.test/image.png',score:80,perspective:['self','other','situation'][index%3]}));
+  const body={decision:'meme',confidence:'low',ranking_mode:'perspective',degraded:false,candidates,private:'private situation'};
+  const result=await probePicker('https://example.test',async()=>Response.json(body));
+  assert.equal(result.status,'failed');assert.equal(result.results[1].fallback,false);
+  assert.equal(result.results[1].confidence,'low');assert.equal(result.results[1].ranking_mode,'perspective');
+  assert.equal(result.results[1].perspectives_complete,true);assert.doesNotMatch(JSON.stringify(result),/private situation/);
+  const unknown=await probePicker('https://example.test',async()=>Response.json({...body,confidence:'private secret',ranking_mode:'private account'}));
+  assert.equal(unknown.results[0].confidence,null);assert.equal(unknown.results[0].ranking_mode,null);
 });
 
 test('browser reports caught picker errors without attaching comments or error text',()=>{

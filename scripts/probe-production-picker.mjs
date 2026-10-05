@@ -21,8 +21,11 @@ export async function probePicker(origin='https://memes.significanthobbies.com',
         &&new Set(candidates.map(candidate=>candidate.id)).size===5
         &&candidates.every(candidate=>typeof candidate.id==='string'&&candidate.id&&typeof candidate.media_url==='string'&&/^https:\/\//.test(candidate.media_url)&&Number.isFinite(candidate.score));
       const perspectives=new Set((candidates??[]).map(candidate=>candidate.perspective));
-      const degraded=body.degraded===true||body.confidence==='low'||(fixture.id==='perspectives'&&!['self','other','situation'].every(perspective=>perspectives.has(perspective)));
-      results.push({case:fixture.id,status:valid&&!degraded?'passed':'failed',status_code:response.status,degraded,duration_ms:Date.now()-started});
+      const perspectives_complete=['self','other','situation'].every(perspective=>perspectives.has(perspective));
+      const degraded=body.degraded===true||body.confidence==='low'||(fixture.id==='perspectives'&&!perspectives_complete);
+      const confidence=['high','medium','low'].includes(body.confidence)?body.confidence:null;
+      const ranking_mode=['general','perspective','general_fallback','retrieval_fallback'].includes(body.ranking_mode)?body.ranking_mode:null;
+      results.push({case:fixture.id,status:valid&&!degraded?'passed':'failed',status_code:response.status,degraded,fallback:body.degraded===true,confidence,ranking_mode,...(fixture.id==='perspectives'?{perspectives_complete}:{}),duration_ms:Date.now()-started});
     } catch {
       results.push({case:fixture.id,status:'failed',reason:'request_or_response_failed',duration_ms:Date.now()-started});
     }
