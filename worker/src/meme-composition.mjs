@@ -87,14 +87,22 @@ function isRaster(bytes,type) {
 export async function compositionMedia(id,fetchImpl=fetch) {
   const record=byId.get(id);const url=creationMediaUrl(record);
   if(!url) return json({error:'Image composition is unavailable for this reference.'},404);
+  let stage='fetch',upstreamStatus;
   try {
-    const response=await fetchImpl(url,{redirect:'error',signal:AbortSignal.timeout(12000)});
+    // Workerd rejects redirect:"error". Manual mode keeps redirects unfollowed;
+    // the response gate below rejects every non-2xx before reading any bytes.
+    const response=await fetchImpl(url,{redirect:'manual',signal:AbortSignal.timeout(12000)});
+    upstreamStatus=response.status;stage='response';
     const type=response.headers.get('content-type')?.split(';')[0].toLowerCase();
     if(!response.ok||!['image/jpeg','image/png','image/webp'].includes(type)||Number(response.headers.get('content-length'))>MAX_IMAGE_BYTES) {await response.body?.cancel();throw new Error();}
-    const bytes=await boundedBytes(response.body,MAX_IMAGE_BYTES);
+    stage='read';const bytes=await boundedBytes(response.body,MAX_IMAGE_BYTES);
+    stage='signature';
     if(!isRaster(bytes,type)) throw new Error();
     return new Response(bytes,{headers:{'Content-Type':type,'Cache-Control':'public, max-age=86400','X-Content-Type-Options':'nosniff','Cross-Origin-Resource-Policy':'same-origin','Referrer-Policy':'no-referrer'}});
-  } catch {return json({error:'Could not load the source image. Try again shortly.'},502);}
+  } catch {
+    console.log(JSON.stringify({event:'composition.media_failed',stage,upstream_status:upstreamStatus}));
+    return json({error:'Could not load the source image. Try again shortly.'},502);
+  }
 }
 
 export async function annaComposition(request,env) {
