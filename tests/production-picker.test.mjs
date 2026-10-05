@@ -63,7 +63,7 @@ test('real perspective ranking accepts 30 candidates through the managed adapter
     const labels=JSON.parse(prompt.split('Labels by index: ')[1].split('\nInputs: ')[0]);
     const inputs=JSON.parse(prompt.split('\nInputs: ')[1]);
     requests.push({labels:labels.length,inputs:inputs.length});
-    return completion(inputs.map((_,index)=>({label_index:index===0?labels.length-1:Math.max(1,labels.length-2),scores:labels.map((_,labelIndex)=>labelIndex/(labels.length*2)+index/100)})));
+    return completion(inputs.map((_,index)=>[index===0?labels.length-1:Math.max(1,labels.length-2),...labels.map((_,labelIndex)=>labelIndex/(labels.length*2)+index/100)]));
   }});
   const ranked=await rankCandidatesByPerspective('I told my coworker the deadline was today and he started another coffee break.',catalogue.slice(0,30),{fetchImpl:adapter,limit:5});
   assert.equal(ranked.length,5);
