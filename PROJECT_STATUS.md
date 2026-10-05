@@ -1,9 +1,17 @@
 # Meme Lab project status
 
-**Updated:** 4 October 2026
-**Lifecycle:** Live personal meme picker with the corrected 3,000-item meme-and-GIF catalogue and crawlable catalogue pages.
+**Updated:** 5 October 2026
+**Lifecycle:** Live meme picker and prefilled caption Studio; Anna 1.3.0 candidate prepared, public Store publication remains gated.
 
 ## Live product
+
+### Prefilled caption Studio: website live, Anna 1.3.0 prepared
+
+Owner-selected Canvas Studio is deployed from exact main `a555da79f615cdf630fed282f559e371bc94325f`, Worker `cfa5c248-6d05-4cb6-889e-3f3c149cb7aa`; main CI passes 215 tests. Website captions use automatic Free AI; Anna captions use one host completion and existing private-file/download APIs. No model/provider is forced. Eight inspected asset profiles preserve comic roles; 1,681 static references are eligible for the inspected/vision workflow, without a quality guarantee.
+
+Live inspected-template and vision-caption/media checks pass. Actual Workerd regression covers the corrected redirect-mode failure. The picker smoke still degraded to `general_fallback`; upstream/ranking issue #30 remains open. Local rendered/editor/export checks and real Anna dev-host inference pass; direct hosted UI/private-download verification is unqualified.
+
+Anna working revision 16 / frozen 1.3.0 version 1109, bundle 1040 is prepared. App status remains `pending_review`, `is_published:false`, review candidate still **1.2.1**. Release preflight blocks until administrator approval. Verify the new hosted Studio/private download before re-pinning 1.3.0; Store publication and public installation remain open in #12. [Full release receipt](artifacts/caption-release-20261005/release.md).
 
 ### Anna review correction: 1.2.1 candidate
 
