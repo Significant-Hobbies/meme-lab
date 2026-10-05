@@ -34,6 +34,15 @@ test('local preview serves only selected footer CSS and assets with exact bytes 
   const app = createApp(configFromEnv({}), { storeDir });
   try {
     const url = await listen(app);
+    const workspace = await fetch(url);
+    assert.equal(workspace.status, 200);
+    const workspaceHtml = await workspace.text();
+    const relevanceLink = workspaceHtml.match(/<a\b[^>]*href="([^"]+)"[^>]*>Relevance review<\/a>/);
+    assert.ok(relevanceLink, 'workspace footer should contain its Relevance review link');
+    const review = await fetch(new URL(relevanceLink[1], url));
+    assert.equal(review.status, 200, relevanceLink[1]);
+    assert.match(await review.text(), /<title>Meme Lab — relevance review<\/title>/);
+
     const css = await fetch(`${url}/footer-precise.css`);
     assert.equal(css.status, 200);
     assert.equal(css.headers.get('content-type'), 'text/css; charset=utf-8');
