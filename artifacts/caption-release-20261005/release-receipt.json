@@ -1,0 +1,26 @@
+{
+  "measuredAt": "2026-10-05T13:41:48.380Z",
+  "sourceSha": "a555da79f615cdf630fed282f559e371bc94325f",
+  "workerVersion": "cfa5c248-6d05-4cb6-889e-3f3c149cb7aa",
+  "mainCi": "https://github.com/Significant-Hobbies/meme-lab/actions/runs/37318345565",
+  "testsPassed": 215,
+  "website": "https://memes.significanthobbies.com",
+  "anna": {
+    "appId": 389,
+    "slug": "meme-lab",
+    "workingRevision": 16,
+    "workingContentHash": "12b91b53742d3312ca9c1b35e8fc41286491a64bf33208f570dece3b3e1ea66b",
+    "preparedVersion": "1.3.0",
+    "versionId": 1109,
+    "bundleId": 1040,
+    "fileCount": 19,
+    "bytes": 179308,
+    "bundleManifestSha256": "24d3b3dbbcf3bcf9a9209068b7b615e38b24e60cb3f3e6e4d0a01740df7394c3",
+    "bundleSourceSha": "75da407b5e42a34c567717dce4a148cd3a9d7648",
+    "status": "pending_review",
+    "reviewCandidate": "1.2.1",
+    "isPublished": false,
+    "releasePreflight": "Refused until APPROVED",
+    "qualification": "Real platform dev-host completion and local editor/PNG checks passed. Hosted new Studio/private-download/public Store installation remains unverified; browser navigation is blocked. Existing frozen review candidate retained."
+  }
+}
