@@ -8,8 +8,10 @@ export function createGatewayClassifierFetch(binding,projectId='meme-lab') {
     // Ordinal ranking has five labels; perspective selection has one per meme.
     if(!inputs.length||inputs.length>30||!labels.length||labels.length>30) throw new Error('Classifier input is outside the supported bounds.');
     const labelIndexes=labels.map((_,index)=>index);
-    const schema={type:'object',additionalProperties:false,required:['results'],properties:{results:{type:'array',minItems:inputs.length,maxItems:inputs.length,items:{type:'object',additionalProperties:false,required:['label_index','scores'],properties:{label_index:{type:'integer',enum:labelIndexes},scores:{type:'array',minItems:labels.length,maxItems:labels.length,items:{type:'number',minimum:0,maximum:1}}}}}}};
-    const prompt=`Classify each input independently. Return label_index using only the listed label indexes. Return scores in the same order as the labels; each score must be between 0 and 1 and scores must form a probability distribution summing to 1, not all be equal. label_index must identify the highest-probability label. Preserve input order. Follow this output shape: ${JSON.stringify(schema)}\nInstructions: ${String(source.instructions||'').slice(0,3000)}\nLabels by index: ${JSON.stringify(labels.map((label,index)=>({index,label})))}\nInputs: ${JSON.stringify(inputs)}`;
+    // Tuples avoid repeating field names for every candidate in the bounded
+    // completion. Decode them back into the unchanged classifier contract.
+    const schema={type:'object',additionalProperties:false,required:['results'],properties:{results:{type:'array',minItems:inputs.length,maxItems:inputs.length,items:{type:'array',minItems:labels.length+1,maxItems:labels.length+1,prefixItems:[{type:'integer',enum:labelIndexes}],items:{type:'number',minimum:0,maximum:1}}}}};
+    const prompt=`Classify each input independently. Return compact JSON without indentation or commentary. Each results entry is one flat array [label_index,score_0,score_1,...], with exactly ${labels.length+1} numbers. Return label_index using only the listed label indexes. Return scores in the same order as the labels; each score must be between 0 and 1 and scores must form a probability distribution summing to 1, not all be equal. Use at most three decimal places per score. label_index must identify the highest-probability label. Preserve input order. Follow this output shape: ${JSON.stringify(schema)}\nInstructions: ${String(source.instructions||'').slice(0,3000)}\nLabels by index: ${JSON.stringify(labels.map((label,index)=>({index,label})))}\nInputs: ${JSON.stringify(inputs)}`;
     const body=JSON.stringify({model:'auto',stream:false,response_format:{type:'json_object'},messages:[{role:'user',content:prompt}],max_tokens:2000});
     for(let attempt=0;attempt<2;attempt++) {
       init.signal?.throwIfAborted();
@@ -39,15 +41,34 @@ export function createGatewayClassifierFetch(binding,projectId='meme-lab') {
 async function decodeClassifierResponse(response,inputs,labels,labelIndexes) {
   let raw;
   try { raw=await response.json(); } catch { throw new Error('Free AI gateway returned invalid JSON.'); }
-  if(typeof raw?.choices?.[0]?.message?.content!=='string') throw new Error('Free AI classifier returned invalid structured output.');
+  if(typeof raw?.choices?.[0]?.message?.content!=='string') {
+    logInvalidOutput(raw,'missing_content');
+    throw new Error('Free AI classifier returned invalid structured output.');
+  }
   let parsed;
-  try { parsed=JSON.parse((raw?.choices?.[0]?.message?.content??'').replace(/^```(?:json)?\s*|\s*```$/g,'')); } catch { throw new Error('Free AI classifier returned invalid structured output.'); }
+  try { parsed=JSON.parse(raw.choices[0].message.content.replace(/^```(?:json)?\s*|\s*```$/g,'')); } catch {
+    logInvalidOutput(raw,'invalid_json');
+    throw new Error('Free AI classifier returned invalid structured output.');
+  }
   if(!Array.isArray(parsed?.results)||parsed.results.length!==inputs.length) throw new Error('Free AI classifier returned an unexpected result count.');
   const results=parsed.results.map(result=>{
+    // Accept previous object-shaped answers too; validate either representation
+    // before exposing any scores to ranking.
+    if(Array.isArray(result)) result={label_index:result[0],scores:result.slice(1)};
     if(!Number.isInteger(result?.label_index)||!labelIndexes.includes(result.label_index)||!Array.isArray(result.scores)||result.scores.length!==labels.length||result.scores.some(score=>typeof score!=='number'||!Number.isFinite(score)||score<0||score>1)) throw new Error('Free AI classifier returned invalid category scores.');
     const total=result.scores.reduce((sum,score)=>sum+score,0);
     if(total<=0) throw new Error('Free AI classifier returned empty category scores.');
     return {label:labels[result.label_index],scores:Object.fromEntries(labels.map((label,index)=>[label,result.scores[index]/total]))};
   });
   return Response.json({results},{status:200});
+}
+
+function logInvalidOutput(raw,failure_kind) {
+  const reason=raw?.choices?.[0]?.finish_reason;
+  const tokens=raw?.usage?.completion_tokens;
+  console.warn(JSON.stringify({
+    event:'classifier_output_invalid',failure_kind,
+    finish_reason:['stop','length','content_filter','tool_calls'].includes(reason)?reason:null,
+    completion_tokens:Number.isInteger(tokens)&&tokens>=0&&tokens<=2000?tokens:null
+  }));
 }
