@@ -194,6 +194,16 @@ test('media fetch permits only catalogue rasters, rejects redirects and checks a
   let redirects=0;
   assert.equal((await compositionMedia(drake.id,async()=>{redirects++;return new Response(null,{status:302,headers:{Location:'https://private.invalid/'}});})).status,502);
   assert.equal(redirects,1);
+  const preview=catalogue.find(record=>record.media_url==='https://i.imgflip.com/4/50jf7n.jpg');
+  assert.equal(creationMediaUrl(preview),preview.media_url);
+  const planned=await composeMeme(request({comment:'My roommate chooses hand washing over the working dishwasher.',candidate_id:preview.id,perspective:'best_match'}),{FREE_AI:{fetch:async request=>{
+    const payload=await request.json();
+    assert.equal(payload.max_tokens,1200);assert.ok(Array.isArray(payload.messages[0].content));
+    assert.equal(payload.messages[0].content[1].image_url.url,preview.media_url);
+    return Response.json({model:'served-vision-model',choices:[{finish_reason:'stop',message:{content:JSON.stringify({decision:'reference',captions:[]})}}]});
+  }}});
+  assert.equal(planned.status,200);
+  for(const path of ['/5/50jf7n.jpg','/4/extra/50jf7n.jpg','/4/admin','/4/50jf7n.svg'])assert.equal(creationMediaUrl({image_url:'https://i.imgflip.com'+path}),null);
   for(const url of ['https://i.imgflip.com.evil.test/a.jpg','https://user:pass@i.imgflip.com/a.jpg','https://i.imgflip.com:8443/a.jpg','http://i.imgflip.com/a.jpg','https://i.imgflip.com/../admin']) assert.equal(creationMediaUrl({image_url:url}),null);
 });
 
