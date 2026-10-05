@@ -98,3 +98,14 @@ test('endpoint reporter swallows delivery errors', async () => {
     false,
   );
 });
+
+test('caption routes report bounded route names without situations or catalogue IDs',async()=>{
+  const events=[];
+  const report=createEndpointReporter({key:'test-key',fetch:async(_,options)=>{events.push(...JSON.parse(options.body).events);return new Response(null,{status:202});}});
+  for(const [method,route] of [['POST','/api/create'],['POST','/api/anna/composition'],['GET','/api/create/media/{id}']]){
+    assert.equal(await report({method,route,status_code:503,duration_ms:5,comment:'private caption',candidate_id:'private-template'}),true);
+  }
+  assert.equal(await report({method:'GET',route:'/api/create/media/private-template',status_code:200,duration_ms:1}),false);
+  assert.equal(events.length,3);
+  assert.doesNotMatch(JSON.stringify(events),/private caption|private-template|comment|candidate_id/);
+});

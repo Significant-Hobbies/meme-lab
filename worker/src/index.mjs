@@ -7,6 +7,7 @@ import {BudgetUnavailableError} from './ai-budget.mjs';
 import {endpointFor,pingFor} from './ping.mjs';
 import {annaEvent} from './anna-events.mjs';
 import {annaShortlist} from './anna-shortlist.mjs';
+import {composeMeme,compositionMedia,annaComposition} from './meme-composition.mjs';
 
 const allowedIds=new Set(catalogue.map(record=>record.id));
 const catalogueById=new Map(catalogue.map(record=>[record.id,record]));
@@ -414,6 +415,21 @@ export default {
   async fetch(request,env,ctx) {
     const url=new URL(request.url);
     const isRead=request.method==='GET'||request.method==='HEAD';
+    if(url.pathname==='/api/create'&&request.method==='POST') return withEndpointMeasurement(request,env,ctx,'/api/create',()=>{
+      const origin=request.headers.get('origin');
+      if(origin&&origin!==url.origin) return json({error:'Cross-origin requests are blocked.'},403);
+      return composeMeme(request,env);
+    });
+    if((isRead||request.method==='OPTIONS')&&url.pathname.startsWith('/api/create/media/')) return withEndpointMeasurement(request,env,ctx,'/api/create/media/{id}',async()=>{
+      if(request.method==='OPTIONS')return new Response(null,{status:204,headers:{'Access-Control-Allow-Origin':'*','Access-Control-Allow-Methods':'GET, HEAD, OPTIONS'}});
+      let id;
+      try {id=decodeURIComponent(url.pathname.slice('/api/create/media/'.length));}
+      catch {return json({error:'Unknown meme.'},400);}
+      const response=await compositionMedia(id);
+      const headers=new Headers(response.headers);headers.set('Access-Control-Allow-Origin','*');
+      return forHead(request,new Response(response.body,{status:response.status,headers}));
+    });
+    if(url.pathname==='/api/anna/composition') return withEndpointMeasurement(request,env,ctx,'/api/anna/composition',()=>annaComposition(request,env));
     if(url.pathname==='/api/anna/shortlist') return withEndpointMeasurement(request,env,ctx,'/api/anna/shortlist',()=>annaShortlist(request,env));
     if(url.pathname==='/api/anna/events') return withEndpointMeasurement(request,env,ctx,'/api/anna/events',()=>annaEvent(request,env,ctx));
     if(isRead&&url.pathname==='/robots.txt') return forHead(request,textResponse(`User-agent: *\nAllow: /\nDisallow: /api/\n\nSitemap: ${SITE_ORIGIN}/sitemap.xml\n`));
