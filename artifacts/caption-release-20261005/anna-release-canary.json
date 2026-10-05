@@ -1,0 +1,62 @@
+{
+  "measuredAt": "2026-10-05T13:12:28.716Z",
+  "scope": "Real Anna platform dev-host inference through release adapter and actual stateless Worker planner; not hosted UI, storage or public installation proof",
+  "input": {
+    "comment": "My roommate chooses hand washing over the working dishwasher.",
+    "candidate_id": "drake-preference",
+    "perspective": "my_reaction"
+  },
+  "elapsedMs": 3644,
+  "attribution": {
+    "model": "google/gemini-3-flash-preview",
+    "stopReason": "endTurn",
+    "usage": {
+      "inputTokens": 469,
+      "outputTokens": 29,
+      "totalTokens": 498
+    },
+    "provider": "openrouter",
+    "quotaConsumed": 0.2775862068965517
+  },
+  "result": {
+    "decision": "compose",
+    "candidate_id": "drake-preference",
+    "name": "Drake Hotline Bling",
+    "placement": "template",
+    "expected_aspect": 1,
+    "grammar": "Reject a sensible or less-preferred option; enthusiastically choose the contrasting option. Do not reverse the preference. Use short option labels, usually 2–5 words. If an option’s target is ambiguous, omit that target rather than guessing it.",
+    "layers": [
+      {
+        "id": "rejected",
+        "label": "Rejected option",
+        "role": "The option rejected by the person in the upper panel.",
+        "text": "The working dishwasher",
+        "box": [
+          0.53,
+          0.04,
+          0.43,
+          0.42
+        ],
+        "style": "plain",
+        "rotation": 0
+      },
+      {
+        "id": "preferred",
+        "label": "Preferred option",
+        "role": "The option approved by the person in the lower panel.",
+        "text": "Hand washing everything",
+        "box": [
+          0.53,
+          0.54,
+          0.43,
+          0.42
+        ],
+        "style": "plain",
+        "rotation": 0
+      }
+    ],
+    "source_url": "https://i.imgflip.com/30b1gx.jpg",
+    "media_status": "source-preview",
+    "media_url": "/api/create/media/drake-preference"
+  }
+}

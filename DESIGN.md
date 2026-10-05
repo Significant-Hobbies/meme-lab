@@ -48,3 +48,7 @@ The owner selected A · Studio on 2026-10-04, refining the earlier Reference Des
 ## Studio implementation evidence
 
 The shared public entry and Anna bundle inherit the same picker source, type, navy/cobalt tokens, restrained surfaces and native disclosure behavior. The entry pairs a direct situation composer with three genuine catalogue previews. Source preview rights remain explicit. Anna retains its existing signed-in photo-remix and private-file capabilities; visual consistency does not claim feature parity. The task receipt is `.fleet/design-review-beautify-20261004.json`; rendered implementation evidence lives in `artifacts/design/beautify-20261004/`.
+
+## Prefilled caption Studio
+
+The owner selected Canvas Studio on 2026-10-05. Supported static results open with role-specific captions, a text-layer list, source-resolution canvas and position inspector. Preserve the current compact split composer and Studio identity. The shared editor uses Free AI on the website and Anna host AI in the addon; both keep verified template geometry. Unsupported static sources and GIFs retain their original reaction.

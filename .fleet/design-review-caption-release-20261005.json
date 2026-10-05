@@ -1,0 +1,311 @@
+{
+  "$schema": "fleet.design-review.v2",
+  "version": 2,
+  "project": "meme-lab",
+  "target": "Release approved prefilled Canvas Studio in website and Anna",
+  "surfaceMode": "operate",
+  "mode": "preserve",
+  "register": "product",
+  "context": {
+    "product": "PRODUCT.md",
+    "design": "DESIGN.md"
+  },
+  "direction": {
+    "productSurfaces": {
+      "scope": "paired",
+      "landing": "Public homepage and caption Studio, same entry/operating surface",
+      "app": "Anna caption Studio and existing photo editor",
+      "reason": "Shared picker/editor source; Anna uses host AI while public website uses Free AI."
+    },
+    "pairedPreview": {
+      "landing": "artifacts/caption-release-20261005/web-1440.png",
+      "app": "artifacts/caption-release-20261005/anna-1440.png"
+    },
+    "source": "existing",
+    "references": [
+      "PRODUCT.md and DESIGN.md \u2014 Reference Desk system",
+      "worker/public/index.html, app.js and app.css \u2014 existing composer and result components"
+    ],
+    "probes": [
+      {
+        "id": "instant",
+        "thesis": "Finished meme first; corrections progressively disclosed.",
+        "layout": "Large result image paired with a compact action panel; stacked media-first on mobile.",
+        "typography": "System-sans UI with bold in-panel captions and serif situation text.",
+        "path": ".fleet-local/meme-maker-directions/instant-1440.png",
+        "preview": ".fleet-local/meme-maker-directions/instant.html",
+        "entry": ".fleet-local/meme-maker-directions/instant-entry.png",
+        "compact": ".fleet-local/meme-maker-directions/instant-390.png",
+        "brief": ".fleet-local/meme-maker-directions/brief.md"
+      },
+      {
+        "id": "guided",
+        "thesis": "A structured sequence explains the comic roles before export.",
+        "layout": "Progress rail, role-based caption form and live preview; preview above fields on mobile.",
+        "typography": "Compact question labels, generous serif situation and bold caption preview.",
+        "path": ".fleet-local/meme-maker-directions/guided-1440.png",
+        "preview": ".fleet-local/meme-maker-directions/guided.html",
+        "entry": ".fleet-local/meme-maker-directions/guided-entry.png",
+        "compact": ".fleet-local/meme-maker-directions/guided-390.png",
+        "brief": ".fleet-local/meme-maker-directions/brief.md"
+      },
+      {
+        "id": "studio",
+        "thesis": "Automatic draft becomes a selectable text-layer workspace.",
+        "layout": "Layers, dark neutral canvas and position inspector; canvas over inspector on mobile.",
+        "typography": "Dense utility labels with larger bold meme text.",
+        "path": ".fleet-local/meme-maker-directions/studio-1440.png",
+        "preview": ".fleet-local/meme-maker-directions/studio.html",
+        "entry": ".fleet-local/meme-maker-directions/studio-entry.png",
+        "compact": ".fleet-local/meme-maker-directions/studio-390.png",
+        "brief": ".fleet-local/meme-maker-directions/brief.md"
+      }
+    ],
+    "selected": "studio",
+    "approval": "approved",
+    "ownerEvidence": {
+      "path": ".fleet-local/meme-maker-directions/owner-selection.md",
+      "quote": "canvas studio would be best"
+    },
+    "supplied": "",
+    "before": "artifacts/design/beautify-20261004/after-web-1440.png",
+    "library": {
+      "strategy": "upstream-first",
+      "primary": "existing-project-system",
+      "sources": [
+        "https://github.com/Significant-Hobbies/meme-lab/blob/main/worker/public/app.css",
+        "https://github.com/Significant-Hobbies/meme-lab/blob/main/worker/public/index.html"
+      ],
+      "runtime": "existing",
+      "customReplacement": {
+        "used": false,
+        "authorization": "not-required",
+        "reason": "Reuse healthy project-native navigation, forms, buttons, result fields and disclosure. Template-specific caption regions are the requested product capability, not replacement interface primitives."
+      }
+    },
+    "contract": {
+      "purpose": "Meme Lab helps people selecting reactions for everyday conversations turn one pasted situation into a useful meme immediately through grounded reference retrieval and contextual selection.",
+      "purposeSource": "PRODUCT.md; saas-maker/catalog/projects.json, meme-lab.presentation.directory.purposeContract",
+      "canonicalPurpose": "Turn one pasted comment or situation into a useful meme immediately.",
+      "purposeAlignment": "match",
+      "driftNote": "Owner-authorized caption release; Anna publication remains gated by administrator review.",
+      "audience": "People selecting reactions for everyday conversations; the owner evaluates usefulness.",
+      "job": "Turn the selected template and complete situation into short role-aware captions, review their placement, and export a usable meme.",
+      "thesis": "The chosen meme opens as a prefilled Canvas Studio: template-aware text roles and regions first, selectable layers and position inspector for corrections.",
+      "system": "Preserve current Studio navy/cobalt/white tokens, compact native controls and desktop split composer. Preserve approved caption layers/canvas/inspector; do not restore the old Reference Desk composer.",
+      "signature": "Template-defined caption roles map the exact situation to panels or characters rather than using generic top/bottom text.",
+      "risk": "Automatic captions can reverse speakers or miss the punchline; preview and editable region text must stay accessible. Unsupported templates and GIFs retain explicit capability states.",
+      "qualityBar": "Readable role-aware caption regions, preserved current Studio shell, original-resolution PNG, truthful source and privacy states, no page overflow at 390/768/1440."
+    }
+  },
+  "evidence": {
+    "platform": "web",
+    "productContinuity": {
+      "status": "pass",
+      "reviewer": "Codex direct paired-surface reviewer",
+      "report": "artifacts/caption-release-20261005/review.md",
+      "surfaces": {
+        "landing": "artifacts/caption-release-20261005/web-1440.png",
+        "app": "artifacts/caption-release-20261005/anna-1440.png"
+      },
+      "checks": {
+        "designSystem": {
+          "status": "pass",
+          "observation": "Both retain current Studio typography, navy/cobalt tokens, compact native controls and shared caption editor."
+        },
+        "identity": {
+          "status": "pass",
+          "observation": "Shared wordmark/composer/reaction imagery connect entry and app; Anna photo editor remains separate within the same system."
+        },
+        "vocabulary": {
+          "status": "pass",
+          "observation": "Both use caption draft, text layers, placement and Download PNG; Anna adds explicit private-save wording."
+        },
+        "productTruth": {
+          "status": "pass",
+          "observation": "Automatic Free AI website, one Anna host completion, explicit source-preview rights state and Anna private PNG save; no guaranteed humour claim."
+        },
+        "handoff": {
+          "status": "pass",
+          "observation": "Local actual-source path situation to reference to prefilled editor to PNG works; Anna host canary validates model path, public Store approval remains a separate gate."
+        }
+      }
+    },
+    "slopScale": {
+      "platform": "web",
+      "posture": "advisory",
+      "reason": "",
+      "checkpoints": [
+        {
+          "stage": "directions",
+          "direction": "instant",
+          "status": "scanned",
+          "command": "node /Users/sarthak/Desktop/fleet/saas-maker/tooling/scripts/slop-score.mjs http://127.0.0.1:4329/instant.html 'http://127.0.0.1:4329/instant.html?state=entry' --json",
+          "report": ".fleet-local/meme-maker-directions/slop/instant.json",
+          "findingsReview": "Creation and entry states have no triggered patterns. Reviewed actual image, caption roles, type hierarchy and corrected mobile captures; a zero detector score is not acceptance."
+        },
+        {
+          "stage": "directions",
+          "direction": "guided",
+          "status": "scanned",
+          "command": "node /Users/sarthak/Desktop/fleet/saas-maker/tooling/scripts/slop-score.mjs http://127.0.0.1:4329/guided.html 'http://127.0.0.1:4329/guided.html?state=entry' --json",
+          "report": ".fleet-local/meme-maker-directions/slop/guided.json",
+          "findingsReview": "Creation and entry states have no triggered patterns. Reviewed actual image, caption roles, type hierarchy and corrected mobile captures; a zero detector score is not acceptance."
+        },
+        {
+          "stage": "directions",
+          "direction": "studio",
+          "status": "scanned",
+          "command": "node /Users/sarthak/Desktop/fleet/saas-maker/tooling/scripts/slop-score.mjs http://127.0.0.1:4329/studio.html 'http://127.0.0.1:4329/studio.html?state=entry' --json",
+          "report": ".fleet-local/meme-maker-directions/slop/studio.json",
+          "findingsReview": "Creation flags three all-uppercase inspector headings. Retained as intentional compact operating labels consistent with Reference Desk. Entry has no triggered patterns. Reviewed corrected mobile/desktop captures; scores are advisory."
+        },
+        {
+          "stage": "iteration",
+          "status": "scanned",
+          "command": "node /Users/sarthak/Desktop/fleet/saas-maker/tooling/scripts/slop-score.mjs http://127.0.0.1:4337/?review=1 http://127.0.0.1:4337/anna/?review=1 --json",
+          "report": "artifacts/caption-release-20261005/slop-caption-iteration.json",
+          "findingsReview": "Both score 3; only three uppercase operating headings triggered. Retained approved compact utility hierarchy. Screenshots and interactions reviewed separately; advisory score is not acceptance."
+        },
+        {
+          "stage": "final",
+          "status": "scanned",
+          "command": "node /Users/sarthak/Desktop/fleet/saas-maker/tooling/scripts/slop-score.mjs http://127.0.0.1:4337/?review=1 http://127.0.0.1:4337/anna/?review=1 --json",
+          "report": "artifacts/caption-release-20261005/slop-caption-final.json",
+          "findingsReview": "Both score 3; only three uppercase operating headings triggered. Retained approved compact utility hierarchy. Screenshots and interactions reviewed separately; advisory score is not acceptance."
+        }
+      ]
+    },
+    "visualReview": {
+      "status": "pass",
+      "reviewer": "Codex implementing agent - direct review, not owner acceptance",
+      "direction": "studio",
+      "report": "artifacts/caption-release-20261005/review.md",
+      "checks": {
+        "hierarchy": {
+          "status": "pass",
+          "observation": "Web/Anna 1440: compact composer and result name lead to canvas; Download PNG is the cobalt primary action; correction controls stay secondary."
+        },
+        "typography": {
+          "status": "pass",
+          "observation": "Web 1440 and Anna 390: bold short captions fit Drake white panels; existing system-sans type hierarchy remains legible; compact metadata is a deduction."
+        },
+        "composition": {
+          "status": "pass",
+          "observation": "All six captures: desktop layers/canvas/inspector, tablet layers above canvas, phone stacked complete controls preserve the approved Studio."
+        },
+        "identity": {
+          "status": "pass",
+          "observation": "Both variants preserve current navy/cobalt/white split composer and actual meme imagery; role-aware caption regions provide product identity."
+        },
+        "interaction": {
+          "status": "pass",
+          "observation": "Website edit, arrow-key movement 53 to 52, Reset to 53, retained edits after simulated 429 and actual 1200x1200 PNG export passed. Real Anna host completion canary passed; hosted private download unqualified."
+        },
+        "responsive": {
+          "status": "pass",
+          "observation": "Browser width/scrollWidth measurements at 390/768/1440 matched on website and Anna. Canvas and all caption controls remain available."
+        }
+      }
+    },
+    "screenshots": [
+      {
+        "width": 390,
+        "path": "artifacts/caption-release-20261005/web-390.png",
+        "state": "Prefilled editable caption draft; authored local fixture; real source image",
+        "horizontalOverflow": false
+      },
+      {
+        "width": 768,
+        "path": "artifacts/caption-release-20261005/web-768.png",
+        "state": "Prefilled editable caption draft; authored local fixture; real source image",
+        "horizontalOverflow": false
+      },
+      {
+        "width": 1440,
+        "path": "artifacts/caption-release-20261005/web-1440.png",
+        "state": "Prefilled editable caption draft; authored local fixture; real source image",
+        "horizontalOverflow": false
+      },
+      {
+        "width": 390,
+        "path": "artifacts/caption-release-20261005/anna-390.png",
+        "state": "Prefilled editable caption draft; authored local fixture; real source image",
+        "horizontalOverflow": false
+      },
+      {
+        "width": 768,
+        "path": "artifacts/caption-release-20261005/anna-768.png",
+        "state": "Prefilled editable caption draft; authored local fixture; real source image",
+        "horizontalOverflow": false
+      },
+      {
+        "width": 1440,
+        "path": "artifacts/caption-release-20261005/anna-1440.png",
+        "state": "Prefilled editable caption draft; authored local fixture; real source image",
+        "horizontalOverflow": false
+      }
+    ],
+    "projectCheck": {
+      "status": "pass",
+      "command": "node --test tests/*.test.mjs; npm run check; npm run build:public; node scripts/build-anna.mjs; anna-app validate --strict; wrangler deploy --dry-run"
+    },
+    "critique": {
+      "score": 36,
+      "maximum": 40,
+      "dimensions": {
+        "hierarchy": 7,
+        "typography": 7,
+        "composition": 7,
+        "identity": 7,
+        "interaction": 4,
+        "responsive": 4
+      }
+    },
+    "audit": {
+      "score": 17,
+      "maximum": 20,
+      "dimensions": {
+        "purpose": 4,
+        "accessibility": 5,
+        "behavior": 3,
+        "responsive": 3,
+        "performance": 2
+      }
+    },
+    "unresolved": {
+      "p0": 0,
+      "p1": 0
+    },
+    "detector": {
+      "posture": "advisory",
+      "findings": []
+    },
+    "comprehension": {
+      "status": "not-applicable",
+      "reviewer": "",
+      "answers": {
+        "product": "",
+        "audience": "",
+        "value": "",
+        "mechanism": "",
+        "proof": "",
+        "nextAction": ""
+      },
+      "purposeScore": {
+        "product": 0,
+        "audience": 0,
+        "value": 0,
+        "mechanism": 0,
+        "proof": 0,
+        "nextAction": 0,
+        "total": 0
+      },
+      "mismatches": []
+    }
+  },
+  "ownerFeedback": {
+    "decision": "keep",
+    "note": "Owner selected prefilled Canvas Studio and explicitly authorized release: its okay release it. Direct local renders and real Anna dev-host canary pass; hosted Store installation remains gated by Anna review."
+  }
+}
