@@ -185,12 +185,15 @@ test('body limit applies to bytes read, even when a caller omits Content-Length'
 test('media fetch permits only catalogue rasters, rejects redirects and checks actual signatures',async()=>{
   let fetched;
   const response=await compositionMedia(drake.id,async(url,options)=>{fetched={url,options};return new Response(new Uint8Array([255,216,255,1]),{headers:{'Content-Type':'image/jpeg'}});});
-  assert.equal(response.status,200);assert.equal(fetched.url,drake.image_url);assert.equal(fetched.options.redirect,'error');
+  assert.equal(response.status,200);assert.equal(fetched.url,drake.image_url);assert.equal(fetched.options.redirect,'manual');
   assert.equal(response.headers.get('Cross-Origin-Resource-Policy'),'same-origin');
   for(const [type,bytes] of [['image/svg+xml','<svg></svg>'],['image/jpeg','<html>not an image</html>'],['image/gif','GIF89a']]) {
     assert.equal((await compositionMedia(drake.id,async()=>new Response(bytes,{headers:{'Content-Type':type}}))).status,502);
   }
   assert.equal((await compositionMedia('https://localhost/admin',()=>assert.fail('Must not fetch.'))).status,404);
+  let redirects=0;
+  assert.equal((await compositionMedia(drake.id,async()=>{redirects++;return new Response(null,{status:302,headers:{Location:'https://private.invalid/'}});})).status,502);
+  assert.equal(redirects,1);
   for(const url of ['https://i.imgflip.com.evil.test/a.jpg','https://user:pass@i.imgflip.com/a.jpg','https://i.imgflip.com:8443/a.jpg','http://i.imgflip.com/a.jpg','https://i.imgflip.com/../admin']) assert.equal(creationMediaUrl({image_url:url}),null);
 });
 
