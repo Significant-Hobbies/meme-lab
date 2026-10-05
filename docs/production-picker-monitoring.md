@@ -20,6 +20,12 @@ source, logs or chat. The workflow fails explicitly when reporting is missing
 or rejected; a green required-reporting run means both the picker check and
 App Health ingest succeeded.
 
+The workflow's probe receipt also records allowlisted confidence and ranking
+mode, whether the API marked the response as a fallback, and whether all three
+perspectives are present. Strict failure criteria are unchanged. These fields
+distinguish a genuine low-confidence selection from degraded routing without
+including comments, provider bodies or request headers.
+
 App Health's Overview feed must include production error logs and warning-level
 `*.degraded` logs to surface these outcomes independently of its 20-request
 aggregate-health threshold. Overview alerts remain retained occurrences rather

@@ -133,7 +133,7 @@ function directOrdinalScore(answer) {
   return {classifier_score:score/(FIT_CRITERIA.length-1),fit_label:FIT_LABELS[fitIndex].key};
 }
 
-async function scoreDirectCandidates(comment,candidates,{apiKey,fetchImpl,timeoutMs,instructions=FIT_INSTRUCTIONS}={}) {
+async function scoreDirectCandidates(comment,candidates,{apiKey,fetchImpl,timeoutMs,instructions=FIT_INSTRUCTIONS,allowTies=false}={}) {
   const state=directCandidateState(comment,candidates);
   state.task=instructions;
   const questions=Object.fromEntries(candidates.map((_,index)=>[`fit_${index}`,{
@@ -143,7 +143,7 @@ async function scoreDirectCandidates(comment,candidates,{apiKey,fetchImpl,timeou
   }]));
   const answers=await askJev({state,questions,apiKey,fetchImpl,timeoutMs});
   const scored=candidates.map((record,index)=>({...record,...directOrdinalScore(answers[`fit_${index}`]),retrieval_rank:index+1}));
-  if(scored.length>1&&scored.every(record=>record.classifier_score===scored[0].classifier_score)) throw new Error('TypeSafe returned flat ordinal scores.');
+  if(!allowTies&&scored.length>1&&scored.every(record=>record.classifier_score===scored[0].classifier_score)) throw new Error('TypeSafe returned flat ordinal scores.');
   return scored;
 }
 
@@ -162,12 +162,12 @@ function ordinalScore(result) {
   };
 }
 
-async function scoreOrdinalCandidates(comment,candidates,{fetchImpl,timeoutMs,instructions=FIT_INSTRUCTIONS,inputFor=candidateInput,apiKey}={}) {
-  if(apiKey) return scoreDirectCandidates(comment,candidates,{apiKey,fetchImpl,timeoutMs,instructions});
+async function scoreOrdinalCandidates(comment,candidates,{fetchImpl,timeoutMs,instructions=FIT_INSTRUCTIONS,inputFor=candidateInput,apiKey,allowTies=false}={}) {
+  if(apiKey) return scoreDirectCandidates(comment,candidates,{apiKey,fetchImpl,timeoutMs,instructions,allowTies});
   const labels=FIT_LABELS.map(({label})=>label);
   const results=await classifyMany({inputs:candidates.map(record=>inputFor(comment,record)),labels,instructions,fetchImpl,timeoutMs});
   const scored=candidates.map((record,index)=>({...record,...ordinalScore(results[index]),retrieval_rank:index+1}));
-  if(scored.length>1&&scored.every(record=>record.classifier_score===scored[0].classifier_score)) throw new Error('Classifier returned flat ordinal scores.');
+  if(!allowTies&&scored.length>1&&scored.every(record=>record.classifier_score===scored[0].classifier_score)) throw new Error('Classifier returned flat ordinal scores.');
   return scored;
 }
 
@@ -290,7 +290,9 @@ export async function rankCandidatesByPerspective(comment,candidates,{fetchImpl=
   if(selected.length<limit) throw new Error('Perspective ranking could not produce distinct candidates.');
   if(ordinalPerspectives&&!apiKey) return selected.slice(0,limit).sort((left,right)=>right.classifier_score-left.classifier_score||left.perspective.localeCompare(right.perspective));
   const rescored=await scoreOrdinalCandidates(comment,selected.slice(0,limit),{
-    fetchImpl,timeoutMs,apiKey,
+    // These distinct memes were already selected by non-flat perspective
+    // rankings. Equal final fit is valid; keep their viewpoints and scores.
+    fetchImpl,timeoutMs,apiKey,allowTies:true,
     instructions:`${FIT_INSTRUCTIONS} The input declares the intended viewpoint. Judge the candidate only for that viewpoint; do not silently switch to another participant or to the event itself.`,
     inputFor:(text,record)=>`COMMENT: ${text}\nVIEWPOINT: ${record.perspective_label}\nCANDIDATE: ${record.name}. Meaning: ${record.message} Social dynamic: ${record.relational_pattern} Example: ${record.example_context} Avoid: ${record.near_miss_context}`
   });

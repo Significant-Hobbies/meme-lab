@@ -39,6 +39,19 @@ test('HTTP 200 degradation still produces an error-level failed probe event',asy
   assert.equal(body.logs[0].props.perspectives_degraded,true);
 });
 
+test('bounded cause fields reach App Health while unknown text is excluded',async()=>{
+  let body;
+  await reportPickerProbe({status:'failed',results:[
+    {case:'perspectives',status:'failed',degraded:true,fallback:false,confidence:'low',ranking_mode:'perspective',perspectives_complete:true},
+    {case:'general',status:'failed',confidence:'private secret',ranking_mode:'private prompt',fallback:'private',perspectives_complete:'private'}
+  ]},{key:'test-key',fetchImpl:async(_url,init)=>{body=JSON.parse(init.body);return new Response(null,{status:202});}});
+  const props=body.logs[0].props;
+  assert.equal(props.perspectives_fallback,false);assert.equal(props.perspectives_confidence,'low');
+  assert.equal(props.perspectives_ranking_mode,'perspective');assert.equal(props.perspectives_complete,true);
+  assert.equal(Object.hasOwn(props,'general_confidence'),false);assert.equal(Object.hasOwn(props,'general_ranking_mode'),false);
+  assert.doesNotMatch(JSON.stringify(body),/private|test-key/);
+});
+
 test('an unavailable public site still generates a failed probe log without an HTTP response',async()=>{
   let body;
   await reportPickerProbe({status:'failed',results:[{case:'general',status:'failed',reason:'request_or_response_failed',duration_ms:100}]},{
