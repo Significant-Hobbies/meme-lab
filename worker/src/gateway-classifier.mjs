@@ -29,7 +29,7 @@ export function createGatewayClassifierFetch(binding,projectId='meme-lab') {
           await response.body?.cancel();
           continue;
         }
-        return await decodeClassifierResponse(response,inputs,labels,labelIndexes);
+        return await decodeClassifierResponse(response,inputs,labels,labelIndexes,init.classifierRejectFlatOrdinal);
       } catch(error) {
         // A syntactically invalid provider answer is transient too. Retry once
         // under the original deadline, never use invalid data as fit scores.
@@ -40,7 +40,7 @@ export function createGatewayClassifierFetch(binding,projectId='meme-lab') {
   };
 }
 
-async function decodeClassifierResponse(response,inputs,labels,labelIndexes) {
+async function decodeClassifierResponse(response,inputs,labels,labelIndexes,rejectFlatOrdinal) {
   let raw;
   try { raw=await response.json(); } catch { throw new Error('Free AI gateway returned invalid JSON.'); }
   if(typeof raw?.choices?.[0]?.message?.content!=='string') {
@@ -68,6 +68,15 @@ async function decodeClassifierResponse(response,inputs,labels,labelIndexes) {
     const winner=ordinalFit?result.scores.reduce((best,score,index)=>score>result.scores[best]?index:best,0):result.label_index;
     return {label:labels[winner],scores:Object.fromEntries(labels.map((label,index)=>[label,result.scores[index]/total]))};
   });
+  // The ranker's flat-batch invariant belongs inside the bounded repair loop.
+  // Final winners may legitimately tie, so only shortlist scoring opts in.
+  if(rejectFlatOrdinal&&ordinalFit&&results.length>1) {
+    const fits=results.map(result=>labels.reduce((total,label,index)=>total+result.scores[label]*index,0)/(labels.length-1));
+    if(fits.every(score=>score===fits[0])) {
+      logInvalidOutput(raw,'flat_ordinal_scores');
+      throw new Error('Free AI classifier returned flat ordinal scores.');
+    }
+  }
   return Response.json({results},{status:200});
 }
 

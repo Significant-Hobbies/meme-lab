@@ -76,11 +76,12 @@ async function classify({comment,labels,instructions,fetchImpl,timeoutMs}) {
   return result;
 }
 
-async function classifyMany({inputs,labels,instructions,fetchImpl,timeoutMs}) {
+async function classifyMany({inputs,labels,instructions,fetchImpl,timeoutMs,rejectFlatOrdinal=false}) {
   const response=await fetchImpl(JEV_ENDPOINT,{
     method:'POST',
     headers:{'content-type':'application/json'},
     signal:AbortSignal.timeout(timeoutMs),
+    classifierRejectFlatOrdinal:rejectFlatOrdinal,
     body:JSON.stringify({inputs,labels,tier:'fast',instructions})
   });
   if(!response.ok) throw new Error(`Classifier returned HTTP ${response.status}.`);
@@ -165,7 +166,7 @@ function ordinalScore(result) {
 async function scoreOrdinalCandidates(comment,candidates,{fetchImpl,timeoutMs,instructions=FIT_INSTRUCTIONS,inputFor=candidateInput,apiKey,allowTies=false}={}) {
   if(apiKey) return scoreDirectCandidates(comment,candidates,{apiKey,fetchImpl,timeoutMs,instructions,allowTies});
   const labels=FIT_LABELS.map(({label})=>label);
-  const results=await classifyMany({inputs:candidates.map(record=>inputFor(comment,record)),labels,instructions,fetchImpl,timeoutMs});
+  const results=await classifyMany({inputs:candidates.map(record=>inputFor(comment,record)),labels,instructions,fetchImpl,timeoutMs,rejectFlatOrdinal:!allowTies});
   const scored=candidates.map((record,index)=>({...record,...ordinalScore(results[index]),retrieval_rank:index+1}));
   if(!allowTies&&scored.length>1&&scored.every(record=>record.classifier_score===scored[0].classifier_score)) throw new Error('Classifier returned flat ordinal scores.');
   return scored;

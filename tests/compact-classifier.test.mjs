@@ -1,6 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {createGatewayClassifierFetch} from '../worker/src/gateway-classifier.mjs';
+import {rankCandidates} from '../worker/src/classification.mjs';
+import {withClassifierDeadline} from '../worker/src/classifier-deadline.mjs';
 
 const fitLabels=['0 | wrong','1 | weak','2 | plausible','3 | strong','4 | exact'];
 const init=(count=30)=>({body:JSON.stringify({inputs:Array(count).fill('private input'),labels:fitLabels})});
@@ -96,4 +98,36 @@ test('unknown provider finish reasons and token metadata are excluded',async()=>
     for(const warning of warnings){assert.equal(warning.finish_reason,null);assert.equal(warning.completion_tokens,null);}
     assert.doesNotMatch(JSON.stringify(warnings),/private|account|key/);
   }finally{console.warn=original;}
+});
+
+
+test('flat ordinal shortlist answers are repaired inside the original two-call adapter budget',async()=>{
+  let calls=0;
+  const adapter=createGatewayClassifierFetch({fetch:async()=>++calls===1?
+    completion([[3,0,0,0,1,0],[4,0,0,.5,0,.5]]):
+    completion([[3,0,0,0,1,0],[4,0,0,0,0,1]])});
+  const ranked=await rankCandidates('private input',[{id:'strong',name:'Strong'},{id:'exact',name:'Exact'}],{fetchImpl:withClassifierDeadline(adapter,1000),limit:2,timeoutMs:1000});
+  assert.equal(calls,2);assert.equal(ranked[0].id,'exact');assert.equal(ranked[0].classifier_score,1);
+});
+
+test('a genuinely flat shortlist stays invalid after one repair without invented score differences',async()=>{
+  let calls=0;
+  const adapter=createGatewayClassifierFetch({fetch:async()=>{calls++;return completion([[1,0,1,0,0,0],[1,0,1,0,0,0]]);}});
+  await assert.rejects(adapter('',{...init(2),classifierRejectFlatOrdinal:true}),/flat ordinal scores/);
+  assert.equal(calls,2);
+});
+
+test('valid final winner ties and safety decisions do not trigger flat-shortlist repair',async()=>{
+  let calls=0;
+  const adapter=createGatewayClassifierFetch({fetch:async()=>{calls++;return completion([[3,0,0,0,1,0],[3,0,0,0,1,0]]);}});
+  assert.equal((await adapter('',init(2))).status,200);assert.equal(calls,1);
+  const safety=createGatewayClassifierFetch({fetch:async()=>completion([[1,.5,.5],[1,.5,.5]])});
+  assert.equal((await safety('',{body:JSON.stringify({inputs:['one','two'],labels:['humour','serious']}),classifierRejectFlatOrdinal:true})).status,200);
+});
+
+test('caller cancellation during flat-score validation prevents a second dispatch',async()=>{
+  let calls=0;const controller=new AbortController();
+  const adapter=createGatewayClassifierFetch({fetch:async()=>{calls++;controller.abort();return completion([[3,0,0,0,1,0],[3,0,0,0,1,0]]);}});
+  await assert.rejects(adapter('',{...init(2),classifierRejectFlatOrdinal:true,signal:controller.signal}),/flat ordinal scores/);
+  assert.equal(calls,1);
 });
