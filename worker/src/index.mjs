@@ -1,5 +1,6 @@
 import {catalogue} from './catalogue.stage3000.generated.mjs';
 import {createGatewayClassifierFetch,hasMultiplePerspectives,humourBelongs,needsSeriousHandling,rankCandidates,rankCandidatesByPerspective,requiresFactualAnswer} from './classification.mjs';
+import {withClassifierDeadline} from './classifier-deadline.mjs';
 import {MAX_RECOMMENDATIONS,presentSelection,selectionFromRanking} from './recommendation.mjs';
 import {retrieveCandidates} from './retrieval.mjs';
 import {classifierUnavailable,reportPickerHealth} from './recommendation-health.mjs';
@@ -291,7 +292,7 @@ async function recommend(request,env,ctx) {
   try {
     const shortlist=await retrieveCandidates(env,comment,30);
     const classifierFetch=typeof env.CLASSIFIER_FETCH==='function'?env.CLASSIFIER_FETCH:createGatewayClassifierFetch(env.FREE_AI);
-    const classifierOptions={fetchImpl:classifierFetch};
+    const classifierOptions={fetchImpl:withClassifierDeadline(classifierFetch,25000)};
     let classifier_gate='not_needed';
     const factualRequest=requiresFactualAnswer(comment);
     const seriousRequest=needsSeriousHandling(comment);
@@ -327,8 +328,9 @@ async function recommend(request,env,ctx) {
         return json({...recommendation,feedback_enabled,degraded:true});
       }
     }
-    // Managed inference scores the full 30-candidate batch, within a bounded deadline.
-    const rankingOptions={...classifierOptions,timeoutMs:15000,ordinalPerspectives:typeof env.CLASSIFIER_FETCH!=='function'};
+    // Safety, ranking and any fallback share one clock. Slow managed batches
+    // can finish without granting each later stage a fresh timeout window.
+    const rankingOptions={...classifierOptions,timeoutMs:25000,ordinalPerspectives:typeof env.CLASSIFIER_FETCH!=='function'};
     let ranked;
     let ranking_mode='general';
     let ranking_model=CLASSIFIER_MODEL;
