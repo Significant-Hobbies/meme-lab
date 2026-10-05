@@ -10,6 +10,17 @@ import { blindArm, experimentSeed, latestExperimentReviews, orderedRepresentatio
 
 export const ROOT=dirname(fileURLToPath(import.meta.url));
 const mime={'.html':'text/html; charset=utf-8','.css':'text/css; charset=utf-8','.js':'text/javascript; charset=utf-8','.md':'text/plain; charset=utf-8','.json':'application/json; charset=utf-8','.jsonl':'application/x-ndjson; charset=utf-8','.png':'image/png','.svg':'image/svg+xml','.sha256':'text/plain; charset=utf-8','.py':'text/plain; charset=utf-8'};
+const footerAssetMime=new Map([
+  ['/footer-art/meme-lab-original-v1.webp','image/webp'],
+  ['/footer-art/provenance.json','application/json; charset=utf-8'],
+  ['/fonts/fleet-footer-precise-v1/geist-OFL.txt','text/plain; charset=utf-8'],
+  ['/fonts/fleet-footer-precise-v1/geist.woff2','font/woff2'],
+  ['/fonts/fleet-footer-precise-v1/geistmono-OFL.txt','text/plain; charset=utf-8'],
+  ['/fonts/fleet-footer-precise-v1/geistmono.woff2','font/woff2'],
+  ['/fonts/fleet-footer-precise-v1/newsreader-OFL.txt','text/plain; charset=utf-8'],
+  ['/fonts/fleet-footer-precise-v1/newsreader.woff2','font/woff2'],
+  ['/fonts/fleet-footer-precise-v1/provenance.json','application/json; charset=utf-8']
+]);
 
 function commonHeaders(res) {
   res.setHeader('X-Content-Type-Options','nosniff');
@@ -117,7 +128,8 @@ export function createApp(config, {storeDir=resolve(ROOT,'runs')}={}) {
         if(path==='/') file=resolve(ROOT,'public/index.html');
         else if(path==='/review') file=resolve(ROOT,'public/review.html');
         else if(path==='/design-probes' || path==='/design-probes/') file=resolve(ROOT,'design-probes/index.html');
-        else if(['/app.js','/styles.css','/experiment.css','/review.js','/review.css'].includes(path)) file=resolve(ROOT,'public',path.slice(1));
+        else if(['/app.js','/styles.css','/experiment.css','/review.js','/review.css','/footer-precise.css'].includes(path)) file=resolve(ROOT,'public',path.slice(1));
+        else if(footerAssetMime.has(path)) file=resolve(ROOT,'public',path.slice(1));
         else if(path.startsWith('/design-probes/')) {
           file=resolve(ROOT,path.slice(1));
           if(!file.startsWith(resolve(ROOT,'design-probes')+sep)||!mime[extname(file)]) return json(res,404,{error:'Not found.'});
@@ -135,7 +147,7 @@ export function createApp(config, {storeDir=resolve(ROOT,'runs')}={}) {
         // Original single-file HTML intentionally embeds its own script. It is preserved byte-for-byte.
         if(path.startsWith('/design-probes')) res.setHeader('Content-Security-Policy',"default-src 'none'; style-src 'unsafe-inline'; base-uri 'none'; frame-ancestors 'none'");
         else if(!path.startsWith('/original/')) res.setHeader('Content-Security-Policy',"default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' https://i.imgflip.com https://api.memegen.link https://api.nga.gov; connect-src 'self'; object-src 'none'; base-uri 'none'; frame-ancestors 'none'");
-        res.writeHead(200,{'Content-Type':mime[extname(file)]||'text/plain; charset=utf-8'}); return res.end(await readFile(file));
+        res.writeHead(200,{'Content-Type':footerAssetMime.get(path)||mime[extname(file)]||'text/plain; charset=utf-8'}); return res.end(await readFile(file));
       }
       if(req.headers['x-meme-lab']!=='1') return json(res,403,{error:'Missing local-app request header.'});
       const body=await bodyJSON(req);
