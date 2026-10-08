@@ -1,6 +1,6 @@
 # Meme Lab project status
 
-**Updated:** 5 October 2026
+**Updated:** 9 October 2026
 **Lifecycle:** Live meme picker and prefilled caption Studio; Anna 1.3.0 candidate prepared, public Store publication remains gated.
 
 ## Live product
@@ -102,7 +102,11 @@ Version 1.2.1 is prepared for re-review; public Store approval remains external.
 
 - Continue owner review of the fresh 100-case stage-3,000 evaluation and use production feedback to improve the weakest GIF metadata.
 - Convert the focused canonical set into owner-labelled evaluation data and use feedback to resolve the five remaining ordering disagreements.
-- At 30,000, add movie-dialogue reactions as a separate corpus and route each input to meme, dialogue, or none before corpus-specific retrieval.
+- The next catalogue expansion is GIF-first, not a standalone movie-dialogue corpus. Cornell dialogue remains research/evaluation material and is not a production source.
+- A 5,000-GIF staging pool is now built from the full official GIF Reply exports. It contains 4,134 entries not present in the earlier 1,189-record source set, requires at least ten observed reply uses, has no exact record, media, or dataset-GIF-ID duplicates, and caps identical semantic buckets at eight.
+- The staging pool is deliberately not live yet. A browser-measured 63-GIF stratified sample found 10 assets (15.9%) below the 320-by-180-equivalent release floor, one timed-out asset, and both visible watermarks and genuinely strong tail entries. Every new record now has an unknown asset-quality score, a pending visual-quality status, and `production_eligible: false`; no record can enter production until measured. The 120-record review sample remains owner-unvalidated, and 4,134 net-new records still need meaning-specific full-sentence retrieval metadata before release qualification.
+- A focused curation pass visually inspected seven distinct candidates, checked their actual GIF dimensions and reaction meaning, and replaced seven live records whose names and retrieval descriptions were watermark text or broken OCR. The generated catalogue remains exactly 3,000 records. These seven changes landed on main on 9 October 2026 but are not deployed. The next Worker deploy must be paired with a vector update: embed and upsert the seven new records and delete the seven replaced IDs' vectors (the release proof still requires 6,000 vectors). Retrieval already skips vector matches whose IDs are absent from the catalogue, so a Worker-only deploy degrades gracefully rather than failing.
+- Dialogue research tooling (Cornell and Wikiquote acquisition, cross-source linking, local screening and memorability evaluation) is in the repository. The third-party corpora and every derived dialogue dataset stay local and gitignored, consistent with `docs/dialogue-review.md`.
 
 Tracking: [public beta #1](https://github.com/sarthakagrawal927/meme-lab/issues/1), [catalogue expansion #2](https://github.com/sarthakagrawal927/meme-lab/issues/2), [verified meme and GIF rebuild #4](https://github.com/sarthakagrawal927/meme-lab/issues/4), [canonical retrieval gaps #5](https://github.com/sarthakagrawal927/meme-lab/issues/5), [crawlable catalogue #6](https://github.com/sarthakagrawal927/meme-lab/issues/6).
 
