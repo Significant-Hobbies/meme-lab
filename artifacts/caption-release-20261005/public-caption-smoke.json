@@ -1,0 +1,123 @@
+{
+  "measuredAt": "2026-10-05T13:41:48.380Z",
+  "sourceSha": "a555da79f615cdf630fed282f559e371bc94325f",
+  "scope": "Anonymous real production HTTP/API and exact public bytes; direct production browser navigation is blocked in this environment",
+  "results": [
+    {
+      "path": "/app.js",
+      "status": 200,
+      "exactSourceBytes": true
+    },
+    {
+      "path": "/meme-studio.js",
+      "status": 200,
+      "exactSourceBytes": true
+    },
+    {
+      "path": "/meme-renderer.js",
+      "status": 200,
+      "exactSourceBytes": true
+    },
+    {
+      "path": "/meme-studio.css",
+      "status": 200,
+      "exactSourceBytes": true
+    },
+    {
+      "path": "/anna-privacy.html",
+      "status": 200,
+      "exactSourceBytes": true
+    },
+    {
+      "path": "/api/create",
+      "status": 200,
+      "input": {
+        "comment": "My roommate chooses hand washing over the working dishwasher.",
+        "candidate_id": "drake-preference",
+        "perspective": "my_reaction"
+      },
+      "draft": {
+        "decision": "compose",
+        "candidate_id": "drake-preference",
+        "name": "Drake Hotline Bling",
+        "placement": "template",
+        "expected_aspect": 1,
+        "grammar": "Reject a sensible or less-preferred option; enthusiastically choose the contrasting option. Do not reverse the preference. Use short option labels, usually 2–5 words. If an option’s target is ambiguous, omit that target rather than guessing it.",
+        "layers": [
+          {
+            "id": "rejected",
+            "label": "Rejected option",
+            "role": "The option rejected by the person in the upper panel.",
+            "text": "Working dishwasher",
+            "box": [
+              0.53,
+              0.04,
+              0.43,
+              0.42
+            ],
+            "style": "plain",
+            "rotation": 0
+          },
+          {
+            "id": "preferred",
+            "label": "Preferred option",
+            "role": "The option approved by the person in the lower panel.",
+            "text": "Hand washing",
+            "box": [
+              0.53,
+              0.54,
+              0.43,
+              0.42
+            ],
+            "style": "plain",
+            "rotation": 0
+          }
+        ],
+        "media_url": "/api/create/media/drake-preference",
+        "source_url": "https://i.imgflip.com/30b1gx.jpg",
+        "media_status": "source-preview"
+      }
+    },
+    {
+      "path": "/api/create/media/drake-preference",
+      "status": 200,
+      "type": "image/jpeg",
+      "bytes": 92771,
+      "cors": true
+    },
+    {
+      "path": "/api/anna/composition",
+      "status": 200,
+      "preflight": 204,
+      "cors": true,
+      "templateId": "drake-preference",
+      "maxTokens": 800
+    },
+    {
+      "path": "/api/create",
+      "check": "none",
+      "status": 200,
+      "decision": "none"
+    },
+    {
+      "path": "/api/create",
+      "check": "reference",
+      "status": 200,
+      "decision": "reference"
+    },
+    {
+      "path": "/api/create",
+      "check": "unknown ID",
+      "status": 400
+    },
+    {
+      "path": "/api/recommend",
+      "status": 200,
+      "decision": "meme",
+      "degraded": true,
+      "rankingMode": "general_fallback",
+      "candidateCount": 5,
+      "selected": "303237059-playstation-trophy"
+    }
+  ]
+}

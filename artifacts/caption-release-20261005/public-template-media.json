@@ -1,0 +1,54 @@
+{
+  "measuredAt": "2026-10-05T13:31:40.154Z",
+  "sourceSha": "3ca2ee07c7137dc616e8e17ec0e6fe9a4a6e5601",
+  "results": [
+    {
+      "id": "drake-preference",
+      "status": 200,
+      "type": "image/jpeg",
+      "bytes": 92771
+    },
+    {
+      "id": "two-buttons",
+      "status": 200,
+      "type": "image/jpeg",
+      "bytes": 64963
+    },
+    {
+      "id": "distracted-boyfriend",
+      "status": 200,
+      "type": "image/jpeg",
+      "bytes": 96791
+    },
+    {
+      "id": "grus-plan",
+      "status": 200,
+      "type": "image/jpeg",
+      "bytes": 47785
+    },
+    {
+      "id": "expanding-brain",
+      "status": 200,
+      "type": "image/jpeg",
+      "bytes": 107509
+    },
+    {
+      "id": "change-my-mind",
+      "status": 200,
+      "type": "image/jpeg",
+      "bytes": 80400
+    },
+    {
+      "id": "x-everywhere",
+      "status": 200,
+      "type": "image/jpeg",
+      "bytes": 168696
+    },
+    {
+      "id": "success-kid",
+      "status": 200,
+      "type": "image/jpeg",
+      "bytes": 8514
+    }
+  ]
+}

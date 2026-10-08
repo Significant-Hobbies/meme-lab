@@ -1,7 +1,11 @@
+import {composeOnAnna} from './captions.mjs';
+import {persistMeme,downloadSavedMeme} from './creations.mjs';
 import {initializePersonalEditor} from './personal-editor.mjs';
 import {decorateResults,initializeInteractions} from './interactions.mjs';
 import {reportEvent} from './engagement.mjs';
 import {recommendOnAnna} from './ranking.mjs';
+import {MemeStudio} from './meme-studio.js';
+
 const $=selector=>document.querySelector(selector);
 const form=$('#meme-form');
 const comment=$('#comment');
@@ -11,6 +15,10 @@ const loading=$('#loading');
 const result=$('#result');
 const noMatch=$('#no-match');
 let currentRecommendation=null;
+let selectedCandidate=null;
+let submittedSituation='';
+let searchVersion=0;
+const studio=new MemeStudio($('#meme-studio'),{generateDraft:async(body,{signal})=>composeOnAnna(body,{anna:await annaReady,signal}),mediaBase:'https://memes.significanthobbies.com',downloadBlob:async blob=>{const anna=await annaReady;const entry=await persistMeme(anna,blob);await downloadSavedMeme(anna,entry.path);}});
 const fitText=candidate=>`${candidate.fit_label||'weak'}`.toUpperCase()+' FIT';
 const displayText=value=>String(value??'')
   .replace(/&#(\d+);/g,(_,code)=>String.fromCodePoint(Number(code)))
@@ -58,7 +66,7 @@ function renderBest(candidate) {
   copy.className='result-copy';
   const lowConfidence=currentRecommendation?.confidence==='low';
   const perspectiveAware=candidate.perspective&&candidate.perspective!=='best_match';
-  const matchLabel=perspectiveAware?candidate.perspective_label.toUpperCase():'BEST MATCH';
+  const matchLabel=perspectiveAware?candidate.perspective_label.toUpperCase():candidate.rank===1?'BEST MATCH':'SELECTED TEMPLATE';
   const rank=Object.assign(document.createElement('span'),{className:`rank${lowConfidence?' low-confidence':''}`,textContent:`${lowConfidence?'LOW CONFIDENCE · ':''}${matchLabel} · ${fitText(candidate)}`});
   const title=document.createElement('h2');
   title.append(Object.assign(document.createElement('a'),{href:`https://memes.significanthobbies.com/memes/${encodeURIComponent(candidate.id)}`,target:"_blank",rel:"noopener noreferrer",textContent:displayText(candidate.name)}));
@@ -93,14 +101,33 @@ function renderAlternatives(candidates) {
       title,
       Object.assign(document.createElement('p'),{className:'signal-note',textContent:candidate.signal_summary})
     );
+    if(candidate.media_type!=='gif') {
+      const create=Object.assign(document.createElement('button'),{type:'button',className:'create-alternative',textContent:'Make this meme'});
+      create.addEventListener('click',()=>openStudio(candidate));copy.append(create);
+    }
     card.append(media(candidate,'alternative-media'),copy);
     host.append(card);
   }
 }
 
+function openStudio(candidate) {
+  selectedCandidate=candidate;
+  renderBest(candidate);
+  $('#feedback-status').textContent='';
+  for(const button of document.querySelectorAll('[data-verdict]')) {button.disabled=false;button.removeAttribute('aria-pressed');}
+  $('#best-result').hidden=true;
+  studio.open({...candidate,name:displayText(candidate.name)},submittedSituation).then(()=>{
+    if(!studio.host.hidden&&studio.candidate.id===candidate.id&&!studio.image)$('#best-result').hidden=false;
+  });
+  result.scrollIntoView({behavior:'smooth',block:'start'});
+}
+
 async function findMeme() {
   const value=comment.value.trim();
   if(!value) { status.textContent='Paste a comment first.'; comment.focus(); return; }
+  const version=++searchVersion;
+  studio.close();
+  $('#best-result').hidden=false;
   status.textContent='';
   submit.disabled=true;
   submit.querySelector('span').textContent='Finding it…';
@@ -119,6 +146,8 @@ async function findMeme() {
       return;
     }
     currentRecommendation=data;
+    submittedSituation=value;
+    selectedCandidate=data.candidates[0];
     renderBest(data.candidates[0]);
     renderAlternatives(data.candidates.slice(1));
     decorateResults(data);
@@ -127,14 +156,17 @@ async function findMeme() {
     $('#feedback-status').textContent='';
     for(const button of document.querySelectorAll('[data-verdict]')) { button.disabled=false;button.removeAttribute('aria-pressed'); }
     showOnly('result');
+    if(data.candidates[0].media_type!=='gif')openStudio(data.candidates[0]);
     result.scrollIntoView({behavior:'smooth',block:'start'});
   } catch(error) {
+    if(version!==searchVersion)return;
     window.appHealthLog?.('recommendation.failed',{level:'error',title:'Meme picker failed',props:{route:'/api/recommend',status_code:responseStatus,duration_ms:Date.now()-started}});
     showOnly('form');
     status.textContent=error.message;
     status.scrollIntoView({behavior:'smooth',block:'nearest'});
     void reportEvent('run_error');
   } finally {
+    if(version!==searchVersion)return;
     submit.disabled=false;
     submit.querySelector('span').textContent='Find the meme';
   }
@@ -142,8 +174,8 @@ async function findMeme() {
 
 form.addEventListener('submit',event=>{event.preventDefault();findMeme();});
 for(const button of document.querySelectorAll('[data-example]')) button.addEventListener('click',()=>{comment.value=button.dataset.example;comment.focus();});
-$('#try-again').addEventListener('click',()=>{showOnly('form');comment.focus();window.scrollTo({top:0,behavior:'smooth'});});
-$('#edit-comment').addEventListener('click',()=>{showOnly('form');comment.focus();window.scrollTo({top:0,behavior:'smooth'});});
+$('#try-again').addEventListener('click',()=>{studio.close();showOnly('form');comment.focus();window.scrollTo({top:0,behavior:'smooth'});});
+$('#edit-comment').addEventListener('click',()=>{studio.close();showOnly('form');comment.focus();window.scrollTo({top:0,behavior:'smooth'});});
 
 const annaReady=import('/static/anna-apps/_sdk/latest/index.js')
   .then(({AnnaAppRuntime})=>AnnaAppRuntime.connect())

@@ -16,7 +16,9 @@ test('gateway supports the 30-label perspective contract and rejects oversized i
   const adapter=createGatewayClassifierFetch({fetch:async request=>{
     calls++;
     assert.equal(request.headers.get('x-gateway-project-id'),'meme-lab');
-    assert.equal((await request.json()).response_format.type,'json_object');
+    const body=await request.json();
+    assert.equal(body.response_format.type,'json_schema');
+    assert.equal(body.response_format.json_schema.strict,true);
     return completion([{label_index:29,scores:Array.from({length:30},(_,index)=>index/30)}]);
   }});
   const response=await adapter('',requestInit(30));
@@ -63,13 +65,27 @@ test('real perspective ranking accepts 30 candidates through the managed adapter
     const labels=JSON.parse(prompt.split('Labels by index: ')[1].split('\nInputs: ')[0]);
     const inputs=JSON.parse(prompt.split('\nInputs: ')[1]);
     requests.push({labels:labels.length,inputs:inputs.length});
-    return completion(inputs.map((_,index)=>({label_index:index===0?labels.length-1:Math.max(1,labels.length-2),scores:labels.map((_,labelIndex)=>labelIndex/(labels.length*2)+index/100)})));
+    return completion(inputs.map((_,index)=>[index===0?labels.length-1:Math.max(1,labels.length-2),...labels.map((_,labelIndex)=>labelIndex/(labels.length*2)+index/100)]));
   }});
   const ranked=await rankCandidatesByPerspective('I told my coworker the deadline was today and he started another coffee break.',catalogue.slice(0,30),{fetchImpl:adapter,limit:5});
   assert.equal(ranked.length,5);
   assert.equal(new Set(ranked.map(candidate=>candidate.id)).size,5);
   assert.deepEqual(new Set(ranked.map(candidate=>candidate.perspective)),new Set(['self','other','situation']));
   assert.deepEqual(requests.map(request=>request.labels),[30,30,30,5]);
+});
+
+test('equally strong final perspective fits retain the five independently ranked memes',async()=>{
+  let calls=0;
+  const fetchImpl=async(_url,init)=>{
+    const {labels,inputs}=JSON.parse(init.body);calls++;
+    if(labels.length===5)return Response.json({results:inputs.map(()=>({label:labels[3],scores:Object.fromEntries(labels.map((label,index)=>[label,index===3?1:0]))}))});
+    const winner=(calls-1)%3;
+    return Response.json({results:[{label:labels[winner],scores:Object.fromEntries(labels.map((label,index)=>[label,index===winner?0.9:0.01]))}]});
+  };
+  const ranked=await rankCandidatesByPerspective('I told my coworker the deadline was today and he started another coffee break.',catalogue.slice(0,30),{fetchImpl,limit:5});
+  assert.equal(calls,4);assert.equal(ranked.length,5);assert.equal(new Set(ranked.map(x=>x.id)).size,5);
+  assert.deepEqual(new Set(ranked.map(x=>x.perspective)),new Set(['self','other','situation']));
+  assert(ranked.every(x=>x.fit_label==='strong'&&x.classifier_score===.75));
 });
 
 const budget={idFromName:name=>name,get:()=>({fetch:async(url,options)=>{
@@ -84,6 +100,24 @@ const testEnv={
   DB:{prepare:()=>({bind:()=>({run:async()=>({success:true})})})}
 };
 const recommend=comment=>new Request('https://example.test/api/recommend',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({comment})});
+
+test('public confidence follows ordinal probabilities while genuine weak results stay low',async()=>{
+  for(const strong of [true,false]){
+    let calls=0;
+    const adapter=createGatewayClassifierFetch({fetch:async request=>{
+      calls++;
+      const {messages}=await request.json();
+      const inputs=JSON.parse(messages[0].content.split('\nInputs: ')[1]);
+      return completion(inputs.map((_,index)=>strong&&index===0?[1,0,.01,.01,.43,.55]:[4,.7+index/1000,.2-index/1000,.1,0,0]));
+    }});
+    const response=await worker.fetch(recommend('The meeting could have been an email.'),{...testEnv,CLASSIFIER_FETCH:adapter});
+    const body=await response.json();
+    assert.equal(response.status,200);assert.equal(body.degraded,false);assert.equal(calls,1);
+    assert.equal(body.confidence,strong?'high':'low');
+    assert.equal(body.candidates[0].fit_label,strong?'exact':'weak');
+    if(strong)assert.equal(body.candidates[0].score,88);
+  }
+});
 
 test('upstream 502 returns an honest low-confidence semantic fallback and logs degradation',async()=>{
   const warnings=[];const original=console.warn;console.warn=message=>warnings.push(JSON.parse(message));
@@ -137,6 +171,17 @@ test('functional probe rejects an HTTP 200 fallback and missing perspectives',as
   for(const body of [{...success,degraded:true},{...success,confidence:'low'},{...success,candidates:candidates.map(candidate=>({...candidate,perspective:'best_match'}))}]) {
     assert.equal((await probePicker('https://example.test',async()=>Response.json(body))).status,'failed');
   }
+});
+
+test('probe distinguishes low confidence from fallback and missing perspectives without private fields',async()=>{
+  const candidates=Array.from({length:5},(_,index)=>({id:`candidate-${index}`,media_url:'https://example.test/image.png',score:80,perspective:['self','other','situation'][index%3]}));
+  const body={decision:'meme',confidence:'low',ranking_mode:'perspective',degraded:false,candidates,private:'private situation'};
+  const result=await probePicker('https://example.test',async()=>Response.json(body));
+  assert.equal(result.status,'failed');assert.equal(result.results[1].fallback,false);
+  assert.equal(result.results[1].confidence,'low');assert.equal(result.results[1].ranking_mode,'perspective');
+  assert.equal(result.results[1].perspectives_complete,true);assert.doesNotMatch(JSON.stringify(result),/private situation/);
+  const unknown=await probePicker('https://example.test',async()=>Response.json({...body,confidence:'private secret',ranking_mode:'private account'}));
+  assert.equal(unknown.results[0].confidence,null);assert.equal(unknown.results[0].ranking_mode,null);
 });
 
 test('browser reports caught picker errors without attaching comments or error text',()=>{

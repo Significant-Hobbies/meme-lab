@@ -53,12 +53,12 @@ export function needsSeriousHandling(comment) {
   const helpSeeking=/\b(help me|please help|tell me|give me|what can i say|what should i|how (?:do|can|should) i|guidance|steps to take)\b/i;
   const highRisk=/(?:\b(?:my|our|their|his|her) [a-z]+ (?:has )?died\b|\b(?:someone|person|friend|relative|parent|child|baby|pet|dog|cat|he|she|they) (?:has )?died\b|\b(?:hurt (?:myself|themselves|himself|herself)|suicid|death|funeral|chest pain|trouble breathing|prescription|medication|unsafe (?:home|partner)|sexual (?:message|harassment)|panic attack|allergic reaction|anaphyla|missing child|lost their baby|miscarriage)\b)/i;
   const supportRequest=/\b(?:ask(?:ed|s)?|need(?:ed|s)?|want(?:ed|s)?|looking|seek(?:ing)?)\b.{0,120}\b(?:help|guidance|support|listen|apolog(?:y|ize|ise)?|respond|report|deadline|official|document|fee|steps|service|contact|explanation|take responsibility|stay with)\b/i;
-  const seriousTopic=/\b(sexual assault|assaulted|pregnan|fertility treatment|poison(?:ed|ing)?|dishwasher capsule|gas smell|carbon monoxide|harassment|locks changed|put down (?:a |the |their )?(?:dog|cat|pet)|passport|payroll deduction|scholarship deadline|emergency service)\b/i;
+  const seriousTopic=/\b(sexual assault|assaulted|pregnan|fertility treatment|poison(?:ed|ing)?|dishwasher capsule|gas smell|gas leak|smells?(?:\s+(?:strongly|faintly))? of gas|carbon monoxide|harassment|locks changed|put down (?:a |the |their )?(?:dog|cat|pet)|passport|payroll deduction|scholarship deadline|emergency service)\b/i;
   return helpSeeking.test(comment)||highRisk.test(comment)||supportRequest.test(comment)||seriousTopic.test(comment);
 }
 
 export function requiresFactualAnswer(comment) {
-  const factualRequest=/\b(factual explanation|plain factual|what (?:the )?.+ (?:field|fields|term|terms) mean|which .+ (?:form|document)|how (?:do|should) i (?:file|complete|fill|submit)|current documents|expected processing time|confirmed .+ deadline|official submission page|correct .+ contact|written explanation)\b/i;
+  const factualRequest=/\b(factual explanation|plain factual|what (?:the )?.+ (?:field|fields|term|terms) mean|which .+ (?:form|document)|how (?:do|should) i (?:file|complete|fill|submit)|current documents|expected processing time|confirmed .+ deadline|official (?:\w+ ){0,4}deadline|official submission page|correct .+ contact|written explanation)\b/i;
   const factualDomain=/\b(tax|residency|visa|legal|medical|prescription|identification|government form|passport|payroll|payslip|scholarship|application)\b/i;
   return factualRequest.test(comment)&&factualDomain.test(comment);
 }
@@ -76,11 +76,12 @@ async function classify({comment,labels,instructions,fetchImpl,timeoutMs}) {
   return result;
 }
 
-async function classifyMany({inputs,labels,instructions,fetchImpl,timeoutMs}) {
+async function classifyMany({inputs,labels,instructions,fetchImpl,timeoutMs,rejectFlatOrdinal=false}) {
   const response=await fetchImpl(JEV_ENDPOINT,{
     method:'POST',
     headers:{'content-type':'application/json'},
     signal:AbortSignal.timeout(timeoutMs),
+    classifierRejectFlatOrdinal:rejectFlatOrdinal,
     body:JSON.stringify({inputs,labels,tier:'fast',instructions})
   });
   if(!response.ok) throw new Error(`Classifier returned HTTP ${response.status}.`);
@@ -133,7 +134,7 @@ function directOrdinalScore(answer) {
   return {classifier_score:score/(FIT_CRITERIA.length-1),fit_label:FIT_LABELS[fitIndex].key};
 }
 
-async function scoreDirectCandidates(comment,candidates,{apiKey,fetchImpl,timeoutMs,instructions=FIT_INSTRUCTIONS}={}) {
+async function scoreDirectCandidates(comment,candidates,{apiKey,fetchImpl,timeoutMs,instructions=FIT_INSTRUCTIONS,allowTies=false}={}) {
   const state=directCandidateState(comment,candidates);
   state.task=instructions;
   const questions=Object.fromEntries(candidates.map((_,index)=>[`fit_${index}`,{
@@ -143,7 +144,7 @@ async function scoreDirectCandidates(comment,candidates,{apiKey,fetchImpl,timeou
   }]));
   const answers=await askJev({state,questions,apiKey,fetchImpl,timeoutMs});
   const scored=candidates.map((record,index)=>({...record,...directOrdinalScore(answers[`fit_${index}`]),retrieval_rank:index+1}));
-  if(scored.length>1&&scored.every(record=>record.classifier_score===scored[0].classifier_score)) throw new Error('TypeSafe returned flat ordinal scores.');
+  if(!allowTies&&scored.length>1&&scored.every(record=>record.classifier_score===scored[0].classifier_score)) throw new Error('TypeSafe returned flat ordinal scores.');
   return scored;
 }
 
@@ -162,12 +163,12 @@ function ordinalScore(result) {
   };
 }
 
-async function scoreOrdinalCandidates(comment,candidates,{fetchImpl,timeoutMs,instructions=FIT_INSTRUCTIONS,inputFor=candidateInput,apiKey}={}) {
-  if(apiKey) return scoreDirectCandidates(comment,candidates,{apiKey,fetchImpl,timeoutMs,instructions});
+async function scoreOrdinalCandidates(comment,candidates,{fetchImpl,timeoutMs,instructions=FIT_INSTRUCTIONS,inputFor=candidateInput,apiKey,allowTies=false}={}) {
+  if(apiKey) return scoreDirectCandidates(comment,candidates,{apiKey,fetchImpl,timeoutMs,instructions,allowTies});
   const labels=FIT_LABELS.map(({label})=>label);
-  const results=await classifyMany({inputs:candidates.map(record=>inputFor(comment,record)),labels,instructions,fetchImpl,timeoutMs});
+  const results=await classifyMany({inputs:candidates.map(record=>inputFor(comment,record)),labels,instructions,fetchImpl,timeoutMs,rejectFlatOrdinal:!allowTies});
   const scored=candidates.map((record,index)=>({...record,...ordinalScore(results[index]),retrieval_rank:index+1}));
-  if(scored.length>1&&scored.every(record=>record.classifier_score===scored[0].classifier_score)) throw new Error('Classifier returned flat ordinal scores.');
+  if(!allowTies&&scored.length>1&&scored.every(record=>record.classifier_score===scored[0].classifier_score)) throw new Error('Classifier returned flat ordinal scores.');
   return scored;
 }
 
@@ -290,7 +291,9 @@ export async function rankCandidatesByPerspective(comment,candidates,{fetchImpl=
   if(selected.length<limit) throw new Error('Perspective ranking could not produce distinct candidates.');
   if(ordinalPerspectives&&!apiKey) return selected.slice(0,limit).sort((left,right)=>right.classifier_score-left.classifier_score||left.perspective.localeCompare(right.perspective));
   const rescored=await scoreOrdinalCandidates(comment,selected.slice(0,limit),{
-    fetchImpl,timeoutMs,apiKey,
+    // These distinct memes were already selected by non-flat perspective
+    // rankings. Equal final fit is valid; keep their viewpoints and scores.
+    fetchImpl,timeoutMs,apiKey,allowTies:true,
     instructions:`${FIT_INSTRUCTIONS} The input declares the intended viewpoint. Judge the candidate only for that viewpoint; do not silently switch to another participant or to the event itself.`,
     inputFor:(text,record)=>`COMMENT: ${text}\nVIEWPOINT: ${record.perspective_label}\nCANDIDATE: ${record.name}. Meaning: ${record.message} Social dynamic: ${record.relational_pattern} Example: ${record.example_context} Avoid: ${record.near_miss_context}`
   });

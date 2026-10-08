@@ -23,6 +23,7 @@
   <title>Meme Lab — Find the meme</title>
   <link rel="stylesheet" href="/app.css">
   <link rel="stylesheet" href="/footer-precise.css">
+  <link rel="stylesheet" href="/meme-studio.css">
 </head>
 <body class="page-try">
   <header class="topbar">
@@ -40,7 +41,7 @@
       <div class="composer-intro">
       <p class="eyebrow">THE RIGHT REACTION</p>
       <h1 id="page-title">Find the meme that fits.</h1>
-      <p class="intro">Describe the whole situation. Meme Lab returns one best match and four honestly ranked alternatives.</p>
+      <p class="intro">Describe the whole situation. Meme Lab returns one best match and four ranked alternatives, with editable caption drafts for supported static memes.</p>
 
       </div>
       <form id="meme-form">
@@ -70,6 +71,7 @@
     </section>
 
     <section id="result" class="result" hidden aria-live="polite">
+      <section id="meme-studio" class="meme-studio" hidden aria-labelledby="studio-heading"></section>
       <div id="best-result" class="best-result"></div>
       <div id="alternatives-wrap" class="alternatives-wrap" hidden>
         <div class="section-title"><span id="alternatives-title">ALSO FITS</span><span id="alternatives-subtitle">Four backups, ranked by fit.</span></div>

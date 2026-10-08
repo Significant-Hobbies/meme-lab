@@ -1,0 +1,57 @@
+{
+  "measuredAt": "2026-10-05T13:41:42.219Z",
+  "sourceSha": "a555da79f615cdf630fed282f559e371bc94325f",
+  "input": {
+    "comment": "My roommate chooses hand washing over the working dishwasher.",
+    "candidate_id": "91998305-drake-blank",
+    "perspective": "best_match"
+  },
+  "status": 200,
+  "elapsedMs": 4367,
+  "output": {
+    "decision": "compose",
+    "candidate_id": "91998305-drake-blank",
+    "name": "Drake Blank",
+    "placement": "vision",
+    "expected_aspect": null,
+    "grammar": "AI-assigned caption roles; check that each label belongs to the right person or panel.",
+    "layers": [
+      {
+        "id": "drake-reject",
+        "label": "Top Panel",
+        "role": "Rejecting the dishwasher",
+        "text": "Using the working dishwasher",
+        "box": [
+          0.5,
+          0.05,
+          0.48,
+          0.4
+        ],
+        "style": "plain",
+        "rotation": 0
+      },
+      {
+        "id": "drake-accept",
+        "label": "Bottom Panel",
+        "role": "Choosing hand washing",
+        "text": "Hand washing every single dish",
+        "box": [
+          0.5,
+          0.55,
+          0.48,
+          0.4
+        ],
+        "style": "plain",
+        "rotation": 0
+      }
+    ],
+    "media_url": "/api/create/media/91998305-drake-blank",
+    "source_url": "https://i.imgflip.com/4/1iruch.jpg",
+    "media_status": "source-preview"
+  },
+  "media": {
+    "status": 200,
+    "type": "image/jpeg",
+    "bytes": 7931
+  }
+}
