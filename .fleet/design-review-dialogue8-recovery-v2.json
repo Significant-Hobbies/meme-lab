@@ -1,0 +1,196 @@
+{
+  "$schema": "fleet.design-review.v2",
+  "version": 2,
+  "project": "lane11-meme8-20261008",
+  "target": "Restore local Wikiquote dialogue review issue8",
+  "surfaceMode": "operate",
+  "mode": "preserve",
+  "register": "product",
+  "context": {
+    "product": "PRODUCT.md",
+    "design": "DESIGN.md"
+  },
+  "direction": {
+    "productSurfaces": {
+      "scope": "standalone",
+      "landing": "",
+      "app": "/review?dataset=dialogue",
+      "reason": "This localhost-only owner research tool has no separate marketing, signup or onboarding counterpart. The public standalone operating playground remains unchanged."
+    },
+    "pairedPreview": {
+      "landing": "",
+      "app": ""
+    },
+    "source": "existing",
+    "references": [],
+    "probes": [],
+    "selected": "existing-reference-desk",
+    "approval": "not-required",
+    "ownerEvidence": {
+      "path": "",
+      "quote": ""
+    },
+    "supplied": "",
+    "before": ".fleet-local/dialogue8/design/before.png",
+    "library": {
+      "strategy": "upstream-first",
+      "primary": "existing-project-system",
+      "sources": [],
+      "runtime": "existing",
+      "customReplacement": {
+        "used": false,
+        "authorization": "not-required",
+        "reason": ""
+      }
+    },
+    "contract": {
+      "purpose": "Turn owner judgments into traceable source-quality labels before movie dialogue can enter Meme Lab retrieval.",
+      "purposeSource": "PRODUCT.md and original GitHub issue 8; Site Health project has no purposeContract.",
+      "canonicalPurpose": "Meme Lab turns one pasted comment or situation into a useful meme immediately.",
+      "purposeAlignment": "match",
+      "driftNote": "",
+      "audience": "The owner reviewing a bounded local Wikiquote sample.",
+      "job": "Read one exact line with film, speaker and source; rate three quality dimensions; save, resume and export honest progress.",
+      "thesis": "Restore the existing approved Reference Desk interaction within its current navy, white and cobalt system.",
+      "system": "Preserve existing review layout, system sans interface type, serif quotation, modest borders and semantic selected states.",
+      "signature": "One provenance-bearing movie line and three separate judgments, with hidden screening priors.",
+      "risk": "Three dimensions slow review; existing one-tap choices, keyboard navigation and resumable progress keep the decision manageable.",
+      "qualityBar": "Exact source wording readable at 390/768/1440; all judgments required; visible focus and saved progress; no score leakage or invented model accuracy; existing Meme mode still works."
+    }
+  },
+  "evidence": {
+    "platform": "web",
+    "productContinuity": {
+      "status": "not-applicable",
+      "reason": "This localhost-only owner research tool has no separate marketing, signup or onboarding counterpart. The public standalone operating playground remains unchanged."
+    },
+    "slopScale": {
+      "platform": "web",
+      "posture": "advisory",
+      "reason": "",
+      "checkpoints": [
+        {
+          "stage": "iteration",
+          "status": "scanned",
+          "command": "node /Users/sarthak/Desktop/fleet/saas-maker/tooling/scripts/slop-score.mjs http://127.0.0.1:51105/review?dataset=dialogue --json",
+          "report": ".fleet-local/dialogue8/design/iteration-slop.json",
+          "findingsReview": "Only low-contrast text triggered: muted description, calibration and film metadata below 4.5:1. Scoped the review muted token to #4b5d73; retained the established compact layout and source quotation treatment. Partial export was also inaccessible until completion and is being moved outside the completion panel."
+        },
+        {
+          "stage": "final",
+          "status": "scanned",
+          "command": "node /Users/sarthak/Desktop/fleet/saas-maker/tooling/scripts/slop-score.mjs http://127.0.0.1:51105/review?dataset=dialogue --json",
+          "report": ".fleet-local/dialogue8/design/final-slop.json",
+          "findingsReview": "Same pinned0.8.0 runner, full preset and1280x800 viewport. No flags remain after the muted-text contrast correction. Score0 is advisory, not owner acceptance. Final exact-width browser QA also passes delayed dataset-switch response regression, immutable progress, partial export and Meme keyboard behavior."
+        }
+      ]
+    },
+    "visualReview": {
+      "status": "pass",
+      "reviewer": "Codex direct rendered review",
+      "direction": "existing-reference-desk",
+      "report": ".fleet-local/dialogue8/design/review.md",
+      "checks": {
+        "hierarchy": {
+          "status": "pass",
+          "observation": "Exact quotation, visible film/source and the three judgments form one card; calibration explicitly states missing model prelabels. Preserve-mode headline remains prominent."
+        },
+        "typography": {
+          "status": "pass",
+          "observation": "System sans controls and serif quote remain legible in all three exact captures; long title wraps without clipping. The large preserved headline consumes mobile space."
+        },
+        "composition": {
+          "status": "pass",
+          "observation": "Three choice rows group into two columns at tablet/desktop and stack at390. Export is available directly after the card. Mobile review remains vertically long."
+        },
+        "identity": {
+          "status": "pass",
+          "observation": "Navy/cobalt Meme Lab wordmark, provenance-bearing quotation and Reference Desk card treatment remain coherent with the existing approved system."
+        },
+        "interaction": {
+          "status": "pass",
+          "observation": "Private browser QA verifies all three ratings required, save/advance/reload, partial download, model metrics hidden, Meme numeric shortcut persistence and dataset switching. Held old Meme queue response is ignored after switching back to dialogue; empty/loading queues cannot be saved."
+        },
+        "responsive": {
+          "status": "pass",
+          "observation": "Actual Playwright captures at390/768/1440 show zero horizontal overflow, visible quotation/source and access to all rating controls. Mobile descriptive copy/navigation shortcuts follow existing responsive hiding."
+        }
+      }
+    },
+    "screenshots": [
+      {
+        "width": 390,
+        "path": ".fleet-local/dialogue8/design/after-390.png"
+      },
+      {
+        "width": 768,
+        "path": ".fleet-local/dialogue8/design/after-768.png"
+      },
+      {
+        "width": 1440,
+        "path": ".fleet-local/dialogue8/design/after-1440.png"
+      }
+    ],
+    "projectCheck": {
+      "command": "npm test; npm run check; isolated browser QA",
+      "status": "pass"
+    },
+    "critique": {
+      "score": 35,
+      "maximum": 40,
+      "dimensions": {
+        "hierarchy": 7,
+        "typography": 7,
+        "composition": 6,
+        "identity": 7,
+        "interaction": 4,
+        "responsive": 4
+      }
+    },
+    "audit": {
+      "score": 18,
+      "maximum": 20,
+      "dimensions": {
+        "purpose": 4,
+        "accessibility": 5,
+        "behavior": 4,
+        "responsive": 3,
+        "performance": 2
+      }
+    },
+    "unresolved": {
+      "p0": 0,
+      "p1": 0
+    },
+    "detector": {
+      "posture": "advisory",
+      "findings": []
+    },
+    "comprehension": {
+      "status": "not-applicable",
+      "reviewer": "",
+      "answers": {
+        "product": "",
+        "audience": "",
+        "value": "",
+        "mechanism": "",
+        "proof": "",
+        "nextAction": ""
+      },
+      "purposeScore": {
+        "product": 0,
+        "audience": 0,
+        "value": 0,
+        "mechanism": 0,
+        "proof": 0,
+        "nextAction": 0,
+        "total": 0
+      },
+      "mismatches": []
+    }
+  },
+  "ownerFeedback": {
+    "decision": "not-required",
+    "note": "Preserve work follows the existing direction; this is not owner acceptance of the result."
+  }
+}
