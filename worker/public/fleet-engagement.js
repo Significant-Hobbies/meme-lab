@@ -29,6 +29,8 @@
     'product-name': 'Meme Lab',
     kind: 'newsletter',
     'allow-kind-selection': '',
+    layout: 'compact',
+    integrated: '',
     source: 'fleet-footer',
     'privacy-url': 'https://sassmaker.com/privacy',
     theme: 'light',

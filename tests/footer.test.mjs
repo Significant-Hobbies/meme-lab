@@ -50,6 +50,10 @@ test('newsletter uses the light theme on the public origin', () => {
   assert.equal(capture.attributes.theme, 'light');
   assert.equal(capture.attributes.source, 'fleet-footer');
   assert.equal(capture.attributes['catalog-id'], 'meme-lab');
+  assert.equal(capture.attributes.kind, 'newsletter');
+  assert.equal(capture.attributes['allow-kind-selection'], '');
+  assert.equal(capture.attributes.layout, 'compact');
+  assert.equal(capture.attributes.integrated, '');
   assert.equal(created.find(element => element.tag === 'fleet-footer-extension').children[0], capture);
   assert.equal(listeners.length, 2);
 });
