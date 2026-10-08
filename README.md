@@ -66,11 +66,11 @@ Each submission creates a local run file. Each verdict creates a feedback event;
 With a local model configured, the frozen holdout can be resumed without duplicating completed cases:
 
 ```bash
-npm run experiment:holdout
-npm run experiment:review
+pnpm run experiment:holdout
+pnpm run experiment:review
 ```
 
-Open **http://127.0.0.1:4318** for the isolated owner-review queue. Use **http://127.0.0.1:4318/review** to label each returned candidate as relevant, not relevant or unsure. Allowlisted candidate previews load automatically. The relevance queue is resumable and keeps conditions, rationales and pre-labels hidden. `npm run experiment:summarize` validates both blind-review artifacts and regenerates `results/holdout-v1/summary.json`.
+Open **http://127.0.0.1:4318** for the isolated owner-review queue. Use **http://127.0.0.1:4318/review** to label each returned candidate as relevant, not relevant or unsure. Allowlisted candidate previews load automatically. The relevance queue is resumable and keeps conditions, rationales and pre-labels hidden. `pnpm run experiment:summarize` validates both blind-review artifacts and regenerates `results/holdout-v1/summary.json`.
 
 ## Included
 
@@ -92,8 +92,8 @@ Open **http://127.0.0.1:4318** for the isolated owner-review queue. Use **http:/
 ## Check the build
 
 ```bash
-npm test
-npm run check
+pnpm test
+pnpm run check
 # Optional original validator:
 python3 original/meme_references_v1/validate_dataset.py
 ```

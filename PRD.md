@@ -59,7 +59,7 @@ The current model adapter is text-only. It tests reference selection from metada
 
 ## 5. Local implementation
 
-Use the included Node.js 22+ server and plain HTML/CSS/JavaScript. There are no package dependencies, build step, user accounts, telemetry, or hosted database. Run `node server.mjs`; tests use `npm test`.
+Use the included Node.js 22+ server and plain HTML/CSS/JavaScript. There are no package dependencies, build step, user accounts, telemetry, or hosted database. Run `node server.mjs`; tests use `pnpm test`.
 
 The default model route is a locally configured Ollama `/api/chat` endpoint with a JSON schema. An optional chat-completions-compatible adapter is included. Its documented request/response basis is listed in [implementation sources](docs/research_index.md#implementation-documentation). Configure a model already available to the user; do not automatically download a large model or purchase API access.
 

@@ -2,7 +2,7 @@
 
 Read `PRD.md`, `README.md`, `docs/audit_addendum.md`, then the original release's `README.md` and `source_audit.md`.
 
-This is already a runnable local starter. **Do not rebuild it in a new framework or start scraping more sites.** Start it with `node server.mjs`, run `npm test` and `npm run check`, inspect the UI, and connect one model the user already has available.
+This is already a runnable local starter. **Do not rebuild it in a new framework or start scraping more sites.** Start it with `node server.mjs`, run `pnpm test` and `pnpm run check`, inspect the UI, and connect one model the user already has available.
 
 Immediate objective: show whether supplied contextual metadata improves apt reference selection over names alone. Default pool: 30 reaction candidates. Whole-60 is a separate reference experiment; half the collection needs captions or another finished variant.
 
