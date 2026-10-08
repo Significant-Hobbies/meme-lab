@@ -12,3 +12,8 @@ anna/.anna/
 
 # Local design-scanner reports; retained outside the published bundle.
 .fleet-local/
+
+# Third-party dialogue corpora and derived research data stay local (see docs/dialogue-review.md).
+expansion/sources/dialogue-*
+expansion/candidates/dialogue-*
+eval/dialogue_*
