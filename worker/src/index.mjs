@@ -2,7 +2,12 @@ import {catalogue} from './catalogue.stage3000.generated.mjs';
 import {hasMultiplePerspectives,humourBelongs,needsSeriousHandling,rankCandidates,rankCandidatesByPerspective,requiresFactualAnswer} from './classification.mjs';
 import {MAX_RECOMMENDATIONS,presentSelection,selectionFromRanking} from './recommendation.mjs';
 import {retrieveCandidates} from './retrieval.mjs';
-import {pingFor} from './ping.mjs';
+import {classifierUnavailable,reportPickerHealth} from './recommendation-health.mjs';
+import {BudgetUnavailableError} from './ai-budget.mjs';
+import {endpointFor,pingFor} from './ping.mjs';
+import {annaEvent} from './anna-events.mjs';
+import {annaShortlist} from './anna-shortlist.mjs';
+import {composeMeme,compositionMedia} from './meme-composition.mjs';
 
 const allowedIds=new Set(catalogue.map(record=>record.id));
 const catalogueById=new Map(catalogue.map(record=>[record.id,record]));
@@ -73,7 +78,7 @@ function secureHeaders(headers=new Headers()) {
   headers.set('Referrer-Policy','no-referrer');
   headers.set('X-Frame-Options','DENY');
   headers.set('Permissions-Policy','camera=(), microphone=(), geolocation=()');
-  headers.set('Content-Security-Policy',"default-src 'self'; script-src 'self' https://sassmaker.com https://health.sassmaker.com; style-src 'self' 'unsafe-inline'; img-src 'self' https://i.imgflip.com https://api.memegen.link https://media.giphy.com; connect-src 'self' https://ingest.sassmaker.com https://api.sassmaker.com; object-src 'none'; base-uri 'none'; frame-ancestors 'none'; form-action 'self'");
+  headers.set('Content-Security-Policy',"default-src 'self'; script-src 'self' https://sassmaker.com https://health.sassmaker.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://i.imgflip.com https://api.memegen.link https://media.giphy.com; connect-src 'self' https://ingest.sassmaker.com https://api.sassmaker.com; object-src 'none'; base-uri 'none'; frame-ancestors 'none'; form-action 'self'");
   return headers;
 }
 
@@ -309,47 +314,47 @@ async function recommend(request,env,ctx) {
         }
         classifier_gate='humour';
       } catch(error) {
-        if(isClassifierThrottled(error)) {
-          classifier_gate='throttled_abstain';
-          const selection={decision:'none',confidence:'low',none_reason:'This may call for a serious response, and the safety check is temporarily unavailable.',candidates:[]};
-          const recommendation=presentSelection(selection);
-          let feedback_enabled=true;
-          try { await persistRecommendation(env,recommendation,comment,'safety-gate-throttled'); }
-          catch(storeError) {
-            feedback_enabled=false;
-            console.error(JSON.stringify({event:'recommendation_store',status:'error',error:safeError(storeError)}));
-          }
-          console.error(JSON.stringify({event:'classifier_gate',status:'throttled_abstain',error:safeError(error)}));
-          return json({...recommendation,feedback_enabled});
+        const throttled=isClassifierThrottled(error);
+        classifier_gate=throttled?'throttled_abstain':'unavailable_abstain';
+        const selection={decision:'none',confidence:'low',none_reason:'This may call for a serious response, and the safety check is temporarily unavailable.',candidates:[]};
+        const recommendation=presentSelection(selection);
+        let feedback_enabled=true;
+        try { await persistRecommendation(env,recommendation,comment,throttled?'safety-gate-throttled':'safety-gate-unavailable'); }
+        catch(storeError) {
+          feedback_enabled=false;
+          console.error(JSON.stringify({event:'recommendation_store',status:'error',error:safeError(storeError)}));
         }
-        classifier_gate='fallback';
-        console.error(JSON.stringify({event:'classifier_gate',status:'fallback',error:safeError(error)}));
+        console.error(JSON.stringify({event:'classifier_gate',status:classifier_gate,error:safeError(error)}));
+        reportPickerHealth(env,ctx,'recommendation.degraded',{route:'/api/recommend',classifier_gate,duration_ms:Date.now()-started});
+        return json({...recommendation,feedback_enabled,degraded:true});
       }
     }
+    // Managed inference scores the full 30-candidate batch, within a bounded deadline.
+    const rankingOptions={...classifierOptions,timeoutMs:15000};
     let ranked;
     let ranking_mode='general';
     let ranking_model=typesafeApiKey?TYPESAFE_MODEL:CLASSIFIER_MODEL;
     const perspectiveEligible=hasMultiplePerspectives(comment);
     try {
       ranked=perspectiveEligible
-        ? await rankCandidatesByPerspective(comment,shortlist,{...classifierOptions,limit:Math.min(MAX_RECOMMENDATIONS,shortlist.length)})
-        : await rankCandidates(comment,shortlist,{...classifierOptions,limit:Math.min(MAX_RECOMMENDATIONS,shortlist.length)});
+        ? await rankCandidatesByPerspective(comment,shortlist,{...rankingOptions,limit:Math.min(MAX_RECOMMENDATIONS,shortlist.length)})
+        : await rankCandidates(comment,shortlist,{...rankingOptions,limit:Math.min(MAX_RECOMMENDATIONS,shortlist.length)});
       if(perspectiveEligible) ranking_mode='perspective';
     }
     catch(error) {
       console.error(JSON.stringify({event:'classifier_rank',status:'fallback',mode:perspectiveEligible?'perspective':'general',error:safeError(error)}));
-      if(isClassifierThrottled(error)) {
+      if(classifierUnavailable(error)) {
         ranked=retrievalFallback(shortlist);
         ranking_mode='retrieval_fallback';
         ranking_model=RETRIEVAL_FALLBACK_MODEL;
       } else if(perspectiveEligible) {
         try {
-          ranked=await rankCandidates(comment,shortlist,{...classifierOptions,limit:Math.min(MAX_RECOMMENDATIONS,shortlist.length)});
+          ranked=await rankCandidates(comment,shortlist,{...rankingOptions,limit:Math.min(MAX_RECOMMENDATIONS,shortlist.length)});
           ranking_mode='general_fallback';
         }
         catch(fallbackError) {
           console.error(JSON.stringify({event:'classifier_rank',status:'fallback',mode:'general',error:safeError(fallbackError)}));
-          if(isClassifierThrottled(fallbackError)) {
+          if(classifierUnavailable(fallbackError)) {
             ranked=retrievalFallback(shortlist);
             ranking_mode='retrieval_fallback';
             ranking_model=RETRIEVAL_FALLBACK_MODEL;
@@ -360,7 +365,9 @@ async function recommend(request,env,ctx) {
       }
     }
     const selection=selectionFromRanking(ranked);
-    console.log(JSON.stringify({event:'recommendation',status:'ok',duration_ms:Date.now()-started,decision:selection.decision,confidence:selection.confidence,candidate_count:selection.candidates.length,classifier_gate,classifier_ranked:true,ranking_mode}));
+    const degraded=ranking_mode==='retrieval_fallback'||ranking_mode==='general_fallback';
+    if(degraded) reportPickerHealth(env,ctx,'recommendation.degraded',{route:'/api/recommend',ranking_mode,classifier_gate,duration_ms:Date.now()-started});
+    console.log(JSON.stringify({event:'recommendation',status:degraded?'degraded':'ok',duration_ms:Date.now()-started,decision:selection.decision,confidence:selection.confidence,candidate_count:selection.candidates.length,classifier_gate,classifier_ranked:ranking_mode!=='retrieval_fallback',ranking_mode}));
     const perspectives=new Map((ranked??[]).filter(record=>record.perspective).map(record=>[record.id,{perspective:record.perspective,perspective_label:record.perspective_label}]));
     const recommendation=presentSelection(selection,{perspectives});
     let feedback_enabled=true;
@@ -370,8 +377,9 @@ async function recommend(request,env,ctx) {
       console.error(JSON.stringify({event:'recommendation_store',status:'error',error:safeError(error)}));
     }
     ctx?.waitUntil(pingFor(env)('recommendation.created',{title:`decision: ${selection.decision}`,props:{decision:selection.decision,confidence:selection.confidence,candidates:selection.candidates.length,ranking_mode,classifier_gate}}));
-    return json({...recommendation,feedback_enabled});
+    return json({...recommendation,feedback_enabled,degraded,ranking_mode});
   } catch(error) {
+    if(error instanceof BudgetUnavailableError) return json({error:'Meme matching is temporarily unavailable. Try again shortly.'},503,{'Retry-After':'60'});
     console.error(JSON.stringify({event:'recommendation',status:'error',duration_ms:Date.now()-started,error:safeError(error)}));
     return json({error:'The meme picker had a wobble. Try again.'},502);
   }
@@ -382,10 +390,46 @@ function secureAsset(response) {
   return new Response(response.body,{status:response.status,statusText:response.statusText,headers});
 }
 
+function queueEndpointMeasurement(request,env,ctx,route,status_code,startedAt) {
+  if(status_code>=500) reportPickerHealth(env,ctx,'endpoint.failed',{method:request.method,route,status_code,duration_ms:Date.now()-startedAt});
+  if(!env.APP_HEALTH_INGEST_KEY||typeof ctx?.waitUntil!=='function') return;
+  ctx.waitUntil(endpointFor(env)({
+    method:request.method,
+    route,
+    status_code,
+    duration_ms:Date.now()-startedAt
+  }));
+}
+
+async function withEndpointMeasurement(request,env,ctx,route,handler) {
+  const startedAt=Date.now();
+  try {
+    const response=await handler();
+    queueEndpointMeasurement(request,env,ctx,route,response.status,startedAt);
+    return response;
+  } catch(error) {
+    queueEndpointMeasurement(request,env,ctx,route,500,startedAt);
+    throw error;
+  }
+}
+
 export default {
   async fetch(request,env,ctx) {
     const url=new URL(request.url);
     const isRead=request.method==='GET'||request.method==='HEAD';
+    if(url.pathname==='/api/create'&&request.method==='POST') return withEndpointMeasurement(request,env,ctx,'/api/create',()=>{
+      const origin=request.headers.get('origin');
+      if(origin&&origin!==url.origin) return json({error:'Cross-origin requests are blocked.'},403);
+      return composeMeme(request,env);
+    });
+    if(isRead&&url.pathname.startsWith('/api/create/media/')) return withEndpointMeasurement(request,env,ctx,'/api/create/media/{id}',async()=>{
+      let id;
+      try {id=decodeURIComponent(url.pathname.slice('/api/create/media/'.length));}
+      catch {return json({error:'Unknown meme.'},400);}
+      return forHead(request,await compositionMedia(id));
+    });
+    if(url.pathname==='/api/anna/shortlist') return withEndpointMeasurement(request,env,ctx,'/api/anna/shortlist',()=>annaShortlist(request,env));
+    if(url.pathname==='/api/anna/events') return withEndpointMeasurement(request,env,ctx,'/api/anna/events',()=>annaEvent(request,env,ctx));
     if(isRead&&url.pathname==='/robots.txt') return forHead(request,textResponse(`User-agent: *\nAllow: /\nDisallow: /api/\n\nSitemap: ${SITE_ORIGIN}/sitemap.xml\n`));
     if(isRead&&url.pathname==='/sitemap.xml') return forHead(request,textResponse(sitemap(),{contentType:'application/xml; charset=utf-8'}));
     if(isRead&&url.pathname==='/api/ai') {
@@ -408,7 +452,7 @@ export default {
       if(url.pathname!==canonicalPath) return forHead(request,Response.redirect(`${SITE_ORIGIN}${canonicalPath}`,301));
       return forHead(request,pageResponse(memePage(record)));
     }
-    if(url.pathname==='/api/health'&&isRead) return forHead(request,json({status:'ok',catalogue:catalogue.length}));
+    if(url.pathname==='/api/health'&&isRead) return withEndpointMeasurement(request,env,ctx,'/api/health',()=>forHead(request,json({status:'ok',catalogue:catalogue.length})));
     const markdownAlternate=MARKDOWN_ALTERNATES[url.pathname];
     if(isRead&&markdownAlternate&&wantsMarkdown(request)) {
       const mdUrl=new URL(url);
@@ -419,14 +463,18 @@ export default {
       }
     }
     if(url.pathname==='/api/recommend'&&request.method==='POST') {
-      const origin=request.headers.get('origin');
-      if(origin&&origin!==url.origin) return json({error:'Cross-origin requests are blocked.'},403);
-      return recommend(request,env,ctx);
+      return withEndpointMeasurement(request,env,ctx,'/api/recommend',()=>{
+        const origin=request.headers.get('origin');
+        if(origin&&origin!==url.origin) return json({error:'Cross-origin requests are blocked.'},403);
+        return recommend(request,env,ctx);
+      });
     }
     if(url.pathname==='/api/feedback'&&request.method==='POST') {
-      const origin=request.headers.get('origin');
-      if(origin&&origin!==url.origin) return json({error:'Cross-origin requests are blocked.'},403);
-      return saveFeedback(request,env,ctx);
+      return withEndpointMeasurement(request,env,ctx,'/api/feedback',()=>{
+        const origin=request.headers.get('origin');
+        if(origin&&origin!==url.origin) return json({error:'Cross-origin requests are blocked.'},403);
+        return saveFeedback(request,env,ctx);
+      });
     }
     if(url.pathname.startsWith('/api/')) return json({error:'Not found.'},404);
     return secureAsset(await env.ASSETS.fetch(request));

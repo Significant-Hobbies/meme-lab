@@ -1,9 +1,23 @@
 # Meme Lab project status
 
-**Updated:** 22 September 2026
+**Updated:** 2 October 2026
 **Lifecycle:** Live personal meme picker with the corrected 3,000-item meme-and-GIF catalogue and crawlable catalogue pages.
 
 ## Live product
+
+### Anna sharing pilot: version 1.1.0 pending review
+
+- Tracking: [Anna monetization pilot #12](https://github.com/Significant-Hobbies/meme-lab/issues/12).
+- Anna app `389` / `meme-lab` under `@significant-hobbies`: frozen version `1.1.0`, version ID `1019`, bundle ID `955`, seven files / 60,558 bytes. Bundle manifest SHA-256 `2723342aafb6a71cfe9280f2fa7410932906971b3d2b2b99e5bb725d31d6be84`. Cut from working revision 4, content hash `1ba9d7546ea620a6a0201c0a6895c47c90f7136ed288035887a6f4c045063032`. Submitted for review on 2 October; **not public in the Store**. Frozen 1.0.0 remains intact.
+- Preserves Reference Desk and adds native share where supported, explicit copy and private saved reactions for every result. Saves use independent per-reference keys; only IDs/names and a last-visit day are stored in Anna. Anna’s signed-in host supplies model and personal storage access; retrieval remains public.
+- Real installed Anna draft verified: five grounded ranked reactions; copy chooses the selected backup and excludes the situation; save survives a full Anna page reload; removal succeeds; explicit sincere apology abstains. Native share delivery to a recipient is unverified; tests cover cancellation and fallback. Three actual runtime screenshots are uploaded.
+- Diagnostic: 30 real harness cases, assistant-authored expectations, not human ground truth. Expected reference ranked first in 19/22 reaction cases and appeared in 21/22 top-five results. Initially 7/8 serious cases abstained; an explicit sincere-apology guard corrected the miss, then 8/8 passed. One development-reload interruption was rerun, with zero final errors. The tea case returned plausible sipping GIFs but missed the fixture’s named meme; labels were not changed. This is regression evidence, not humour, retention or revenue proof.
+- Anonymous allowlisted events contain only event names and are marked client-reported. They log to Cloudflare and optionally use the existing App Health integration; HTTP acceptance does not establish App Health ingestion. Anna’s native Open/Use and AI-session reporting showed one install and WAU/MAU one from owner tests with dev traffic excluded. No qualified MAU or earnings established.
+- Worker `meme-lab-play` release receipt: version `3e726ecd-da97-48a8-84a6-e4023df4a87c` deployed from exact merged main `f35132adce2d9f611a10d5e68b8ffd2de05fbc84` after PR #16 and main CI passed. Owner specifically approved `ANNA_SEARCH_LIMITER`, namespace 389001: 120 requests/minute per IP and route at each Cloudflare location. Only Anna shortlist/events are limited; shared networks share admission. This is neither retrieval authentication nor a global spending cap. Public privacy updated.
+- Checks: 134 repository tests, package/catalogue checks, strict Anna manifest validation, Wrangler dry-run and Fleet design validator passed. Preserve lane: critique 35/40, audit 17/20, no unresolved P0/P1. Responsive screenshots at 390/768/1440 re-render actual Anna result DOM with the bundled CSS; runtime behavior was checked separately.
+- Owner approved Google sign-in, Developer Terms and a revocable 90-day official CLI token scoped to `dev.session.mint`. No credentials included in source/bundle; no production dependencies added. Owner approved source integration; PR #16 is merged and both PR/main CI passed.
+- Deployment concurrency: main `7da4fe2` replaced the Anna-only deployment during testing. The final combined deployment preserves main’s shared AI/Vectorize admission and patched Undici tooling, restores Anna routes and verifies shortlist HTTP 200 / 30 references, events HTTP 202, privacy HTTP 200 after its canonical redirect. The owner approved source integration after this replacement was observed; PR #16 preserves the Anna routes in main.
+- Remaining external gate: Anna administrator approval, then release `1.1.0` and verify an ordinary Store installation. Clean current-main release worktree: `/tmp/meme-lab-anna-release-20261002`; original isolated integration/evaluation worktree: `/tmp/meme-lab-anna-20261002`.
 
 - Paste one complete comment or situation and receive the best meme first, four backups, ordinal fit labels, and honest confidence.
 - Multi-person comments now return distinct viewpoints where available: **My reaction**, **Their side**, and **The situation**.

@@ -37,6 +37,18 @@ Use a two-column best-result layout and a compact grid of up to four backups whe
 - Corners remain modest and consistent. Pills are reserved for compact status labels.
 - Meme imagery is the only expressive visual layer; decorative illustrations and alternating candy-colored panels are excluded.
 
+## Canvas Studio
+
+The owner selected Canvas Studio on 2026-10-05, with captions and placement prefilled automatically. This adds an image workspace within the existing Reference Desk identity, rather than replacing its navy/cobalt/white system.
+
+- Static results lead with a finished image, selectable text layers and a compact inspector. A dark neutral canvas distinguishes the image from white controls; cobalt marks the selected region.
+- Prefill uses the template’s comic roles. Verified regions keep panel text, character labels and sign captions away from faces, gestures and baked text. Other AI-proposed placements remain labelled for review.
+- Editing, regeneration, source failure and unavailable captioning have explicit states. Regeneration failure preserves edits; stale results never replace a newly selected meme.
+- Text stays readable: shrink before breaking whole words, wrap long unbroken text by grapheme, and block export when text is empty, unfit or rotated outside the image. The preview and exported PNG use the same renderer; handles are an interface overlay.
+- On tablet, layers form a horizontal strip above canvas and inspector. On phones, the canvas precedes the inspector, with numeric controls preserving all move/resize capabilities. Download remains available above the workspace. Layer-strip scrolling stays contained; no page-level horizontal overflow is accepted.
+
+Canvas Studio evidence uses `.fleet/design-review-meme-maker.json` and `.fleet-local/meme-maker-directions/`. Original Reference Desk receipts remain historical evidence. Browser tests use fixture model replies; live inference quality is a separate qualification.
+
 ## Evidence
 
-Design-workflow artifacts live in `artifacts/design/`; the current receipt is `.fleet/design-review.json`.
+Historical Reference Desk artifacts live in `artifacts/design/` and `.fleet/design-review.json`. The Canvas Studio pass uses `.fleet/design-review-meme-maker.json`.

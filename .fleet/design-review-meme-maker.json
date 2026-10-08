@@ -1,0 +1,262 @@
+{
+  "$schema": "fleet.design-review.v2",
+  "version": 2,
+  "project": "meme-lab",
+  "target": "Template-aware meme creation from a selected reference",
+  "surfaceMode": "operate",
+  "mode": "overhaul",
+  "register": "product",
+  "context": {
+    "product": "PRODUCT.md",
+    "design": "DESIGN.md"
+  },
+  "direction": {
+    "productSurfaces": {
+      "scope": "standalone",
+      "landing": "",
+      "app": "worker/public/index.html — combined discovery, composer, recommendation and proposed creation flow",
+      "reason": "The public homepage is the application and discovery surface, with no separate landing page, signup or onboarding. Collection, reference pages and How it works are supporting routes. Anna is a separate host runtime outside this preview scope."
+    },
+    "pairedPreview": {
+      "landing": "",
+      "app": ""
+    },
+    "source": "comparison",
+    "references": [
+      "PRODUCT.md and DESIGN.md — Reference Desk system",
+      "worker/public/index.html, app.js and app.css — existing composer and result components"
+    ],
+    "probes": [
+      {
+        "id": "instant",
+        "thesis": "Finished meme first; corrections progressively disclosed.",
+        "layout": "Large result image paired with a compact action panel; stacked media-first on mobile.",
+        "typography": "System-sans UI with bold in-panel captions and serif situation text.",
+        "path": ".fleet-local/meme-maker-directions/instant-1440.png",
+        "preview": ".fleet-local/meme-maker-directions/instant.html",
+        "entry": ".fleet-local/meme-maker-directions/instant-entry.png",
+        "compact": ".fleet-local/meme-maker-directions/instant-390.png",
+        "brief": ".fleet-local/meme-maker-directions/brief.md"
+      },
+      {
+        "id": "guided",
+        "thesis": "A structured sequence explains the comic roles before export.",
+        "layout": "Progress rail, role-based caption form and live preview; preview above fields on mobile.",
+        "typography": "Compact question labels, generous serif situation and bold caption preview.",
+        "path": ".fleet-local/meme-maker-directions/guided-1440.png",
+        "preview": ".fleet-local/meme-maker-directions/guided.html",
+        "entry": ".fleet-local/meme-maker-directions/guided-entry.png",
+        "compact": ".fleet-local/meme-maker-directions/guided-390.png",
+        "brief": ".fleet-local/meme-maker-directions/brief.md"
+      },
+      {
+        "id": "studio",
+        "thesis": "Automatic draft becomes a selectable text-layer workspace.",
+        "layout": "Layers, dark neutral canvas and position inspector; canvas over inspector on mobile.",
+        "typography": "Dense utility labels with larger bold meme text.",
+        "path": ".fleet-local/meme-maker-directions/studio-1440.png",
+        "preview": ".fleet-local/meme-maker-directions/studio.html",
+        "entry": ".fleet-local/meme-maker-directions/studio-entry.png",
+        "compact": ".fleet-local/meme-maker-directions/studio-390.png",
+        "brief": ".fleet-local/meme-maker-directions/brief.md"
+      }
+    ],
+    "selected": "studio",
+    "approval": "approved",
+    "ownerEvidence": {
+      "path": ".fleet-local/meme-maker-directions/owner-selection.md",
+      "quote": "canvas studio would be best"
+    },
+    "supplied": "",
+    "before": ".fleet-local/meme-maker-directions/before-1440.png",
+    "library": {
+      "strategy": "upstream-first",
+      "primary": "existing-project-system",
+      "sources": [
+        "https://github.com/Significant-Hobbies/meme-lab/blob/main/worker/public/app.css",
+        "https://github.com/Significant-Hobbies/meme-lab/blob/main/worker/public/index.html"
+      ],
+      "runtime": "existing",
+      "customReplacement": {
+        "used": false,
+        "authorization": "not-required",
+        "reason": "Reuse healthy project-native navigation, forms, buttons, result fields and disclosure. Template-specific caption regions are the requested product capability, not replacement interface primitives."
+      }
+    },
+    "contract": {
+      "purpose": "Meme Lab helps people selecting reactions for everyday conversations turn one pasted situation into a useful meme immediately through grounded reference retrieval and contextual selection.",
+      "purposeSource": "PRODUCT.md; saas-maker/catalog/projects.json, meme-lab.presentation.directory.purposeContract",
+      "canonicalPurpose": "Turn one pasted comment or situation into a useful meme immediately.",
+      "purposeAlignment": "match",
+      "driftNote": "Creation is a proposed extension after existing selection, not a shipped claim. Catalog includes Anna capabilities that are outside this public-playground scope and were not requalified.",
+      "audience": "People selecting reactions for everyday conversations; the owner evaluates usefulness.",
+      "job": "Turn the selected template and complete situation into short role-aware captions, review their placement, and export a usable meme.",
+      "thesis": "The chosen meme opens as a prefilled Canvas Studio: template-aware text roles and regions first, selectable layers and position inspector for corrections.",
+      "system": "Navy and cobalt UI, white surfaces, cool-gray canvas, semantic green fit labels, modest geometry, system sans controls and bold meme text. Serif submitted situation text; responsive image-first stacking.",
+      "signature": "Template-defined caption roles map the exact situation to panels or characters rather than using generic top/bottom text.",
+      "risk": "Automatic captions can reverse speakers or miss the punchline; preview and editable region text must stay accessible. Unsupported templates and GIFs retain explicit capability states.",
+      "qualityBar": "Readable correctly assigned caption regions that preserve faces/gestures; image leads the result; edit and export remain clear; original 30-day privacy and source semantics remain truthful; no page-level horizontal overflow at 390/768/1440. Concepts remain explicitly labelled."
+    }
+  },
+  "evidence": {
+    "platform": "web",
+    "productContinuity": {
+      "status": "not-applicable",
+      "reason": "The public homepage is the application and discovery surface, with no separate landing page, signup or onboarding. Collection, reference pages and How it works are supporting routes. Anna is a separate host runtime outside this preview scope.",
+      "reviewer": "Codex implementing agent",
+      "report": ".fleet-local/meme-maker-directions/brief.md"
+    },
+    "slopScale": {
+      "platform": "web",
+      "posture": "advisory",
+      "reason": "",
+      "checkpoints": [
+        {
+          "stage": "directions",
+          "direction": "instant",
+          "status": "scanned",
+          "command": "node /Users/sarthak/Desktop/fleet/saas-maker/tooling/scripts/slop-score.mjs http://127.0.0.1:4329/instant.html 'http://127.0.0.1:4329/instant.html?state=entry' --json",
+          "report": ".fleet-local/meme-maker-directions/slop/instant.json",
+          "findingsReview": "Creation and entry states have no triggered patterns. Reviewed actual image, caption roles, type hierarchy and corrected mobile captures; a zero detector score is not acceptance."
+        },
+        {
+          "stage": "directions",
+          "direction": "guided",
+          "status": "scanned",
+          "command": "node /Users/sarthak/Desktop/fleet/saas-maker/tooling/scripts/slop-score.mjs http://127.0.0.1:4329/guided.html 'http://127.0.0.1:4329/guided.html?state=entry' --json",
+          "report": ".fleet-local/meme-maker-directions/slop/guided.json",
+          "findingsReview": "Creation and entry states have no triggered patterns. Reviewed actual image, caption roles, type hierarchy and corrected mobile captures; a zero detector score is not acceptance."
+        },
+        {
+          "stage": "directions",
+          "direction": "studio",
+          "status": "scanned",
+          "command": "node /Users/sarthak/Desktop/fleet/saas-maker/tooling/scripts/slop-score.mjs http://127.0.0.1:4329/studio.html 'http://127.0.0.1:4329/studio.html?state=entry' --json",
+          "report": ".fleet-local/meme-maker-directions/slop/studio.json",
+          "findingsReview": "Creation flags three all-uppercase inspector headings. Retained as intentional compact operating labels consistent with Reference Desk. Entry has no triggered patterns. Reviewed corrected mobile/desktop captures; scores are advisory."
+        },
+        {
+          "stage": "iteration",
+          "status": "scanned",
+          "command": "node /Users/sarthak/Desktop/fleet/saas-maker/tooling/scripts/slop-score.mjs 'http://127.0.0.1:4330/?review=1' --json",
+          "report": ".fleet-local/meme-maker-directions/slop/iteration.json",
+          "findingsReview": "Three uppercase operating headings are flagged: Text layers, Selected text, Position & size. Retained intentionally as compact workspace labels consistent with Reference Desk. Raw score 3 is advisory. Actual rendered review fixed word splitting on narrow panels and retained correct role-specific geometry."
+        },
+        {
+          "stage": "final",
+          "status": "scanned",
+          "command": "node /Users/sarthak/Desktop/fleet/saas-maker/tooling/scripts/slop-score.mjs 'http://127.0.0.1:4330/?review=1' --json",
+          "report": ".fleet-local/meme-maker-directions/slop/final.json",
+          "findingsReview": "Three uppercase operating headings are flagged: Text layers, Selected text, Position & size. Retained intentionally as compact workspace labels consistent with Reference Desk. Raw score 3 is advisory. Actual rendered review fixed word splitting on narrow panels and retained correct role-specific geometry."
+        }
+      ]
+    },
+    "visualReview": {
+      "status": "pass",
+      "reviewer": "Codex implementing agent - direct review; not owner acceptance",
+      "direction": "studio",
+      "report": ".fleet-local/meme-maker-directions/review-final.md",
+      "checks": {
+        "hierarchy": {
+          "status": "pass",
+          "observation": "after-1440: name and finished image lead; Download PNG is the visible cobalt primary action; layer/inspector controls remain secondary."
+        },
+        "typography": {
+          "status": "pass",
+          "observation": "Bold captions are legible in source-specific regions; Gru final PNG keeps reminders and appointment whole after whole-word fitting fix. Compact helper labels use existing system sans."
+        },
+        "composition": {
+          "status": "pass",
+          "observation": "Desktop layers/dark canvas/white inspector match the selected studio; tablet layers move above canvas; mobile stacks un-cropped media and complete controls."
+        },
+        "identity": {
+          "status": "pass",
+          "observation": "Reference Desk navy/cobalt/white tokens and brand remain; comic-role layers and actual meme imagery supply product-specific identity."
+        },
+        "interaction": {
+          "status": "pass",
+          "observation": "Fixture-backed actual app/Worker journey, pointer and keyboard movement/resizing, text edit, reset, failure recovery, stale draft suppression and real PNG downloads passed. Live inference remains unqualified."
+        },
+        "responsive": {
+          "status": "pass",
+          "observation": "Final captures at 390/768/1440 and browser scrollWidth measurements show no page overflow; contained layers and numeric controls preserve editing on phones."
+        }
+      }
+    },
+    "screenshots": [
+      {
+        "width": 390,
+        "path": ".fleet-local/meme-maker-directions/after-390.png"
+      },
+      {
+        "width": 768,
+        "path": ".fleet-local/meme-maker-directions/after-768.png"
+      },
+      {
+        "width": 1440,
+        "path": ".fleet-local/meme-maker-directions/after-1440.png"
+      }
+    ],
+    "projectCheck": {
+      "command": "npm test (160 passed); npm run check; node --check on changed modules; git diff --check; Playwright local editor/export/failure checks",
+      "status": "pass"
+    },
+    "critique": {
+      "score": 36,
+      "maximum": 40,
+      "dimensions": {
+        "hierarchy": 7,
+        "typography": 7,
+        "composition": 7,
+        "identity": 7,
+        "interaction": 4,
+        "responsive": 4
+      }
+    },
+    "audit": {
+      "score": 17,
+      "maximum": 20,
+      "dimensions": {
+        "purpose": 4,
+        "accessibility": 5,
+        "behavior": 3,
+        "responsive": 3,
+        "performance": 2
+      }
+    },
+    "unresolved": {
+      "p0": 0,
+      "p1": 0
+    },
+    "detector": {
+      "posture": "advisory",
+      "findings": []
+    },
+    "comprehension": {
+      "status": "not-applicable",
+      "reviewer": "",
+      "answers": {
+        "product": "",
+        "audience": "",
+        "value": "",
+        "mechanism": "",
+        "proof": "",
+        "nextAction": ""
+      },
+      "purposeScore": {
+        "product": 0,
+        "audience": 0,
+        "value": 0,
+        "mechanism": 0,
+        "proof": 0,
+        "nextAction": 0,
+        "total": 0
+      },
+      "mismatches": []
+    }
+  },
+  "ownerFeedback": {
+    "decision": "keep",
+    "note": "Owner selected Canvas Studio with automatic prefilling. Local source/editor validation is complete; this is direction selection, not acceptance of the finished implementation. Live provider caption quality, binding readiness and deployed creation remain unverified."
+  }
+}

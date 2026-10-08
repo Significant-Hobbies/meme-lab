@@ -257,6 +257,7 @@
         <article><span>CATALOGUE</span><h3>Versioned JSON and generated modules</h3><p>Names, meanings, examples, near-misses, provenance, quality signals, and source URLs live with the project and generate the public collection.</p></article>
         <article><span>SEMANTIC INDEX</span><h3>6,000 vectors in Vectorize</h3><p>Meaning and usage vectors are stored remotely so every request searches a bounded index instead of loading all 3,000 records.</p></article>
         <article><span>MEDIA</span><h3>Provider-hosted images and GIFs</h3><p>Imgflip, Memegen, and GIPHY assets load from recorded source URLs. Results animate GIFs; collection cards use lighter previews.</p></article>
+        <article><span>CREATION</span><h3>Captions follow the meme’s structure</h3><p>Canvas Studio uses verified text regions for seven familiar templates: contrasts, dilemmas, character labels, plans, escalation, signs and victories. Other supported static memes use visual analysis to propose caption roles and placement, labelled for review. Captioning is a separate bounded AI request after ranking. The browser renders the preview and PNG from the same image and text layout. Drafts stay in the current tab; the AI provider processes the situation and, when needed, the source image. GIFs remain animated reactions.</p></article>
         <article><span>RIGHTS</span><h3>Usage evidence is not a licence</h3><p>Research-backed popularity proves that a GIF is used as a reaction. It does not establish redistribution rights, so every external asset remains a labelled source preview.</p></article>
         <article><span>FEEDBACK</span><h3>Bounded D1 records</h3><p>The comment, returned candidate IDs, decision, labels, and yes/no feedback support evaluation and receive a 30-day expiry.</p></article>
         <article><span>LOCAL WORK</span><h3>CLIP and Qwen built the collection</h3><p>Uniqueness signals and long-form metadata were generated locally. The fastest local routing models tested so far were not accurate enough for the live decision.</p></article>
@@ -321,10 +322,12 @@
     </section>
   </main>
 
-  <footer>
+  <fleet-footer-extension product-name="Meme Lab" art-src="/footer-art/meme-lab.webp" surface="app" art-alt="Meme Lab: A tiny original reaction-reference atelier centers two invented expressive animal cards beside a blank comment slip. Different perspectives remain visible; a discreet provenance drawer supports the reference job without decorative doodles." art-width="2170" art-height="725" art-position="50% 50%" art-credit="Original illustration for Meme Lab">
+<footer slot="navigation" data-fleet-footer-navigation>
     <a href="/collection">Browse all 3,000 live memes</a>
     <span>Current stage: 3,000 live · 30,000 next</span>
   </footer>
+</fleet-footer-extension>
   <script type="module" src="/how-it-works.js"></script>
   <script src="/app-health-log.js" defer></script>
   <script src="/fleet-engagement.js" defer></script>

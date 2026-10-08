@@ -22,6 +22,7 @@
   <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"Meme Lab","url":"https://memes.significanthobbies.com/","applicationCategory":"EntertainmentApplication","description":"Describe a situation and get one best meme plus four ranked alternatives from a 3,000-reference catalogue."}</script>
   <title>Meme Lab — Find the meme</title>
   <link rel="stylesheet" href="/app.css">
+  <link rel="stylesheet" href="/meme-studio.css">
 </head>
 <body class="page-try">
   <header class="topbar">
@@ -38,7 +39,7 @@
     <section class="composer" aria-labelledby="page-title">
       <p class="eyebrow">REACTION MATCHING</p>
       <h1 id="page-title">Find the meme that fits.</h1>
-      <p class="intro">Describe the whole situation. Meme Lab returns one best match and four honestly ranked alternatives.</p>
+      <p class="intro">Describe the whole situation. Get one best match and four ranked alternatives, with a prefilled canvas editor for supported static memes.</p>
 
       <form id="meme-form">
         <label for="comment">The comment</label>
@@ -66,6 +67,7 @@
     </section>
 
     <section id="result" class="result" hidden aria-live="polite">
+      <section id="meme-studio" class="meme-studio" hidden aria-labelledby="studio-heading"></section>
       <div id="best-result" class="best-result"></div>
       <div id="alternatives-wrap" class="alternatives-wrap" hidden>
         <div class="section-title"><span id="alternatives-title">ALSO FITS</span><span id="alternatives-subtitle">Four backups, ranked by fit.</span></div>
@@ -96,6 +98,7 @@
     <section class="about" aria-labelledby="about-title">
       <h2 id="about-title">What Meme Lab actually does</h2>
       <p>Meme Lab is a personal meme picker. You paste a complete comment or describe a situation — a group-chat argument, a workplace absurdity, a small domestic injustice — and it returns the one meme that fits it best, followed by four honestly ranked alternatives. Every result carries an ordinal fit label and an honest confidence level, so a weak match says it is weak instead of pretending otherwise.</p>
+      <p>Supported static memes open in Canvas Studio with captions written for the situation. Familiar templates use defined roles and verified text regions; other static memes use AI-assisted placement that you can review and adjust. Edit the wording, move or resize each text box, and download the finished PNG. Reaction GIFs keep their original animation.</p>
       <h2>The catalogue behind it</h2>
       <p>The recommendations draw on a corrected 3,000-reference catalogue: 1,805 named meme templates and 1,195 reaction GIFs chosen because real conversations actually used them — each selected GIF has at least 108 observed replies in the GIF Reply research dataset. Every reference records what it expresses, the social dynamic it captures, an example of where it fits, and a near-miss case where it would be wrong. You can browse all of it in the <a href="/collection">collection</a>.</p>
       <h2>How matching works</h2>
@@ -103,10 +106,12 @@
     </section>
   </main>
 
-  <footer>
+  <fleet-footer-extension product-name="Meme Lab" art-src="/footer-art/meme-lab.webp" surface="app" art-alt="Meme Lab: A tiny original reaction-reference atelier centers two invented expressive animal cards beside a blank comment slip. Different perspectives remain visible; a discreet provenance drawer supports the reference job without decorative doodles." art-width="2170" art-height="725" art-position="50% 50%" art-credit="Original illustration for Meme Lab">
+<footer slot="navigation" data-fleet-footer-navigation>
     <a href="/collection">3,000 live meme references</a>
     <span>Sometimes no meme is the right meme.</span>
   </footer>
+</fleet-footer-extension>
   <script type="module" src="/app.js"></script>
   <script src="/app-health-log.js" defer></script>
   <script src="/fleet-engagement.js" defer></script>

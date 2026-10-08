@@ -8,6 +8,7 @@
     "node": ">=22"
   },
   "scripts": {
+    "build:anna": "node scripts/build-anna.mjs",
     "start": "node server.mjs",
     "build:public-catalogue": "node scripts/build-public-catalogue.mjs",
     "build:expansion": "node scripts/build-expansion.mjs",
@@ -65,5 +66,8 @@
   "devDependencies": {
     "@huggingface/transformers": "^4.3.0",
     "wrangler": "^4.135.0"
+  },
+  "overrides": {
+    "undici@>=7.0.0 <8.0.0": "7.29.1"
   }
 }
