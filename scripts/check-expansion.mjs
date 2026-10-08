@@ -43,7 +43,7 @@ const replacementGifSource=parseJsonl(await readFile(resolve(root,'expansion/sou
 const nonReactionExclusions=JSON.parse(await readFile(resolve(root,'expansion/exclusions/non-reaction-assets.json'),'utf8'));
 const stage3000EvalDefinition=JSON.parse(await readFile(resolve(root,'eval/stage-3000-eval-definition.json'),'utf8'));
 const coverageInputHash=createHash('sha256').update(candidatesText).update(coverageCasesText).digest('hex');
-if(coverageExperiment.input_hash!==coverageInputHash) throw new Error('Stage-300 coverage result is stale. Reseed the index and rerun npm run experiment:stage-300-coverage.');
+if(coverageExperiment.input_hash!==coverageInputHash) throw new Error('Stage-300 coverage result is stale. Reseed the index and rerun pnpm run experiment:stage-300-coverage.');
 
 validateExpansionRecords(candidates,{knownIds:catalogue.map(record=>record.id)});
 validateStages(manifest);
@@ -57,10 +57,10 @@ validateOpenSourceCandidates(stage3000NgaSource,{minimum:1200});
 validateReactionGifCandidates(reactionGifSource,{minimum:1189});
 validateReactionGifCandidates(replacementGifSource,{minimum:6});
 if(reactionGifSource.length!==1189||reactionGifReport.selected_records!==1189) throw new Error('Reaction GIF acquisition is incomplete.');
-if(JSON.stringify(stage3000Source)!==JSON.stringify([...stage3000Phase1Source,...stage3000NgaSource])) throw new Error('Stage-3000 combined source is stale. Run npm run build:stage-3000-source.');
+if(JSON.stringify(stage3000Source)!==JSON.stringify([...stage3000Phase1Source,...stage3000NgaSource])) throw new Error('Stage-3000 combined source is stale. Run pnpm run build:stage-3000-source.');
 if(stage3000Source.length!==stage3000Acquisition.raw_source_records) throw new Error('Stage-3000 source acquisition count does not match its generated pool.');
 const currentUniqueness=auditUniqueness({targets:stage3000Source,references:stage1000FullCatalogue,fingerprints:stage3000FingerprintManifest.fingerprints});
-if(JSON.stringify(currentUniqueness)!==JSON.stringify(stage3000Uniqueness)) throw new Error('Stage-3000 uniqueness report is stale. Run npm run fingerprint:stage-3000 and npm run audit:stage-3000.');
+if(JSON.stringify(currentUniqueness)!==JSON.stringify(stage3000Uniqueness)) throw new Error('Stage-3000 uniqueness report is stale. Run pnpm run fingerprint:stage-3000 and pnpm run audit:stage-3000.');
 if(currentUniqueness.summary.incomplete_fingerprint_coverage) throw new Error('Stage-3000 image fingerprint coverage must be complete.');
 const stage1000EvalSummary=validateStage1000Cases(stage1000Cases,{allowedIds:new Set(stage1000Catalogue.map(record=>record.id))});
 if(stage1000Candidates.length!==700||stage1000Catalogue.length!==1000||new Set(stage1000Catalogue.map(record=>record.id)).size!==1000) throw new Error('Stage-1000 generated catalogue has the wrong size or duplicate IDs.');
@@ -72,9 +72,9 @@ const excludedIds=nonReactionExclusions.records.map(record=>record.id);
 const integrity=catalogueIntegrity(publicCollection,{excludedIds});
 if(integrity.media_types.image!==1805||integrity.media_types.gif!==1195||excludedIds.length!==6) throw new Error('Verified catalogue media composition is stale.');
 if(!publicCollection.some(record=>record.name==='My Name Is Jeff'&&record.media_type==='gif')) throw new Error('My Name Is Jeff is missing from the verified catalogue.');
-if(stage3000SemanticUniqueness.selected_records!==2000||stage3000SemanticUniqueness.embedding_duplicate_candidates!==10) throw new Error('Stage-3000 semantic selection report is stale. Run npm run select:stage-3000.');
+if(stage3000SemanticUniqueness.selected_records!==2000||stage3000SemanticUniqueness.embedding_duplicate_candidates!==10) throw new Error('Stage-3000 semantic selection report is stale. Run pnpm run select:stage-3000.');
 if(stage3000EvalDefinition.cases!==100||stage3000EvalDefinition.humour!==75||stage3000EvalDefinition.no_meme!==25) throw new Error('Stage-3000 evaluation definition is incomplete.');
 const generated=JSON.parse(await readFile(resolve(root,'worker/public/expansion-status.json'),'utf8'));
-if(generated.live_records!==3000||generated.candidate_records!==0||generated.stage_3000_source?.status!=='live_unvalidated'||generated.eval?.stage_3000_cases!==100) throw new Error('Generated public expansion status is stale. Run npm run build:public.');
+if(generated.live_records!==3000||generated.candidate_records!==0||generated.stage_3000_source?.status!=='live_unvalidated'||generated.eval?.stage_3000_cases!==100) throw new Error('Generated public expansion status is stale. Run pnpm run build:public.');
 
 console.log(JSON.stringify({status:'passed',live_records:generated.live_records,stage_3000_source:generated.stage_3000_source,eval:generated.eval},null,2));
