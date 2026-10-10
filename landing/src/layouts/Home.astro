@@ -1,5 +1,6 @@
 ---
 import Base from '@saas-maker/templates/Base.astro';
+import { createElement } from 'react';
 import { SiteHeader } from '@saas-maker/ui/blocks/site-header';
 import { StudioFooter, studioFromProjects, studioProjectsFeed } from '@saas-maker/ui/blocks/footer';
 import '../styles/home.css';
@@ -16,7 +17,7 @@ console.log(`Studio strip: ${studio.length ? 'catalog feed' : 'library fallback'
   <Fragment slot="head">
     <link rel="alternate" type="text/markdown" href="/index.md" title="Markdown version" />
   </Fragment>
-  <SiteHeader brand={{ name: 'memelab', href: '/' }} links={content.nav} className="home-header" />
+  <SiteHeader brand={{ name: 'memelab', href: '/' }} links={content.nav} actions={createElement('span', { className: 'live-count' }, '3,000 live')} className="home-header" />
   <slot />
   <StudioFooter product={content.product} url={content.url} {...content.footer} studio={studio} />
   <script is:inline type="module" src="/app.js"></script>

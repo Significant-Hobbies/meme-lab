@@ -1,4 +1,6 @@
-@import "@saas-maker/templates/gallery.css";
+/* Base owns theme.css; this is the page's only utilities entry (header + footer sources only). */
+@import "@saas-maker/ui/theme.css";
+@import "@saas-maker/ui/source-shell.css";
 @source "../pages";
 @source "../layouts";
 
@@ -16,19 +18,23 @@ body{min-height:100vh;background:var(--background)}
 .home-main h1,.home-main h2,.home-main h3{text-transform:lowercase}
 .home-main :focus-visible{outline:3px solid var(--ring);outline-offset:3px}
 .home-header nav a[href="/"]{color:var(--foreground);text-decoration:underline;text-underline-offset:8px;text-decoration-color:var(--brand)}
-.home-header>a{color:var(--navy)}
+.home-header{position:static;backdrop-filter:none}
+.home-header .container-page{width:min(100% - 40px,1180px);padding:0}
+.home-header a[href="/"]>span{font-size:21px;font-weight:850;letter-spacing:-.7px;color:var(--navy)}
+.live-count{color:var(--green);font:800 10px/1.4 var(--font-mono);letter-spacing:1px;white-space:nowrap}
+
 .composer{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);gap:12px 64px;align-items:start}
 .composer-intro{padding-top:5px}
-.eyebrow{margin:0 0 10px;color:var(--brand-ink);font-size:11px;font-weight:700}
-.composer h1{max-width:360px;margin:0;font-size:42px;line-height:1.06;letter-spacing:-.04em;text-wrap:balance}
+.eyebrow{margin:0 0 10px;color:var(--brand-ink);font:700 10px/1.4 var(--font-mono);letter-spacing:1px}
+.composer h1{max-width:360px;margin:0;color:var(--navy);font-size:42px;font-weight:800;line-height:1.06;letter-spacing:-.04em;text-wrap:balance}
 .intro{max-width:370px;margin:16px 0 0;color:var(--muted-foreground);font-size:14px;line-height:1.65}
 .composer-card{padding:18px;border:1px solid var(--border);border-radius:6px;background:#f9faff;min-width:0}
 #meme-form>label{display:block;color:var(--navy);font-size:12px;font-weight:650}
-#comment{display:block;width:100%;min-height:110px;margin-top:10px;padding:10px;border:1px solid var(--input);border-radius:6px;background:var(--card);color:var(--foreground);font:15px/1.6 ui-sans-serif,system-ui;resize:vertical}
+#comment{display:block;width:100%;min-height:100px;margin-top:10px;padding:4px 0;border:0;border-radius:0;background:transparent;color:var(--foreground);font:15px/1.6 ui-sans-serif,system-ui;resize:vertical}
 .retention-note{margin:8px 0 0;color:var(--muted-foreground);font-size:11px;line-height:1.6}
 .form-row{display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px;margin-top:16px;padding-top:12px;border-top:1px solid var(--line)}
 .primary{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 18px;border:0;border-radius:6px;background:var(--brand);color:var(--brand-foreground);font-size:12px;font-weight:650;gap:24px}.primary:hover{background:var(--brand-ink)}
-.example-picker{flex:1;min-width:0}
+.example-picker{flex:1;min-width:0;order:1}
 .example-picker summary{display:flex;min-height:44px;align-items:center;color:var(--muted-foreground);font-size:12px;cursor:pointer;list-style:none}
 .example-picker summary::after{content:' +';margin-left:8px}.example-picker[open] summary::after{content:' −'}
 .examples{display:grid;padding-top:8px}
@@ -157,3 +163,6 @@ body{min-height:100vh;background:var(--background)}
 
 .studio-inspector label{display:block}
 .studio-inspector textarea{width:100%;border:1px solid var(--input);border-radius:6px;background:var(--card);color:var(--foreground)}
+
+/* Library gap: the footer wordmark overflows with the system font (8 characters keep the full scale). */
+footer p[aria-hidden]{font-size:min(16vw,14rem)}

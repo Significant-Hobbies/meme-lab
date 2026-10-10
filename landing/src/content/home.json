@@ -32,7 +32,7 @@
       "--brand-ink": "#3456b2",
       "--primary": "#4165c5",
       "--primary-foreground": "#ffffff",
-      "--background": "#f5f7fb",
+      "--background": "#ffffff",
       "--foreground": "#182033",
       "--card": "#ffffff",
       "--surface": "#ffffff",
@@ -42,7 +42,8 @@
       "--ring": "#4165c5",
       "--font-sans": "ui-sans-serif, system-ui, sans-serif",
       "--font-display": "ui-sans-serif, system-ui, sans-serif",
-      "--font-text": "ui-sans-serif, system-ui, sans-serif"
+      "--font-text": "ui-sans-serif, system-ui, sans-serif",
+      "--font-mono": "ui-monospace, SFMono-Regular, Menlo, monospace"
     }
   },
   "product": "Meme Lab",
@@ -181,11 +182,6 @@
           }
         ]
       }
-    ],
-    "art": {
-      "src": "/footer-art/meme-lab-original-v1.webp",
-      "alt": "Two reaction-card characters flank a blank comment card.",
-      "position": "50% 50%"
-    }
+    ]
   }
 }
