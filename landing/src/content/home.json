@@ -1,0 +1,191 @@
+{
+  "page": {
+    "title": "Meme Lab — Find the meme",
+    "description": "Paste a comment and get the meme that fits it best.",
+    "theme": "base",
+    "mode": "light",
+    "motion": false,
+    "canonical": "https://memes.significanthobbies.com/",
+    "robots": "index, follow, max-image-preview:large",
+    "og": {
+      "title": "Meme Lab — Find the meme that fits",
+      "description": "Describe the whole situation and get one best meme plus four ranked alternatives.",
+      "image": "https://memes.significanthobbies.com/og-image.png",
+      "imageAlt": "Meme Lab — paste a comment, get the meme that fits.",
+      "imageWidth": 1200,
+      "imageHeight": 630,
+      "type": "website",
+      "twitterCard": "summary_large_image"
+    },
+    "jsonLd": {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "Meme Lab",
+      "url": "https://memes.significanthobbies.com/",
+      "applicationCategory": "EntertainmentApplication",
+      "description": "Describe a situation and get one best meme plus four ranked alternatives from a 3,000-reference catalogue."
+    },
+    "tokens": {
+      "--brand": "#4165c5",
+      "--brand-foreground": "#ffffff",
+      "--brand-soft": "#edf2ff",
+      "--brand-ink": "#3456b2",
+      "--primary": "#4165c5",
+      "--primary-foreground": "#ffffff",
+      "--background": "#f5f7fb",
+      "--foreground": "#182033",
+      "--card": "#ffffff",
+      "--surface": "#ffffff",
+      "--muted-foreground": "#647087",
+      "--border": "#d9dfe9",
+      "--input": "#bcc5d4",
+      "--ring": "#4165c5",
+      "--font-sans": "ui-sans-serif, system-ui, sans-serif",
+      "--font-display": "ui-sans-serif, system-ui, sans-serif",
+      "--font-text": "ui-sans-serif, system-ui, sans-serif"
+    }
+  },
+  "product": "Meme Lab",
+  "url": "https://memes.significanthobbies.com/",
+  "nav": [
+    {
+      "label": "find a reaction",
+      "href": "/"
+    },
+    {
+      "label": "collection",
+      "href": "/collection"
+    },
+    {
+      "label": "how it works",
+      "href": "/how-it-works"
+    }
+  ],
+  "intro": {
+    "eyebrow": "the right reaction",
+    "title": "find the meme that fits.",
+    "body": "Describe the whole situation. Meme Lab returns one best match and four ranked alternatives, with editable caption drafts for supported static memes."
+  },
+  "composer": {
+    "label": "what happened?",
+    "placeholder": "Paste a real comment, or describe what happened…",
+    "retention": "Your comment and returned candidates are kept for 30 days to support feedback.",
+    "examplesTitle": "try an example",
+    "submit": "find the meme",
+    "examples": [
+      {
+        "value": "I spent an hour looking for my phone while using its flashlight.",
+        "label": "I spent an hour looking for my phone while using its flashlight."
+      },
+      {
+        "value": "My coworker said the meeting could have been an email, then scheduled a follow-up meeting about it.",
+        "label": "My coworker said the meeting could have been an email, then scheduled a follow-up meeting about it."
+      },
+      {
+        "value": "My sibling ate the leftovers with my name on them, then asked why I looked upset.",
+        "label": "My sibling ate the leftovers with my name on them, then asked why I looked upset."
+      },
+      {
+        "value": "They replied 'k' to the six-paragraph message I spent an hour writing.",
+        "label": "They replied “k” to the six-paragraph message I spent an hour writing."
+      },
+      {
+        "value": "The tests finally passed after I changed nothing and ran them again.",
+        "label": "The tests finally passed after I changed nothing and ran them again."
+      },
+      {
+        "value": "My friend just lost a family member and asked me to help write a sincere condolence message.",
+        "label": "My friend just lost a family member and asked me to help write a sincere condolence message."
+      }
+    ]
+  },
+  "collection": {
+    "title": "from the collection",
+    "browse": "browse all 3,000 →",
+    "note": "Source previews · transformation rights are not established.",
+    "items": [
+      {
+        "href": "/memes/success-kid",
+        "image": "https://i.imgflip.com/1bhk.jpg",
+        "alt": "Success Kid source preview",
+        "title": "Success Kid",
+        "body": "A small, satisfying victory."
+      },
+      {
+        "href": "/memes/disaster-girl",
+        "image": "https://i.imgflip.com/23ls.jpg",
+        "alt": "Disaster Girl source preview",
+        "title": "Disaster Girl",
+        "body": "Enjoying the chaos."
+      },
+      {
+        "href": "/memes/drake-preference",
+        "image": "https://i.imgflip.com/30b1gx.jpg",
+        "alt": "Drake Hotline Bling source preview",
+        "title": "Drake Hotline Bling",
+        "body": "This one. Definitely not that one."
+      }
+    ]
+  },
+  "result": {
+    "alternativesTitle": "also fits",
+    "alternativesSubtitle": "Four backups, ranked by fit.",
+    "feedbackTitle": "Did it land?",
+    "retention": "Stored for 30 days for evaluation.",
+    "landed": "yes, that fits",
+    "missed": "nope",
+    "again": "try another comment ↗"
+  },
+  "noMatch": {
+    "eyebrow": "no strong match",
+    "title": "better to say nothing.",
+    "edit": "edit the comment"
+  },
+  "about": [
+    {
+      "title": "what meme lab actually does",
+      "body": "Meme Lab is a personal meme picker. You paste a complete comment or describe a situation — a group-chat argument, a workplace absurdity, a small domestic injustice — and it returns the one meme that fits it best, followed by four honestly ranked alternatives. Every result carries an ordinal fit label and an honest confidence level, so a weak match says it is weak instead of pretending otherwise."
+    },
+    {
+      "title": "the catalogue behind it",
+      "body": "The recommendations draw on a corrected 3,000-reference catalogue: 1,805 named meme templates and 1,195 reaction GIFs chosen because real conversations actually used them — each selected GIF has at least 108 observed replies in the GIF Reply research dataset. Every reference records what it expresses, the social dynamic it captures, an example of where it fits, and a near-miss case where it would be wrong. You can browse all of it in the <a href=\"/collection\">collection</a>."
+    },
+    {
+      "title": "how matching works",
+      "body": "Your comment is compared against two embedding views of the catalogue — one indexed by meaning, one by example — then the shortlist is scored on five ordered fit levels. Comments that involve more than one person are answered from three angles: your reaction, their side, and the situation itself. Serious requests — condolences, apologies, safety, anything that needs a real answer — are declined before humour is considered; no meme is the right meme there. The full methodology, including how results are evaluated, lives on <a href=\"/how-it-works\">how it works</a>."
+    }
+  ],
+  "footer": {
+    "catalogId": "meme-lab",
+    "capture": "newsletter",
+    "summary": "Sometimes no meme is the right meme.",
+    "groups": [
+      {
+        "title": "meme lab",
+        "links": [
+          {
+            "label": "find a reaction",
+            "href": "/"
+          },
+          {
+            "label": "collection",
+            "href": "/collection"
+          },
+          {
+            "label": "how it works",
+            "href": "/how-it-works"
+          },
+          {
+            "label": "markdown",
+            "href": "/index.md"
+          }
+        ]
+      }
+    ],
+    "art": {
+      "src": "/footer-art/meme-lab-original-v1.webp",
+      "alt": "Two reaction-card characters flank a blank comment card.",
+      "position": "50% 50%"
+    }
+  }
+}

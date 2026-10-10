@@ -1,0 +1,67 @@
+---
+import Home from '../layouts/Home.astro';
+import { homeContent } from '../content/schema';
+import json from '../content/home.json';
+const content = homeContent.parse(json);
+---
+
+<Home content={content}>
+  <main id="main" class="home-main page-try">
+    <section class="composer" aria-labelledby="page-title">
+      <div class="composer-intro">
+        <p class="eyebrow">{content.intro.eyebrow}</p>
+        <h1 id="page-title">{content.intro.title}</h1>
+        <p class="intro">{content.intro.body}</p>
+      </div>
+      <div class="composer-card">
+        <form id="meme-form">
+          <label for="comment">{content.composer.label}</label>
+          <textarea id="comment" name="comment" maxlength="1000" required placeholder={content.composer.placeholder}></textarea>
+          <p class="retention-note">{content.composer.retention}</p>
+          <div class="form-row">
+            <details class="example-picker">
+              <summary>{content.composer.examplesTitle}</summary>
+              <div class="examples" aria-label="Example comments">
+                {content.composer.examples.map((example) => <button type="button" data-example={example.value}>{example.label}</button>)}
+              </div>
+            </details>
+            <button id="submit" type="submit" class="primary"><span>{content.composer.submit}</span><span aria-hidden="true">→</span></button>
+          </div>
+        </form>
+      </div>
+      <p id="status" class="status" role="status" aria-live="polite"></p>
+    </section>
+
+    <section class="collection-preview" aria-labelledby="collection-preview-title">
+      <div class="collection-preview-heading"><h2 id="collection-preview-title">{content.collection.title}</h2><a href="/collection">{content.collection.browse}</a></div>
+      <div class="collection-preview-grid">
+        {content.collection.items.map((item) => <a class="collection-preview-item" href={item.href}><img src={item.image} alt={item.alt} width="90" height="90" loading="lazy" decoding="async" referrerpolicy="no-referrer" /><div><h3>{item.title}</h3><p>{item.body}</p></div></a>)}
+      </div>
+      <p class="collection-preview-note">{content.collection.note}</p>
+    </section>
+
+    <section id="loading" class="loading-card" hidden aria-label="Finding a meme"><div class="loading-image"></div><div class="loading-lines"><span></span><span></span><span></span></div></section>
+    <section id="result" class="result" hidden aria-live="polite">
+      <section id="meme-studio" class="meme-studio" hidden aria-labelledby="studio-heading"></section>
+      <div id="best-result" class="best-result"></div>
+      <div id="alternatives-wrap" class="alternatives-wrap" hidden>
+        <div class="section-title"><span id="alternatives-title">{content.result.alternativesTitle}</span><span id="alternatives-subtitle">{content.result.alternativesSubtitle}</span></div>
+        <div id="alternatives" class="alternatives"></div>
+      </div>
+      <div id="feedback" class="feedback" hidden>
+        <div><strong>{content.result.feedbackTitle}</strong><span>{content.result.retention}</span></div>
+        <div class="feedback-actions"><button type="button" data-verdict="landed">{content.result.landed}</button><button type="button" data-verdict="missed">{content.result.missed}</button></div>
+        <p id="feedback-status" role="status" aria-live="polite"></p>
+      </div>
+      <button id="try-again" class="try-again" type="button">{content.result.again}</button>
+    </section>
+    <section id="no-match" class="no-match" hidden>
+      <span class="no-match-mark">∅</span><p class="eyebrow">{content.noMatch.eyebrow}</p><h2>{content.noMatch.title}</h2><p id="no-match-reason"></p>
+      <button id="edit-comment" class="primary" type="button">{content.noMatch.edit}</button>
+    </section>
+
+    <section class="about" aria-labelledby="about-title">
+      {content.about.map((section, index) => <><h2 id={index === 0 ? 'about-title' : undefined}>{section.title}</h2><p set:html={section.body} /></>)}
+    </section>
+  </main>
+</Home>

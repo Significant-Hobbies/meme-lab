@@ -4,6 +4,8 @@ runs/*
 private/
 results/
 node_modules/
+landing/dist/
+landing/.astro/
 .wrangler/
 .DS_Store
 

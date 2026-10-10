@@ -23,7 +23,34 @@ test('public HTML permits embedded footer images while retaining script restrict
 
 const engagementSource = await readFile(new URL('../worker/public/fleet-engagement.js', import.meta.url), 'utf8');
 
-function mountEngagement(origin) {
+test('built home retains the composer contract and Worker markdown negotiation', async () => {
+  const html = await readFile(new URL('../worker/public/index.html', import.meta.url), 'utf8');
+  const markdown = await readFile(new URL('../worker/public/index.md', import.meta.url), 'utf8');
+  const app = await readFile(new URL('../worker/public/app.js', import.meta.url), 'utf8');
+  for (const [, id] of app.matchAll(/\$\('#([^']+)'\)/g)) {
+    assert.match(html, new RegExp(`id="${id}"`), `Missing composer element: ${id}`);
+  }
+  assert.equal((html.match(/data-example=/g) || []).length, 6);
+  assert.equal((html.match(/data-verdict=/g) || []).length, 2);
+  assert.doesNotMatch(html, /<astro-island/);
+  for (const [, attributes, code] of html.matchAll(/<script([^>]*)>([\s\S]*?)<\/script>/g)) {
+    assert(!code.trim() || attributes.includes('application/ld+json'), 'Executable inline scripts violate the Worker CSP');
+  }
+  const paths = [];
+  const env = { ASSETS: { async fetch(request) {
+    paths.push(new URL(request.url).pathname);
+    return new Response(paths.at(-1) === '/index.md' ? markdown : html);
+  } } };
+  const home = await worker.fetch(new Request('https://memes.significanthobbies.com/'), env);
+  assert.equal(await home.text(), html);
+  assert.match(home.headers.get('content-security-policy'), /script-src 'self'/);
+  const alternate = await worker.fetch(new Request('https://memes.significanthobbies.com/', { headers: { Accept: 'text/markdown' } }), env);
+  assert.equal(await alternate.text(), markdown);
+  assert.equal(alternate.headers.get('content-type'), 'text/markdown; charset=utf-8');
+  assert.deepEqual(paths, ['/', '/index.md']);
+});
+
+function mountEngagement(origin, studioFooter = false) {
   const created = [];
   const listeners = [];
   const document = {
@@ -35,7 +62,7 @@ function mountEngagement(origin) {
       created.push(element);
       return element;
     },
-    querySelector() { return null; },
+    querySelector(selector) { return studioFooter && selector.includes('[data-subscribe]') ? {} : null; },
     addEventListener(...args) { listeners.push(args); },
     head: {append() {}},
     body: {append(element) { element.isConnected = true; }},
@@ -55,6 +82,14 @@ test('newsletter uses the light theme on the public origin', () => {
   assert.equal(capture.attributes.layout, 'compact');
   assert.equal(capture.attributes.integrated, '');
   assert.equal(created.find(element => element.tag === 'fleet-footer-extension').children[0], capture);
+  assert.equal(listeners.length, 2);
+});
+
+test('StudioFooter keeps analytics but does not append the legacy capture', () => {
+  const {created, listeners} = mountEngagement('https://memes.significanthobbies.com', true);
+  assert.equal(created.length, 1);
+  assert.equal(created[0].tag, 'script');
+  assert.equal(created[0].src, 'https://health.sassmaker.com/tracker.js');
   assert.equal(listeners.length, 2);
 });
 

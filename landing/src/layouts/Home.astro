@@ -1,0 +1,25 @@
+---
+import Base from '@saas-maker/templates/Base.astro';
+import { SiteHeader } from '@saas-maker/ui/blocks/site-header';
+import { StudioFooter, studioFromProjects, studioProjectsFeed } from '@saas-maker/ui/blocks/footer';
+import '../styles/home.css';
+
+const { content } = Astro.props;
+const projects = await fetch(studioProjectsFeed, { signal: AbortSignal.timeout(2500) })
+  .then((response) => response.ok ? response.json() : [])
+  .catch(() => []);
+const studio = studioFromProjects(projects, { current: content.footer.catalogId });
+console.log(`Studio strip: ${studio.length ? 'catalog feed' : 'library fallback'}`);
+---
+
+<Base {...content.page}>
+  <Fragment slot="head">
+    <link rel="alternate" type="text/markdown" href="/index.md" title="Markdown version" />
+  </Fragment>
+  <SiteHeader brand={{ name: 'memelab', href: '/' }} links={content.nav} className="home-header" />
+  <slot />
+  <StudioFooter product={content.product} url={content.url} {...content.footer} studio={studio} />
+  <script is:inline type="module" src="/app.js"></script>
+  <script is:inline src="/app-health-log.js" defer></script>
+  <script is:inline src="/fleet-engagement.js" defer></script>
+</Base>
