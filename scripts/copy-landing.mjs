@@ -13,6 +13,7 @@ let html = await readFile(new URL('index.html', dist), 'utf8');
 html = html
   .replace(/<meta name="color-scheme"[^>]*>/, '')
   .replace(/<meta name="twitter:image:alt"[^>]*>/, '')
+  .replace(/<link rel="preload"[^>]*as="font"[^>]*>/g, '')
   .replace('width=device-width, initial-scale=1', 'width=device-width,initial-scale=1');
 const scripts = [...html.matchAll(/<script([^>]*)>([\s\S]*?)<\/script>/g)];
 for (const [tag, attributes, code] of scripts) {
@@ -29,7 +30,16 @@ const names = new Set([...html.matchAll(/\/_landing\/([^"'\s<>]+)/g)].map((match
 for (const name of names) {
   if (name.startsWith('script.')) continue;
   if (name.endsWith('.css')) {
-    const css = await readFile(new URL(`_landing/${name}`, dist), 'utf8');
+    // System fonts only: Base imports lazy faces for all presets. Remove those
+    // declarations rather than retaining URLs to font files we do not ship.
+    const css = (await readFile(new URL(`_landing/${name}`, dist), 'utf8'))
+      .replace(/@font-face\s*\{[^}]*\}/g, '')
+      // This home is base/light; retain base rules and the shared components.
+      .replace(/\[data-theme=(?:paper|ink|hearth|signal|gallery)\][^{]*\{[^{}]*\}/g, '');
+    const hash = createHash('sha256').update(css).digest('hex').slice(0, 12);
+    const cssName = `index.${hash}.css`;
+    await writeFile(new URL(cssName, assets), css);
+    html = html.replaceAll(`/_landing/${name}`, `/_landing/${cssName}`);
     for (const [, reference] of css.matchAll(/url\(["']?([^"')]+)["']?\)/g)) {
       if (reference.startsWith('/_landing/')) names.add(reference.slice('/_landing/'.length));
     }
@@ -38,7 +48,7 @@ for (const name of names) {
 // Copy only the generated home and its cacheable assets. No other route changes.
 // The home uses system fonts (tokens set --font-*), so the library's lazy @font-face files are never requested; do not ship them.
 for (const name of names) {
-  if (name.startsWith('script.') || /\.woff2?$/.test(name)) continue;
+  if (name.startsWith('script.') || /\.(css|woff2?)$/.test(name)) continue;
   await cp(new URL(`_landing/${name}`, dist), new URL(name, assets));
 }
 await writeFile(new URL('index.html', publicDir), html);
