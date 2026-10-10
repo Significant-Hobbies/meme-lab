@@ -102,14 +102,17 @@ test('How It Works documents the complete 30-to-30000 journey and evidence bound
 });
 
 test('every public surface uses the restrained application shell',()=>{
-  for(const page of [tryItPage,collectionPage,howItWorks]) {
+  for(const page of [collectionPage,howItWorks]) {
     assert.match(page,/class="topbar"/);
     assert.doesNotMatch(page,/class="doodle-field"/);
   }
-  assert.match(tryItPage,/body class="page-try"/);
+  assert.match(tryItPage,/<header[^>]*class="[^"]*home-header/);
+  assert.match(tryItPage,/<main id="main" class="home-main page-try"/);
+  assert.match(tryItPage,/<footer data-fleet-footer="studio" data-catalog-id="meme-lab"/);
+  assert.doesNotMatch(tryItPage,/class="doodle-field"/);
   assert.match(collectionPage,/body class="page-collection"/);
   assert.match(howItWorks,/body class="page-how"/);
-  assert.match(tryItPage,/Find the meme that fits\./);
+  assert.match(tryItPage,/find the meme that fits\./);
 });
 
 test('public surfaces render GIF results and lightweight collection previews',()=>{

@@ -8,6 +8,9 @@
     "node": ">=22"
   },
   "scripts": {
+    "build:landing": "pnpm --dir landing build && node scripts/copy-landing.mjs",
+    "preview:landing": "node scripts/preview-landing.mjs",
+    "verify:landing": "node scripts/verify-landing.mjs",
     "build:anna": "node scripts/build-anna.mjs",
     "start": "node server.mjs",
     "build:public-catalogue": "node scripts/build-public-catalogue.mjs",

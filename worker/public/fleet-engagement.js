@@ -19,7 +19,7 @@
     }
   }, true);
 
-  if (document.querySelector('saas-maker-newsletter-capture')) return;
+  if (document.querySelector('[data-subscribe], saas-maker-newsletter-capture')) return;
   const extension = document.querySelector('fleet-footer-extension') || document.createElement('fleet-footer-extension');
   const capture = document.createElement('saas-maker-newsletter-capture');
   for (const [name, value] of Object.entries({
