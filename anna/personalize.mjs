@@ -77,7 +77,7 @@ export class PersonalMemeJob {
       const photoUrl=await upload(input,'image_input');
       onStage('Creating your face in the meme');
       // One user-requested image, no automatic retry and no separate provider.
-      const result=await anna.image.generate({prompt,n:1,reference_image_urls:[templateUrl,photoUrl],size,modelPreferences:{hints:[{name:'Nano Banana 2'},{name:'Nano Banana Pro'},{name:'Nano Banana'},{name:'GPT Image'}]}},{timeoutMs:120000});fresh();
+      const result=await anna.image.generate({prompt,n:1,reference_image_urls:[templateUrl,photoUrl],size,modelPreferences:{hints:[{name:'google/gemini-2.5-flash-image'}]}},{timeoutMs:120000});fresh();
       if(!Array.isArray(result?.images)||result.images.length!==1)throw new Error('Anna did not return one image.');
       const generated=remoteImageUrl(result.images[0]?.url);
       onStage(mode==='format'?'Preparing your meme for review':'Preserving the original meme around your face');
