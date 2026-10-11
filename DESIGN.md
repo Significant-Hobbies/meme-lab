@@ -31,7 +31,7 @@ Use a two-column best-result layout and a compact grid of up to four backups whe
 ## Visual system
 
 - Navy anchors navigation and primary feedback actions; cobalt identifies interactive focus and links.
-- White working surfaces sit on a cool-gray canvas with hairline slate borders and limited elevation.
+- 11 Oct 2026: dark everywhere, with a navy canvas, dark working surfaces, hairline slate borders, and cobalt lifted to #789bef for WCAG AA contrast.
 - Green communicates a good fit or live status, amber communicates weak confidence, and rose is reserved for errors or stopped experiments.
 - System sans typography keeps the operating surface fast and familiar. Sentence input uses a readable serif only to distinguish submitted language from interface chrome.
 - Corners remain modest and consistent. Pills are reserved for compact status labels.

@@ -34,8 +34,18 @@ for (const name of names) {
     // declarations rather than retaining URLs to font files we do not ship.
     const css = (await readFile(new URL(`_landing/${name}`, dist), 'utf8'))
       .replace(/@font-face\s*\{[^}]*\}/g, '')
-      // This home is base/light; retain base rules and the shared components.
-      .replace(/\[data-theme=(?:paper|ink|hearth|signal|gallery)\][^{]*\{[^{}]*\}/g, '');
+      // Retain base rules and shared components; home.css supplies the dark tokens.
+      .replace(/\[data-theme=(?:paper|ink|hearth|signal|gallery)\][^{]*\{[^{}]*\}/g, '')
+      // Tokenize compiled utility colors too. @property initial values must be
+      // independent of custom properties, so use the transparent keyword.
+      .replace(/([^{}]+)\{([^{}]*)\}/g, (block, selector, declarations) => {
+        if (selector.includes(':root')) return block;
+        if (selector.includes('fbf5ec')) return ''; // Unused library utility.
+        const colors = { '#0000': 'transparent', '#000': 'var(--ink)', '#0003': 'var(--overlay-soft)', '#0006': 'var(--overlay)', '#fff': 'var(--card)', '#00000040': 'var(--overlay)' };
+        const themed = declarations.replace(/#[\da-f]{3,8}\b/gi, (color) =>
+          selector.includes('@property') ? 'transparent' : colors[color.toLowerCase()] || color);
+        return `${selector}{${themed}}`;
+      });
     const hash = createHash('sha256').update(css).digest('hex').slice(0, 12);
     const cssName = `index.${hash}.css`;
     await writeFile(new URL(cssName, assets), css);
