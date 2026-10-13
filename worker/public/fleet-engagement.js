@@ -32,7 +32,7 @@
     layout: 'compact',
     integrated: '',
     source: 'fleet-footer',
-    'privacy-url': 'https://sassmaker.com/privacy',
+    'privacy-url': '/privacy',
     theme: 'light',
   })) capture.setAttribute(name, value);
   extension.append(capture);

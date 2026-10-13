@@ -17,9 +17,9 @@ console.log(`Studio strip: ${studio.length ? 'catalog feed' : 'library fallback'
   <Fragment slot="head">
     <link rel="alternate" type="text/markdown" href="/index.md" title="Markdown version" />
   </Fragment>
-  <SiteHeader brand={{ name: 'memelab', href: '/' }} links={content.nav} actions={createElement('span', { className: 'live-count' }, '3,000 live')} className="home-header" />
+  <SiteHeader brand={{ name: content.product, href: '/' }} links={content.nav} actions={createElement('span', { className: 'live-count' }, '3,000 live')} className="home-header" />
   <slot />
-  <StudioFooter product={content.product} url={content.url} {...content.footer} studio={studio} />
+  <StudioFooter product={content.product} url={content.url} {...content.footer} studio={studio} privacyUrl="/privacy" />
   <script is:inline type="module" src="/app.js"></script>
   <script is:inline src="/app-health-log.js" defer></script>
   <script is:inline src="/fleet-engagement.js" defer></script>

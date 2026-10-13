@@ -17,15 +17,20 @@ const content = homeContent.parse(json);
         <form id="meme-form">
           <label for="comment">{content.composer.label}</label>
           <textarea id="comment" name="comment" maxlength="1000" required placeholder={content.composer.placeholder}></textarea>
-          <p class="retention-note">{content.composer.retention}</p>
           <div class="form-row">
-            <details class="example-picker">
-              <summary>{content.composer.examplesTitle}</summary>
-              <div class="examples" aria-label="Example comments">
-                {content.composer.examples.map((example) => <button type="button" data-example={example.value}>{example.label}</button>)}
-              </div>
-            </details>
-            <button id="submit" type="submit" class="primary"><span>{content.composer.submit}</span><span aria-hidden="true">→</span></button>
+            <div class="example-controls">
+              <button type="button" class="example-run" data-example={content.composer.examples[0].value}>{content.composer.examplesTitle}</button>
+              <details class="example-picker">
+                <summary>More examples</summary>
+                <div class="examples" aria-label="Example comments">
+                  {content.composer.examples.slice(1).map((example) => <button type="button" data-example={example.value}>{example.label}</button>)}
+                </div>
+              </details>
+            </div>
+            <div class="submit-group">
+            <button id="submit" type="submit" aria-describedby="retention-note" class="primary"><span>{content.composer.submit}</span><span aria-hidden="true">→</span></button>
+              <p id="retention-note" class="retention-note">{content.composer.retention} <a href="/privacy">Privacy</a></p>
+            </div>
           </div>
         </form>
       </div>

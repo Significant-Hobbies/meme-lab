@@ -1,0 +1,19 @@
+{
+  "request_id": "11111111-1111-4111-8111-111111111111",
+  "decision": "meme",
+  "confidence": "high",
+  "feedback_enabled": true,
+  "candidates": [
+    {
+      "id": "drake-preference",
+      "name": "Synthetic preference template",
+      "rank": 1,
+      "fit_label": "strong",
+      "score": 0.9,
+      "media_type": "image",
+      "media_url": "/fixtures/sample.png",
+      "signal_summary": "Synthetic recommendation for UI checks.",
+      "source_url": "https://example.invalid/sample"
+    }
+  ]
+}

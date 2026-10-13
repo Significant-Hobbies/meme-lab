@@ -1,0 +1,21 @@
+{
+  "decision": "compose",
+  "placement": "template",
+  "expected_aspect": 1.5,
+  "layers": [
+    {
+      "id": "caption-1",
+      "label": "Preference",
+      "role": "Synthetic preference",
+      "text": "One click is enough",
+      "box": [
+        0.08,
+        0.08,
+        0.84,
+        0.22
+      ],
+      "style": "outlined",
+      "rotation": 0
+    }
+  ]
+}
