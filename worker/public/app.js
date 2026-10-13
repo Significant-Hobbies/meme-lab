@@ -165,7 +165,7 @@ async function findMeme() {
 }
 
 form.addEventListener('submit',event=>{event.preventDefault();findMeme();});
-for(const button of document.querySelectorAll('[data-example]')) button.addEventListener('click',()=>{comment.value=button.dataset.example;comment.focus();});
+for(const button of document.querySelectorAll('[data-example]')) button.addEventListener('click',()=>{if(submit.disabled)return;comment.value=button.dataset.example;button.closest("details")?.removeAttribute("open");form.requestSubmit();});
 $('#try-again').addEventListener('click',()=>{studio.close();showOnly('form');comment.focus();window.scrollTo({top:0,behavior:'smooth'});});
 $('#edit-comment').addEventListener('click',()=>{studio.close();showOnly('form');comment.focus();window.scrollTo({top:0,behavior:'smooth'});});
 for(const button of document.querySelectorAll('[data-verdict]')) button.addEventListener('click',async()=>{

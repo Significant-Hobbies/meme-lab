@@ -143,7 +143,7 @@ function memePage(record) {
 </head>
 <body class="page-meme">
   <header class="topbar">
-    <a class="brand" href="/" aria-label="Meme Lab home"><span>meme</span>lab</a>
+    <a class="brand" href="/" aria-label="Meme Lab home">Meme Lab</a>
     <nav class="site-nav" aria-label="Main navigation">
       <a href="/">Try it</a>
       <a href="/collection">Collection</a>
@@ -460,6 +460,11 @@ export default {
       return forHead(request,pageResponse(memePage(record)));
     }
     if(url.pathname==='/api/health'&&isRead) return withEndpointMeasurement(request,env,ctx,'/api/health',()=>forHead(request,json({status:'ok',catalogue:catalogue.length})));
+    if(isRead&&(url.pathname==='/studio'||url.pathname==='/studio/')) return forHead(request,new Response(null,{status:302,headers:secureHeaders(new Headers({Location:'/#meme-form'}))}));
+    if(isRead&&url.pathname==='/privacy') {
+      const assetUrl=new URL(url);assetUrl.pathname='/privacy.html';
+      return forHead(request,secureAsset(await env.ASSETS.fetch(new Request(assetUrl,request))));
+    }
     const markdownAlternate=MARKDOWN_ALTERNATES[url.pathname];
     if(isRead&&markdownAlternate&&wantsMarkdown(request)) {
       const mdUrl=new URL(url);

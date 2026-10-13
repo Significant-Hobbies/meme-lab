@@ -17,7 +17,7 @@ Meme Lab uses the owner-selected **Studio** system (A, selected 2026-10-04): a r
 ## Interaction rules
 
 - Load image previews automatically from allowlisted providers and fall back to the reference name without blocking the result.
-- Keep complete, natural input examples in a native Try an example disclosure; use neutral reference rows rather than colorful tiles.
+- Run one complete, natural input with Try an example in one click. Keep the remaining examples in a native More examples disclosure with neutral reference rows.
 - Keep result cards immediate and scannable: image, meme name, perspective, fit score, and quiet catalogue signals without generated reasoning.
 - Keep all four ranked backups visible and use their fit scores to make weak options obvious.
 - Keep one-tap feedback close to the result and state its 30-day retention.

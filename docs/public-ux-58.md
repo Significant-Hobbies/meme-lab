@@ -1,0 +1,11 @@
+# Public UX #58 coding receipt
+
+Base: verified remote main `083c20aca84885ac303529359cadb6d570e67a51` on 13 October 2026. No repository AGENTS.md was present; handoff, audit addendum and DESIGN.md were read. No open PR was found. This is a single-writer branch preserving the base history.
+
+Try an example now submits one complete example in the current experience; five more remain in a native disclosure and submit directly. A busy request cannot be restarted by example clicks. The 30-day comment/candidate retention explanation and app privacy link sit in the submit group and describe the button accessibly. /studio and /studio/ redirect to /#meme-form; the editor remains in the result panel. Public header wordmarks use Meme Lab, including collection, methodology and generated detail pages. Footer consent links use the app privacy route, which distinguishes optional SaaS Maker forms from app processing.
+
+Validation: landing build and copy; package and expansion checks; all 271 Node tests passed with zero skips; focused public routes/app checks passed (51 tests); public catalogue/package builds and Wrangler deployment dry-run passed. The scripts underlying the pnpm commands were run directly after pnpm tried to use an unavailable home-directory store. Initial syscall-sandbox runs caused Node native assertions and prevented Chromium startup; the successful local runs used the permitted sandbox allowance. No source workaround weakened application behavior.
+
+`python tests/public_ux_browser.py` passes actual public DOM/CSS/JS at 390/768/1440 with committed synthetic recommendation/composition/feedback responses and drawn sample media. Home, loading, editor and privacy renders were inspected. This verifies local UI behavior and geometry, not live providers, remote persistence, humour, source media, organic use, or production acceptance.
+
+Open gates: human/editorial privacy and copy review; physical-device and assisted-use acceptance; production route/data-retention/provider acceptance and release. No deployment, merge, release, credentials, production configuration, remote migration, catalogue expansion, Anna/Store/admin action or provider diagnosis was performed. Issue #58 remains open for those gates.

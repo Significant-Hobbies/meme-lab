@@ -220,3 +220,6 @@ footer p[aria-hidden]{font-size:min(16vw,14rem)}
 .primary:disabled,.meme-studio .primary:disabled,.meme-studio .primary:disabled:hover{color:var(--muted);background:var(--muted-bg);border:1px solid var(--line)}
 
 [class*="disabled:opacity-"]:disabled{opacity:1}
+
+.example-controls{flex:1;min-width:0}.example-run{min-height:44px;color:var(--blue);font-size:12px;text-align:left}.submit-group{max-width:270px}.submit-group>.primary{width:100%}.submit-group .retention-note{font-size:12px}
+@media(max-width:720px){.submit-group{order:-1;max-width:none;width:100%}}
