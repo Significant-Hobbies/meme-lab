@@ -18,6 +18,10 @@ const content = homeContent.parse(json);
           <label for="comment">{content.composer.label}</label>
           <textarea id="comment" name="comment" maxlength="1000" required placeholder={content.composer.placeholder}></textarea>
           <div class="form-row">
+            <div class="submit-group">
+              <button id="submit" type="submit" aria-describedby="retention-note" class="primary"><span>{content.composer.submit}</span><span aria-hidden="true">→</span></button>
+              <p id="retention-note" class="retention-note">{content.composer.retention} <a href="/privacy">Privacy</a></p>
+            </div>
             <div class="example-controls">
               <button type="button" class="example-run" data-example={content.composer.examples[0].value}>{content.composer.examplesTitle}</button>
               <details class="example-picker">
@@ -26,10 +30,6 @@ const content = homeContent.parse(json);
                   {content.composer.examples.slice(1).map((example) => <button type="button" data-example={example.value}>{example.label}</button>)}
                 </div>
               </details>
-            </div>
-            <div class="submit-group">
-            <button id="submit" type="submit" aria-describedby="retention-note" class="primary"><span>{content.composer.submit}</span><span aria-hidden="true">→</span></button>
-              <p id="retention-note" class="retention-note">{content.composer.retention} <a href="/privacy">Privacy</a></p>
             </div>
           </div>
         </form>
