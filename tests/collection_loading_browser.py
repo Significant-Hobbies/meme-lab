@@ -23,7 +23,7 @@ try:
         except Exception:
             time.sleep(.1)
     with sync_playwright() as p:
-        browser = p.chromium.launch(executable_path='/usr/bin/chromium', args=['--no-sandbox'])
+        browser = p.chromium.launch(executable_path=os.getenv('PLAYWRIGHT_CHROMIUM_EXECUTABLE', '/usr/bin/chromium'), args=['--no-sandbox'])
         for width in [390, 768, 1440]:
             context = browser.new_context(viewport={'width': width, 'height': 900},
                                           service_workers='block', color_scheme='dark')
