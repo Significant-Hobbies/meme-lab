@@ -1,7 +1,13 @@
+// Above-fold rules are in the initial response; load the unchanged full styles without blocking it.
+for(const style of document.querySelectorAll('link[data-collection-style]')) style.media='all';
 const grid=document.querySelector('#collection-grid');
 const search=document.querySelector('#catalogue-search');
 const count=document.querySelector('#collection-count');
 const empty=document.querySelector('#collection-empty');
+const failure=document.querySelector('#collection-error');
+const failureMessage=document.querySelector('#collection-error-message');
+const retry=document.querySelector('#collection-retry');
+let loading=false;
 const pagination=document.querySelector('#collection-pagination');
 const pageLabel=document.querySelector('#collection-page-label');
 const previous=document.querySelector('#collection-previous');
@@ -75,17 +81,57 @@ function filterCollection() {
   render();
 }
 
-try {
-  const response=await fetch('/collection.json');
-  if(!response.ok) throw new Error('Could not load the collection.');
-  catalogue=await response.json();
-  filtered=catalogue;
-  render();
-  search.addEventListener('input',filterCollection);
-  previous.addEventListener('click',()=>{page-=1;render();grid.scrollIntoView({behavior:'smooth',block:'start'});});
-  next.addEventListener('click',()=>{page+=1;render();grid.scrollIntoView({behavior:'smooth',block:'start'});});
-} catch(error) {
-  count.textContent=error.message;
-  empty.hidden=false;
-  empty.textContent='The collection could not load. Please try again.';
+function showLoading() {
+  grid.hidden=false;
+  grid.setAttribute('aria-busy','true');
+  failure.hidden=true;
+  empty.hidden=true;
+  pagination.hidden=true;
+  count.textContent='Loading the collection…';
+  const fragment=document.createDocumentFragment();
+  for(let index=0;index<pageSize;index+=1) {
+    const card=document.createElement('div');
+    card.className='collection-card collection-skeleton';
+    card.setAttribute('aria-hidden','true');
+    const media=document.createElement('div');
+    media.className='collection-media';
+    const copy=document.createElement('div');
+    copy.className='collection-copy';
+    for(let line=0;line<3;line+=1) copy.append(document.createElement('span'));
+    card.append(media,copy);
+    fragment.append(card);
+  }
+  grid.replaceChildren(fragment);
 }
+
+async function loadCollection() {
+  if(loading) return;
+  loading=true;
+  retry.disabled=true;
+  showLoading();
+  try {
+    const response=await fetch('/collection.json');
+    if(!response.ok) throw new Error('Could not load the collection.');
+    const rows=await response.json();
+    if(!Array.isArray(rows)) throw new Error('The collection response was unreadable.');
+    catalogue=rows;
+    filterCollection();
+  } catch(error) {
+    grid.replaceChildren();
+    count.textContent='Collection unavailable';
+    failureMessage.textContent=error instanceof Error?error.message:'Could not load the collection.';
+    failure.hidden=false;
+    empty.hidden=true;
+    pagination.hidden=true;
+  } finally {
+    loading=false;
+    retry.disabled=false;
+    grid.setAttribute('aria-busy','false');
+  }
+}
+
+search.addEventListener('input',()=>{if(!loading&&failure.hidden) filterCollection();});
+previous.addEventListener('click',()=>{page-=1;render();grid.scrollIntoView({behavior:'smooth',block:'start'});});
+next.addEventListener('click',()=>{page+=1;render();grid.scrollIntoView({behavior:'smooth',block:'start'});});
+retry.addEventListener('click',loadCollection);
+await loadCollection();
