@@ -50,7 +50,7 @@ test('built home retains the composer contract and Worker markdown negotiation',
   assert.deepEqual(paths, ['/', '/index.md']);
 });
 
-function mountEngagement(origin, studioFooter = false) {
+function mountEngagement(origin, studioFooter = false, compactFooter = false) {
   const created = [];
   const listeners = [];
   const document = {
@@ -65,7 +65,10 @@ function mountEngagement(origin, studioFooter = false) {
     querySelector(selector) { return studioFooter && selector.includes('[data-subscribe]') ? {} : null; },
     addEventListener(...args) { listeners.push(args); },
     head: {append() {}},
-    body: {append(element) { element.isConnected = true; }},
+    body: {
+      append(element) { element.isConnected = true; },
+      hasAttribute(name) { return compactFooter && name === 'data-compact-footer'; },
+    },
   };
   runInNewContext(engagementSource, {location: {origin}, document});
   return {created, listeners};
@@ -91,6 +94,16 @@ test('StudioFooter keeps analytics but does not append the legacy capture', () =
   assert.equal(created[0].tag, 'script');
   assert.equal(created[0].src, 'https://health.sassmaker.com/tracker.js');
   assert.equal(listeners.length, 2);
+});
+
+test('collection keeps analytics without mounting newsletter or Ask AI', async () => {
+  const collection = await readFile(new URL('../worker/public/collection.html', import.meta.url), 'utf8');
+  assert.match(collection, /<body[^>]*data-compact-footer/);
+  assert.match(collection, /<footer class="collection-footer">/);
+  assert.doesNotMatch(collection, /fleet-footer-extension|ai-chat-footer\.js|project-strip\.js/);
+  const {created} = mountEngagement('https://memes.significanthobbies.com', false, true);
+  assert.deepEqual(created.map(element => element.tag), ['script']);
+  assert.equal(created[0].src, 'https://health.sassmaker.com/tracker.js');
 });
 
 test('preview and foreign origins do not mount telemetry or newsletter capture', () => {
