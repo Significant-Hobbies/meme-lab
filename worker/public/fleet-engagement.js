@@ -19,6 +19,7 @@
     }
   }, true);
 
+  if (document.body.hasAttribute('data-compact-footer')) return;
   if (document.querySelector('[data-subscribe], saas-maker-newsletter-capture')) return;
   const extension = document.querySelector('fleet-footer-extension') || document.createElement('fleet-footer-extension');
   const capture = document.createElement('saas-maker-newsletter-capture');
