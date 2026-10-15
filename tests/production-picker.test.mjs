@@ -184,6 +184,23 @@ test('probe distinguishes low confidence from fallback and missing perspectives 
   assert.equal(unknown.results[0].confidence,null);assert.equal(unknown.results[0].ranking_mode,null);
 });
 
+test('failed probe retains only a valid Cloudflare Ray ID for correlation',async()=>{
+  const candidates=Array.from({length:5},(_,index)=>({id:`candidate-${index}`,media_url:'https://example.test/image.png',score:80,perspective:['self','other','situation'][index%3]}));
+  const body={decision:'meme',confidence:'low',degraded:true,candidates};
+  const ray='a4b005319d4f3bdd-SIN';
+  const failed=await probePicker('https://example.test',async()=>Response.json(body,{headers:{'cf-ray':ray}}));
+  assert.equal(failed.status,'failed');
+  assert.equal(failed.results[0].ray_id,ray);
+  assert.equal(failed.results[1].ray_id,ray);
+  const invalid=await probePicker('https://example.test',async()=>Response.json(body,{headers:{'cf-ray':'private input'}}));
+  assert.equal('ray_id' in invalid.results[0],false);
+  const passed=await probePicker('https://example.test',async()=>Response.json({...body,confidence:'high',degraded:false},{headers:{'cf-ray':ray}}));
+  assert.equal('ray_id' in passed.results[0],false);
+  const malformed=await probePicker('https://example.test',async()=>new Response('{',{headers:{'cf-ray':ray}}));
+  assert.equal(malformed.results[0].ray_id,ray);
+  assert.equal(malformed.results[0].reason,'request_or_response_failed');
+});
+
 test('browser reports caught picker errors without attaching comments or error text',()=>{
   const app=readFileSync(new URL('../worker/public/app.js',import.meta.url),'utf8');
   assert.match(app,/appHealthLog\?\.\('recommendation.failed'/);
