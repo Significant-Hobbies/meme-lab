@@ -10,11 +10,14 @@ export async function probePicker(origin='https://memes.significanthobbies.com',
   const results=[];
   for(const fixture of pickerCases) {
     const started=Date.now();
+    let ray_id=null;
     try {
       const response=await fetchImpl(new URL('/api/recommend',origin),{
         method:'POST',headers:{'Content-Type':'application/json'},
         body:JSON.stringify({comment:fixture.comment}),signal:AbortSignal.timeout(30_000)
       });
+      const ray=response.headers.get('cf-ray');
+      if(/^[0-9a-f]{16,32}-[A-Z]{3}$/.test(ray??'')) ray_id=ray;
       const body=await response.json();
       const candidates=body?.candidates;
       const valid=response.ok&&body.decision==='meme'&&Array.isArray(candidates)&&candidates.length===5
@@ -25,9 +28,10 @@ export async function probePicker(origin='https://memes.significanthobbies.com',
       const degraded=body.degraded===true||body.confidence==='low'||(fixture.id==='perspectives'&&!perspectives_complete);
       const confidence=['high','medium','low'].includes(body.confidence)?body.confidence:null;
       const ranking_mode=['general','perspective','general_fallback','retrieval_fallback'].includes(body.ranking_mode)?body.ranking_mode:null;
-      results.push({case:fixture.id,status:valid&&!degraded?'passed':'failed',status_code:response.status,degraded,fallback:body.degraded===true,confidence,ranking_mode,...(fixture.id==='perspectives'?{perspectives_complete}:{}),duration_ms:Date.now()-started});
+      const failed=!valid||degraded;
+      results.push({case:fixture.id,status:failed?'failed':'passed',status_code:response.status,degraded,fallback:body.degraded===true,confidence,ranking_mode,...(fixture.id==='perspectives'?{perspectives_complete}:{}),...(failed&&ray_id?{ray_id}:{}),duration_ms:Date.now()-started});
     } catch {
-      results.push({case:fixture.id,status:'failed',reason:'request_or_response_failed',duration_ms:Date.now()-started});
+      results.push({case:fixture.id,status:'failed',reason:'request_or_response_failed',...(ray_id?{ray_id}:{}),duration_ms:Date.now()-started});
     }
   }
   return {status:results.every(result=>result.status==='passed')?'passed':'failed',results};
