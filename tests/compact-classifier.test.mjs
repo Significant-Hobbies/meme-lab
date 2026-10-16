@@ -20,7 +20,7 @@ test('compact full-batch answers preserve all ordinal probabilities and input or
     const schema=body.response_format.json_schema.schema;
     assert.deepEqual(schema.required,['results']);assert.equal(schema.additionalProperties,false);
     assert.equal(schema.properties.results.minItems,30);assert.equal(schema.properties.results.maxItems,30);
-    assert.equal(schema.properties.results.items.minItems,6);assert.equal(schema.properties.results.items.maxItems,6);
+    assert.equal(schema.properties.results.items.minItems,2);assert.equal(schema.properties.results.items.maxItems,2);
     assert.equal(schema.properties.results.items.items.type,'number');
     assert.equal(schema.properties.results.items.prefixItems,undefined);
     assert.equal(request.headers.get('x-gateway-force-provider'),null);
@@ -69,10 +69,10 @@ test('ordinal reconciliation preserves the separate safety classifier decision',
 });
 
 test('invalid compact tuples never become fit scores and retries remain bounded',async()=>{
-  for(const tuple of [[4,1],[5,0,0,0,0,1],[4,0,0,0,-.1,1.1],[4,0,0,0,0,0],[4,0,0,0,0,'1']]){
+  for(const tuple of [[4,5],[5,0,0,0,0,1],[4,0,0,0,-.1,1.1],[4,0,0,0,0,0],[4,0,0,0,0,'1']]){
     let calls=0;
     const adapter=createGatewayClassifierFetch({fetch:async()=>{calls++;return completion([tuple]);}});
-    await assert.rejects(adapter('',init(1)),/category scores/);
+    await assert.rejects(adapter('',init(1)),/category scores|ordinal scores/);
     assert.equal(calls,2);
   }
 });
@@ -130,4 +130,44 @@ test('caller cancellation during flat-score validation prevents a second dispatc
   const adapter=createGatewayClassifierFetch({fetch:async()=>{calls++;controller.abort();return completion([[3,0,0,0,1,0],[3,0,0,0,1,0]]);}});
   await assert.rejects(adapter('',{...init(2),classifierRejectFlatOrdinal:true,signal:controller.signal}),/flat ordinal scores/);
   assert.equal(calls,1);
+});
+
+test('compact ordinal pairs preserve direct continuous fit without fabricated probabilities',async()=>{
+  const candidates=[{id:'weak',name:'Weak'},{id:'exact',name:'Exact'},{id:'plausible',name:'Plausible'}];
+  const adapter=createGatewayClassifierFetch({fetch:async request=>{
+    const body=await request.json();
+    assert.match(body.messages[0].content,/ordinal_score/);
+    return completion([[1,1.25],[4,3.95],[2,2.4]]);
+  }});
+  const raw=await (await adapter('',init(3))).json();
+  assert.deepEqual(raw.results,[{label:fitLabels[1],ordinal_score:1.25},{label:fitLabels[4],ordinal_score:3.95},{label:fitLabels[2],ordinal_score:2.4}]);
+  const ranked=await rankCandidates('private input',candidates,{fetchImpl:adapter,limit:3});
+  assert.deepEqual(ranked.map(({id,classifier_score,fit_label})=>({id,classifier_score,fit_label})),[
+    {id:'exact',classifier_score:3.95/4,fit_label:'exact'},
+    {id:'plausible',classifier_score:.6,fit_label:'plausible'},
+    {id:'weak',classifier_score:1.25/4,fit_label:'weak'}
+  ]);
+});
+
+test('ordinal pair validation rejects malformed values within the same two-call budget',async()=>{
+  for(const tuple of [[4,-.1],[4,4.01],[5,3],[1.5,2],[1,'2'],['1',2],[1,null]]) {
+    let calls=0;
+    const adapter=createGatewayClassifierFetch({fetch:async()=>{calls++;return completion([tuple]);}});
+    await assert.rejects(adapter('',init(1)),/invalid ordinal scores/);
+    assert.equal(calls,2);
+  }
+});
+
+test('a full flat ordinal batch gets explicit repair feedback and preserves every candidate',async()=>{
+  let calls=0;
+  const adapter=createGatewayClassifierFetch({fetch:async request=>{
+    const body=await request.json();calls++;
+    assert.equal(body.max_tokens,2000);assert.equal(body.model,'auto');
+    const prompt=body.messages[0].content;
+    if(calls===1) assert.doesNotMatch(prompt,/Repair:/);
+    else {assert.match(prompt,/Repair:/);assert.match(prompt,/never invent fit differences/);}
+    return completion(Array.from({length:30},(_,i)=>calls===1?[2,2]:[i%5,Math.min(4,i%5+.01)]));
+  }});
+  const response=await adapter('',{...init(),classifierRejectFlatOrdinal:true});
+  const raw=await response.json();assert.equal(raw.results.length,30);assert.equal(calls,2);
 });
