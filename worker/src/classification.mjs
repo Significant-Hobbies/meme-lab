@@ -153,10 +153,14 @@ function candidateInput(comment,record) {
 }
 
 function ordinalScore(result) {
-  const scores=FIT_LABELS.map(({label})=>Number(result?.scores?.[label]));
-  if(scores.some(score=>!Number.isFinite(score)||score<0||score>1)) throw new Error('Classifier returned incomplete ordinal scores.');
   const labelIndex=FIT_LABELS.findIndex(({label})=>label===result.label);
   if(labelIndex<0) throw new Error('Classifier returned an unknown fit label.');
+  if(typeof result.ordinal_score==='number') {
+    if(!Number.isFinite(result.ordinal_score)||result.ordinal_score<0||result.ordinal_score>4) throw new Error('Classifier returned invalid ordinal scores.');
+    return {classifier_score:result.ordinal_score/4,fit_label:FIT_LABELS[labelIndex].key};
+  }
+  const scores=FIT_LABELS.map(({label})=>Number(result?.scores?.[label]));
+  if(scores.some(score=>!Number.isFinite(score)||score<0||score>1)) throw new Error('Classifier returned incomplete ordinal scores.');
   return {
     classifier_score:scores.reduce((total,score,index)=>total+score*index,0)/4,
     fit_label:FIT_LABELS[labelIndex].key

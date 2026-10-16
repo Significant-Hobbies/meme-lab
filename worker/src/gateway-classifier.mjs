@@ -8,13 +8,20 @@ export function createGatewayClassifierFetch(binding,projectId='meme-lab',visito
     // Ordinal ranking has five labels; perspective selection has one per meme.
     if(!inputs.length||inputs.length>30||!labels.length||labels.length>30) throw new Error('Classifier input is outside the supported bounds.');
     const labelIndexes=labels.map((_,index)=>index);
+    const ordinalFit=labels.length===5&&labels.every((label,index)=>typeof label==='string'&&label.startsWith(`${index} | `));
     // Tuples avoid repeating field names for every candidate in the bounded
     // completion. Decode them back into the unchanged classifier contract.
     // Uniform numeric arrays avoid tuple-only schema keywords across providers.
-    // The decoder still requires an integer category and probabilities in [0,1].
-    const schema={type:'object',additionalProperties:false,required:['results'],properties:{results:{type:'array',minItems:inputs.length,maxItems:inputs.length,items:{type:'array',minItems:labels.length+1,maxItems:labels.length+1,items:{type:'number',minimum:0,maximum:Math.max(1,labels.length-1)}}}}};
-    const prompt=`Classify each input independently. Return compact JSON without indentation or commentary. Each results entry is one flat array [label_index,score_0,score_1,...], with exactly ${labels.length+1} numbers. Return label_index using only the listed label indexes. Return scores in the same order as the labels; each score must be between 0 and 1 and scores must form a probability distribution summing to 1, not all be equal. Use at most three decimal places per score. label_index must identify the highest-probability label. Preserve input order. Follow this output shape: ${JSON.stringify(schema)}\nInstructions: ${String(source.instructions||'').slice(0,3000)}\nLabels by index: ${JSON.stringify(labels.map((label,index)=>({index,label})))}\nInputs: ${JSON.stringify(inputs)}`;
-    const body=JSON.stringify({model:'auto',stream:false,response_format:{type:'json_schema',json_schema:{name:'classifier_results',strict:true,schema}},messages:[{role:'user',content:prompt}],max_tokens:2000});
+    // The decoder validates the category and each mode's numeric bounds.
+    const width=ordinalFit?2:labels.length+1;
+    const schema={type:'object',additionalProperties:false,required:['results'],properties:{results:{type:'array',minItems:inputs.length,maxItems:inputs.length,items:{type:'array',minItems:width,maxItems:width,items:{type:'number',minimum:0,maximum:Math.max(1,labels.length-1)}}}}};
+    // Ranking consumes a continuous ordinal fit and its category, not five
+    // generated probabilities. Two numbers leave time for the bounded repair.
+    const outputInstructions=ordinalFit
+      ? 'Each results entry is [label_index,ordinal_score], exactly two numbers. label_index is the integer index of the best fitting category. ordinal_score is the continuous fit rating from 0 (wrong) to 4 (exact), with at most two decimal places. Assess each candidate separately against the category definitions; do not use a constant default rating. Do not return probability arrays.'
+      : `Each results entry is one flat array [label_index,score_0,score_1,...], with exactly ${labels.length+1} numbers. Return scores in the same order as the labels; each score must be between 0 and 1 and scores must form a probability distribution summing to 1, not all be equal. Use at most three decimal places per score. label_index must identify the highest-probability label.`;
+    const prompt=`Classify each input independently. Return compact JSON without indentation or commentary. ${outputInstructions} Return label_index using only the listed label indexes. Preserve input order. Follow this output shape: ${JSON.stringify(schema)}\nInstructions: ${String(source.instructions||'').slice(0,3000)}\nLabels by index: ${JSON.stringify(labels.map((label,index)=>({index,label})))}\nInputs: ${JSON.stringify(inputs)}`;
+    let repair=false;
     for(let attempt=0;attempt<2;attempt++) {
       init.signal?.throwIfAborted();
       try {
@@ -22,7 +29,7 @@ export function createGatewayClassifierFetch(binding,projectId='meme-lab',visito
           method:'POST',
           headers:{authorization:'Bearer service-binding','content-type':'application/json','x-gateway-project-id':projectId,...(visitorIp?{'cf-connecting-ip':visitorIp}:{}),...(/^[A-Z]{3}$/.test(callerColo??'')?{'x-gateway-caller-colo':callerColo}:{})},
           signal:init.signal,
-          body
+          body:JSON.stringify({model:'auto',stream:false,response_format:{type:'json_schema',json_schema:{name:'classifier_results',strict:true,schema}},messages:[{role:'user',content:prompt+(repair?'\nRepair: The previous answer failed validation. Reassess every input independently, retain the exact result count and numeric bounds, and return the requested compact shape. Do not copy a default rating across the batch. Preserve genuine ties; never invent fit differences.':'')}],max_tokens:2000})
         }));
         if(!response.ok) {
           if(![500,502,503,504].includes(response.status)||attempt===1||init.signal?.aborted) return response;
@@ -34,6 +41,7 @@ export function createGatewayClassifierFetch(binding,projectId='meme-lab',visito
         // A syntactically invalid provider answer is transient too. Retry once
         // under the original deadline, never use invalid data as fit scores.
         if(attempt===1||init.signal?.aborted) throw error;
+        repair=true;
       }
     }
     throw new Error('Free AI classifier could not produce a valid answer.');
@@ -57,6 +65,12 @@ async function decodeClassifierResponse(response,inputs,labels,labelIndexes,reje
   const results=parsed.results.map(result=>{
     // Accept previous object-shaped answers too; validate either representation
     // before exposing any scores to ranking.
+    if(ordinalFit&&Array.isArray(result)&&result.length===2) {
+      const [label_index,ordinal_score]=result;
+      if(!Number.isInteger(label_index)||!labelIndexes.includes(label_index)||typeof ordinal_score!=='number'||!Number.isFinite(ordinal_score)||ordinal_score<0||ordinal_score>4) throw new Error('Free AI classifier returned invalid ordinal scores.');
+      // Preserve the directly rated fit; never invent a probability distribution.
+      return {label:labels[label_index],ordinal_score};
+    }
     if(Array.isArray(result)) result={label_index:result[0],scores:result.slice(1)};
     if(!Number.isInteger(result?.label_index)||!labelIndexes.includes(result.label_index)||!Array.isArray(result.scores)||result.scores.length!==labels.length||result.scores.some(score=>typeof score!=='number'||!Number.isFinite(score)||score<0||score>1)) throw new Error('Free AI classifier returned invalid category scores.');
     const total=result.scores.reduce((sum,score)=>sum+score,0);
@@ -71,7 +85,7 @@ async function decodeClassifierResponse(response,inputs,labels,labelIndexes,reje
   // The ranker's flat-batch invariant belongs inside the bounded repair loop.
   // Final winners may legitimately tie, so only shortlist scoring opts in.
   if(rejectFlatOrdinal&&ordinalFit&&results.length>1) {
-    const fits=results.map(result=>labels.reduce((total,label,index)=>total+result.scores[label]*index,0)/(labels.length-1));
+    const fits=results.map(result=>typeof result.ordinal_score==='number'?result.ordinal_score/(labels.length-1):labels.reduce((total,label,index)=>total+result.scores[label]*index,0)/(labels.length-1));
     if(fits.every(score=>score===fits[0])) {
       logInvalidOutput(raw,'flat_ordinal_scores');
       throw new Error('Free AI classifier returned flat ordinal scores.');
