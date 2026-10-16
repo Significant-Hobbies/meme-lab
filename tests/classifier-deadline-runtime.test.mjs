@@ -25,13 +25,14 @@ test('actual Workerd supports combined classifier deadlines and prevents cancell
 test('actual named service binding preserves the classifier visitor address',async()=>{
   const consumer=buildSync({stdin:{contents:`import {createGatewayClassifierFetch} from './worker/src/gateway-classifier.mjs';
 export default {async fetch(request,env){
-  const classify=createGatewayClassifierFetch(env.FREE_AI,'meme-lab','192.0.2.1');
+  const classify=createGatewayClassifierFetch(env.FREE_AI,'meme-lab','192.0.2.1','HKG');
   return classify('',{body:JSON.stringify({inputs:['fixture'],labels:['yes','no']})});
 }};`,resolveDir:root},bundle:true,write:false,format:'esm',platform:'browser'}).outputFiles[0].text;
   const gateway=`import {WorkerEntrypoint} from 'cloudflare:workers';
 export class Gateway extends WorkerEntrypoint {
   async fetch(request){
     if(request.headers.get('cf-connecting-ip')!=='192.0.2.1')return new Response(null,{status:429});
+    if(request.headers.get('x-gateway-caller-colo')!=='HKG')return new Response(null,{status:400});
     return Response.json({choices:[{message:{content:JSON.stringify({results:[[0,1,0]]})}}]});
   }
 }
