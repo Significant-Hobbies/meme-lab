@@ -15,6 +15,7 @@ test('compact full-batch answers preserve all ordinal probabilities and input or
     calls++;
     const body=await request.json();
     assert.equal(body.model,'auto');assert.equal(body.max_tokens,2000);
+    assert.equal(body.reasoning_effort,'low');
     assert.equal(body.response_format.type,'json_schema');
     assert.equal(body.response_format.json_schema.strict,true);
     const schema=body.response_format.json_schema.schema;
@@ -197,4 +198,16 @@ test('missing or malformed model metadata never becomes a repair header',async()
     }});
     assert.equal((await adapter('',{...init(2),classifierRejectFlatOrdinal:true})).status,200);assert.equal(calls,2);
   }
+});
+
+test('invalid-output telemetry exposes only a recognized provider name',async()=>{
+  const warnings=[];const original=console.warn;console.warn=message=>warnings.push(JSON.parse(message));
+  try{
+    for(const provider of ['mistral','private account detail']){
+      const adapter=createGatewayClassifierFetch({fetch:async()=>Response.json({choices:[{message:{content:'private invalid output'}}],x_gateway:{provider,model:'private_model'}})});
+      await assert.rejects(adapter('',init(1)),/invalid structured output/);
+    }
+    assert.deepEqual(warnings.map(x=>x.provider),['mistral','mistral',null,null]);
+    assert.doesNotMatch(JSON.stringify(warnings),/private|account|detail|model/);
+  }finally{console.warn=original;}
 });

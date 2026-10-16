@@ -31,7 +31,7 @@ export function createGatewayClassifierFetch(binding,projectId='meme-lab',visito
           method:'POST',
           headers:{authorization:'Bearer service-binding','content-type':'application/json','x-gateway-project-id':projectId,...(visitorIp?{'cf-connecting-ip':visitorIp}:{}),...(/^[A-Z]{3}$/.test(callerColo??'')?{'x-gateway-caller-colo':callerColo}:{}),...(invalidModels.size?{'x-gateway-exclude-models':JSON.stringify([...invalidModels])}:{})},
           signal:init.signal,
-          body:JSON.stringify({model:'auto',stream:false,response_format:{type:'json_schema',json_schema:{name:'classifier_results',strict:true,schema}},messages:[{role:'user',content:prompt+(repair?'\nRepair: The previous answer failed validation. Reassess every input independently, retain the exact result count and numeric bounds, and return the requested compact shape. Do not copy a default rating across the batch. Preserve genuine ties; never invent fit differences.':'')}],max_tokens:2000})
+          body:JSON.stringify({model:'auto',reasoning_effort:'low',stream:false,response_format:{type:'json_schema',json_schema:{name:'classifier_results',strict:true,schema}},messages:[{role:'user',content:prompt+(repair?'\nRepair: The previous answer failed validation. Reassess every input independently, retain the exact result count and numeric bounds, and return the requested compact shape. Do not copy a default rating across the batch. Preserve genuine ties; never invent fit differences.':'')}],max_tokens:2000})
         }));
         if(!response.ok) {
           if(![500,502,503,504].includes(response.status)||attempt===1||init.signal?.aborted) return response;
@@ -113,8 +113,10 @@ function decodeClassifierPayload(raw,inputs,labels,labelIndexes,rejectFlatOrdina
 function logInvalidOutput(raw,failure_kind) {
   const reason=raw?.choices?.[0]?.finish_reason;
   const tokens=raw?.usage?.completion_tokens;
+  const provider=raw?.x_gateway?.provider;
   console.warn(JSON.stringify({
     event:'classifier_output_invalid',failure_kind,
+    provider:['gemini','groq','mistral','openrouter','nvidia','cohere','pollinations','zai','workers_ai'].includes(provider)?provider:null,
     finish_reason:['stop','length','content_filter','tool_calls'].includes(reason)?reason:null,
     completion_tokens:Number.isInteger(tokens)&&tokens>=0&&tokens<=2000?tokens:null
   }));
