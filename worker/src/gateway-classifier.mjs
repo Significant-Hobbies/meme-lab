@@ -1,5 +1,7 @@
 // Preserve the classifier response contract while using managed inference.
 export function createGatewayClassifierFetch(binding,projectId='meme-lab',visitorIp,callerColo) {
+  // Shared only by this recommendation's classifier stages and repair calls.
+  const invalidModels=new Set();
   return async (_url,init={})=>{
     if(!binding||typeof binding.fetch!=='function') throw new Error('Free AI gateway binding is unavailable.');
     const source=JSON.parse(init.body||'{}');
@@ -27,7 +29,7 @@ export function createGatewayClassifierFetch(binding,projectId='meme-lab',visito
       try {
         const response=await binding.fetch(new Request('https://fleet-gateway.internal/v1/chat/completions',{
           method:'POST',
-          headers:{authorization:'Bearer service-binding','content-type':'application/json','x-gateway-project-id':projectId,...(visitorIp?{'cf-connecting-ip':visitorIp}:{}),...(/^[A-Z]{3}$/.test(callerColo??'')?{'x-gateway-caller-colo':callerColo}:{})},
+          headers:{authorization:'Bearer service-binding','content-type':'application/json','x-gateway-project-id':projectId,...(visitorIp?{'cf-connecting-ip':visitorIp}:{}),...(/^[A-Z]{3}$/.test(callerColo??'')?{'x-gateway-caller-colo':callerColo}:{}),...(invalidModels.size?{'x-gateway-exclude-models':JSON.stringify([...invalidModels])}:{})},
           signal:init.signal,
           body:JSON.stringify({model:'auto',stream:false,response_format:{type:'json_schema',json_schema:{name:'classifier_results',strict:true,schema}},messages:[{role:'user',content:prompt+(repair?'\nRepair: The previous answer failed validation. Reassess every input independently, retain the exact result count and numeric bounds, and return the requested compact shape. Do not copy a default rating across the batch. Preserve genuine ties; never invent fit differences.':'')}],max_tokens:2000})
         }));
@@ -36,7 +38,7 @@ export function createGatewayClassifierFetch(binding,projectId='meme-lab',visito
           await response.body?.cancel();
           continue;
         }
-        return await decodeClassifierResponse(response,inputs,labels,labelIndexes,init.classifierRejectFlatOrdinal);
+        return await decodeClassifierResponse(response,inputs,labels,labelIndexes,init.classifierRejectFlatOrdinal,invalidModels);
       } catch(error) {
         // A syntactically invalid provider answer is transient too. Retry once
         // under the original deadline, never use invalid data as fit scores.
@@ -48,9 +50,23 @@ export function createGatewayClassifierFetch(binding,projectId='meme-lab',visito
   };
 }
 
-async function decodeClassifierResponse(response,inputs,labels,labelIndexes,rejectFlatOrdinal) {
+async function decodeClassifierResponse(response,inputs,labels,labelIndexes,rejectFlatOrdinal,invalidModels) {
   let raw;
   try { raw=await response.json(); } catch { throw new Error('Free AI gateway returned invalid JSON.'); }
+  try {
+    return decodeClassifierPayload(raw,inputs,labels,labelIndexes,rejectFlatOrdinal);
+  } catch(error) {
+    const {provider,model}=raw?.x_gateway??{};
+    if(typeof provider==='string'&&/^[a-z_]{1,32}$/.test(provider)&&typeof model==='string'&&model.length<=200&&/^[A-Za-z0-9_./:@+\-]+$/.test(model)) {
+      const key=`${provider}:${model}`;
+      if(!invalidModels.has(key)&&invalidModels.size===4) invalidModels.delete(invalidModels.values().next().value);
+      invalidModels.add(key);
+    }
+    throw error;
+  }
+}
+
+function decodeClassifierPayload(raw,inputs,labels,labelIndexes,rejectFlatOrdinal) {
   if(typeof raw?.choices?.[0]?.message?.content!=='string') {
     logInvalidOutput(raw,'missing_content');
     throw new Error('Free AI classifier returned invalid structured output.');

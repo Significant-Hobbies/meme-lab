@@ -171,3 +171,30 @@ test('a full flat ordinal batch gets explicit repair feedback and preserves ever
   const response=await adapter('',{...init(),classifierRejectFlatOrdinal:true});
   const raw=await response.json();assert.equal(raw.results.length,30);assert.equal(calls,2);
 });
+
+test('a validated failed model is excluded from the automatic repair and later stages only in this recommendation',async()=>{
+  let calls=0;
+  const adapter=createGatewayClassifierFetch({fetch:async request=>{
+    calls++;
+    const body=await request.json();assert.equal(body.model,'auto');assert.equal(body.max_tokens,2000);
+    assert.equal(request.headers.get('x-gateway-force-model'),null);
+    assert.deepEqual(JSON.parse(request.headers.get('x-gateway-exclude-models')||'[]'),calls===1?[]:['mistral:codestral-latest']);
+    return calls===1?completion([[2,2],[2,2]],{x_gateway:{provider:'mistral',model:'codestral-latest'}}):completion([[3,3.2],[4,3.8]],{x_gateway:{provider:'gemini',model:'gemini-3.5-flash-lite'}});
+  }});
+  const first=await adapter('',{...init(2),classifierRejectFlatOrdinal:true});
+  assert.equal(first.status,200);assert.equal(calls,2);
+  assert.equal((await adapter('',{...init(2),classifierRejectFlatOrdinal:true})).status,200);assert.equal(calls,3);
+  const other=createGatewayClassifierFetch({fetch:async request=>{assert.equal(request.headers.get('x-gateway-exclude-models'),null);return completion([[3,3.2],[4,3.8]]);}});
+  assert.equal((await other('',init(2))).status,200);
+});
+
+test('missing or malformed model metadata never becomes a repair header',async()=>{
+  for(const x_gateway of [undefined,{provider:'mistral',model:'bad header value'},{provider:'bad-provider',model:'codestral-latest'},{provider:'mistral',model:'a'.repeat(201)}]) {
+    let calls=0;
+    const adapter=createGatewayClassifierFetch({fetch:async request=>{
+      calls++;assert.equal(request.headers.get('x-gateway-exclude-models'),null);
+      return calls===1?completion([[2,2],[2,2]],{x_gateway}):completion([[3,3],[4,4]]);
+    }});
+    assert.equal((await adapter('',{...init(2),classifierRejectFlatOrdinal:true})).status,200);assert.equal(calls,2);
+  }
+});
