@@ -32,8 +32,9 @@ test('gateway retries a transient 502 once and retains the original abort signal
   let calls=0;
   const adapter=createGatewayClassifierFetch({fetch:async request=>{
     assert.equal(request.signal.aborted,false);
+    assert.equal(request.headers.get('cf-connecting-ip'),'192.0.2.1');
     return ++calls===1?new Response(null,{status:502}):completion([{label_index:4,scores:[0,0,0,0,1]}]);
-  }});
+  }},'meme-lab','192.0.2.1');
   assert.equal((await adapter('',{...requestInit(),signal})).status,200);
   assert.equal(calls,2);
 });
@@ -100,6 +101,28 @@ const testEnv={
   DB:{prepare:()=>({bind:()=>({run:async()=>({success:true})})})}
 };
 const recommend=comment=>new Request('https://example.test/api/recommend',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({comment})});
+
+test('public visitors keep separate gateway rate-limit buckets',async()=>{
+  const used=new Set();const seen=[];
+  const binding={...testEnv.FREE_AI,fetch:async request=>{
+    const visitor=request.headers.get('cf-connecting-ip')||'fleet:meme-lab';
+    seen.push(visitor);
+    if(used.has(visitor))return new Response(null,{status:429});
+    used.add(visitor);
+    const {messages}=await request.json();
+    const inputs=JSON.parse(messages[0].content.split('\nInputs: ')[1]);
+    return completion(inputs.map((_,index)=>index===0?[4,0,0,0,.2,.8]:[1,.7+index/1000,.2-index/1000,.1,0,0]));
+  }};
+  for(const visitor of ['192.0.2.10','192.0.2.11']){
+    const request=recommend('The meeting could have been an email.');
+    request.headers.set('cf-connecting-ip',visitor);
+    request.headers.set('x-forwarded-for','198.51.100.1');
+    const response=await worker.fetch(request,{...testEnv,FREE_AI:binding});
+    assert.equal(response.status,200);
+    assert.equal((await response.json()).degraded,false);
+  }
+  assert.deepEqual(seen,['192.0.2.10','192.0.2.11']);
+});
 
 test('public confidence follows ordinal probabilities while genuine weak results stay low',async()=>{
   for(const strong of [true,false]){

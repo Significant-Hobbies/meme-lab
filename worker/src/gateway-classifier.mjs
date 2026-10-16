@@ -1,5 +1,5 @@
 // Preserve the classifier response contract while using managed inference.
-export function createGatewayClassifierFetch(binding,projectId='meme-lab') {
+export function createGatewayClassifierFetch(binding,projectId='meme-lab',visitorIp) {
   return async (_url,init={})=>{
     if(!binding||typeof binding.fetch!=='function') throw new Error('Free AI gateway binding is unavailable.');
     const source=JSON.parse(init.body||'{}');
@@ -20,7 +20,7 @@ export function createGatewayClassifierFetch(binding,projectId='meme-lab') {
       try {
         const response=await binding.fetch(new Request('https://fleet-gateway.internal/v1/chat/completions',{
           method:'POST',
-          headers:{authorization:'Bearer service-binding','content-type':'application/json','x-gateway-project-id':projectId},
+          headers:{authorization:'Bearer service-binding','content-type':'application/json','x-gateway-project-id':projectId,...(visitorIp?{'cf-connecting-ip':visitorIp}:{})},
           signal:init.signal,
           body
         }));
