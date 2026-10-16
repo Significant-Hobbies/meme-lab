@@ -103,10 +103,11 @@ const testEnv={
 const recommend=comment=>new Request('https://example.test/api/recommend',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({comment})});
 
 test('public visitors keep separate gateway rate-limit buckets',async()=>{
-  const used=new Set();const seen=[];
+  const used=new Set();const seen=[];const colos=[];
   const binding={...testEnv.FREE_AI,fetch:async request=>{
     const visitor=request.headers.get('cf-connecting-ip')||'fleet:meme-lab';
     seen.push(visitor);
+    colos.push(request.headers.get('x-gateway-caller-colo'));
     if(used.has(visitor))return new Response(null,{status:429});
     used.add(visitor);
     const {messages}=await request.json();
@@ -117,11 +118,14 @@ test('public visitors keep separate gateway rate-limit buckets',async()=>{
     const request=recommend('The meeting could have been an email.');
     request.headers.set('cf-connecting-ip',visitor);
     request.headers.set('x-forwarded-for','198.51.100.1');
+    request.headers.set('x-gateway-caller-colo','LHR');
+    Object.defineProperty(request,'cf',{value:{colo:visitor.endsWith('.10')?'HKG':'IAD'}});
     const response=await worker.fetch(request,{...testEnv,FREE_AI:binding});
     assert.equal(response.status,200);
     assert.equal((await response.json()).degraded,false);
   }
   assert.deepEqual(seen,['192.0.2.10','192.0.2.11']);
+  assert.deepEqual(colos,['HKG','IAD']);
 });
 
 test('public confidence follows ordinal probabilities while genuine weak results stay low',async()=>{
