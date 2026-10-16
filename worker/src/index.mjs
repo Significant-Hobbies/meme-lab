@@ -294,7 +294,8 @@ async function recommend(request,env,ctx) {
   const started=Date.now();
   try {
     const shortlist=await retrieveCandidates(env,comment,30);
-    const classifierFetch=typeof env.CLASSIFIER_FETCH==='function'?env.CLASSIFIER_FETCH:createGatewayClassifierFetch(env.FREE_AI);
+    // Keep the gateway's per-visitor limit; addressless jobs retain its project bucket.
+    const classifierFetch=typeof env.CLASSIFIER_FETCH==='function'?env.CLASSIFIER_FETCH:createGatewayClassifierFetch(env.FREE_AI,'meme-lab',request.headers.get('cf-connecting-ip'));
     const classifierOptions={fetchImpl:withClassifierDeadline(classifierFetch,25000)};
     let classifier_gate='not_needed';
     const factualRequest=requiresFactualAnswer(comment);
