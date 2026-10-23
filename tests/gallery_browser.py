@@ -95,6 +95,7 @@ try:
    duration=float(probe['format']['duration']);assert 1.7<duration<3.5,(duration,probe)
    assert stream['width']==1280 and stream['height']>720
    assert stream['codec_name']=='h264'
+   numerator,denominator=map(int,stream['avg_frame_rate'].split('/'));assert numerator/denominator>=25,'Low-frame-rate sources must retain a stable encoding cadence'
    subprocess.run(['ffmpeg','-hide_banner','-loglevel','error','-y','-ss','0.5','-i',str(file),'-frames:v','1',str(OUT/f'export-frame-{width}.png')],check=True)
    # Play the actual exported bytes, not the source or editor canvas.
    exported=page.evaluate('async bytes=>{const video=document.createElement("video");video.muted=true;video.src=URL.createObjectURL(new Blob([new Uint8Array(bytes)],{type:"video/mp4"}));document.body.append(video);await new Promise((resolve,reject)=>{video.onloadeddata=resolve;video.onerror=reject;});await video.play();const result={width:video.videoWidth,height:video.videoHeight,duration:video.duration};video.pause();const seek=new Promise(resolve=>{video.onseeked=resolve;});video.currentTime=Math.min(.5,video.duration/2);await seek;const canvas=document.createElement("canvas");canvas.width=video.videoWidth;canvas.height=video.videoHeight;const ctx=canvas.getContext("2d");ctx.drawImage(video,0,0);result.captionBand=[...ctx.getImageData(10,video.videoHeight-10,1,1).data];URL.revokeObjectURL(video.src);video.remove();return result;}',list(file.read_bytes()))
