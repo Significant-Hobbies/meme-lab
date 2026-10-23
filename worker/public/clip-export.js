@@ -1,6 +1,6 @@
 export function recordingFormat() {
   if(!globalThis.MediaRecorder||!HTMLCanvasElement.prototype.captureStream)return null;
-  for(const mime of ['video/mp4;codecs=avc1.42001E','video/mp4','video/webm;codecs=vp9','video/webm;codecs=vp8','video/webm']) {
+  for(const mime of ['video/mp4;codecs=avc1.640033','video/mp4;codecs=avc1.42002A','video/mp4','video/webm;codecs=vp9','video/webm;codecs=vp8','video/webm']) {
     if(MediaRecorder.isTypeSupported(mime))return {mime,extension:mime.startsWith('video/mp4')?'mp4':'webm'};
   }
   return null;
@@ -24,7 +24,8 @@ function linesFor(ctx,text,maxWidth) {
 
 export function paintClip(canvas,video,caption,position='top') {
   if(!video.videoWidth)return;
-  const width=Math.round(Math.min(960,Math.max(480,video.videoWidth))/2)*2;
+  const scale=Math.min(1,1920/Math.max(video.videoWidth,video.videoHeight));
+  const width=Math.max(2,Math.floor(video.videoWidth*scale/2)*2);
   const videoHeight=Math.round(video.videoHeight*width/video.videoWidth);
   const font=Math.round(width*.052),padding=Math.round(width*.045),lineHeight=Math.round(font*1.25);
   const ctx=canvas.getContext('2d');
@@ -34,6 +35,7 @@ export function paintClip(canvas,video,caption,position='top') {
   const height=Math.ceil((videoHeight+captionHeight)/2)*2;
   if(canvas.width!==width||canvas.height!==height){canvas.width=width;canvas.height=height;}
   ctx.fillStyle='#fff';ctx.fillRect(0,0,canvas.width,canvas.height);
+  ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';
   ctx.drawImage(video,0,position==='bottom'?0:captionHeight,width,videoHeight);
   ctx.font=`650 ${font}px ui-sans-serif, system-ui, sans-serif`;ctx.fillStyle='#111';ctx.textBaseline='top';
   for(const [index,line] of lines.entries())ctx.fillText(line,padding,(position==='bottom'?videoHeight:0)+padding+index*lineHeight);
@@ -51,7 +53,7 @@ export function videoEvent(video,event,{signal,timeout=12000}={}) {
   });
 }
 
-export async function recordClip(video,canvas,paint,{signal,onProgress}={}) {
+export async function recordClip(video,canvas,paint,{signal,onProgress,fps=30}={}) {
   const format=recordingFormat();
   if(!format)throw new Error('Video export is unavailable in this browser. Try a recent Chrome, Edge or Safari.');
   if(document.hidden)throw new Error('Keep this tab visible while exporting your video.');
@@ -60,10 +62,12 @@ export async function recordClip(video,canvas,paint,{signal,onProgress}={}) {
   if(video.currentTime>.001){const seek=videoEvent(video,'seeked',{signal});video.currentTime=0;await seek;}
   signal?.throwIfAborted();paint();
   const loop=video.loop;video.loop=false;
-  const stream=canvas.captureStream(30);
+  const frameRate=Number.isFinite(fps)?Math.max(10,Math.min(60,fps)):30;
+  const stream=canvas.captureStream(frameRate);
   let recorder,frame,timer;
   try {
-    recorder=new MediaRecorder(stream,{mimeType:format.mime,videoBitsPerSecond:4_000_000});
+    const bitrate=Math.round(Math.max(2_000_000,Math.min(20_000_000,canvas.width*canvas.height*frameRate*.18)));
+    recorder=new MediaRecorder(stream,{mimeType:format.mime,videoBitsPerSecond:bitrate});
     const chunks=[];
     const result=new Promise((resolve,reject)=>{
       let failure;

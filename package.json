@@ -46,7 +46,7 @@
     "eval:stage-3000:generate": "node scripts/generate-stage-3000-eval.mjs",
     "eval:stage-3000:build": "node scripts/build-stage-3000-eval.mjs",
     "eval:stage-3000:validate": "node scripts/validate-stage-3000-eval.mjs",
-    "build:public": "pnpm run build:public-catalogue && pnpm run build:expansion && pnpm run build:stage-1000 && pnpm run build:stage-3000",
+    "build:public": "pnpm run build:public-catalogue && pnpm run build:expansion && pnpm run build:stage-1000 && pnpm run build:stage-3000 && pnpm run build:clips",
     "dev:public": "pnpm run build:public && wrangler dev",
     "deploy:public": "pnpm run build:public && wrangler deploy --tag $(git rev-parse HEAD)",
     "types:worker": "wrangler types worker-configuration.d.ts",
@@ -74,7 +74,8 @@
     "eval:fit-score:build": "node scripts/build-fit-score-eval.mjs",
     "eval:fit-score": "node scripts/run-fit-score-eval.mjs",
     "eval:fit-score:finalists": "FIT_SCORE_RATINGS=fit_score_blind_ratings_v2.jsonl FIT_SCORE_REPORT=fit-score-corrected-finalists-v1 FIT_SCORE_ARMS=raw_30way_jev_fast,ordinal_jev_fast_compact,ordinal_jev_fast_full30,ordinal_jev_fast_full30_compact,ordinal_jev_fast_full30_specific node scripts/run-fit-score-eval.mjs",
-    "eval:canonical-gaps": "node scripts/run-live-gap-diagnostic.mjs"
+    "eval:canonical-gaps": "node scripts/run-live-gap-diagnostic.mjs",
+    "build:clips": "node scripts/build-clip-library.mjs"
   },
   "devDependencies": {
     "@huggingface/transformers": "^4.3.0",

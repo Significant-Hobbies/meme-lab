@@ -9,6 +9,12 @@ The gallery can now open supported static templates directly in the existing cap
 
 Source and actual Workerd proxy checks pass. Browser verification at 390/768/1440 uses synthetic AI and a generated test clip; PNG creation, exported H.264 playback, burned caption pixels, failures and cancellation pass. A real catalogue clip was also exported through the actual Download MP4 action and visually inspected. AI caption quality for the new clip route and production behavior remain unverified. Cloudflare authentication is expired; deployment is pending restored login. [Implementation PR #74](https://github.com/Significant-Hobbies/meme-lab/pull/74).
 
+## Clip library and output quality — 23 October 2026
+
+Source implementation adds 1,309 gallery-only animations, bringing browse/create coverage to 4,309 references and 2,504 clips. The hosted qualification inspected 3,724 staged candidates: 1,359 passed delivery/resolution/frame-rate/duration and three-frame decoding, then 50 near duplicates were excluded. Sources meet a 480/270-pixel long/short-edge floor, 0.4–30 seconds and 10–60 fps. Qualification is technical media evidence, not human cultural/rights validation; the original staged owner labels and 3,000-reference automatic-retrieval corpus remain unchanged.
+
+Clip captions now receive three bounded chronological JPEG frames through automatic Free AI routing, with a reference decision for incompatible reactions. Export retains source dimensions up to a 1,920-pixel long edge, scales encoding bitrate to pixels/frame rate, and avoids artificial upscaling. Hosted browser tests pass at 390/768/1440 and verify three distinct frame uploads plus playable H.264 output at 1280 × 920 for the 1280 × 720 test clip and its caption band. New-route live AI humour/fit quality remains unverified. Production deployment remains pending Cloudflare authentication. [PR #76](https://github.com/Significant-Hobbies/meme-lab/pull/76), [qualification and browser evidence](https://github.com/Significant-Hobbies/meme-lab/actions/runs/39998424078).
+
 ## Live product
 
 ### Prefilled caption Studio: website live, Anna 1.3.0 prepared

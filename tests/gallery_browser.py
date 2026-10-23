@@ -12,19 +12,22 @@ PORT='4334'
 BASE='http://127.0.0.1:'+PORT
 proc=subprocess.Popen(['node','scripts/preview-landing.mjs',PORT],cwd=ROOT,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
 captions=['Changed nothing. Fixed everything.','The fix was running it again.','My contribution: the up arrow.']
+extras=json.loads((ROOT/'worker/public/clips.json').read_text())
+clip_count=f'{1195+len(extras):,}'
+all_count=f'{3000+len(extras):,}'
 report={'synthetic_ai':True,'synthetic_clip':True,'widths':[]}
 try:
  for _ in range(100):
   try:urlopen(BASE).close();break
   except Exception:time.sleep(.1)
  with sync_playwright() as p:
-  executable=shutil.which('chromium')
+  executable=shutil.which('google-chrome') or shutil.which('chromium')
   if not executable and Path('/Applications/Google Chrome.app/Contents/MacOS/Google Chrome').exists():executable='/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'
   browser=p.chromium.launch(**({'executable_path':executable} if executable else {}),args=['--no-sandbox'])
   for width in [390,768,1440]:
    context=browser.new_context(viewport={'width':width,'height':1000},reduced_motion='reduce',accept_downloads=True)
    page=context.new_page();page.bring_to_front();errors=[];calls=[];pending=[]
-   mode={'captions':'success','media':'success'}
+   mode={'captions':'success','media':'success','library':'success'}
    page.on('pageerror',lambda error:errors.append(str(error)))
    def route(r):
     url=r.request.url
@@ -33,9 +36,11 @@ try:
      else:r.abort()
      return
     path=url.removeprefix(BASE)
+    if path=='/clips.json' and mode['library']=='error':
+     r.fulfill(status=503,json={'error':'Synthetic unavailable extra library'});return
     if path.startswith('/api/clips/media/'):
      if mode['media']=='error':r.fulfill(status=502,json={'error':'Synthetic unavailable source'});return
-     r.fulfill(body=(FIX/'clip.mp4').read_bytes(),content_type='video/mp4');return
+     r.fulfill(body=(FIX/'hd-clip.mp4').read_bytes(),content_type='video/mp4');return
     if path=='/api/clips/captions':
      calls.append(r.request.post_data_json)
      if mode['captions']=='hold':pending.append(r);return
@@ -51,11 +56,11 @@ try:
    page.goto(BASE+'/collection');page.locator('.collection-create-button').first.wait_for()
    assert page.locator('.collection-card').count()==24
    assert not page.evaluate('document.documentElement.scrollWidth>innerWidth')
-   page.locator('[data-format="gif"]').click();assert '1,195' in page.locator('#collection-count').inner_text()
+   page.locator('[data-format="gif"]').click();assert clip_count in page.locator('#collection-count').inner_text()
    assert page.locator('.media-kind').first.inner_text()=='CLIP'
    page.locator('[data-mood="awkward"]').click();assert 'mood=awkward' in page.url
    page.locator('#catalogue-search').fill('unlikely-query-no-results');page.locator('#collection-empty').wait_for(state='visible')
-   page.locator('#collection-clear').click();assert '3,000' in page.locator('#collection-count').inner_text()
+   page.locator('#collection-clear').click();assert all_count in page.locator('#collection-count').inner_text()
    page.locator('#collection-next').click();assert 'Page 2' in page.locator('#collection-page-label').inner_text()
    page.reload();expect(page.locator('#collection-grid')).to_have_attribute('aria-busy','false');assert 'Page 2' in page.locator('#collection-page-label').inner_text()
    page.locator('#collection-previous').click()
@@ -70,10 +75,15 @@ try:
    page.locator('#collection-audience').fill('Developers');page.locator('#collection-tone').select_option('deadpan')
    mode['captions']='hold';page.locator('#collection-generate').click();assert page.locator('#collection-generate').is_disabled()
    expect(page.locator('#collection-generate')).to_have_text('Writing captions…')
+   for _ in range(200):
+    if pending:break
+    page.wait_for_timeout(10)
    assert len(pending)==1
    pending.pop().fulfill(json={'decision':'captions','captions':captions});mode['captions']='success'
    page.locator('.clip-options button').first.wait_for();assert page.locator('.clip-options button').count()==3
    assert calls[-1]['audience']=='Developers' and calls[-1]['tone']=='deadpan'
+   assert len(calls[-1]['frames'])==3 and all(frame['data_url'].startswith('data:image/jpeg;base64,') for frame in calls[-1]['frames'])
+   assert len({frame['data_url'] for frame in calls[-1]['frames']})==3
    page.locator('.clip-options button').nth(1).click();assert page.locator('#clip-caption').input_value()==captions[1]
    page.locator('#clip-caption').fill('A caption edited by the user.');page.locator('#clip-position').select_option('bottom')
    assert not page.locator('#collection-create').evaluate('(node)=>node.scrollWidth>node.clientWidth')
@@ -83,7 +93,7 @@ try:
    probe=json.loads(subprocess.check_output(['ffprobe','-v','error','-show_streams','-show_format','-of','json',str(file)]))
    stream=next(item for item in probe['streams'] if item['codec_type']=='video')
    duration=float(probe['format']['duration']);assert 1.7<duration<3.5,(duration,probe)
-   assert stream['width']==480 and stream['height']>270
+   assert stream['width']==1280 and stream['height']>720
    assert stream['codec_name']=='h264'
    subprocess.run(['ffmpeg','-hide_banner','-loglevel','error','-y','-ss','0.5','-i',str(file),'-frames:v','1',str(OUT/f'export-frame-{width}.png')],check=True)
    # Play the actual exported bytes, not the source or editor canvas.
@@ -113,6 +123,8 @@ try:
    assert static.value.suggested_filename.endswith('.png')
    assert not page.locator('#collection-create').evaluate('(node)=>node.scrollWidth>node.clientWidth')
    page.locator('.studio-grid').scroll_into_view_if_needed();page.screenshot(path=str(OUT/f'static-editor-{width}.png'))
+   mode['library']='error';page.goto(BASE+'/collection');page.locator('#collection-library-status').wait_for(state='visible');assert '3,000' in page.locator('#collection-count').inner_text()
+   mode['library']='success';page.reload();expect(page.locator('#collection-count')).to_contain_text(all_count);page.locator('#collection-library-status').wait_for(state='hidden')
    assert not errors,errors
    report['widths'].append({'width':width,'passed':True,'export':{'duration':duration,'width':stream['width'],'height':stream['height'],'codec':stream['codec_name'],'bytes':file.stat().st_size},'exported_file_played':True})
    context.close()

@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 import {catalogue} from '../worker/src/catalogue.stage3000.generated.mjs';
-import {clipSource,clipCaptions,clipMedia,validateClipCaptions} from '../worker/src/clip-captions.mjs';
+import {clipSource,clipCaptions,clipMedia,validateClipCaptions,validateClipFrames} from '../worker/src/clip-captions.mjs';
 import {planComposition} from '../worker/src/meme-composition.mjs';
 import worker from '../worker/src/index.mjs';
 
@@ -10,6 +10,8 @@ const clip=catalogue.find(record=>record.id==='gif-yrufixsnwfvcxaxpmx');
 const body={candidate_id:clip.id,comment:'The tests passed after I changed nothing and ran them again.',audience:'Developers',tone:'deadpan'};
 const request=(data=body,extra={})=>new Request('https://example.test/api/clips/captions',{method:'POST',headers:{'Content-Type':'application/json',...extra},body:JSON.stringify(data)});
 const output={decision:'captions',captions:['Changed nothing. Fixed everything.','The fix was running it again.','My contribution: the up arrow.']};
+const frameBytes=await readFile(new URL('./fixtures/public-ux/frame.jpg',import.meta.url));
+const frames=[.2,.7,1.2].map(at_seconds=>({at_seconds,data_url:'data:image/jpeg;base64,'+frameBytes.toString('base64')}));
 const answer=(value=output,extra={})=>Response.json({model:'served-model',choices:[{finish_reason:'stop',message:{content:JSON.stringify(value)}}],...extra});
 
 test('reaction video URLs derive only from the existing catalogue source',()=>{
@@ -23,7 +25,7 @@ test('clip generation sends one bounded, attributed automatic request with the s
   let calls=0;
   const response=await clipCaptions(request(),{FREE_AI:{fetch:async req=>{
     calls++;assert.equal(req.headers.get('x-gateway-project-id'),'meme-lab');const data=await req.json();
-    assert.equal(data.model,'auto');assert.equal(data.max_tokens,650);assert.equal(data.reasoning_effort,'low');assert.match(data.messages[0].content,/Caption style: deadpan/);assert.match(data.messages[0].content,/Developers/);assert.match(data.messages[0].content,/Use Clap/);assert.equal(data.messages.length,1);return answer();
+    assert.equal(data.model,'auto');assert.equal(data.max_tokens,850);assert.equal(data.reasoning_effort,'low');assert.match(data.messages[0].content,/Caption style: deadpan/);assert.match(data.messages[0].content,/Developers/);assert.match(data.messages[0].content,/Use Clap/);assert.equal(data.messages.length,1);return answer();
   }}});
   assert.equal(calls,1);assert.equal(response.status,200);assert.deepEqual((await response.json()).captions,output.captions);
 });
@@ -37,7 +39,7 @@ test('serious and factual inputs return no caption before inference',async()=>{
 
 test('clip endpoint rejects invalid briefs, IDs, oversized input and cross-origin calls',async()=>{
   for(const data of [null,{}, {...body,candidate_id:'drake-preference'},{...body,candidate_id:'unknown'},{...body,comment:'x'.repeat(1001)},{...body,tone:'invented'},{...body,audience:'x'.repeat(81)},{...body,audience:'bad\nvalue'}])assert.equal((await clipCaptions(request(data),{})).status,400);
-  assert.equal((await clipCaptions(request({...body,extra:'x'.repeat(6000)}),{})).status,413);
+  assert.equal((await clipCaptions(request({...body,extra:'x'.repeat(500001)}),{})).status,413);
   assert.equal((await worker.fetch(request(body,{Origin:'https://other.test'}),{})).status,403);
   assert.equal((await clipCaptions(new Request('https://example.test/api/clips/captions',{method:'POST',body:'{}'}),{})).status,415);
 });
@@ -46,6 +48,17 @@ test('clip output rejects incomplete, duplicate, contradictory or invalid captio
   assert.deepEqual(validateClipCaptions(output),output);
   for(const value of [{}, {...output,captions:['one']},{...output,captions:['same','same','same']},{...output,captions:['fine','ok','x'.repeat(141)]},{...output,captions:['fine','ok','bad\u0001']},{decision:'none',captions:['no']}])assert.throws(()=>validateClipCaptions(value));
   assert.equal(validateClipCaptions({decision:'none',captions:[]}).decision,'none');
+});
+
+test('visual captioning sends three bounded chronological frames with automatic vision routing',async()=>{
+  assert.equal(validateClipFrames(frames).length,3);
+  for(const invalid of [[],[frames[0]],frames.map(frame=>({...frame,at_seconds:1})),frames.map(frame=>({...frame,data_url:'https://private.invalid/'})),frames.map(frame=>({...frame,data_url:'data:image/jpeg;base64,/9j/AA=='})),frames.map(frame=>({...frame,at_seconds:31}))])assert.throws(()=>validateClipFrames(invalid));
+  const response=await clipCaptions(request({...body,frames}),{FREE_AI:{fetch:async req=>{
+    const data=await req.json();assert.equal(data.model,'auto');const content=data.messages[0].content;
+    assert.equal(content.filter(part=>part.type==='image_url').length,3);assert.match(content[0].text,/Inspect the three chronological frames/);assert.match(content[0].text,/emotionally incompatible/);assert.ok(content.every(part=>part.type==='text'||part.image_url.url.startsWith('data:image/jpeg;base64,')));return answer();
+  }}});
+  assert.equal(response.status,200);assert.equal((await response.json()).grounding,'visual');
+  assert.equal(validateClipCaptions({decision:'reference',captions:[]}).decision,'reference');
 });
 
 test('provider errors, quota, malformed output and attribution errors never become success or retry',async()=>{

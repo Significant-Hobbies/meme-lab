@@ -60,7 +60,7 @@ function filterCollection(reset=true){
   const words=search.value.trim().toLocaleLowerCase().split(/\s+/u).filter(Boolean);
   filtered=catalogue.filter(meme=>{const text=[meme.name,meme.message,meme.relational_pattern,meme.example_context,...meme.tags].join(" ").toLocaleLowerCase();return (format==="all"||meme.media_type===format)&&(!mood||moods[mood].test(text))&&words.every(word=>text.includes(word));});
   if($("#collection-sort").value==="name")filtered.sort((a,b)=>a.name.localeCompare(b.name));
-  else filtered.sort((a,b)=>{const ai=featured.indexOf(a.id),bi=featured.indexOf(b.id);return (ai<0?featured.length:ai)-(bi<0?featured.length:bi);});
+  else filtered.sort((a,b)=>{const ai=featured.indexOf(a.id),bi=featured.indexOf(b.id);return (ai<0?featured.length:ai)-(bi<0?featured.length:bi)||Number(Boolean(b.video_evidence))-Number(Boolean(a.video_evidence));});
   if(reset)page=1;render();
 }
 
@@ -75,7 +75,15 @@ async function loadCollection(){
   try{
     const response=await fetch("/collection.json");if(!response.ok)throw new Error("Could not load the collection.");
     const rows=await response.json();if(!Array.isArray(rows)||rows.some(row=>!row||typeof row.id!=="string"||typeof row.name!=="string"||!Array.isArray(row.tags)))throw new Error("The collection response was unreadable.");
-    catalogue=rows;filterCollection(false);
+    catalogue=rows;
+    const libraryStatus=$("#collection-library-status");libraryStatus.hidden=true;
+    try{
+      const more=await fetch("/clips.json");if(!more.ok)throw new Error("Clip library unavailable");
+      const extras=await more.json();if(!Array.isArray(extras)||extras.some(row=>!row||typeof row.id!=="string"||typeof row.name!=="string"||!Array.isArray(row.tags)))throw new Error("Unreadable clip library");
+      catalogue=[...rows,...extras];
+      const featuredClips=extras.slice(0,4);for(const [index,clip] of featuredClips.entries())featured[index*2+1]=clip.id;
+    }catch{libraryStatus.textContent="Additional clips could not be loaded. The original collection is still available. Reload to try again.";libraryStatus.hidden=false;}
+    $(".beta").textContent=catalogue.length.toLocaleString()+" REACTIONS";filterCollection(false);
     const id=new URL(location.href).searchParams.get("meme");if(id){const meme=catalogue.find(item=>item.id===id);if(meme)openCreator(meme);}
   }catch(error){grid.replaceChildren();count.textContent="Collection unavailable";failureMessage.textContent=error.message;failure.hidden=false;empty.hidden=true;pagination.hidden=true;}
   finally{loading=false;retry.disabled=false;grid.setAttribute("aria-busy","false");}
@@ -97,7 +105,7 @@ function closeCreator(){creatorVersion++;staticStudio.close();clipStudio.close()
 dialog.addEventListener("close",closeCreator);
 $("#collection-create-close").addEventListener("click",()=>dialog.close());
 dialog.addEventListener("click",event=>{if(event.target===dialog){const rect=dialog.getBoundingClientRect();if(event.clientX<rect.left||event.clientX>rect.right||event.clientY<rect.top||event.clientY>rect.bottom)dialog.close();}});
-$("#collection-clip-studio").addEventListener("clip-export-state",event=>{generate.disabled=generating||event.detail.exporting;});
+$("#collection-clip-studio").addEventListener("clip-export-state",event=>{generate.disabled=generating||event.detail.exporting||(selected?.media_type==="gif"&&!clipStudio.ready);});
 form.addEventListener("submit",async event=>{
   event.preventDefault();if(!selected||generating||clipStudio.exporting)return;
   const version=creatorVersion,candidate=selected,brief={comment:$("#collection-situation").value.trim(),audience:$("#collection-audience").value.trim(),tone:$("#collection-tone").value};
