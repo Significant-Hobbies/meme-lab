@@ -6,7 +6,7 @@ const measured=JSON.parse(await readFile(new URL('expansion/reviewed/gallery-cli
 const baseline=new Set(catalogue.map(record=>record.id)),ids=new Set();
 const records=measured.map(({source,media})=>{
   const id=source.proposed_id;
-  if(!id||baseline.has(id)||ids.has(id)||media.id!==id||!media.eligible||media.width<1||media.height<1||Math.max(media.width,media.height)<480||Math.min(media.width,media.height)<270||media.duration<.4||media.duration>30||media.fps<10||media.fps>60||media.bytes>20*1024*1024||media.bytes<1||media.url!==source.media_url.replace(/giphy\.gif$/,'giphy.mp4'))throw new Error('Unqualified or duplicate gallery clip: '+id);
+  if(!id||baseline.has(id)||ids.has(id)||media.id!==id||!media.eligible||!media.motion_checked||media.distinct_frames<2||media.width<1||media.height<1||Math.max(media.width,media.height)<480||Math.min(media.width,media.height)<270||media.duration<.4||media.duration>30||media.fps<10||media.fps>60||media.bytes>20*1024*1024||media.bytes<1||media.url!==source.media_url.replace(/giphy\.gif$/,'giphy.mp4'))throw new Error('Unqualified or duplicate gallery clip: '+id);
   const url=new URL(source.media_url);
   if(url.origin!=='https://media.giphy.com'||!/^\/media\/[a-zA-Z0-9]+\/giphy\.gif$/.test(url.pathname)||url.search||url.hash)throw new Error('Unknown source: '+id);
   ids.add(id);
