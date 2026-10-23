@@ -27,7 +27,7 @@ try:
   for width in [390,768,1440]:
    context=browser.new_context(viewport={'width':width,'height':1000},reduced_motion='reduce',accept_downloads=True)
    page=context.new_page();page.bring_to_front();errors=[];calls=[];pending=[]
-   mode={'captions':'success','media':'success'}
+   mode={'captions':'success','media':'success','library':'success'}
    page.on('pageerror',lambda error:errors.append(str(error)))
    def route(r):
     url=r.request.url
@@ -36,6 +36,8 @@ try:
      else:r.abort()
      return
     path=url.removeprefix(BASE)
+    if path=='/clips.json' and mode['library']=='error':
+     r.fulfill(status=503,json={'error':'Synthetic unavailable extra library'});return
     if path.startswith('/api/clips/media/'):
      if mode['media']=='error':r.fulfill(status=502,json={'error':'Synthetic unavailable source'});return
      r.fulfill(body=(FIX/'hd-clip.mp4').read_bytes(),content_type='video/mp4');return
@@ -121,6 +123,8 @@ try:
    assert static.value.suggested_filename.endswith('.png')
    assert not page.locator('#collection-create').evaluate('(node)=>node.scrollWidth>node.clientWidth')
    page.locator('.studio-grid').scroll_into_view_if_needed();page.screenshot(path=str(OUT/f'static-editor-{width}.png'))
+   mode['library']='error';page.goto(BASE+'/collection');page.locator('#collection-library-status').wait_for(state='visible');assert '3,000' in page.locator('#collection-count').inner_text()
+   mode['library']='success';page.reload();page.locator('#collection-library-status').wait_for(state='hidden');assert all_count in page.locator('#collection-count').inner_text()
    assert not errors,errors
    report['widths'].append({'width':width,'passed':True,'export':{'duration':duration,'width':stream['width'],'height':stream['height'],'codec':stream['codec_name'],'bytes':file.stat().st_size},'exported_file_played':True})
    context.close()

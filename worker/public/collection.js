@@ -81,6 +81,7 @@ async function loadCollection(){
       const more=await fetch("/clips.json");if(!more.ok)throw new Error("Clip library unavailable");
       const extras=await more.json();if(!Array.isArray(extras)||extras.some(row=>!row||typeof row.id!=="string"||typeof row.name!=="string"||!Array.isArray(row.tags)))throw new Error("Unreadable clip library");
       catalogue=[...rows,...extras];
+      const featuredClips=extras.slice(0,4);for(const [index,clip] of featuredClips.entries())featured[index*2+1]=clip.id;
     }catch{libraryStatus.textContent="Additional clips could not be loaded. The original collection is still available. Reload to try again.";libraryStatus.hidden=false;}
     $(".beta").textContent=catalogue.length.toLocaleString()+" REACTIONS";filterCollection(false);
     const id=new URL(location.href).searchParams.get("meme");if(id){const meme=catalogue.find(item=>item.id===id);if(meme)openCreator(meme);}
