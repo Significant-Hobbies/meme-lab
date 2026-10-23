@@ -79,6 +79,7 @@ function renderBest(candidate) {
     source.append(link);
   } else source.textContent=sourceText;
   copy.append(rank,title,signals,source);
+  if(candidate.media_type==='gif')copy.append(Object.assign(document.createElement('a'),{className:'primary',href:`https://memes.significanthobbies.com/collection?meme=${encodeURIComponent(candidate.id)}`,target:"_blank",rel:"noopener noreferrer",textContent:'Caption this clip →'}));
   host.append(media(candidate,'hero-media'),copy);
 }
 
@@ -104,7 +105,7 @@ function renderAlternatives(candidates) {
     if(candidate.media_type!=='gif') {
       const create=Object.assign(document.createElement('button'),{type:'button',className:'create-alternative',textContent:'Make this meme'});
       create.addEventListener('click',()=>openStudio(candidate));copy.append(create);
-    }
+    }else copy.append(Object.assign(document.createElement('a'),{className:'create-alternative',href:`https://memes.significanthobbies.com/collection?meme=${encodeURIComponent(candidate.id)}`,target:"_blank",rel:"noopener noreferrer",textContent:'Caption this clip →'}));
     card.append(media(candidate,'alternative-media'),copy);
     host.append(card);
   }
@@ -173,7 +174,7 @@ async function findMeme() {
 }
 
 form.addEventListener('submit',event=>{event.preventDefault();findMeme();});
-for(const button of document.querySelectorAll('[data-example]')) button.addEventListener('click',()=>{comment.value=button.dataset.example;comment.focus();});
+for(const button of document.querySelectorAll('[data-example]')) button.addEventListener('click',()=>{if(submit.disabled)return;comment.value=button.dataset.example;button.closest("details")?.removeAttribute("open");form.requestSubmit();});
 $('#try-again').addEventListener('click',()=>{studio.close();showOnly('form');comment.focus();window.scrollTo({top:0,behavior:'smooth'});});
 $('#edit-comment').addEventListener('click',()=>{studio.close();showOnly('form');comment.focus();window.scrollTo({top:0,behavior:'smooth'});});
 

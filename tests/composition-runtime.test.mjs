@@ -10,6 +10,7 @@ const {Miniflare,convertV4MiniflareOptions}=tooling('miniflare');
 const {buildSync}=tooling('esbuild');
 const root=fileURLToPath(new URL('../',import.meta.url));
 const script=buildSync({stdin:{contents:"import {compositionMedia} from './worker/src/meme-composition.mjs'; export default {fetch(){return compositionMedia('drake-preference');}}",resolveDir:root},bundle:true,write:false,format:'esm',platform:'browser'}).outputFiles[0].text;
+const clipScript=buildSync({stdin:{contents:"import {clipMedia} from './worker/src/clip-captions.mjs'; export default {fetch(request){return clipMedia('gif-yrufixsnwfvcxaxpmx',fetch,request.signal);}}",resolveDir:root},bundle:true,write:false,format:'esm',platform:'browser'}).outputFiles[0].text;
 
 test('actual Workerd media path serves allowed rasters and never follows redirects',async()=>{
   let calls=0,redirect=false;
@@ -29,5 +30,21 @@ test('actual Workerd media path serves allowed rasters and never follows redirec
     redirect=true;
     assert.equal((await runtime.dispatchFetch('http://localhost/')).status,502);
     assert.equal(calls,2,'redirect target must never be fetched');
+  }finally{await runtime.dispose();}
+});
+
+test('actual Workerd clip proxy accepts MP4 bytes and rejects unfollowed redirects',async()=>{
+  let calls=0,redirect=false;
+  const bytes=new Uint8Array([0,0,0,20,102,116,121,112,105,115,111,109]);
+  const runtime=new Miniflare(convertV4MiniflareOptions({
+    name:'clip-media-runtime',modules:true,compatibilityDate:'2026-09-01',script:clipScript,
+    outboundService:async request=>{
+      calls++;assert.equal(request.url,'https://media.giphy.com/media/YRuFixSNWFVcXaxpmX/giphy.mp4');
+      return redirect?new Response(null,{status:302,headers:{Location:'https://private.invalid/'}}):new Response(bytes,{headers:{'Content-Type':'video/mp4'}});
+    }
+  }));
+  try{
+    const response=await runtime.dispatchFetch('http://localhost/');assert.equal(response.status,200);assert.equal(response.headers.get('content-type'),'video/mp4');assert.deepEqual(new Uint8Array(await response.arrayBuffer()),bytes);
+    redirect=true;assert.equal((await runtime.dispatchFetch('http://localhost/')).status,502);assert.equal(calls,2);
   }finally{await runtime.dispose();}
 });

@@ -99,30 +99,30 @@
     ]
   },
   "collection": {
-    "title": "from the collection",
-    "browse": "browse all 3,000 →",
+    "title": "pick a reaction and make it yours",
+    "browse": "open the gallery →",
     "note": "Source previews · transformation rights are not established.",
     "items": [
       {
-        "href": "/memes/success-kid",
+        "href": "/collection?meme=success-kid",
         "image": "https://i.imgflip.com/1bhk.jpg",
         "alt": "Success Kid source preview",
         "title": "Success Kid",
         "body": "A small, satisfying victory."
       },
       {
-        "href": "/memes/disaster-girl",
+        "href": "/collection?meme=disaster-girl",
         "image": "https://i.imgflip.com/23ls.jpg",
         "alt": "Disaster Girl source preview",
         "title": "Disaster Girl",
         "body": "Enjoying the chaos."
       },
       {
-        "href": "/memes/drake-preference",
-        "image": "https://i.imgflip.com/30b1gx.jpg",
-        "alt": "Drake Hotline Bling source preview",
-        "title": "Drake Hotline Bling",
-        "body": "This one. Definitely not that one."
+        "href": "/collection?meme=gif-yrufixsnwfvcxaxpmx",
+        "image": "https://media.giphy.com/media/YRuFixSNWFVcXaxpmX/giphy_s.gif",
+        "alt": "Clap reaction clip source preview",
+        "title": "Clap · reaction clip",
+        "body": "Add your caption. Download a video."
       }
     ]
   },

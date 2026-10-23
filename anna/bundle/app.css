@@ -147,6 +147,10 @@ textarea::placeholder{color:var(--muted)}
 
 footer{display:flex;width:min(100% - 40px,1180px);margin:0 auto;padding:20px 0 28px;border-top:1px solid var(--line);justify-content:space-between;color:var(--muted);font-size:12px}
 footer a{color:var(--blue);font-weight:750;text-decoration:none}
+.collection-footer{gap:12px;align-items:center}
+.collection-footer nav{display:flex;gap:10px 20px;flex-wrap:wrap}
+.collection-footer nav a{display:inline-flex;min-height:44px;align-items:center}
+.collection-footer p{margin:0}
 
 /* Keep settled capture consent above the shared fixed Feedback launcher
    (44px target + 20px bottom offset + 24px focus/hover clearance). */
@@ -267,6 +271,13 @@ saas-maker-newsletter-capture{
 }
 
 .primary:disabled,.meme-studio .primary:disabled,.meme-studio .primary:disabled:hover{color:var(--muted);background:var(--muted-bg);border:1px solid var(--line)}
+
+/* Reserve the existing collection card geometry during a catalogue read. */
+.page-collection .page-main{min-height:calc(100svh - 80px)}
+.collection-skeleton .collection-copy{height:188px;display:grid;gap:14px;align-content:start}
+.collection-skeleton .collection-copy span{display:block;height:18px;width:85%;border-radius:4px;background:var(--muted-bg)}
+.collection-skeleton .collection-copy span:last-child{width:55%}
+#collection-error[hidden]{display:none}
 
 /* Fit the existing Reference Desk system to Anna’s default window. */
 .retention-note{font-size:12px}

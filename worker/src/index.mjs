@@ -9,6 +9,8 @@ import {endpointFor,pingFor} from './ping.mjs';
 import {annaEvent} from './anna-events.mjs';
 import {annaShortlist} from './anna-shortlist.mjs';
 import {composeMeme,compositionMedia,annaComposition} from './meme-composition.mjs';
+import {clipCaptions,clipMedia} from './clip-captions.mjs';
+import {creationMediaUrl} from './meme-templates.mjs';
 
 const allowedIds=new Set(catalogue.map(record=>record.id));
 const catalogueById=new Map(catalogue.map(record=>[record.id,record]));
@@ -78,7 +80,7 @@ function secureHeaders(headers=new Headers()) {
   headers.set('Referrer-Policy','no-referrer');
   headers.set('X-Frame-Options','DENY');
   headers.set('Permissions-Policy','camera=(), microphone=(), geolocation=()');
-  headers.set('Content-Security-Policy',"default-src 'self'; script-src 'self' https://sassmaker.com https://health.sassmaker.com https://static.cloudflareinsights.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://i.imgflip.com https://api.memegen.link https://media.giphy.com; connect-src 'self' https://ingest.sassmaker.com https://api.sassmaker.com https://sassmaker.com https://cloudflareinsights.com; object-src 'none'; base-uri 'none'; frame-ancestors 'none'; form-action 'self'");
+  headers.set('Content-Security-Policy',"default-src 'self'; script-src 'self' https://sassmaker.com https://health.sassmaker.com https://static.cloudflareinsights.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://i.imgflip.com https://api.memegen.link https://media.giphy.com; media-src 'self' blob:; connect-src 'self' https://ingest.sassmaker.com https://api.sassmaker.com https://sassmaker.com https://cloudflareinsights.com; object-src 'none'; base-uri 'none'; frame-ancestors 'none'; form-action 'self'");
   return headers;
 }
 
@@ -169,7 +171,8 @@ function memePage(record) {
         </dl>
         <ul class="tag-list meme-detail-tags" aria-label="Related moods">${tags}</ul>
         <div class="meme-detail-actions">
-          <a class="primary" href="/">Find a meme for your situation <span aria-hidden="true">&rarr;</span></a>
+          ${record.media_type==='gif'||creationMediaUrl(record)?`<a class="primary" href="/collection?meme=${encodeURIComponent(record.id)}">${record.media_type==='gif'?'Caption this clip':'Make this meme'} <span aria-hidden="true">&rarr;</span></a>`:''}
+          <a href="/">Find a meme for your situation</a>
           ${record.image_url?`<a class="source-link" href="${escapeHtml(record.image_url)}" target="_blank" rel="noopener noreferrer">${sourceNote}</a>`:''}
         </div>
       </div>
@@ -421,6 +424,15 @@ export default {
   async fetch(request,env,ctx) {
     const url=new URL(request.url);
     const isRead=request.method==='GET'||request.method==='HEAD';
+    if(url.pathname==='/api/clips/captions'&&request.method==='POST')return withEndpointMeasurement(request,env,ctx,'/api/clips/captions',()=>{
+      const origin=request.headers.get('origin');
+      if(origin&&origin!==url.origin)return json({error:'Cross-origin requests are blocked.'},403);
+      return clipCaptions(request,env);
+    });
+    if(isRead&&url.pathname.startsWith('/api/clips/media/'))return withEndpointMeasurement(request,env,ctx,'/api/clips/media/{id}',async()=>{
+      let id;try{id=decodeURIComponent(url.pathname.slice('/api/clips/media/'.length));}catch{return json({error:'Unknown reaction clip.'},400);}
+      return forHead(request,await clipMedia(id,fetch,request.signal));
+    });
     if(url.pathname==='/api/create'&&request.method==='POST') return withEndpointMeasurement(request,env,ctx,'/api/create',()=>{
       const origin=request.headers.get('origin');
       if(origin&&origin!==url.origin) return json({error:'Cross-origin requests are blocked.'},403);

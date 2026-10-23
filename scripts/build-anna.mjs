@@ -24,14 +24,16 @@ html=html.replace('</body>','  <script type="module" src="./app.js"></script>\n<
 html=html.replace('<section id="no-match" class="no-match" hidden>','<section id="no-match" class="no-match" hidden role="status" aria-live="polite">');
 const action='<button id="submit" class="primary" type="submit"><span>Find the meme</span><span aria-hidden="true">→</span></button>';
 html=html.replace(`          ${action}\n`,'').replace('<div class="form-row">',`<div class="form-row">\n          ${action}`);
-for(const file of ['meme-studio.js','meme-renderer.js','meme-studio.css'])await copyFile(new URL('worker/public/'+file,root),new URL(file,out));
-for(const file of ['caption-core.mjs','meme-templates.mjs'])await copyFile(new URL('worker/src/'+file,root),new URL(file,out));
+for(const file of ['meme-studio.js','meme-renderer.js','meme-studio.css','meme-media.js'])await copyFile(new URL('worker/public/'+file,root),new URL(file,out));
+for(const file of ['caption-core.mjs','caption-brief.mjs','meme-templates.mjs'])await copyFile(new URL('worker/src/'+file,root),new URL(file,out));
+await writeFile(new URL('meme-templates.mjs',out),(await readFile(new URL('meme-templates.mjs',out),'utf8')).replace('../public/meme-media.js','./meme-media.js'));
 let app=await readFile(new URL('worker/public/app.js',root),'utf8');
 const oldRequest="const response=await fetch('/api/recommend',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({comment:value})});\n    responseStatus=response.status;\n    const data=await response.json();\n    if(version!==searchVersion)return;\n    if(!response.ok) throw new Error(data.error||'Could not find a meme.');";
 if(!app.includes(oldRequest)) throw new Error('Website recommendation adapter changed; review the Anna build.');
 if(!app.includes("const studio=new MemeStudio($('#meme-studio'));"))throw new Error('Website caption adapter changed; review the Anna build.');
 app=app.replace("const studio=new MemeStudio($('#meme-studio'));","const studio=new MemeStudio($('#meme-studio'),{generateDraft:async(body,{signal})=>composeOnAnna(body,{anna:await annaReady,signal}),mediaBase:'https://memes.significanthobbies.com',downloadBlob:async blob=>{const anna=await annaReady;const entry=await persistMeme(anna,blob);await downloadSavedMeme(anna,entry.path);}});");
 app=app.replace(oldRequest,'const data=await recommendOnAnna(value,{anna:await annaReady});')
+  .replaceAll('href:`/collection?meme=${encodeURIComponent(candidate.id)}`','href:`https://memes.significanthobbies.com/collection?meme=${encodeURIComponent(candidate.id)}`,target:"_blank",rel:"noopener noreferrer"')
   .replaceAll('href:`/memes/${encodeURIComponent(candidate.id)}`','href:`https://memes.significanthobbies.com/memes/${encodeURIComponent(candidate.id)}`,target:"_blank",rel:"noopener noreferrer"');
 // Anna does not retain website feedback. Remove that listener entirely.
 const feedbackStart=app.indexOf("for(const button of document.querySelectorAll('[data-verdict]')) button.addEventListener");

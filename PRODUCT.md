@@ -10,6 +10,8 @@ The first user is the owner, but the playground is public for lightweight feedba
 
 The corrected catalogue contains 3,000 searchable references: 1,805 static meme templates and 1,195 usage-backed reaction GIFs. Arbitrary artwork, empty editing canvases, and decorative backgrounds are not counted as meme coverage. Every reference has a specific meaning, social dynamic, example, near-miss, provenance, media type and state, meme-strength score, and asset-quality score.
 
+The website collection also supports creation directly from a chosen reference. Search, mood and format filters lead to the existing PNG caption Studio for supported static templates, or a reaction-clip editor using the recorded GIPHY source’s MP4 rendition. Users can supply an audience and caption style, choose between three clip-caption drafts, edit the text and export a silent captioned video. Captions sit above or below the un-cropped picture. Export runs locally for clips up to 30 seconds; MP4 is preferred, with WebM when that is the browser’s supported format. Gallery situations and drafts are not retained by Meme Lab. Source availability and transformation rights remain separate from technical export capability.
+
 Runtime ranking is deliberately bounded:
 
 1. Two semantic searches retrieve 30 likely references.

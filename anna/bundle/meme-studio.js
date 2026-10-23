@@ -41,10 +41,10 @@ export class MemeStudio {
   }
   selectedLayer() {return this.layers.find(layer=>layer.id===this.selected);}
   message(text,error=false) {this.$('.studio-status').textContent=text;this.$('.studio-status').classList.toggle('error',error);}
-  async open(candidate,situation) {
-    this.close();this.candidate=candidate;this.situation=situation;this.host.hidden=false;this.busy=true;this.blocked=false;
+  async open(candidate,situation,brief) {
+    this.close();this.candidate=candidate;this.situation=situation;this.brief=brief;this.host.hidden=false;this.busy=true;this.blocked=false;
     this.$('#studio-heading').textContent=candidate.name;
-    this.$('.studio-context').textContent=`${candidate.perspective_label||'Best match'} · ${candidate.fit_label||'weak'} fit`;
+    this.$('.studio-context').textContent=candidate.from_collection?'Selected from the collection · editable caption draft':`${candidate.perspective_label||'Best match'} · ${candidate.fit_label||'weak'} fit`;
     this.$('.studio-placement').textContent='Writing captions for this template’s structure…';
     this.$('.studio-source').href=candidate.source_url||candidate.image_url;
     this.$('.studio-source').textContent=candidate.license_url?'Open licensed source':'Open source preview · media rights not established';
@@ -68,7 +68,7 @@ export class MemeStudio {
 
   async fetchDraft(signal) {
     const perspective=({my_reaction:'self',their_side:'other',the_situation:'situation'}[this.candidate.perspective]??this.candidate.perspective??'best_match');
-    const body={comment:this.situation,candidate_id:this.candidate.id,perspective};
+    const body={comment:this.situation,candidate_id:this.candidate.id,perspective,...this.brief};
     if(this.generateDraft)return this.generateDraft(body,{signal});
     const response=await fetch('/api/create',{method:'POST',headers:{'Content-Type':'application/json'},signal,body:JSON.stringify(body)});
     let data;try{data=await response.json();}catch{throw new Error('Caption generation returned an unreadable response. Try again.');}
