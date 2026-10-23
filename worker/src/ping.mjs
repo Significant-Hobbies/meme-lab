@@ -5,6 +5,8 @@
 const DEFAULT_URL = 'https://ingest.sassmaker.com/v1/logs';
 const DEFAULT_ENDPOINT_URL = 'https://ingest.sassmaker.com/v1/ingest';
 const API_ENDPOINTS = {
+  '/api/clips/captions': ['POST'],
+  '/api/clips/media/{id}': ['GET', 'HEAD'],
   '/api/create': ['POST'],
   '/api/create/media/{id}': ['GET', 'HEAD'],
   '/api/anna/composition': ['POST'],

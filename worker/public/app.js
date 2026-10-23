@@ -73,6 +73,7 @@ function renderBest(candidate) {
     source.append(link);
   } else source.textContent=sourceText;
   copy.append(rank,title,signals,source);
+  if(candidate.media_type==='gif')copy.append(Object.assign(document.createElement('a'),{className:'primary',href:`/collection?meme=${encodeURIComponent(candidate.id)}`,textContent:'Caption this clip →'}));
   host.append(media(candidate,'hero-media'),copy);
 }
 
@@ -98,7 +99,7 @@ function renderAlternatives(candidates) {
     if(candidate.media_type!=='gif') {
       const create=Object.assign(document.createElement('button'),{type:'button',className:'create-alternative',textContent:'Make this meme'});
       create.addEventListener('click',()=>openStudio(candidate));copy.append(create);
-    }
+    }else copy.append(Object.assign(document.createElement('a'),{className:'create-alternative',href:`/collection?meme=${encodeURIComponent(candidate.id)}`,textContent:'Caption this clip →'}));
     card.append(media(candidate,'alternative-media'),copy);
     host.append(card);
   }

@@ -1,6 +1,7 @@
 import {catalogue} from './catalogue.stage3000.generated.mjs';
 import {needsSeriousHandling,requiresFactualAnswer} from './classification.mjs';
 import {creationMediaUrl,templateFor,unchangedReactionFor} from './meme-templates.mjs';
+import {captionBrief} from './caption-brief.mjs';
 
 const byId=new Map(catalogue.map(record=>[record.id,record]));
 const MAX_IMAGE_BYTES=6*1024*1024;
@@ -37,12 +38,13 @@ export function planComposition(body) {
   const perspective=captionPerspective(body.perspective);
   if(!perspectives.has(perspective)) throw new InputError(400,'Unknown viewpoint.');
   const comment=body.comment.trim();
+  let brief;try{brief=captionBrief(body);}catch(error){throw new InputError(400,error.message);}
   if(needsSeriousHandling(comment)||requiresFactualAnswer(comment)) return {local:{decision:'none',candidate_id:record.id,layers:[],message:'This calls for a sincere response rather than a meme.'}};
   if(unchangedReactionFor(record)) return {local:{decision:'reference',candidate_id:record.id,layers:[],message:'This image already supplies the punchline. Use the original reaction or choose another template for editable captions.'}};
   const imageUrl=creationMediaUrl(record);
   if(!imageUrl) return {local:{decision:'reference',candidate_id:record.id,layers:[],message:record.media_type==='gif'?'This is an animated reaction. Keep the original GIF.':'This source is available as a reference, but not for image composition.'}};
   const profile=templateFor(record);
-  const prompt=compositionPrompt(comment,record,perspective,profile);
+  const prompt=compositionPrompt(comment,record,perspective,profile,brief);
   const content=profile?prompt:[{type:'text',text:prompt},{type:'image_url',image_url:{url:imageUrl}}];
   return {record,profile,content};
 }
