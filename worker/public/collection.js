@@ -1,5 +1,6 @@
 import {MemeStudio} from "./meme-studio.js";
 import {ClipStudio} from "./clip-studio.js";
+import {creationMediaUrl} from "./meme-media.js";
 
 for(const style of document.querySelectorAll("link[data-collection-style]"))style.media="all";
 const $=selector=>document.querySelector(selector);
@@ -46,7 +47,8 @@ function render(){
     title.append(Object.assign(document.createElement("a"),{href:`/memes/${encodeURIComponent(meme.id)}`,textContent:meme.name}));
     const tags=Object.assign(document.createElement("div"),{className:"tag-list"});
     for(const tag of meme.tags.slice(0,2)){const button=Object.assign(document.createElement("button"),{type:"button",textContent:tag});button.addEventListener("click",()=>{search.value=tag;filterCollection();});tags.append(button);}
-    const create=Object.assign(document.createElement("button"),{type:"button",className:"collection-create-button",textContent:meme.media_type==="gif"?"Caption this clip →":"Make this meme →"});create.addEventListener("click",()=>openCreator(meme));
+    const editable=meme.media_type==="gif"||creationMediaUrl(meme);
+    const create=Object.assign(document.createElement("button"),{type:"button",className:"collection-create-button",textContent:meme.media_type==="gif"?"Caption this clip →":editable?"Make this meme →":"Use original reaction →"});create.addEventListener("click",()=>openCreator(meme));
     copy.append(title,Object.assign(document.createElement("p"),{textContent:meme.message}),tags,create);card.append(imageFor(meme,index),copy);fragment.append(card);
   }
   grid.replaceChildren(fragment);empty.hidden=items.length!==0;
@@ -80,6 +82,7 @@ async function loadCollection(){
 }
 
 function openCreator(meme){
+  if(meme.media_type!=="gif"&&!creationMediaUrl(meme)){location.assign(`/memes/${encodeURIComponent(meme.id)}`);return;}
   creatorVersion++;
   staticStudio.close();clipStudio.close();selected=meme;generating=false;generate.disabled=false;generate.textContent="Generate captions →";createStatus.textContent="";
   $("#collection-create-title").textContent=meme.name;

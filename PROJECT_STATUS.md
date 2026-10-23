@@ -3,6 +3,12 @@
 **Updated:** 9 October 2026
 **Lifecycle:** Live meme picker and prefilled caption Studio; Anna 1.3.0 candidate prepared, public Store publication remains gated.
 
+## Gallery creation — 23 October 2026
+
+The gallery can now open supported static templates directly in the existing caption Studio and turn reaction GIF sources into captioned video. Search, format/mood filters, direct reference links, optional audience/style, three clip-caption choices, local edits, source retry, cancellation and browser video export are implemented. Unsupported static sources remain original reactions. No production dependencies, bindings or production configuration changed.
+
+Source and actual Workerd proxy checks pass. Browser verification at 390/768/1440 uses synthetic AI and a generated test clip; PNG creation, exported H.264 playback, burned caption pixels, failures and cancellation pass. A real catalogue clip was also exported through the actual Download MP4 action and visually inspected. AI caption quality for the new clip route and production behavior remain unverified. Cloudflare authentication is expired; deployment is pending restored login. [Implementation PR #74](https://github.com/Significant-Hobbies/meme-lab/pull/74).
+
 ## Live product
 
 ### Prefilled caption Studio: website live, Anna 1.3.0 prepared

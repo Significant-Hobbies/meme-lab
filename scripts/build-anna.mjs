@@ -24,8 +24,9 @@ html=html.replace('</body>','  <script type="module" src="./app.js"></script>\n<
 html=html.replace('<section id="no-match" class="no-match" hidden>','<section id="no-match" class="no-match" hidden role="status" aria-live="polite">');
 const action='<button id="submit" class="primary" type="submit"><span>Find the meme</span><span aria-hidden="true">→</span></button>';
 html=html.replace(`          ${action}\n`,'').replace('<div class="form-row">',`<div class="form-row">\n          ${action}`);
-for(const file of ['meme-studio.js','meme-renderer.js','meme-studio.css'])await copyFile(new URL('worker/public/'+file,root),new URL(file,out));
+for(const file of ['meme-studio.js','meme-renderer.js','meme-studio.css','meme-media.js'])await copyFile(new URL('worker/public/'+file,root),new URL(file,out));
 for(const file of ['caption-core.mjs','caption-brief.mjs','meme-templates.mjs'])await copyFile(new URL('worker/src/'+file,root),new URL(file,out));
+await writeFile(new URL('meme-templates.mjs',out),(await readFile(new URL('meme-templates.mjs',out),'utf8')).replace('../public/meme-media.js','./meme-media.js'));
 let app=await readFile(new URL('worker/public/app.js',root),'utf8');
 const oldRequest="const response=await fetch('/api/recommend',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({comment:value})});\n    responseStatus=response.status;\n    const data=await response.json();\n    if(version!==searchVersion)return;\n    if(!response.ok) throw new Error(data.error||'Could not find a meme.');";
 if(!app.includes(oldRequest)) throw new Error('Website recommendation adapter changed; review the Anna build.');

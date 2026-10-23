@@ -1,3 +1,5 @@
+export {creationMediaUrl} from './meme-media.js';
+
 // Regions were inspected against these exact source assets, not inferred from
 // names. Coordinates are fractions of the un-cropped original image.
 const region=(id,label,role,box,style='plain',rotation=0,extra={})=>({id,label,role,box,style,rotation,maxChars:64,...extra});
@@ -63,15 +65,4 @@ export function templateFor(record) {
 // space. Reuse the original without sending the image to an inference provider.
 export function unchangedReactionFor(record) {
   return record?.media_type!=='gif'&&(record?.media_url||record?.image_url)==='https://i.imgflip.com/wxica.jpg';
-}
-
-export function creationMediaUrl(record) {
-  if(!record||record.media_type==='gif') return null;
-  try {
-    const url=new URL(record.media_url||record.image_url);
-    if(url.protocol!=='https:'||url.username||url.password||url.port) return null;
-    if(url.hostname==='i.imgflip.com'&&/^\/(?:4\/)?[a-z0-9]+\.(?:jpe?g|png|webp)$/i.test(url.pathname)) return url.href;
-    if(url.hostname==='api.memegen.link'&&/^\/images\/[a-z0-9_-]+\.(?:jpe?g|png|webp)$/i.test(url.pathname)) return url.href;
-  } catch { /* Unknown media stays a reference instead of becoming a proxy URL. */ }
-  return null;
 }

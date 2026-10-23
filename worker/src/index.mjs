@@ -10,6 +10,7 @@ import {annaEvent} from './anna-events.mjs';
 import {annaShortlist} from './anna-shortlist.mjs';
 import {composeMeme,compositionMedia,annaComposition} from './meme-composition.mjs';
 import {clipCaptions,clipMedia} from './clip-captions.mjs';
+import {creationMediaUrl} from './meme-templates.mjs';
 
 const allowedIds=new Set(catalogue.map(record=>record.id));
 const catalogueById=new Map(catalogue.map(record=>[record.id,record]));
@@ -170,7 +171,7 @@ function memePage(record) {
         </dl>
         <ul class="tag-list meme-detail-tags" aria-label="Related moods">${tags}</ul>
         <div class="meme-detail-actions">
-          <a class="primary" href="/collection?meme=${encodeURIComponent(record.id)}">${record.media_type==='gif'?'Caption this clip':'Make this meme'} <span aria-hidden="true">&rarr;</span></a>
+          ${record.media_type==='gif'||creationMediaUrl(record)?`<a class="primary" href="/collection?meme=${encodeURIComponent(record.id)}">${record.media_type==='gif'?'Caption this clip':'Make this meme'} <span aria-hidden="true">&rarr;</span></a>`:''}
           <a href="/">Find a meme for your situation</a>
           ${record.image_url?`<a class="source-link" href="${escapeHtml(record.image_url)}" target="_blank" rel="noopener noreferrer">${sourceNote}</a>`:''}
         </div>
