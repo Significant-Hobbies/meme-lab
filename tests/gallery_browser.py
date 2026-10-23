@@ -35,7 +35,7 @@ try:
     path=url.removeprefix(BASE)
     if path.startswith('/api/clips/media/'):
      if mode['media']=='error':r.fulfill(status=502,json={'error':'Synthetic unavailable source'});return
-     r.fulfill(body=(FIX/'clip.mp4').read_bytes(),content_type='video/mp4');return
+     r.fulfill(body=(FIX/'hd-clip.mp4').read_bytes(),content_type='video/mp4');return
     if path=='/api/clips/captions':
      calls.append(r.request.post_data_json)
      if mode['captions']=='hold':pending.append(r);return
@@ -74,6 +74,8 @@ try:
    pending.pop().fulfill(json={'decision':'captions','captions':captions});mode['captions']='success'
    page.locator('.clip-options button').first.wait_for();assert page.locator('.clip-options button').count()==3
    assert calls[-1]['audience']=='Developers' and calls[-1]['tone']=='deadpan'
+   assert len(calls[-1]['frames'])==3 and all(frame['data_url'].startswith('data:image/jpeg;base64,') for frame in calls[-1]['frames'])
+   assert len({frame['data_url'] for frame in calls[-1]['frames']})==3
    page.locator('.clip-options button').nth(1).click();assert page.locator('#clip-caption').input_value()==captions[1]
    page.locator('#clip-caption').fill('A caption edited by the user.');page.locator('#clip-position').select_option('bottom')
    assert not page.locator('#collection-create').evaluate('(node)=>node.scrollWidth>node.clientWidth')
@@ -83,7 +85,7 @@ try:
    probe=json.loads(subprocess.check_output(['ffprobe','-v','error','-show_streams','-show_format','-of','json',str(file)]))
    stream=next(item for item in probe['streams'] if item['codec_type']=='video')
    duration=float(probe['format']['duration']);assert 1.7<duration<3.5,(duration,probe)
-   assert stream['width']==480 and stream['height']>270
+   assert stream['width']==1280 and stream['height']>720
    assert stream['codec_name']=='h264'
    subprocess.run(['ffmpeg','-hide_banner','-loglevel','error','-y','-ss','0.5','-i',str(file),'-frames:v','1',str(OUT/f'export-frame-{width}.png')],check=True)
    # Play the actual exported bytes, not the source or editor canvas.

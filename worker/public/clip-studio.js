@@ -1,4 +1,5 @@
 import {paintClip,recordClip,recordingFormat,videoEvent} from './clip-export.js';
+import {sampleClipFrames} from './clip-frames.js';
 
 export class ClipStudio {
   constructor(host) {
@@ -29,7 +30,7 @@ export class ClipStudio {
       const loaded=videoEvent(this.video,'loadeddata',{signal:this.abort.signal});this.video.src=this.objectUrl;await loaded;
       if(version!==this.version)return;
       if(!Number.isFinite(this.video.duration)||this.video.duration<=0||this.video.duration>30||!this.video.videoWidth||this.video.videoWidth>4096||this.video.videoHeight>4096||this.video.videoWidth*this.video.videoHeight>12_000_000)throw new Error('Choose a reaction clip up to 30 seconds long and 4,096 pixels wide or tall.');
-      this.ready=true;this.canvas.hidden=false;this.$('.clip-load').hidden=true;this.$('.clip-meta').textContent=`${this.video.duration.toFixed(1)} s · silent reaction clip`;this.paint();
+      this.ready=true;this.canvas.hidden=false;this.$('.clip-load').hidden=true;this.$('.clip-meta').textContent=`${this.video.videoWidth} × ${this.video.videoHeight} source · ${this.video.duration.toFixed(1)} s · silent reaction clip`;this.paint();
     } catch(error){if(version!==this.version||error.name==='AbortError')return;this.$('.clip-load').textContent=error.message;this.$('[data-clip-action="retry"]').hidden=false;}
     finally{if(version===this.version)this.controls();}
   }
@@ -37,13 +38,14 @@ export class ClipStudio {
     if(this.exporting)return;
     this.generationAbort?.abort();const controller=this.generationAbort=new AbortController();
     this.generating=true;this.controls();
-    this.message('Writing three caption options…');
+    this.message('Reading the reaction and writing three caption options…');
     try {
-      const response=await fetch('/api/clips/captions',{method:'POST',headers:{'Content-Type':'application/json'},signal:controller.signal,body:JSON.stringify({candidate_id:this.candidate.id,...brief})});
+      const frames=await sampleClipFrames(this.video,{signal:controller.signal});
+      const response=await fetch('/api/clips/captions',{method:'POST',headers:{'Content-Type':'application/json'},signal:controller.signal,body:JSON.stringify({candidate_id:this.candidate.id,...brief,frames})});
       const data=await response.json();if(controller!==this.generationAbort)return;
       if(!response.ok)throw new Error(data.error||'Could not generate captions. Try again or write your own.');
       const options=this.$('.clip-options');options.replaceChildren();
-      if(data.decision==='none'){this.blocked=true;this.caption.value='';this.message(data.message);this.syncCaption();return;}
+      if(data.decision==='none'||data.decision==='reference'){this.blocked=true;this.caption.value='';this.message(data.message);this.syncCaption();return;}
       if(data.decision!=='captions'||!Array.isArray(data.captions)||data.captions.length!==3||data.captions.some(text=>typeof text!=='string'||!text.trim()||Array.from(text).length>140))throw new Error('Caption generation returned an unreadable response. Try again.');
       this.blocked=false;
       for(const [index,text] of data.captions.entries()){
@@ -61,7 +63,7 @@ export class ClipStudio {
     if(!this.ready||this.exporting||this.generating||!this.caption.value.trim()||this.blocked)return;
     this.exporting=true;this.exportAbort=new AbortController();const version=this.version;this.controls();
     try {
-      const {blob,extension}=await recordClip(this.video,this.canvas,()=>this.paint(),{signal:this.exportAbort.signal,onProgress:percent=>this.message(`Exporting video… ${percent}% · keep this tab visible`)});
+      const {blob,extension}=await recordClip(this.video,this.canvas,()=>this.paint(),{signal:this.exportAbort.signal,fps:this.candidate.video_evidence?.fps??30,onProgress:percent=>this.message(`Exporting video… ${percent}% · keep this tab visible`)});
       if(version!==this.version)return;
       const url=URL.createObjectURL(blob);const link=Object.assign(document.createElement('a'),{href:url,download:`${this.candidate.id}-captioned.${extension}`});link.click();setTimeout(()=>URL.revokeObjectURL(url),60000);
       this.message('Video exported. Your download is ready.');window.appHealthLog?.('clip.exported',{props:{format:extension}});

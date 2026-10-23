@@ -5,8 +5,32 @@ on:
     branches: [main]
   pull_request:
   workflow_dispatch:
+    inputs:
+      qualify_clips:
+        description: Measure the staged reaction video sources and retain a qualification artifact
+        type: boolean
+        default: false
 
 jobs:
+  qualify-clips:
+    if: github.event_name == 'workflow_dispatch' && inputs.qualify_clips
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v6
+      - name: Install media inspection tools
+        run: |
+          if ! command -v ffprobe >/dev/null; then
+            sudo apt-get update -qq
+            sudo apt-get install -y ffmpeg
+          fi
+      - name: Qualify reaction clips
+        run: python3 scripts/qualify-clip-library.py --limit 1500 --probe-cache expansion/sources/gallery-clips-probes.jsonl
+      - uses: actions/upload-artifact@v4
+        with:
+          name: qualified-gallery-clips
+          retention-days: 7
+          path: .fleet-local/clip-quality/
   check:
     runs-on: ubuntu-latest
     steps:

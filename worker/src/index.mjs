@@ -1,4 +1,5 @@
 import {catalogue} from './catalogue.stage3000.generated.mjs';
+import {clipLibrary} from './clip-library.generated.mjs';
 import {createGatewayClassifierFetch,hasMultiplePerspectives,humourBelongs,needsSeriousHandling,rankCandidates,rankCandidatesByPerspective,requiresFactualAnswer} from './classification.mjs';
 import {withClassifierDeadline} from './classifier-deadline.mjs';
 import {MAX_RECOMMENDATIONS,presentSelection,selectionFromRanking} from './recommendation.mjs';
@@ -13,7 +14,7 @@ import {clipCaptions,clipMedia} from './clip-captions.mjs';
 import {creationMediaUrl} from './meme-templates.mjs';
 
 const allowedIds=new Set(catalogue.map(record=>record.id));
-const catalogueById=new Map(catalogue.map(record=>[record.id,record]));
+const catalogueById=new Map([...catalogue,...clipLibrary].map(record=>[record.id,record]));
 const CLASSIFIER_MODEL='free-ai:auto';
 const RETRIEVAL_FALLBACK_MODEL='vector-retrieval-fallback';
 const SITE_ORIGIN='https://memes.significanthobbies.com';
@@ -48,7 +49,7 @@ function agentCatalog(origin=SITE_ORIGIN) {
     markdown:{suffix:'.md',negotiation:true},
     surfaces:[
       {id:'home',url:`${origin}/`,md:`${origin}/index.md`,kind:'static',description:'Paste a comment and get the best-matching meme.'},
-      {id:'collection',url:`${origin}/collection`,md:`${origin}/collection.md`,kind:'collection',description:'Searchable catalogue of 3,000 meme and reaction-GIF references.'},
+      {id:'collection',url:`${origin}/collection`,md:`${origin}/collection.md`,kind:'collection',description:'Browse meme templates and measured reaction clips; create an image or captioned video.'},
       {id:'how-it-works',url:`${origin}/how-it-works`,md:`${origin}/how-it-works.md`,kind:'static',description:'How retrieval, ranking and evaluation work.'},
       {id:'meme',url:`${origin}/memes/{id}`,md:`${origin}/memes/{id}.md`,kind:'dynamic',description:'One reference page per catalogued meme; replace {id} with a sitemap meme id.'}
     ],
@@ -151,7 +152,7 @@ function memePage(record) {
       <a href="/collection">Collection</a>
       <a href="/how-it-works">How it works</a>
     </nav>
-    <span class="beta">3,000 LIVE</span>
+    <span class="beta">MEMES + CLIPS</span>
   </header>
   <main class="meme-detail-main">
     <a class="back-link" href="/collection">&larr; Back to the collection</a>
@@ -165,9 +166,7 @@ function memePage(record) {
         <h1>${name}</h1>
         <p class="meme-definition">${escapeHtml(record.message)}</p>
         <dl class="meme-guide">
-          <div><dt>What it expresses</dt><dd>${escapeHtml(record.relational_pattern)}</dd></div>
-          <div><dt>Example</dt><dd>${escapeHtml(record.example_context)}</dd></div>
-          <div><dt>When not to use it</dt><dd>${escapeHtml(record.near_miss_context)}</dd></div>
+          ${record.catalogue_scope==='gallery'?`<div><dt>Source quality</dt><dd>${record.video_evidence.width} × ${record.video_evidence.height} pixels · ${record.video_evidence.fps} fps · ${record.video_evidence.duration.toFixed(1)} seconds</dd></div><div><dt>About this reaction</dt><dd>Browse and create using the source tags. This clip has not been evaluated for automatic recommendations.</dd></div>`:`<div><dt>What it expresses</dt><dd>${escapeHtml(record.relational_pattern)}</dd></div><div><dt>Example</dt><dd>${escapeHtml(record.example_context)}</dd></div><div><dt>When not to use it</dt><dd>${escapeHtml(record.near_miss_context)}</dd></div>`}
         </dl>
         <ul class="tag-list meme-detail-tags" aria-label="Related moods">${tags}</ul>
         <div class="meme-detail-actions">
@@ -179,7 +178,7 @@ function memePage(record) {
     </article>
   </main>
   <fleet-footer-extension data-fleet-footer-project="meme-lab" product-name="Meme Lab" theme="light" surface="web" font-base="/fonts/fleet-footer-precise-v1/" signature-font="newsreader" art-src="/footer-art/meme-lab-original-v1.webp" art-alt="Two reaction-card characters flank a blank comment card." art-width="2170" art-height="725" art-position="50% 50%">
-    <a data-fleet-footer-cta data-fleet-footer-primary slot="cta" href="/collection">Browse all 3,000 meme references <span aria-hidden="true">→</span></a>
+    <a data-fleet-footer-cta data-fleet-footer-primary slot="cta" href="/collection">Browse memes and reaction clips <span aria-hidden="true">→</span></a>
     <footer data-fleet-footer-navigation slot="navigation">
       <nav aria-label="Footer navigation"><a href="/">Meme Lab home</a><a href="/collection">Collection</a><a href="/how-it-works">How it works</a></nav>
       <p>Match the situation, then pick the perspective.</p>
