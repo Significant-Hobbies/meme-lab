@@ -24,14 +24,15 @@ function linesFor(ctx,text,maxWidth) {
 
 export function paintClip(canvas,video,caption,position='top') {
   if(!video.videoWidth)return;
-  const width=Math.min(960,Math.max(480,video.videoWidth));
+  const width=Math.round(Math.min(960,Math.max(480,video.videoWidth))/2)*2;
   const videoHeight=Math.round(video.videoHeight*width/video.videoWidth);
   const font=Math.round(width*.052),padding=Math.round(width*.045),lineHeight=Math.round(font*1.25);
   const ctx=canvas.getContext('2d');
   ctx.font=`650 ${font}px ui-sans-serif, system-ui, sans-serif`;
   const lines=linesFor(ctx,caption.trim(),width-padding*2);
   const captionHeight=caption.trim()?padding*2+lines.length*lineHeight:0;
-  if(canvas.width!==width||canvas.height!==videoHeight+captionHeight){canvas.width=width;canvas.height=videoHeight+captionHeight;}
+  const height=Math.ceil((videoHeight+captionHeight)/2)*2;
+  if(canvas.width!==width||canvas.height!==height){canvas.width=width;canvas.height=height;}
   ctx.fillStyle='#fff';ctx.fillRect(0,0,canvas.width,canvas.height);
   ctx.drawImage(video,0,position==='bottom'?0:captionHeight,width,videoHeight);
   ctx.font=`650 ${font}px ui-sans-serif, system-ui, sans-serif`;ctx.fillStyle='#111';ctx.textBaseline='top';
