@@ -1,6 +1,6 @@
 export function recordingFormat() {
   if(!globalThis.MediaRecorder||!HTMLCanvasElement.prototype.captureStream)return null;
-  for(const mime of ['video/mp4','video/webm;codecs=vp9','video/webm;codecs=vp8','video/webm']) {
+  for(const mime of ['video/mp4;codecs=avc1.640033','video/mp4;codecs=avc1.42002A','video/mp4','video/webm;codecs=vp9','video/webm;codecs=vp8','video/webm']) {
     if(MediaRecorder.isTypeSupported(mime))return {mime,extension:mime.startsWith('video/mp4')?'mp4':'webm'};
   }
   return null;
