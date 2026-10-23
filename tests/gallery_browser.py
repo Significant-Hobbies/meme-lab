@@ -2,7 +2,7 @@
 import json, os, shutil, subprocess, sys, time
 from pathlib import Path
 from urllib.request import urlopen
-from playwright.sync_api import sync_playwright
+from playwright.sync_api import sync_playwright, expect
 
 ROOT=Path(__file__).resolve().parents[1]
 FIX=ROOT/'tests/fixtures/public-ux'
@@ -57,7 +57,7 @@ try:
    page.locator('#catalogue-search').fill('unlikely-query-no-results');page.locator('#collection-empty').wait_for(state='visible')
    page.locator('#collection-clear').click();assert '3,000' in page.locator('#collection-count').inner_text()
    page.locator('#collection-next').click();assert 'Page 2' in page.locator('#collection-page-label').inner_text()
-   page.reload();page.wait_for_function('document.querySelector("#collection-grid").getAttribute("aria-busy")==="false"');assert 'Page 2' in page.locator('#collection-page-label').inner_text()
+   page.reload();expect(page.locator('#collection-grid')).to_have_attribute('aria-busy','false');assert 'Page 2' in page.locator('#collection-page-label').inner_text()
    page.locator('#collection-previous').click()
    page.locator('[data-format="gif"]').click()
    preview=page.locator('.collection-preview-button').first;preview.click();assert preview.get_attribute('aria-pressed')=='true';preview.click();assert preview.get_attribute('aria-pressed')=='false'
@@ -69,7 +69,7 @@ try:
    page.locator('#collection-situation').fill('The tests passed after I changed nothing and ran them again.')
    page.locator('#collection-audience').fill('Developers');page.locator('#collection-tone').select_option('deadpan')
    mode['captions']='hold';page.locator('#collection-generate').click();assert page.locator('#collection-generate').is_disabled()
-   page.wait_for_function('document.querySelector("#collection-generate").textContent.includes("Writing")')
+   expect(page.locator('#collection-generate')).to_have_text('Writing captions…')
    assert len(pending)==1
    pending.pop().fulfill(json={'decision':'captions','captions':captions});mode['captions']='success'
    page.locator('.clip-options button').first.wait_for();assert page.locator('.clip-options button').count()==3
@@ -106,7 +106,7 @@ try:
    page.keyboard.press('Escape');assert not page.locator('#collection-create').is_visible()
    # Static creation uses the selected template directly without recommendation.
    page.goto(BASE+'/collection?meme=drake-preference');page.locator('#collection-create').wait_for(state='visible');page.locator('#collection-situation').fill('We fixed one bug by rewriting the entire app.');page.locator('#collection-generate').click();page.locator('.studio-text').wait_for()
-   page.wait_for_function('document.querySelector(".studio-text").value==="One click is enough"')
+   expect(page.locator('.studio-text')).to_have_value('One click is enough')
    assert calls[-1]['candidate_id']=='drake-preference'
    page.locator('.studio-text').fill('Local text edit')
    with page.expect_download() as static:page.locator('[data-action="download"]').click()

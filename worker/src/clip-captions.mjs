@@ -63,12 +63,27 @@ export async function clipCaptions(request,env) {
 export async function clipMedia(id,fetchImpl=fetch,signal) {
   const url=clipSource(byId.get(id));
   if(!url)return json({error:'Unknown reaction clip.'},404);
+  let reader;
   try {
     const response=await fetchImpl(url,{redirect:'manual',signal:signal?AbortSignal.any([signal,AbortSignal.timeout(15000)]):AbortSignal.timeout(15000),headers:{Accept:'video/mp4'}});
     if(!response.ok||response.status!==200||response.headers.get('content-type')?.split(';')[0]!=='video/mp4') {await response.body?.cancel();throw new Error('Unavailable clip.');}
     if(Number(response.headers.get('content-length'))>MAX_CLIP_BYTES){await response.body?.cancel();throw new Error('Clip too large.');}
-    const bytes=await boundedBytes(response.body,MAX_CLIP_BYTES);
-    if(bytes.length<12||new TextDecoder().decode(bytes.slice(4,8))!=='ftyp')throw new Error('Invalid video.');
-    return new Response(bytes,{headers:{'Content-Type':'video/mp4','Content-Length':String(bytes.length),'Cache-Control':'public, max-age=86400','X-Content-Type-Options':'nosniff','X-Robots-Tag':'noindex, nofollow','Referrer-Policy':'no-referrer'}});
-  } catch {return json({error:'This clip could not be loaded. Try again or choose another reaction.'},502);}
+    reader=response.body?.getReader();if(!reader)throw new Error('Missing video.');
+    const prefix=[];let size=0;
+    while(size<12){const {done,value}=await reader.read();if(done)throw new Error('Invalid video.');size+=value.byteLength;if(size>MAX_CLIP_BYTES)throw new Error('Clip too large.');prefix.push(value);}
+    const signature=new Uint8Array(12);let offset=0;
+    for(const chunk of prefix){const part=chunk.subarray(0,12-offset);signature.set(part,offset);offset+=part.length;if(offset===12)break;}
+    if(new TextDecoder().decode(signature.slice(4,8))!=='ftyp')throw new Error('Invalid video.');
+    const stream=new ReadableStream({
+      async pull(controller){
+        try{
+          if(prefix.length){controller.enqueue(prefix.shift());return;}
+          const {done,value}=await reader.read();if(done){controller.close();return;}
+          size+=value.byteLength;if(size>MAX_CLIP_BYTES)throw new Error('Clip too large.');controller.enqueue(value);
+        }catch(error){await reader.cancel().catch(()=>{});controller.error(error);}
+      },
+      cancel(reason){return reader.cancel(reason);}
+    });
+    return new Response(stream,{headers:{'Content-Type':'video/mp4','Cache-Control':'public, max-age=86400','X-Content-Type-Options':'nosniff','X-Robots-Tag':'noindex, nofollow','Referrer-Policy':'no-referrer'}});
+  } catch {await reader?.cancel().catch(()=>{});return json({error:'This clip could not be loaded. Try again or choose another reaction.'},502);}
 }

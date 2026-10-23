@@ -67,6 +67,13 @@ test('static template briefs use the same tone and audience without changing ins
   const plan=planComposition({...body,candidate_id:'drake-preference'});assert.match(plan.content,/Caption style: deadpan/);assert.match(plan.content,/"audience":"Developers"/);assert.equal(plan.profile.id,'drake-preference');assert.throws(()=>planComposition({...body,candidate_id:'drake-preference',tone:'wrong'}));
 });
 
+test('video streaming enforces its byte limit without buffering the full clip',async()=>{
+  const signature=new Uint8Array([0,0,0,20,102,116,121,112,105,115,111,109]);let sent=0,cancelled=false;
+  const response=await clipMedia(clip.id,async()=>new Response(new ReadableStream({pull(controller){if(sent++===0)controller.enqueue(signature);else controller.enqueue(new Uint8Array(1024*1024));},cancel(){cancelled=true;}}),{headers:{'Content-Type':'video/mp4'}}));
+  assert.equal(response.status,200);assert.ok(sent<5,'Response must start before the full body is read');
+  await assert.rejects(response.arrayBuffer(),/Clip too large/);assert.equal(cancelled,true);
+});
+
 test('reference pages link directly into gallery creation and CSP admits only local/blob video',async()=>{
   for(const id of [clip.id,'drake-preference']){const response=await worker.fetch(new Request('https://example.test/memes/'+id),{});const html=await response.text();assert.ok(html.includes('/collection?meme='+id));assert.match(response.headers.get('Content-Security-Policy'),/media-src 'self' blob:/);}
 });

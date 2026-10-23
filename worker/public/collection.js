@@ -13,7 +13,7 @@ const featured=["drake-preference","gif-yrufixsnwfvcxaxpmx","success-kid","gif-s
 const params=new URL(location.href).searchParams;
 let format=["image","gif"].includes(params.get("type"))?params.get("type"):"all";
 let mood=Object.hasOwn(moods,params.get("mood"))?params.get("mood"):"";
-let page=Math.max(1,Number.parseInt(params.get("page"),10)||1),loading=false,catalogue=[],filtered=[],selected=null,generating=false;
+let page=Math.max(1,Number.parseInt(params.get("page"),10)||1),loading=false,catalogue=[],filtered=[],selected=null,generating=false,creatorVersion=0;
 const pageSize=24;
 search.value=params.get("q")||"";
 $("#collection-sort").value=params.get("sort")==="name"?"name":"featured";
@@ -80,6 +80,7 @@ async function loadCollection(){
 }
 
 function openCreator(meme){
+  creatorVersion++;
   staticStudio.close();clipStudio.close();selected=meme;generating=false;generate.disabled=false;generate.textContent="Generate captions →";createStatus.textContent="";
   $("#collection-create-title").textContent=meme.name;
   const preview=$(".collection-selected img");preview.hidden=false;preview.onerror=()=>{preview.hidden=true;};preview.src=meme.preview_url||meme.media_url||meme.image_url;preview.alt=meme.name;
@@ -89,22 +90,22 @@ function openCreator(meme){
   if(meme.media_type==="gif")void clipStudio.open(meme);
   $("#collection-situation").focus({preventScroll:true});
 }
-function closeCreator(){staticStudio.close();clipStudio.close();selected=null;generating=false;const url=new URL(location.href);url.searchParams.delete("meme");history.replaceState(null,"",url);}
+function closeCreator(){creatorVersion++;staticStudio.close();clipStudio.close();selected=null;generating=false;const url=new URL(location.href);url.searchParams.delete("meme");history.replaceState(null,"",url);}
 dialog.addEventListener("close",closeCreator);
 $("#collection-create-close").addEventListener("click",()=>dialog.close());
 dialog.addEventListener("click",event=>{if(event.target===dialog){const rect=dialog.getBoundingClientRect();if(event.clientX<rect.left||event.clientX>rect.right||event.clientY<rect.top||event.clientY>rect.bottom)dialog.close();}});
 $("#collection-clip-studio").addEventListener("clip-export-state",event=>{generate.disabled=generating||event.detail.exporting;});
 form.addEventListener("submit",async event=>{
   event.preventDefault();if(!selected||generating||clipStudio.exporting)return;
-  const candidate=selected,brief={comment:$("#collection-situation").value.trim(),audience:$("#collection-audience").value.trim(),tone:$("#collection-tone").value};
+  const version=creatorVersion,candidate=selected,brief={comment:$("#collection-situation").value.trim(),audience:$("#collection-audience").value.trim(),tone:$("#collection-tone").value};
   if(!brief.comment){$("#collection-situation").focus();return;}
   generating=true;generate.disabled=true;generate.textContent="Writing captions…";createStatus.textContent="";
   try {
     if(candidate.media_type==="gif")await clipStudio.generate(brief);
     else await staticStudio.open({...candidate,source_url:candidate.provenance?.source_url||candidate.media_url||candidate.image_url,from_collection:true},brief.comment,{audience:brief.audience,tone:brief.tone});
-    if(selected===candidate)(candidate.media_type==="gif"?clipStudio.host:staticStudio.host).scrollIntoView({behavior:matchMedia("(prefers-reduced-motion: reduce)").matches?"instant":"smooth",block:"start"});
-  }catch(error){if(selected===candidate)createStatus.textContent=error.message;}
-  finally{if(selected===candidate){generating=false;generate.disabled=clipStudio.exporting;generate.textContent="Generate new captions →";}}
+    if(version===creatorVersion)(candidate.media_type==="gif"?clipStudio.host:staticStudio.host).scrollIntoView({behavior:matchMedia("(prefers-reduced-motion: reduce)").matches?"instant":"smooth",block:"start"});
+  }catch(error){if(version===creatorVersion)createStatus.textContent=error.message;}
+  finally{if(version===creatorVersion){generating=false;generate.disabled=clipStudio.exporting;generate.textContent="Generate new captions →";}}
 });
 
 search.addEventListener("input",()=>{if(!loading&&failure.hidden)filterCollection();});
