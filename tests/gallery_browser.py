@@ -124,7 +124,7 @@ try:
    assert not page.locator('#collection-create').evaluate('(node)=>node.scrollWidth>node.clientWidth')
    page.locator('.studio-grid').scroll_into_view_if_needed();page.screenshot(path=str(OUT/f'static-editor-{width}.png'))
    mode['library']='error';page.goto(BASE+'/collection');page.locator('#collection-library-status').wait_for(state='visible');assert '3,000' in page.locator('#collection-count').inner_text()
-   mode['library']='success';page.reload();page.locator('#collection-library-status').wait_for(state='hidden');assert all_count in page.locator('#collection-count').inner_text()
+   mode['library']='success';page.reload();expect(page.locator('#collection-count')).to_contain_text(all_count);page.locator('#collection-library-status').wait_for(state='hidden')
    assert not errors,errors
    report['widths'].append({'width':width,'passed':True,'export':{'duration':duration,'width':stream['width'],'height':stream['height'],'codec':stream['codec_name'],'bytes':file.stat().st_size},'exported_file_played':True})
    context.close()
