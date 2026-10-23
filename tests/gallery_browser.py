@@ -12,13 +12,16 @@ PORT='4334'
 BASE='http://127.0.0.1:'+PORT
 proc=subprocess.Popen(['node','scripts/preview-landing.mjs',PORT],cwd=ROOT,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
 captions=['Changed nothing. Fixed everything.','The fix was running it again.','My contribution: the up arrow.']
+extras=json.loads((ROOT/'worker/public/clips.json').read_text())
+clip_count=f'{1195+len(extras):,}'
+all_count=f'{3000+len(extras):,}'
 report={'synthetic_ai':True,'synthetic_clip':True,'widths':[]}
 try:
  for _ in range(100):
   try:urlopen(BASE).close();break
   except Exception:time.sleep(.1)
  with sync_playwright() as p:
-  executable=shutil.which('chromium')
+  executable=shutil.which('google-chrome') or shutil.which('chromium')
   if not executable and Path('/Applications/Google Chrome.app/Contents/MacOS/Google Chrome').exists():executable='/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'
   browser=p.chromium.launch(**({'executable_path':executable} if executable else {}),args=['--no-sandbox'])
   for width in [390,768,1440]:
@@ -51,11 +54,11 @@ try:
    page.goto(BASE+'/collection');page.locator('.collection-create-button').first.wait_for()
    assert page.locator('.collection-card').count()==24
    assert not page.evaluate('document.documentElement.scrollWidth>innerWidth')
-   page.locator('[data-format="gif"]').click();assert '1,195' in page.locator('#collection-count').inner_text()
+   page.locator('[data-format="gif"]').click();assert clip_count in page.locator('#collection-count').inner_text()
    assert page.locator('.media-kind').first.inner_text()=='CLIP'
    page.locator('[data-mood="awkward"]').click();assert 'mood=awkward' in page.url
    page.locator('#catalogue-search').fill('unlikely-query-no-results');page.locator('#collection-empty').wait_for(state='visible')
-   page.locator('#collection-clear').click();assert '3,000' in page.locator('#collection-count').inner_text()
+   page.locator('#collection-clear').click();assert all_count in page.locator('#collection-count').inner_text()
    page.locator('#collection-next').click();assert 'Page 2' in page.locator('#collection-page-label').inner_text()
    page.reload();expect(page.locator('#collection-grid')).to_have_attribute('aria-busy','false');assert 'Page 2' in page.locator('#collection-page-label').inner_text()
    page.locator('#collection-previous').click()
@@ -70,6 +73,9 @@ try:
    page.locator('#collection-audience').fill('Developers');page.locator('#collection-tone').select_option('deadpan')
    mode['captions']='hold';page.locator('#collection-generate').click();assert page.locator('#collection-generate').is_disabled()
    expect(page.locator('#collection-generate')).to_have_text('Writing captions…')
+   for _ in range(200):
+    if pending:break
+    page.wait_for_timeout(10)
    assert len(pending)==1
    pending.pop().fulfill(json={'decision':'captions','captions':captions});mode['captions']='success'
    page.locator('.clip-options button').first.wait_for();assert page.locator('.clip-options button').count()==3

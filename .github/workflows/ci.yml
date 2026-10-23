@@ -10,8 +10,42 @@ on:
         description: Measure the staged reaction video sources and retain a qualification artifact
         type: boolean
         default: false
+      verify_gallery:
+        description: Run the real responsive gallery and video export browser workflow
+        type: boolean
+        default: false
 
 jobs:
+  gallery-browser:
+    if: github.event_name == 'workflow_dispatch' && inputs.verify_gallery
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+      - name: Install browser verification tools
+        run: |
+          python -m pip install playwright==1.61.0
+          if ! command -v google-chrome >/dev/null; then
+            python -m playwright install --with-deps chromium
+          fi
+          if ! command -v ffprobe >/dev/null; then
+            sudo apt-get update -qq
+            sudo apt-get install -y ffmpeg
+          fi
+      - name: Verify gallery creation and exported video
+        run: python3 tests/gallery_browser.py .fleet-local/gallery
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: gallery-browser-evidence
+          retention-days: 7
+          path: .fleet-local/gallery/
   qualify-clips:
     if: github.event_name == 'workflow_dispatch' && inputs.qualify_clips
     runs-on: ubuntu-latest
