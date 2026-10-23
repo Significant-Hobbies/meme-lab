@@ -62,11 +62,11 @@ export async function recordClip(video,canvas,paint,{signal,onProgress,fps=30}={
   if(video.currentTime>.001){const seek=videoEvent(video,'seeked',{signal});video.currentTime=0;await seek;}
   signal?.throwIfAborted();paint();
   const loop=video.loop;video.loop=false;
-  const frameRate=Number.isFinite(fps)?Math.max(10,Math.min(60,fps)):30;
+  const frameRate=Number.isFinite(fps)?Math.max(30,Math.min(60,fps)):30;
   const stream=canvas.captureStream(frameRate);
   let recorder,frame,timer;
   try {
-    const bitrate=Math.round(Math.max(2_000_000,Math.min(20_000_000,canvas.width*canvas.height*frameRate*.18)));
+    const bitrate=Math.round(Math.max(8_000_000,Math.min(20_000_000,canvas.width*canvas.height*frameRate*.18)));
     recorder=new MediaRecorder(stream,{mimeType:format.mime,videoBitsPerSecond:bitrate});
     const chunks=[];
     const result=new Promise((resolve,reject)=>{
