@@ -1,0 +1,32 @@
+{
+  "schema_version": 2,
+  "references": 4315,
+  "reference_ids": 4321,
+  "aliases": 6,
+  "assets": 4315,
+  "browse_references": 4297,
+  "visual_annotations": 4,
+  "excluded_references": 1,
+  "unavailable_references": 17,
+  "editorial_profiles": 77,
+  "collections": 7,
+  "retrieval_references": 3000,
+  "retrieval_eligible_references": 2976,
+  "unmeasured_assets": 38,
+  "human_validated": false,
+  "review_states": {
+    "editorial": 77,
+    "visual_annotation": 2,
+    "unreviewed": 4235,
+    "alias": 6,
+    "excluded": 1
+  },
+  "encoded_resolutions": {
+    "1080p": 14,
+    "720p": 8,
+    "below_720p": 4255,
+    "unmeasured": 38
+  },
+  "unknown_use_context": 1300,
+  "unknown_near_miss": 1300
+}

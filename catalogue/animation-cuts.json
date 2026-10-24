@@ -1,0 +1,89 @@
+{
+  "source": {
+    "title": "Big Buck Bunny (Sunflower render)",
+    "url": "https://download.blender.org/demo/movies/BBB/bbb_sunflower_1080p_30fps_normal.mp4.zip",
+    "archive_sha256": "e320fef389ec749117d0c1583945039266a40f25483881c2ff0d33207e62b362",
+    "source_sha256": "ae51005850b0ff757fe60c3dd7a12d754d3cd2397d87d939b55235e457f97658",
+    "license_url": "https://creativecommons.org/licenses/by/3.0/",
+    "license_source_url": "https://peach.blender.org/about/",
+    "attribution": "Big Buck Bunny \u00b7 (c) copyright Blender Foundation \u00b7 www.bigbuckbunny.org \u00b7 creativecommons.org/licenses/by/3.0/ \u00b7 Excerpt; caption added; audio removed.",
+    "width": 1920,
+    "height": 1080,
+    "fps": 30,
+    "copyright": "(c) copyright Blender Foundation | www.bigbuckbunny.org"
+  },
+  "clips": [
+    {
+      "id": "clip-bbb-back-at-it",
+      "slug": "bbb-back-at-it",
+      "start_seconds": 57,
+      "duration_seconds": 5
+    },
+    {
+      "id": "clip-bbb-flowers",
+      "slug": "bbb-flowers",
+      "start_seconds": 68,
+      "duration_seconds": 6
+    },
+    {
+      "id": "clip-bbb-small-joy",
+      "slug": "bbb-small-joy",
+      "start_seconds": 82,
+      "duration_seconds": 6
+    },
+    {
+      "id": "clip-bbb-what-now",
+      "slug": "bbb-what-now",
+      "start_seconds": 132,
+      "duration_seconds": 4
+    },
+    {
+      "id": "clip-bbb-not-impressed",
+      "slug": "bbb-not-impressed",
+      "start_seconds": 161,
+      "duration_seconds": 3
+    },
+    {
+      "id": "clip-bbb-patience",
+      "slug": "bbb-patience",
+      "start_seconds": 193,
+      "duration_seconds": 2.5
+    },
+    {
+      "id": "clip-bbb-changed-things",
+      "slug": "bbb-changed-things",
+      "start_seconds": 223.7,
+      "duration_seconds": 3.3
+    },
+    {
+      "id": "clip-bbb-group-chat",
+      "slug": "bbb-group-chat",
+      "start_seconds": 328,
+      "duration_seconds": 5
+    },
+    {
+      "id": "clip-bbb-waiting",
+      "slug": "bbb-waiting",
+      "start_seconds": 373,
+      "duration_seconds": 4
+    },
+    {
+      "id": "clip-bbb-processing",
+      "slug": "bbb-processing",
+      "start_seconds": 389,
+      "duration_seconds": 4
+    },
+    {
+      "id": "clip-bbb-delayed-fall",
+      "slug": "bbb-delayed-fall",
+      "start_seconds": 437,
+      "duration_seconds": 5
+    },
+    {
+      "id": "clip-bbb-peace",
+      "slug": "bbb-peace",
+      "start_seconds": 475,
+      "duration_seconds": 5
+    }
+  ]
+}

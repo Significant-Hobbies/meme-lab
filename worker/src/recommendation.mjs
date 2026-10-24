@@ -1,4 +1,4 @@
-import {catalogue} from './catalogue.stage3000.generated.mjs';
+import {catalogue} from './catalogue.mjs';
 import {staticCandidateSignals} from './candidate-signals.mjs';
 
 export const MAX_RECOMMENDATIONS=5;
@@ -13,6 +13,7 @@ const publicById=new Map(catalogue.map(record=>{
     image_url:record.image_url,
     media_type:record.media_type??'image',
     media_url:record.media_url??record.image_url,
+    media_revision:record.media_revision,
     preview_url:record.preview_url??record.image_url,
     mime_type:record.mime_type,
     source_url:record.provenance?.source_url??record.source_url??record.image_url,

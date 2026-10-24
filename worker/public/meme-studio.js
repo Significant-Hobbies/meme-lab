@@ -79,7 +79,7 @@ export class MemeStudio {
     return data;
   }
   async fetchImage(signal) {
-    const response=await fetch(`${this.mediaBase}/api/create/media/${encodeURIComponent(this.candidate.id)}`,{signal});
+    const response=await fetch(`${this.mediaBase}/api/create/media/${encodeURIComponent(this.candidate.id)}${this.candidate.media_revision?'?v='+this.candidate.media_revision:''}`,{signal});
     if(!response.ok)throw new Error('Could not load the source image.');
     const image=await createImageBitmap(await response.blob());
     if(!image.width||!image.height||image.width>4096||image.height>4096||image.width*image.height>12_000_000) {image.close();throw new Error('This source image is too large to edit.');}

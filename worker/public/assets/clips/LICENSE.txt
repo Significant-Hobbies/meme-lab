@@ -1,0 +1,11 @@
+Big Buck Bunny excerpts
+
+(c) copyright Blender Foundation | www.bigbuckbunny.org
+Licensed under Creative Commons Attribution 3.0 Unported.
+https://creativecommons.org/licenses/by/3.0/
+License statement: https://peach.blender.org/about/
+Official original: https://download.blender.org/demo/movies/BBB/bbb_sunflower_1080p_30fps_normal.mp4.zip
+
+Changes: short excerpts, H.264 encoding at original 1920x1080, audio omitted.
+Meme Lab adds user captions and a visible credit when exporting.
+The film creator does not endorse captions added by users.

@@ -1,6 +1,7 @@
 import {MemeStudio} from "./meme-studio.js";
 import {ClipStudio} from "./clip-studio.js";
 import {creationMediaUrl} from "./meme-media.js";
+import {taxonomy,catalogueViews,browseCatalogue,inferredFacets} from "./catalogue-model.js";
 
 for(const style of document.querySelectorAll("link[data-collection-style]"))style.media="all";
 const $=selector=>document.querySelector(selector);
@@ -9,18 +10,19 @@ const failure=$("#collection-error"),failureMessage=$("#collection-error-message
 const pagination=$("#collection-pagination"),previous=$("#collection-previous"),next=$("#collection-next");
 const dialog=$("#collection-create"),form=$("#collection-caption-form"),generate=$("#collection-generate"),createStatus=$("#collection-create-status");
 const staticStudio=new MemeStudio($("#collection-static-studio")),clipStudio=new ClipStudio($("#collection-clip-studio"));
-const moods={awkward:/awkward|embarrass|cringe/i,celebrating:/success|victory|celebrat|proud|triumph/i,waiting:/wait|bored|impatien|delay/i,chaos:/chaos|panic|disaster|overwhelm/i,unimpressed:/unimpress|eye.roll|disappoint|skepti/i};
-const featured=["drake-preference","gif-yrufixsnwfvcxaxpmx","success-kid","gif-s2e0eucjhwjr6x9pbw","two-buttons","gif-65odcwm00nvmeylsx3","distracted-boyfriend","gif-jumltr3dhegpw"];
+const moods={awkward:"awkwardness",celebrating:"celebration",waiting:"impatience",chaos:"panic",unimpressed:"skepticism",confused:"confusion"};
 const params=new URL(location.href).searchParams;
 let format=["image","gif"].includes(params.get("type"))?params.get("type"):"all";
 let mood=Object.hasOwn(moods,params.get("mood"))?params.get("mood"):"";
 let page=Math.max(1,Number.parseInt(params.get("page"),10)||1),loading=false,catalogue=[],filtered=[],selected=null,generating=false,creatorVersion=0;
+let shelves=[],collection=params.get("collection")||(["q","type","mood","context","intensity","meme"].some(key=>params.has(key))?"all":"selected");
+let context=Object.hasOwn(taxonomy.contexts,params.get("context"))?params.get("context"):"",intensity=["quiet","expressive","exaggerated"].includes(params.get("intensity"))?params.get("intensity"):"";
 const pageSize=24;
 search.value=params.get("q")||"";
 $("#collection-sort").value=params.get("sort")==="name"?"name":"featured";
 
-function updateUrl(){const url=new URL(location.href);for(const [key,value] of Object.entries({q:search.value.trim(),type:format==="all"?"":format,mood,page:page===1?"":page,sort:$("#collection-sort").value==="featured"?"":"name"})){if(value)url.searchParams.set(key,String(value));else url.searchParams.delete(key);}history.replaceState(null,"",url);}
-function controls(){for(const button of document.querySelectorAll("[data-format]"))button.setAttribute("aria-pressed",String(button.dataset.format===format));for(const button of document.querySelectorAll("[data-mood]"))button.setAttribute("aria-pressed",String(button.dataset.mood===mood));$("#collection-clear").hidden=!search.value&&!mood&&format==="all";}
+function updateUrl(){const url=new URL(location.href);for(const [key,value] of Object.entries({q:search.value.trim(),type:format==="all"?"":format,mood,collection,context,intensity,page:page===1?"":page,sort:$("#collection-sort").value==="featured"?"":"name"})){if(value)url.searchParams.set(key,String(value));else url.searchParams.delete(key);}history.replaceState(null,"",url);}
+function controls(){if(context||intensity)$("#collection-refine").open=true;for(const button of document.querySelectorAll("[data-format]"))button.setAttribute("aria-pressed",String(button.dataset.format===format));for(const button of document.querySelectorAll("[data-mood]"))button.setAttribute("aria-pressed",String(button.dataset.mood===mood));$("#collection-clear").hidden=!search.value&&!mood&&!context&&!intensity&&format==="all"&&collection==="selected";$("#collection-shelf").value=collection;$("#collection-context").value=context;$("#collection-intensity").value=intensity;const shelf=shelves.find(shelf=>shelf.id===collection);$("#collection-shelf-description").textContent=shelf?.description||(collection==="selected"?"A considered starting point. Explore the full catalog whenever you want.":"Explore the full catalog by feeling, situation, and format.");}
 
 function imageFor(meme,index){
   const frame=Object.assign(document.createElement("div"),{className:"collection-media"});
@@ -32,8 +34,9 @@ function imageFor(meme,index){
   button.setAttribute("aria-label",`${meme.media_type==="gif"?"Preview":"Create with"} ${meme.name}`);
   if(meme.media_type==="gif"){
     const play=Object.assign(document.createElement("span"),{className:"collection-play",textContent:"▶"});play.setAttribute("aria-hidden","true");
-    button.setAttribute("aria-pressed","false");button.addEventListener("click",()=>{const playing=button.getAttribute("aria-pressed")!=="true";button.setAttribute("aria-pressed",String(playing));button.setAttribute("aria-label",`${playing?"Pause":"Preview"} ${meme.name}`);image.src=playing?(meme.media_url||meme.image_url):preview;play.textContent=playing?"Ⅱ":"▶";});
-    button.append(image,play);
+    const video=meme.mime_type?.startsWith("video/")?Object.assign(document.createElement("video"),{muted:true,loop:true,playsInline:true,hidden:true}):null;
+    button.setAttribute("aria-pressed","false");button.addEventListener("click",async()=>{const playing=button.getAttribute("aria-pressed")!=="true";button.setAttribute("aria-pressed",String(playing));button.setAttribute("aria-label",`${playing?"Pause":"Preview"} ${meme.name}`);play.textContent=playing?"Ⅱ":"▶";if(video){image.hidden=playing;video.hidden=!playing;if(playing){if(!video.src)video.src='/api/clips/media/'+encodeURIComponent(meme.id)+(meme.media_revision?'?v='+meme.media_revision:'');try{await video.play();}catch{video.hidden=true;image.hidden=false;button.setAttribute("aria-pressed","false");play.textContent="▶";}}else video.pause();}else image.src=playing?(meme.media_url||meme.image_url):preview;});
+    button.append(image,...(video?[video]:[]),play);
   }else{button.append(image);button.addEventListener("click",()=>openCreator(meme));}
   frame.append(button,Object.assign(document.createElement("span"),{className:"media-kind",textContent:meme.media_type==="gif"?"CLIP":"TEMPLATE"}));
   return frame;
@@ -57,10 +60,7 @@ function render(){
 }
 
 function filterCollection(reset=true){
-  const words=search.value.trim().toLocaleLowerCase().split(/\s+/u).filter(Boolean);
-  filtered=catalogue.filter(meme=>{const text=[meme.name,meme.message,meme.relational_pattern,meme.example_context,...meme.tags].join(" ").toLocaleLowerCase();return (format==="all"||meme.media_type===format)&&(!mood||moods[mood].test(text))&&words.every(word=>text.includes(word));});
-  if($("#collection-sort").value==="name")filtered.sort((a,b)=>a.name.localeCompare(b.name));
-  else filtered.sort((a,b)=>{const ai=featured.indexOf(a.id),bi=featured.indexOf(b.id);return (ai<0?featured.length:ai)-(bi<0?featured.length:bi)||Number(Boolean(b.video_evidence))-Number(Boolean(a.video_evidence));});
+  filtered=browseCatalogue(catalogue,{query:search.value,format,reaction:moods[mood]||"",context,intensity,collection,collections:shelves,sort:$("#collection-sort").value});
   if(reset)page=1;render();
 }
 
@@ -73,18 +73,23 @@ function showLoading(){
 async function loadCollection(){
   if(loading)return;loading=true;retry.disabled=true;showLoading();
   try{
-    const response=await fetch("/collection.json");if(!response.ok)throw new Error("Could not load the collection.");
-    const rows=await response.json();if(!Array.isArray(rows)||rows.some(row=>!row||typeof row.id!=="string"||typeof row.name!=="string"||!Array.isArray(row.tags)))throw new Error("The collection response was unreadable.");
-    catalogue=rows;
     const libraryStatus=$("#collection-library-status");libraryStatus.hidden=true;
     try{
-      const more=await fetch("/clips.json");if(!more.ok)throw new Error("Clip library unavailable");
-      const extras=await more.json();if(!Array.isArray(extras)||extras.some(row=>!row||typeof row.id!=="string"||typeof row.name!=="string"||!Array.isArray(row.tags)))throw new Error("Unreadable clip library");
-      catalogue=[...rows,...extras];
-      const featuredClips=extras.slice(0,4);for(const [index,clip] of featuredClips.entries())featured[index*2+1]=clip.id;
-    }catch{libraryStatus.textContent="Additional clips could not be loaded. The original collection is still available. Reload to try again.";libraryStatus.hidden=false;}
+      const response=await fetch("/catalogue-v2.json");if(!response.ok)throw new Error("Catalog unavailable");
+      const model=await response.json();catalogue=catalogueViews(model);shelves=model.collections;
+    }catch{
+      const response=await fetch("/collection.json");if(!response.ok)throw new Error("Could not load the collection.");
+      const rows=await response.json();if(!Array.isArray(rows)||rows.some(row=>!row||typeof row.id!=="string"||typeof row.name!=="string"||!Array.isArray(row.tags)))throw new Error("The collection response was unreadable.");
+      let extras=[];try{const more=await fetch("/clips.json");if(!more.ok)throw new Error();extras=await more.json();if(!Array.isArray(extras)||extras.some(row=>!row||typeof row.id!=="string"||!Array.isArray(row.tags)))throw new Error();}catch{extras=[];}
+      const originals=[...rows,...extras],aliases=new Map();for(const record of originals)if(record.canonical_id&&record.canonical_id!==record.id)aliases.set(record.canonical_id,[...(aliases.get(record.canonical_id)||[]),record.id]);
+      catalogue=originals.filter(record=>(!record.canonical_id||record.canonical_id===record.id)&&(!record.catalogue_status||record.catalogue_status==="active")).map(record=>({...record,alias_ids:aliases.get(record.id)||[],facets:record.catalogue_profile?.facets||inferredFacets(record),review:{state:record.catalogue_profile?"editorial":"unreviewed"},search_text:[record.name,record.message,record.relational_pattern,...record.tags].join(" ").toLocaleLowerCase()}));shelves=[];collection="all";
+      libraryStatus.textContent="Selected collections are unavailable. Showing the original catalog; reload to try again.";libraryStatus.hidden=false;
+    }
+    const shelfSelect=$("#collection-shelf");shelfSelect.replaceChildren();for(const shelf of [{id:"selected",title:"Selected reactions"},{id:"all",title:"Every reaction"},...shelves])shelfSelect.append(Object.assign(document.createElement("option"),{value:shelf.id,textContent:shelf.title}));
+    if(!["all","selected",...shelves.map(shelf=>shelf.id)].includes(collection))collection="all";
+    for(const [selector,values,placeholder] of [["#collection-context",taxonomy.contexts,"Any situation"],["#collection-intensity",Object.fromEntries(Object.entries(taxonomy.intensity).filter(([id])=>id!=="unknown")),"Any energy"]]){const select=$(selector);select.replaceChildren(Object.assign(document.createElement("option"),{value:"",textContent:placeholder}));for(const [id,label] of Object.entries(values))select.append(Object.assign(document.createElement("option"),{value:id,textContent:label}));}
     $(".beta").textContent=catalogue.length.toLocaleString()+" REACTIONS";filterCollection(false);
-    const id=new URL(location.href).searchParams.get("meme");if(id){const meme=catalogue.find(item=>item.id===id);if(meme)openCreator(meme);}
+    const id=new URL(location.href).searchParams.get("meme");if(id){const meme=catalogue.find(item=>item.id===id||item.alias_ids?.includes(id));if(meme)openCreator(meme);}
   }catch(error){grid.replaceChildren();count.textContent="Collection unavailable";failureMessage.textContent=error.message;failure.hidden=false;empty.hidden=true;pagination.hidden=true;}
   finally{loading=false;retry.disabled=false;grid.setAttribute("aria-busy","false");}
 }
@@ -119,10 +124,13 @@ form.addEventListener("submit",async event=>{
   finally{if(version===creatorVersion){generating=false;generate.disabled=clipStudio.exporting;generate.textContent="Generate new captions →";}}
 });
 
-search.addEventListener("input",()=>{if(!loading&&failure.hidden)filterCollection();});
+search.addEventListener("input",()=>{if(!loading&&failure.hidden){if(collection==="selected"&&search.value.trim())collection="all";filterCollection();}});
 for(const button of document.querySelectorAll("[data-format]"))button.addEventListener("click",()=>{format=button.dataset.format;filterCollection();});
 for(const button of document.querySelectorAll("[data-mood]"))button.addEventListener("click",()=>{mood=mood===button.dataset.mood?"":button.dataset.mood;filterCollection();});
 $("#collection-sort").addEventListener("change",()=>filterCollection());
-$("#collection-clear").addEventListener("click",()=>{search.value="";format="all";mood="";filterCollection();search.focus();});
+$("#collection-shelf").addEventListener("change",event=>{collection=event.target.value;filterCollection();});
+$("#collection-context").addEventListener("change",event=>{context=event.target.value;filterCollection();});
+$("#collection-intensity").addEventListener("change",event=>{intensity=event.target.value;filterCollection();});
+$("#collection-clear").addEventListener("click",()=>{search.value="";format="all";mood="";context="";intensity="";collection="all";filterCollection();search.focus();});
 previous.addEventListener("click",()=>{page--;render();grid.scrollIntoView({behavior:"smooth",block:"start"});});next.addEventListener("click",()=>{page++;render();grid.scrollIntoView({behavior:"smooth",block:"start"});});
 retry.addEventListener("click",loadCollection);controls();await loadCollection();

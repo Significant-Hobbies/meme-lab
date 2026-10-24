@@ -119,7 +119,7 @@ test('known template makes one bounded, attributed gateway request and returns p
   const calls=[];
   const response=await composeMeme(request({}, {'cf-connecting-ip':'192.0.2.1'}),{FREE_AI:{fetch:async req=>{calls.push(req);return completion(valid);}}});
   assert.equal(response.status,200);const body=await response.json();
-  assert.equal(body.layers.length,2);assert.equal(body.media_url,'/api/create/media/drake-preference');
+  assert.equal(body.layers.length,2);assert.match(body.media_url,/^\/api\/create\/media\/drake-preference\?v=[a-f0-9]{64}$/);
   assert.equal(calls.length,1);const sent=calls[0];const payload=await sent.json();
   assert.equal(sent.headers.get('x-gateway-project-id'),'meme-lab');assert.equal(sent.headers.get('cf-connecting-ip'),'192.0.2.1');
   assert.equal(CAPTION_MODEL,'auto');assert.equal(payload.model,'auto');

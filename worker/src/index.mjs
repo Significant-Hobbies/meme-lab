@@ -1,5 +1,4 @@
-import {catalogue} from './catalogue.stage3000.generated.mjs';
-import {clipLibrary} from './clip-library.generated.mjs';
+import {catalogue,clipLibrary} from './catalogue.mjs';
 import {createGatewayClassifierFetch,hasMultiplePerspectives,humourBelongs,needsSeriousHandling,rankCandidates,rankCandidatesByPerspective,requiresFactualAnswer} from './classification.mjs';
 import {withClassifierDeadline} from './classifier-deadline.mjs';
 import {MAX_RECOMMENDATIONS,presentSelection,selectionFromRanking} from './recommendation.mjs';
@@ -158,7 +157,7 @@ function memePage(record) {
     <a class="back-link" href="/collection">&larr; Back to the collection</a>
     <article class="meme-detail">
       <div class="meme-detail-media">
-        ${mediaUrl?`<img src="${mediaUrl}" alt="${name} meme reference" referrerpolicy="no-referrer">`:'<span class="media-fallback">Preview unavailable</span>'}
+        ${mediaUrl?record.mime_type?.startsWith('video/')?`<video controls playsinline loop muted preload="metadata" poster="${previewUrl}" src="/api/clips/media/${encodeURIComponent(record.id)}${record.media_revision?'?v='+record.media_revision:''}" aria-label="${name} reaction clip"></video>`:`<img src="${mediaUrl}" alt="${name} meme reference" referrerpolicy="no-referrer">`:'<span class="media-fallback">Preview unavailable</span>'}
         ${record.media_type==='gif'?'<span class="media-kind">GIF</span>':''}
       </div>
       <div class="meme-detail-copy">
@@ -166,13 +165,16 @@ function memePage(record) {
         <h1>${name}</h1>
         <p class="meme-definition">${escapeHtml(record.message)}</p>
         <dl class="meme-guide">
-          ${record.catalogue_scope==='gallery'?`<div><dt>Source quality</dt><dd>${record.video_evidence.width} × ${record.video_evidence.height} pixels · ${record.video_evidence.fps} fps · ${record.video_evidence.duration.toFixed(1)} seconds</dd></div><div><dt>About this reaction</dt><dd>Browse and create using the source tags. This clip has not been evaluated for automatic recommendations.</dd></div>`:`<div><dt>What it expresses</dt><dd>${escapeHtml(record.relational_pattern)}</dd></div><div><dt>Example</dt><dd>${escapeHtml(record.example_context)}</dd></div><div><dt>When not to use it</dt><dd>${escapeHtml(record.near_miss_context)}</dd></div>`}
+          ${record.video_evidence?`<div><dt>Source dimensions</dt><dd>${record.video_evidence.width} × ${record.video_evidence.height} encoded pixels · ${record.video_evidence.fps} fps · ${record.video_evidence.duration.toFixed(1)} seconds</dd></div>`:''}
+          ${record.catalogue_scope!=='gallery'||record.catalogue_profile?`<div><dt>What it expresses</dt><dd>${escapeHtml(record.relational_pattern)}</dd></div><div><dt>Example</dt><dd>${escapeHtml(record.example_context)}</dd></div><div><dt>When not to use it</dt><dd>${escapeHtml(record.near_miss_context)}</dd></div>`:''}
+          ${record.catalogue_scope==='gallery'?'<div><dt>About this reaction</dt><dd>This clip is available to browse and caption. It has not been evaluated for automatic recommendations.</dd></div>':''}
         </dl>
         <ul class="tag-list meme-detail-tags" aria-label="Related moods">${tags}</ul>
         <div class="meme-detail-actions">
           ${record.media_type==='gif'||creationMediaUrl(record)?`<a class="primary" href="/collection?meme=${encodeURIComponent(record.id)}">${record.media_type==='gif'?'Caption this clip':'Make this meme'} <span aria-hidden="true">&rarr;</span></a>`:''}
           <a href="/">Find a meme for your situation</a>
-          ${record.image_url?`<a class="source-link" href="${escapeHtml(record.image_url)}" target="_blank" rel="noopener noreferrer">${sourceNote}</a>`:''}
+          ${record.image_url?`<a class="source-link" href="${escapeHtml(record.provenance?.source_url||record.image_url)}" target="_blank" rel="noopener noreferrer">${sourceNote}</a>`:''}
+          ${record.attribution?`<p class="source-credit">${escapeHtml(record.attribution)}</p>`:''}
         </div>
       </div>
     </article>
@@ -222,7 +224,7 @@ function memeNotFound(request,asMarkdown) {
 }
 
 function sitemap() {
-  const urls=[...PUBLIC_ROUTES,...catalogue.map(publicMemePath)];
+  const urls=[...PUBLIC_ROUTES,...catalogue.filter(record=>record.id===record.canonical_id&&record.catalogue_status==='active').map(publicMemePath)];
   return `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls.map(path=>`  <url><loc>${SITE_ORIGIN}${path}</loc></url>`).join('\n')}\n</urlset>\n`;
 }
 
@@ -430,7 +432,8 @@ export default {
     });
     if(isRead&&url.pathname.startsWith('/api/clips/media/'))return withEndpointMeasurement(request,env,ctx,'/api/clips/media/{id}',async()=>{
       let id;try{id=decodeURIComponent(url.pathname.slice('/api/clips/media/'.length));}catch{return json({error:'Unknown reaction clip.'},400);}
-      return forHead(request,await clipMedia(id,fetch,request.signal));
+      const sourceFetch=(source,options)=>source.startsWith('/assets/clips/')?env.ASSETS.fetch(new Request(new URL(source,request.url),options)):fetch(source,options);
+      return forHead(request,await clipMedia(id,sourceFetch,request.signal));
     });
     if(url.pathname==='/api/create'&&request.method==='POST') return withEndpointMeasurement(request,env,ctx,'/api/create',()=>{
       const origin=request.headers.get('origin');
@@ -463,7 +466,8 @@ export default {
       try { id=decodeURIComponent(slug); }
       catch { return forHead(request,memeNotFound(request,markdownPath)); }
       const record=catalogueById.get(id);
-      if(!record) return forHead(request,memeNotFound(request,markdownPath));
+      if(!record||record.catalogue_status!=='active') return forHead(request,memeNotFound(request,markdownPath));
+      if(record.canonical_id&&record.canonical_id!==id) return forHead(request,Response.redirect(`${SITE_ORIGIN}/memes/${encodeURIComponent(record.canonical_id)}${markdownPath?'.md':''}`,308));
       if(markdownPath||wantsMarkdown(request)) {
         return forHead(request,textResponse(memeMarkdown(record),{contentType:'text/markdown; charset=utf-8'}));
       }

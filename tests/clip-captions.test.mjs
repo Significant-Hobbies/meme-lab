@@ -2,6 +2,8 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 import {catalogue} from '../worker/src/catalogue.stage3000.generated.mjs';
+import {clipLibrary as unifiedClips} from '../worker/src/catalogue.mjs';
+
 import {clipSource,clipCaptions,clipMedia,validateClipCaptions,validateClipFrames} from '../worker/src/clip-captions.mjs';
 import {planComposition} from '../worker/src/meme-composition.mjs';
 import worker from '../worker/src/index.mjs';
@@ -13,6 +15,18 @@ const output={decision:'captions',captions:['Changed nothing. Fixed everything.'
 const frameBytes=await readFile(new URL('./fixtures/public-ux/frame.jpg',import.meta.url));
 const frames=[.2,.7,1.2].map(at_seconds=>({at_seconds,data_url:'data:image/jpeg;base64,'+frameBytes.toString('base64')}));
 const answer=(value=output,extra={})=>Response.json({model:'served-model',choices:[{finish_reason:'stop',message:{content:JSON.stringify(value)}}],...extra});
+
+test('licensed hosted animations are registered identities and enforce MP4 delivery',async()=>{
+  const record=unifiedClips.find(record=>record.id==='clip-bbb-delayed-fall');assert.ok(record);
+  assert.equal(clipSource(record),record.media_url);
+  assert.equal(clipSource({...record,id:'unregistered-external'}),null);
+  assert.equal(clipSource({...record,media_url:'https://example.com/movie.webm'}),null);
+  const mp4=new Uint8Array([0,0,0,20,102,116,121,112,105,115,111,109,0,0,0,0]);
+  const response=await clipMedia(record.id,async(url,options)=>{assert.equal(url,record.media_url);assert.equal(options.redirect,'manual');assert.equal(options.headers.Accept,'video/mp4');return new Response(mp4,{headers:{'Content-Type':'video/mp4'}});});
+  assert.equal(response.status,200);assert.equal(response.headers.get('content-type'),'video/mp4');assert.deepEqual(new Uint8Array(await response.arrayBuffer()),mp4);
+  assert.equal((await clipMedia(record.id,async()=>new Response('not a video at all',{headers:{'Content-Type':'video/mp4'}}))).status,502);
+  assert.equal((await clipMedia(record.id,async()=>new Response(mp4,{headers:{'Content-Type':'video/webm'}}))).status,502);
+});
 
 test('reaction video URLs derive only from the existing catalogue source',()=>{
   assert.equal(clipSource(clip),'https://media.giphy.com/media/YRuFixSNWFVcXaxpmX/giphy.mp4');

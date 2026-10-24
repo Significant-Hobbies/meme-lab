@@ -21,7 +21,7 @@ Meme Lab uses the owner-selected **Studio** system (A, selected 2026-10-04): a r
 - Keep result cards immediate and scannable: image, meme name, perspective, fit score, and quiet catalogue signals without generated reasoning.
 - Keep all four ranked backups visible and use their fit scores to make weak options obvious.
 - Keep one-tap feedback close to the result and state its 30-day retention.
-- Keep all 3,000 references searchable and paginated; no experimental/live filtering exists in the personal tool.
+- Start the collection with specific, curated reactions. Offer named shelves and composable format, mood, situation and energy filters, with the full usable catalog a single selection away. Keep aliases, unavailable sources and known source mismatches out of discovery without discarding their evidence.
 - Media provenance stays visible: distinguish CC0 open originals from source previews whose redistribution rights are not established.
 
 ## Responsive behavior

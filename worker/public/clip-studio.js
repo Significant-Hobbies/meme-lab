@@ -14,16 +14,16 @@ export class ClipStudio {
     this.video.addEventListener('play',()=>{this.$('[data-clip-action="play"]').textContent='Pause preview';this.animate();});
     this.video.addEventListener('pause',()=>{this.$('[data-clip-action="play"]').textContent='Play preview';cancelAnimationFrame(this.frame);this.paint();});
   }
-  paint(){paintClip(this.canvas,this.video,this.caption.value,this.$('#clip-position').value);}
+  paint(){paintClip(this.canvas,this.video,this.caption.value,this.$('#clip-position').value,{attribution:this.candidate?.attribution??''});}
   animate(){cancelAnimationFrame(this.frame);if(this.video.paused)return;this.paint();this.frame=requestAnimationFrame(()=>this.animate());}
   message(text,error=false){this.$('.clip-status').textContent=text;this.$('.clip-status').classList.toggle('error',error);}
   close(){this.version++;this.abort?.abort();this.generationAbort?.abort();this.generationAbort=null;this.exportAbort?.abort();this.video.pause();this.video.removeAttribute('src');this.video.load();if(this.objectUrl)URL.revokeObjectURL(this.objectUrl);this.objectUrl=null;this.ready=false;this.exporting=false;this.generating=false;cancelAnimationFrame(this.frame);this.host.hidden=true;}
-  open(candidate){this.close();this.candidate=candidate;this.blocked=false;this.caption.value='';this.$('.clip-options').replaceChildren();this.$('#clip-position').value='top';this.$('.clip-source').href=candidate.provenance?.source_url||candidate.media_url;this.host.hidden=false;this.message('');this.syncCaption();return this.load();}
+  open(candidate){this.close();this.candidate=candidate;this.blocked=false;this.caption.value='';this.$('.clip-options').replaceChildren();this.$('#clip-position').value='top';this.$('.clip-source').href=candidate.provenance?.source_url||candidate.media_url;this.$('.clip-source').textContent=candidate.attribution?'Source and license · credit included in your video':'Open source · media rights not established';this.host.hidden=false;this.message('');this.syncCaption();return this.load();}
   async load(){
     this.abort?.abort();this.abort=new AbortController();const version=++this.version;
     this.ready=false;this.canvas.hidden=true;this.$('.clip-meta').textContent='';this.$('.clip-load').hidden=false;this.$('.clip-load').textContent='Loading the clip…';this.$('[data-clip-action="retry"]').hidden=true;this.controls();
     try {
-      const response=await fetch('/api/clips/media/'+encodeURIComponent(this.candidate.id),{signal:this.abort.signal});
+      const response=await fetch('/api/clips/media/'+encodeURIComponent(this.candidate.id)+(this.candidate.media_revision?'?v='+this.candidate.media_revision:''),{signal:this.abort.signal});
       if(!response.ok)throw new Error('This clip could not be loaded. Try again or choose another reaction.');
       const blob=await response.blob();if(version!==this.version)return;
       if(this.objectUrl)URL.revokeObjectURL(this.objectUrl);this.objectUrl=URL.createObjectURL(blob);

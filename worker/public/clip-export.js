@@ -22,7 +22,7 @@ function linesFor(ctx,text,maxWidth) {
   return lines;
 }
 
-export function paintClip(canvas,video,caption,position='top') {
+export function paintClip(canvas,video,caption,position='top',{attribution=''}={}) {
   if(!video.videoWidth)return;
   const scale=Math.min(1,1920/Math.max(video.videoWidth,video.videoHeight));
   const width=Math.max(2,Math.floor(video.videoWidth*scale/2)*2);
@@ -32,13 +32,19 @@ export function paintClip(canvas,video,caption,position='top') {
   ctx.font=`650 ${font}px ui-sans-serif, system-ui, sans-serif`;
   const lines=linesFor(ctx,caption.trim(),width-padding*2);
   const captionHeight=caption.trim()?padding*2+lines.length*lineHeight:0;
-  const height=Math.ceil((videoHeight+captionHeight)/2)*2;
+  const creditFont=Math.max(10,Math.round(width*.013));
+  ctx.font=`400 ${creditFont}px ui-sans-serif, system-ui, sans-serif`;
+  const creditLines=attribution?linesFor(ctx,attribution,width-padding*2):[];
+  const creditHeight=creditLines.length?Math.round(padding/2)*2+creditLines.length*Math.ceil(creditFont*1.35):0;
+  const height=Math.ceil((videoHeight+captionHeight+creditHeight)/2)*2;
   if(canvas.width!==width||canvas.height!==height){canvas.width=width;canvas.height=height;}
   ctx.fillStyle='#fff';ctx.fillRect(0,0,canvas.width,canvas.height);
   ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';
   ctx.drawImage(video,0,position==='bottom'?0:captionHeight,width,videoHeight);
   ctx.font=`650 ${font}px ui-sans-serif, system-ui, sans-serif`;ctx.fillStyle='#111';ctx.textBaseline='top';
   for(const [index,line] of lines.entries())ctx.fillText(line,padding,(position==='bottom'?videoHeight:0)+padding+index*lineHeight);
+  ctx.font=`400 ${creditFont}px ui-sans-serif, system-ui, sans-serif`;ctx.fillStyle='#444';
+  for(const [index,line] of creditLines.entries())ctx.fillText(line,padding,videoHeight+captionHeight+Math.round(padding/2)+index*Math.ceil(creditFont*1.35));
 }
 
 export function videoEvent(video,event,{signal,timeout=12000}={}) {

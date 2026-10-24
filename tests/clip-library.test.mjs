@@ -25,7 +25,7 @@ test('gallery expansion contains measured distinct animations while retrieval st
 test('new gallery references are browsable and captionable without pretending contextual evaluation',async()=>{
   const record=clipLibrary[0];
   const page=await worker.fetch(new Request('https://example.test/memes/'+record.id),{});assert.equal(page.status,200);
-  const html=await page.text();assert.match(html,/Source quality/);assert.match(html,/not been evaluated for automatic recommendations/);assert.ok(html.includes('/collection?meme='+record.id));assert.doesNotMatch(html,/undefined|<dt>Example<\/dt>/);
+  const html=await page.text();assert.match(html,/Source dimensions/);assert.match(html,/not been evaluated for automatic recommendations/);assert.ok(html.includes('/collection?meme='+record.id));assert.doesNotMatch(html,/undefined/);assert.match(html,/When not to use it/);
   const request=new Request('https://example.test/api/clips/captions',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({candidate_id:record.id,comment:'The tests passed after changing absolutely nothing.'})});
   const response=await clipCaptions(request,{FREE_AI:{fetch:async()=>Response.json({model:'served-model',choices:[{finish_reason:'stop',message:{content:JSON.stringify({decision:'captions',captions:['Changed nothing. Fixed everything.','The fix was running it again.','A very productive up arrow.']})}}]})}});
   assert.equal(response.status,200);assert.equal((await response.json()).candidate_id,record.id);

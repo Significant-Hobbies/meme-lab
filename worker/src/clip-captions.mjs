@@ -1,5 +1,4 @@
-import {catalogue} from './catalogue.stage3000.generated.mjs';
-import {clipLibrary} from './clip-library.generated.mjs';
+import {catalogue,clipLibrary} from './catalogue.mjs';
 import {needsSeriousHandling,requiresFactualAnswer} from './classification.mjs';
 import {boundedBytes} from './meme-composition.mjs';
 import {captionBrief,briefInstructions} from './caption-brief.mjs';
@@ -34,8 +33,14 @@ export function validateClipFrames(value) {
 }
 
 export function clipSource(record) {
-  if(record?.media_type!=='gif')return null;
+  if(record?.media_type!=='gif'||record.catalogue_status&&record.catalogue_status!=='active')return null;
   try {
+    const registered=byId.get(record.id);
+    if(record.mime_type==='video/mp4'&&registered?.media_url===record.media_url&&registered.media_status==='approved'&&registered.license_url==='https://creativecommons.org/licenses/by/3.0/'&&/^\/assets\/clips\/bbb-[a-z-]+\.mp4$/.test(record.media_url))return record.media_url;
+    if(record.mime_type==='video/webm'&&registered?.media_url===record.media_url&&registered.media_status==='approved'&&registered.license_url==='https://creativecommons.org/licenses/by/3.0/'){
+      const source=new URL(record.media_url);
+      if(source.origin==='https://upload.wikimedia.org'&&!source.username&&!source.password&&!source.search&&!source.hash&&source.pathname.startsWith('/wikipedia/commons/')&&source.pathname.endsWith('.webm'))return source.href;
+    }
     const url=new URL(record.media_url||record.image_url);
     if(url.origin!=='https://media.giphy.com'||url.username||url.password||url.search||url.hash||!/^\/media\/[a-zA-Z0-9]+\/giphy\.gif$/.test(url.pathname))return null;
     url.pathname=url.pathname.replace(/giphy\.gif$/,'giphy.mp4');
@@ -92,17 +97,19 @@ export async function clipCaptions(request,env) {
 export async function clipMedia(id,fetchImpl=fetch,signal) {
   const url=clipSource(byId.get(id));
   if(!url)return json({error:'Unknown reaction clip.'},404);
+  const mime=url.endsWith('.webm')?'video/webm':'video/mp4';
   let reader;
   try {
-    const response=await fetchImpl(url,{redirect:'manual',signal:signal?AbortSignal.any([signal,AbortSignal.timeout(15000)]):AbortSignal.timeout(15000),headers:{Accept:'video/mp4'}});
-    if(!response.ok||response.status!==200||response.headers.get('content-type')?.split(';')[0]!=='video/mp4') {await response.body?.cancel();throw new Error('Unavailable clip.');}
+    const response=await fetchImpl(url,{redirect:'manual',signal:signal?AbortSignal.any([signal,AbortSignal.timeout(15000)]):AbortSignal.timeout(15000),headers:{Accept:mime}});
+    if(!response.ok||response.status!==200||response.headers.get('content-type')?.split(';')[0]!==mime) {await response.body?.cancel();throw new Error('Unavailable clip.');}
     if(Number(response.headers.get('content-length'))>MAX_CLIP_BYTES){await response.body?.cancel();throw new Error('Clip too large.');}
     reader=response.body?.getReader();if(!reader)throw new Error('Missing video.');
     const prefix=[];let size=0;
     while(size<12){const {done,value}=await reader.read();if(done)throw new Error('Invalid video.');size+=value.byteLength;if(size>MAX_CLIP_BYTES)throw new Error('Clip too large.');prefix.push(value);}
     const signature=new Uint8Array(12);let offset=0;
     for(const chunk of prefix){const part=chunk.subarray(0,12-offset);signature.set(part,offset);offset+=part.length;if(offset===12)break;}
-    if(new TextDecoder().decode(signature.slice(4,8))!=='ftyp')throw new Error('Invalid video.');
+    const valid=mime==='video/webm'?[26,69,223,163].every((byte,index)=>signature[index]===byte):new TextDecoder().decode(signature.slice(4,8))==='ftyp';
+    if(!valid)throw new Error('Invalid video.');
     const stream=new ReadableStream({
       async pull(controller){
         try{
@@ -113,6 +120,6 @@ export async function clipMedia(id,fetchImpl=fetch,signal) {
       },
       cancel(reason){return reader.cancel(reason);}
     });
-    return new Response(stream,{headers:{'Content-Type':'video/mp4','Cache-Control':'public, max-age=86400','X-Content-Type-Options':'nosniff','X-Robots-Tag':'noindex, nofollow','Referrer-Policy':'no-referrer'}});
+    return new Response(stream,{headers:{'Content-Type':mime,'Cache-Control':'public, max-age=86400','X-Content-Type-Options':'nosniff','X-Robots-Tag':'noindex, nofollow','Referrer-Policy':'no-referrer'}});
   } catch {await reader?.cancel().catch(()=>{});return json({error:'This clip could not be loaded. Try again or choose another reaction.'},502);}
 }
