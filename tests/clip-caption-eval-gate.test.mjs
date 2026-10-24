@@ -36,3 +36,21 @@ test('ties, neither votes, duplicates and missing attempts cannot manufacture a 
   assert.throws(()=>evaluate({results:[...results,results[0]]}),/repeated/);
   assert.equal(evaluate({results:results.slice(1),ratings:votes(30)}).claim_ready,false);
 });
+
+test('complete-pair review skips failed attempts without changing the thirty-case win threshold',()=>{
+  const partial=structuredClone(results);
+  const excluded=new Set(manifest.cases.slice(0,7).map(fixture=>fixture.id));
+  for(const row of partial)if(excluded.has(row.case_id)&&row.arm==='baseline')row.status=503;
+  const completeVotes=votes(30).filter(vote=>!excluded.has(vote.case_id));
+  const report=evaluate({results:partial,ratings:completeVotes,reviewPolicy:'complete_pairs_v2'});
+  assert.equal(report.human_review_complete,true);assert.equal(report.human_votes,23);
+  assert.equal(report.unavailable_pairs,7);assert.equal(report.denominator,30);
+  assert.equal(report.candidate_wins,23);assert.equal(report.claim_ready,true);
+  assert.match(report.review_policy_amendment,/Before any human votes/);
+  assert.equal(evaluate({results:partial,ratings:completeVotes}).human_review_complete,false);
+  assert.equal(evaluate({results:partial,ratings:completeVotes.slice(1),reviewPolicy:'complete_pairs_v2'}).claim_ready,false);
+  const twentyWins=completeVotes.map((vote,index)=>index<20?vote:{...vote,choice:'tie'});
+  assert.equal(evaluate({results:partial,ratings:twentyWins,reviewPolicy:'complete_pairs_v2'}).claim_ready,false);
+  const failed=partial.map(row=>({...row,status:503}));
+  assert.equal(evaluate({results:failed,ratings:[],reviewPolicy:'complete_pairs_v2'}).human_review_complete,false);
+});

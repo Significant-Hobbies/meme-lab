@@ -2,7 +2,7 @@ import {createServer} from 'node:http';
 import {readFile,writeFile,mkdir,rename} from 'node:fs/promises';
 import {resolve,basename} from 'node:path';
 import {randomInt,createHash} from 'node:crypto';
-import {summarizeClipPreference} from './clip-caption-eval-gate.mjs';
+import {captionResultValid,summarizeClipPreference} from './clip-caption-eval-gate.mjs';
 
 const args=Object.fromEntries(process.argv.slice(2).map(argument=>argument.replace(/^--/,'').split('=')));
 const root=resolve(args.root??'.fleet-local/caption-quality-20261024');const run=resolve(root,'runs',args.run??'heldout-v1');
@@ -30,12 +30,17 @@ const mediaUrl=filename=>{const alias=hash(Buffer.from(filename)).slice(0,20)+'.
 if(secondary)for(const row of secondary.cases)byResult.set(row.case_id+':cliphub',{status:row.captions.length?200:0,response:{decision:'captions',captions:row.captions},media:row.media});
 const data=fixtures.map(fixture=>{
   const assignment=sealed.assignments.find(item=>item.case_id===fixture.id);
-  return {id:fixture.id,situation:fixture.comment,audience:fixture.audience,tone:fixture.tone,media:mediaUrl(fixture.candidate_id+'.mp4'),sides:Object.fromEntries(['a','b'].map(side=>{const row=byResult.get(fixture.id+':'+assignment[side]);return [side,{media:row?.media?mediaUrl(row.media):undefined,available:row?.status===200&&row.response?.decision==='captions',captions:row?.response?.captions??[]}];}))};
+  return {id:fixture.id,situation:fixture.comment,audience:fixture.audience,tone:fixture.tone,media:mediaUrl(fixture.candidate_id+'.mp4'),sides:Object.fromEntries(['a','b'].map(side=>{const row=byResult.get(fixture.id+':'+assignment[side]);return [side,{media:row?.media?mediaUrl(row.media):undefined,available:assignment[side]==='cliphub'?row?.status===200:captionResultValid(row),captions:row?.response?.captions??[]}];}))};
 });
-const report=()=>secondary?secondaryReport():summarizeClipPreference({manifest,assignments:sealed.assignments,ratings:review.ratings,results,rater:{...review.rater,kind:raterKind}});report();
+const completeData=data.filter(fixture=>Object.values(fixture.sides).every(side=>side.available)&&(secondary||byResult.get(fixture.id+':candidate').request_sha256===byResult.get(fixture.id+':baseline').request_sha256));
+const reviewableIds=new Set(completeData.map(fixture=>fixture.id));
+const reviewPolicy='complete_pairs_v2';
+const policyPath=resolve(reviewRun,'review-policy.json');
+try{const policy=JSON.parse(await readFile(policyPath,'utf8'));if(policy.id!==reviewPolicy)throw Error('Unexpected review policy.');}catch(error){if(error.code!=='ENOENT')throw error;if(review.ratings.length||review.rater.attested)throw Error('Do not change review policy after human voting starts.');await writeFile(policyPath,JSON.stringify({id:reviewPolicy,recorded_at:new Date().toISOString(),human_votes_at_amendment:0,reason:'Exclude incomplete pairs from voting; preserve all attempts, the original denominator, twenty-one-win threshold and reliability gate.'},null,2)+'\n');}
+const report=()=>secondary?secondaryReport():summarizeClipPreference({manifest,assignments:sealed.assignments,ratings:review.ratings,results,rater:{...review.rater,kind:raterKind},reviewPolicy});report();
 let saves=Promise.resolve();
 function persist(summary){const snapshot=JSON.stringify(review,null,2)+'\n';const task=saves.then(async()=>{for(const [path,body] of [[reviewPath,snapshot],[resolve(reviewRun,'preference-report.json'),JSON.stringify(summary,null,2)+'\n']]){await writeFile(path+'.tmp',body);await rename(path+'.tmp',path);}});saves=task.catch(()=>{});return task;}
-function secondaryReport(){const human=raterKind==='human'&&review.rater.attested;const counts={candidate:0,cliphub:0,tie:0,neither:0,unavailable:0};for(const vote of review.ratings){const assignment=sealed.assignments.find(row=>row.case_id===vote.case_id);const available=['candidate','cliphub'].every(arm=>byResult.get(vote.case_id+':'+arm)?.status===200);if(!available){counts.unavailable++;continue;}if(human)counts[vote.choice==='a'||vote.choice==='b'?assignment[vote.choice]:vote.choice]++;}return {claim_ready:false,human_review_complete:human&&review.ratings.length===fixtures.length,denominator:fixtures.length,human_votes:human?review.ratings.length:0,preferences:counts,scope:'Descriptive secondary comparison: matched situations, audiences and styles, different footage, three versus five options. No universal superiority claim or predeclared pass threshold.'};}
+function secondaryReport(){const human=raterKind==='human'&&review.rater.attested;const counts={candidate:0,cliphub:0,tie:0,neither:0,unavailable:fixtures.length-completeData.length};let reviewed=0;for(const vote of review.ratings){if(!reviewableIds.has(vote.case_id))continue;reviewed++;const assignment=sealed.assignments.find(row=>row.case_id===vote.case_id);if(human)counts[vote.choice==='a'||vote.choice==='b'?assignment[vote.choice]:vote.choice]++;}return {claim_ready:false,human_review_complete:human&&completeData.length>0&&reviewed===completeData.length,denominator:fixtures.length,human_votes:human?reviewed:0,reviewable_pairs:completeData.length,preferences:counts,scope:'Descriptive secondary comparison: matched situations, audiences and styles, different footage, three versus five options. No universal superiority claim or predeclared pass threshold.'};}
 const reply=(res,status,body,type='application/json')=>{res.writeHead(status,{'Content-Type':type,'Cache-Control':'no-store','X-Content-Type-Options':'nosniff','Referrer-Policy':'no-referrer','Content-Security-Policy':"default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; media-src 'self' blob:; connect-src 'self'; frame-ancestors 'none'"});res.end(type==='application/json'?JSON.stringify(body):body);};
 const server=createServer(async(req,res)=>{
   try{
@@ -44,7 +49,7 @@ const server=createServer(async(req,res)=>{
       if(url.pathname==='/')return reply(res,200,await readFile(new URL('./fixtures/clip-caption-review.html',import.meta.url)),'text/html; charset=utf-8');
       if(url.pathname==='/review.js')return reply(res,200,await readFile(new URL('./fixtures/clip-caption-review.js',import.meta.url)),'text/javascript');
       if(url.pathname==='/clip-export.js')return reply(res,200,await readFile('worker/public/clip-export.js'),'text/javascript');
-      if(url.pathname==='/data')return reply(res,200,{cases:data,ratings:review.ratings,finished:review.rater.attested,description:secondary?'Same situation, audience and style, with different footage. Compare all three or five caption options. These are silent previews. Version names are hidden.':undefined});
+      if(url.pathname==='/data')return reply(res,200,{cases:completeData,denominator:fixtures.length,excluded_pairs:fixtures.length-completeData.length,ratings:review.ratings.filter(vote=>reviewableIds.has(vote.case_id)),finished:review.rater.attested,description:secondary?'Same situation, audience and style, with different footage. Compare all three or five caption options. These are silent previews. Version names are hidden.':undefined});
       if(url.pathname.startsWith('/media/')&&allowedMedia.has(basename(url.pathname)))return reply(res,200,await readFile(resolve(root,'media',allowedMedia.get(basename(url.pathname)))),'video/mp4');
       return reply(res,404,{error:'Not found.'});
     }
@@ -53,15 +58,15 @@ const server=createServer(async(req,res)=>{
     const body=JSON.parse(Buffer.concat(parts).toString());
     if(url.pathname==='/vote'){
       if(review.rater.attested)return reply(res,409,{error:'This review is already finished.'});
-      if(!fixtures.some(fixture=>fixture.id===body.case_id)||!['a','b','tie','neither'].includes(body.choice))return reply(res,400,{error:'Choose A, B, tie or neither.'});
+      if(!reviewableIds.has(body.case_id)||!['a','b','tie','neither'].includes(body.choice))return reply(res,400,{error:'Choose A, B, tie or neither.'});
       review.ratings=review.ratings.filter(vote=>vote.case_id!==body.case_id).concat({case_id:body.case_id,choice:body.choice,recorded_at:new Date().toISOString()});
     }else if(url.pathname==='/finish'){
-      if(body.attested!==true||review.ratings.length!==fixtures.length)return reply(res,400,{error:'Review every pair and confirm these are your choices.'});
+      if(body.attested!==true||!completeData.length||!completeData.every(fixture=>review.ratings.some(vote=>vote.case_id===fixture.id)))return reply(res,400,{error:'Review every pair and confirm these are your choices.'});
       review.rater={kind:raterKind,attested:true,attested_at:new Date().toISOString(),method:'Owner choices entered in the local blind review page.'};
     }else return reply(res,404,{error:'Not found.'});
     const summary=report();await persist(summary);
     return reply(res,200,{saved:review.ratings.length,finished:review.rater.attested,description:secondary?'Same situation, audience and style, with different footage. Compare all three or five caption options. These are silent previews. Version names are hidden.':undefined});
   }catch(error){return reply(res,400,{error:error.message});}
 });
-server.listen(port,'127.0.0.1',()=>console.log(JSON.stringify({review_url:'http://127.0.0.1:'+port,blind_pairs:data.length,human_votes:review.ratings.length,claim_ready:report().claim_ready})));
+server.listen(port,'127.0.0.1',()=>console.log(JSON.stringify({review_url:'http://127.0.0.1:'+port,blind_pairs:completeData.length,excluded_pairs:fixtures.length-completeData.length,human_votes:review.ratings.length,claim_ready:report().claim_ready})));
 for(const signal of ['SIGINT','SIGTERM'])process.on(signal,()=>server.close(()=>process.exit(0)));
