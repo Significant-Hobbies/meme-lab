@@ -46,6 +46,17 @@ test('clip generation sends one bounded, attributed automatic request with the s
   assert.equal(calls,1);assert.equal(response.status,200);assert.deepEqual((await response.json()).captions,output.captions);
 });
 
+test('ordinary request-and-response stories reach captioning while actual help still stops before inference',async()=>{
+  let calls=0;
+  const service={FREE_AI:{fetch:async()=>{calls++;return answer();}}};
+  const situation={...body,candidate_id:'clip-tears-of-steel-wait-what',comment:'I asked for a simple status update and got a forty-minute explanation.'};
+  const response=await clipCaptions(request(situation),service);
+  assert.equal(response.status,200);assert.equal((await response.json()).decision,'captions');assert.equal(calls,1);
+  calls=0;
+  const serious=await clipCaptions(request({...situation,comment:'I asked for an update about my medication and got no answer.'}),service);
+  assert.equal((await serious.json()).decision,'none');assert.equal(calls,0);
+});
+
 test('serious and factual inputs return no caption before inference',async()=>{
   for(const comment of ['My friend died and I need condolences.','There is a gas leak in my house. What do I do?','What is the official deadline to file my income tax return?']){
     const response=await clipCaptions(request({...body,comment}),{FREE_AI:{fetch:()=>assert.fail('No inference')}});

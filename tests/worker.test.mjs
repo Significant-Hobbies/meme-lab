@@ -407,6 +407,21 @@ test('public worker abstains directly on an explicit factual form request',async
   assert.deepEqual(body.candidates,[]);
 });
 
+test('support-request targets stop at received outcomes without hiding later help or danger',()=>{
+  for(const comment of [
+    'I asked for a simple status update and got a forty-minute explanation.',
+    'I wanted a quick recap, but I received an apology tour instead.',
+    'We needed a recap, then received a report longer than the meeting.'
+  ]) assert.equal(needsSeriousHandling(comment),false,comment);
+  for(const comment of [
+    'I asked for an explanation of my medication and got no answer.',
+    'I asked a friend to listen and got a quiet place to talk.',
+    'I asked for an update and got nothing. I need someone to listen.',
+    'I asked for a recap and got a warning about a gas leak.',
+    'They wanted support, then received unhelpful advice.'
+  ]) assert.equal(needsSeriousHandling(comment),true,comment);
+});
+
 test('classifier ranking is pinned while explanation scores stay descending',async()=>{
   const candidates=[
     {id:'waiting-skeleton',name:'Waiting Skeleton',message:'An absurdly long wait.',relational_pattern:'Someone is stuck waiting.'},
