@@ -5,6 +5,8 @@ import {catalogue} from '../worker/src/catalogue.stage3000.generated.mjs';
 import {clipSource,clipCaptions,clipMedia,validateClipCaptions,validateClipFrames} from '../worker/src/clip-captions.mjs';
 import {planComposition} from '../worker/src/meme-composition.mjs';
 import worker from '../worker/src/index.mjs';
+import {clipWriterOutput} from './fixtures/clip-writer-output.mjs';
+import {selectClipDrafts} from '../worker/src/clip-caption-writer.mjs';
 
 const clip=catalogue.find(record=>record.id==='gif-yrufixsnwfvcxaxpmx');
 const body={candidate_id:clip.id,comment:'The tests passed after I changed nothing and ran them again.',audience:'Developers',tone:'deadpan'};
@@ -12,7 +14,7 @@ const request=(data=body,extra={})=>new Request('https://example.test/api/clips/
 const output={decision:'captions',captions:['Changed nothing. Fixed everything.','The fix was running it again.','My contribution: the up arrow.']};
 const frameBytes=await readFile(new URL('./fixtures/public-ux/frame.jpg',import.meta.url));
 const frames=[.2,.7,1.2].map(at_seconds=>({at_seconds,data_url:'data:image/jpeg;base64,'+frameBytes.toString('base64')}));
-const answer=(value=output,extra={})=>Response.json({model:'served-model',choices:[{finish_reason:'stop',message:{content:JSON.stringify(value)}}],...extra});
+const answer=(value=clipWriterOutput(output.captions),extra={})=>Response.json({model:'served-model',choices:[{finish_reason:'stop',message:{content:JSON.stringify(value)}}],...extra});
 
 test('reaction video URLs derive only from the existing catalogue source',()=>{
   assert.equal(clipSource(clip),'https://media.giphy.com/media/YRuFixSNWFVcXaxpmX/giphy.mp4');
@@ -25,7 +27,7 @@ test('clip generation sends one bounded, attributed automatic request with the s
   let calls=0;
   const response=await clipCaptions(request(),{FREE_AI:{fetch:async req=>{
     calls++;assert.equal(req.headers.get('x-gateway-project-id'),'meme-lab');const data=await req.json();
-    assert.equal(data.model,'auto');assert.equal(data.max_tokens,850);assert.equal(data.reasoning_effort,'low');assert.match(data.messages[0].content,/Caption style: deadpan/);assert.match(data.messages[0].content,/Developers/);assert.match(data.messages[0].content,/Use Clap/);assert.equal(data.messages.length,1);return answer();
+    assert.equal(data.model,'auto');assert.equal(data.max_tokens,1200);assert.equal(data.reasoning_effort,'low');assert.match(data.messages[0].content,/Caption style: deadpan/);assert.match(data.messages[1].content,/Developers/);assert.match(data.messages[1].content,/Use Clap/);assert.equal(data.messages.length,2);assert.equal(data.messages[0].role,'system');return answer();
   }}});
   assert.equal(calls,1);assert.equal(response.status,200);assert.deepEqual((await response.json()).captions,output.captions);
 });
@@ -54,8 +56,8 @@ test('visual captioning sends three bounded chronological frames with automatic 
   assert.equal(validateClipFrames(frames).length,3);
   for(const invalid of [[],[frames[0]],frames.map(frame=>({...frame,at_seconds:1})),frames.map(frame=>({...frame,data_url:'https://private.invalid/'})),frames.map(frame=>({...frame,data_url:'data:image/jpeg;base64,/9j/AA=='})),frames.map(frame=>({...frame,at_seconds:31}))])assert.throws(()=>validateClipFrames(invalid));
   const response=await clipCaptions(request({...body,frames}),{FREE_AI:{fetch:async req=>{
-    const data=await req.json();assert.equal(data.model,'auto');const content=data.messages[0].content;
-    assert.equal(content.filter(part=>part.type==='image_url').length,3);assert.match(content[0].text,/Inspect the three chronological frames/);assert.match(content[0].text,/emotionally incompatible/);assert.ok(content.every(part=>part.type==='text'||part.image_url.url.startsWith('data:image/jpeg;base64,')));return answer();
+    const data=await req.json();assert.equal(data.model,'auto');const content=data.messages[1].content;
+    assert.equal(content.filter(part=>part.type==='image_url').length,3);assert.match(data.messages[0].content,/Inspect the three chronological frames/);assert.match(data.messages[0].content,/emotionally incompatible/);assert.ok(content.every(part=>part.type==='text'||part.image_url.url.startsWith('data:image/jpeg;base64,')));return answer();
   }}});
   assert.equal(response.status,200);assert.equal((await response.json()).grounding,'visual');
   assert.equal(validateClipCaptions({decision:'reference',captions:[]}).decision,'reference');
@@ -89,4 +91,13 @@ test('video streaming enforces its byte limit without buffering the full clip',a
 
 test('reference pages link directly into gallery creation and CSP admits only local/blob video',async()=>{
   for(const id of [clip.id,'drake-preference']){const response=await worker.fetch(new Request('https://example.test/memes/'+id),{});const html=await response.text();assert.ok(html.includes('/collection?meme='+id));assert.match(response.headers.get('Content-Security-Policy'),/media-src 'self' blob:/);}
+});
+
+test('draft selection returns only three ranked captions and rejects invalid provider selections',()=>{
+  const value=clipWriterOutput(output.captions);value.selected=[2,0,1];
+  assert.deepEqual(selectClipDrafts(value),{decision:'captions',captions:[output.captions[2],output.captions[0],output.captions[1]]});
+  for(const selected of [[0,0,1],[0,1,6],[0,1,1.5],[0,1]])assert.throws(()=>selectClipDrafts({...value,selected}));
+  assert.throws(()=>selectClipDrafts({...value,drafts:value.drafts.slice(0,3)}));
+  assert.throws(()=>selectClipDrafts({...value,decision:'none'}));
+  assert.deepEqual(selectClipDrafts({decision:'reference',drafts:[],selected:[]}),{decision:'reference',captions:[]});
 });
