@@ -16,6 +16,8 @@ export const taxonomy = {
     affection: 'Affection',
     anger: 'Frustration',
     fatigue: 'Tired',
+    anticipation: 'Looking forward to it',
+    determination: 'Determination',
   },
   contexts: {
     work: 'Work',
@@ -56,6 +58,8 @@ const reactionTerms = {
   affection: /\b(affection\w*|wholesome|love|hug\w*)\b/i,
   anger: /\b(angry|anger|frustrat\w*|annoy\w*|furious)\b/i,
   fatigue: /\b(tired|sleepy|exhaust\w*|yawn\w*)\b/i,
+  anticipation: /\b(anticipat\w*|can.t wait|hungry|craving|tempt\w*)\b/i,
+  determination: /\b(determin\w*|persever\w*|keep going|won.t give up)\b/i,
 };
 const contextTerms = {
   work: /\b(work|office|boss|manager|meeting|deadline|coworker|colleague)\b/i,
@@ -157,7 +161,12 @@ export function validateAnnotation(annotation) {
 
 export function mediaQuality(measurement) {
   if (!measurement)
-    return { state: 'unmeasured', width: null, height: null, encoded_resolution: null };
+    return {
+      state: 'unmeasured',
+      width: null,
+      height: null,
+      encoded_resolution: null,
+    };
   const { width, height } = measurement;
   if (!Number.isInteger(width) || !Number.isInteger(height) || width < 1 || height < 1)
     throw Error('Invalid measured dimensions.');
@@ -386,7 +395,7 @@ export function compileCatalogue(
         : inferredFacets(record);
     const assetId = 'asset:' + record.canonical_id,
       source = record.media_url || record.image_url;
-    const localSource = /^\/assets\/clips\/bbb-[a-z-]+\.mp4$/.test(source);
+    const localSource = /^\/assets\/clips\/[a-z0-9]+(?:-[a-z0-9]+)+\.mp4$/.test(source);
     const sourceUrl = new URL(
       source,
       localSource ? 'https://memes.significanthobbies.com' : undefined,
@@ -405,7 +414,10 @@ export function compileCatalogue(
       sourceUrl.origin === 'https://media.giphy.com' &&
       /^\/media\/[a-zA-Z0-9]+\/giphy\.gif$/.test(sourceUrl.pathname)
     )
-      variants.video = { url: source.replace(/giphy\.gif$/, 'giphy.mp4'), mime_type: 'video/mp4' };
+      variants.video = {
+        url: source.replace(/giphy\.gif$/, 'giphy.mp4'),
+        mime_type: 'video/mp4',
+      };
     if (record.mime_type?.startsWith('video/')) variants.video = { ...variants.original };
     const check = mediaChecks[record.canonical_id];
     if (check && ![variants.original.url, variants.video?.url].includes(check.source))
@@ -592,13 +604,16 @@ export function catalogueViews(model) {
         mime_type: asset.variants.original.mime_type,
         media_status: asset.rights.state === 'established' ? 'approved' : 'source-preview',
         provenance: asset.provenance,
+        quality: asset.quality,
         video_evidence: asset.measurement,
         attribution: asset.rights.attribution,
         license_url: asset.rights.license_url,
         facets: reference.facets,
         review: reference.review,
         collections: reference.collections,
-        search_text: searchableText(reference),
+        search_text: [searchableText(reference), asset.provenance?.source_title ?? '']
+          .join(' ')
+          .toLocaleLowerCase(),
       };
     });
 }
@@ -611,6 +626,7 @@ export function browseCatalogue(
     reaction = '',
     context = '',
     intensity = '',
+    resolution = '',
     collection = 'all',
     sort = 'featured',
     collections = [],
@@ -629,6 +645,10 @@ export function browseCatalogue(
       (!reaction || record.facets.reactions.includes(reaction)) &&
       (!context || record.facets.contexts.includes(context)) &&
       (!intensity || record.facets.intensity === intensity) &&
+      (!resolution ||
+        (resolution === '720'
+          ? ['720p', '1080p'].includes(record.quality?.encoded_resolution)
+          : resolution === '1080' && record.quality?.encoded_resolution === '1080p')) &&
       (collection === 'all' ||
         (collection === 'selected'
           ? record.review.state === 'editorial'

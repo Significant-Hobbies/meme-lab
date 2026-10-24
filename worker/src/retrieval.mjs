@@ -1,4 +1,4 @@
-import {catalogue} from './catalogue.mjs';
+import {retrievalCatalogue as catalogue} from './catalogue.mjs';
 import {reciprocalRankFuse} from './rank-fusion.mjs';
 import {reserveRetrievalBudget} from './ai-budget.mjs';
 

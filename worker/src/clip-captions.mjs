@@ -36,7 +36,7 @@ export function clipSource(record) {
   if(record?.media_type!=='gif'||record.catalogue_status&&record.catalogue_status!=='active')return null;
   try {
     const registered=byId.get(record.id);
-    if(record.mime_type==='video/mp4'&&registered?.media_url===record.media_url&&registered.media_status==='approved'&&registered.license_url==='https://creativecommons.org/licenses/by/3.0/'&&/^\/assets\/clips\/bbb-[a-z-]+\.mp4$/.test(record.media_url))return record.media_url;
+    if(record.mime_type==='video/mp4'&&registered?.media_url===record.media_url&&registered.media_status==='approved'&&['https://creativecommons.org/licenses/by/3.0/','https://creativecommons.org/licenses/by/4.0/'].includes(registered.license_url)&&/^\/assets\/clips\/[a-z0-9]+(?:-[a-z0-9]+)+\.mp4$/.test(record.media_url))return record.media_url;
     if(record.mime_type==='video/webm'&&registered?.media_url===record.media_url&&registered.media_status==='approved'&&registered.license_url==='https://creativecommons.org/licenses/by/3.0/'){
       const source=new URL(record.media_url);
       if(source.origin==='https://upload.wikimedia.org'&&!source.username&&!source.password&&!source.search&&!source.hash&&source.pathname.startsWith('/wikipedia/commons/')&&source.pathname.endsWith('.webm'))return source.href;

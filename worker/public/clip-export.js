@@ -68,7 +68,7 @@ export async function recordClip(video,canvas,paint,{signal,onProgress,fps=30}={
   if(video.currentTime>.001){const seek=videoEvent(video,'seeked',{signal});video.currentTime=0;await seek;}
   signal?.throwIfAborted();paint();
   const loop=video.loop;video.loop=false;
-  const frameRate=Number.isFinite(fps)?Math.max(30,Math.min(60,fps)):30;
+  const frameRate=Number.isFinite(fps)?Math.max(1,Math.min(60,fps)):30;
   const stream=canvas.captureStream(frameRate);
   let recorder,frame,timer;
   try {

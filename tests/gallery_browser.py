@@ -16,6 +16,8 @@ extras=json.loads((ROOT/'worker/public/clips.json').read_text())
 external=json.loads((ROOT/'catalogue/external-clips.json').read_text())
 model=json.loads((ROOT/'worker/public/catalogue-v2.json').read_text())
 active=[record for record in model['references'] if record['canonical_id']==record['id'] and record['status']=='active']
+assets={asset['id']:asset for asset in model['assets']}
+full_hd_count=f'{sum(assets[record["asset_ids"][0]]["quality"]["encoded_resolution"]=="1080p" for record in active):,}'
 clip_count=f'{sum(record["kind"]=="clip" for record in active):,}'
 all_count=f'{len(active):,}'
 report={'synthetic_ai':True,'synthetic_clip':True,'widths':[]}
@@ -66,6 +68,13 @@ try:
    assert 'collection=quiet-reactions' in page.url and 'intensity=quiet' in page.url
    page.locator('#collection-intensity').select_option('')
    page.locator('#collection-shelf').select_option('all')
+   page.locator('#collection-resolution').select_option('1080')
+   assert f'of {full_hd_count} memes' in page.locator('#collection-count').inner_text()
+   assert 'resolution=1080' in page.url
+   page.reload();expect(page.locator('#collection-grid')).to_have_attribute('aria-busy','false')
+   assert page.locator('#collection-resolution').input_value()=='1080'
+   assert page.locator('#collection-refine').get_attribute('open') is not None
+   page.locator('#collection-resolution').select_option('')
    page.locator('[data-format="gif"]').click();assert clip_count in page.locator('#collection-count').inner_text()
    assert page.locator('.media-kind').first.inner_text()=='CLIP'
    page.locator('[data-mood="awkward"]').click();assert 'mood=awkward' in page.url

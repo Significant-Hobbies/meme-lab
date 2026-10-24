@@ -2176,6 +2176,891 @@
         "observed_on": "2026-10-24"
       },
       "human_validated": false
+    },
+    "clip-caminandes-3-careful-now": {
+      "title": "One careful step",
+      "summary": "A llama recovers his balance and tries to take a dignified step across slippery ice.",
+      "use_when": "A simple task suddenly needs all your concentration.",
+      "avoid_when": "A deliberate confident entrance, or a fall that has already happened.",
+      "facets": {
+        "reactions": [
+          "panic",
+          "determination"
+        ],
+        "contexts": [
+          "work",
+          "everyday"
+        ],
+        "roles": [
+          "self"
+        ],
+        "intensity": "expressive"
+      },
+      "human_validated": false,
+      "evidence": {
+        "method": "assistant_chronological_frame_review",
+        "source": "/assets/clips/caminandes-3-careful-now.mp4",
+        "source_movie_sha256": "5d57bf180186a1e2923d34824aae00f19d3ea658564e6e5ff36636f535375e66",
+        "clip_start_seconds": 10,
+        "clip_duration_seconds": 4,
+        "review_at_seconds": [
+          10.4,
+          12.0,
+          13.6
+        ],
+        "frame_sha256": [
+          "10ccdb1df1a32edb7c518cc55a6063577a61f0dd1d9a94916d8a41996584605f",
+          "d6dec407ca3ac5cbe174fa839ee9a694f3eb5c6326f8cc89093c5029d9522230",
+          "4ff0a772870cd63cf424ba18a50bb8135f135f5483a6ed1804ec99ad22ce2982"
+        ],
+        "observed_on": "2026-10-24"
+      }
+    },
+    "clip-caminandes-3-immediate-regret": {
+      "title": "That went well",
+      "summary": "The llama takes one confident step and lands flat on his face.",
+      "use_when": "Confidence meets an immediate, very visible consequence.",
+      "avoid_when": "A slow disappointment or a serious injury that deserves concern.",
+      "facets": {
+        "reactions": [
+          "awkwardness",
+          "disappointment"
+        ],
+        "contexts": [
+          "work",
+          "technology",
+          "everyday"
+        ],
+        "roles": [
+          "self",
+          "observer"
+        ],
+        "intensity": "exaggerated"
+      },
+      "human_validated": false,
+      "evidence": {
+        "method": "assistant_chronological_frame_review",
+        "source": "/assets/clips/caminandes-3-immediate-regret.mp4",
+        "source_movie_sha256": "5d57bf180186a1e2923d34824aae00f19d3ea658564e6e5ff36636f535375e66",
+        "clip_start_seconds": 15.5,
+        "clip_duration_seconds": 4,
+        "review_at_seconds": [
+          15.9,
+          17.5,
+          19.1
+        ],
+        "frame_sha256": [
+          "af4463e0331fabecb9e0e661b36efdf31e5793f83fee61a28322fb8c5170d82a",
+          "48f8784c2c0b146e542aa5fee35005137d421800b5a6a3735588c3f04cf2fd2d",
+          "40b4f3c5338e38eea3b9dec724f80f8a69ea1c9f85417e372482357725474956"
+        ],
+        "observed_on": "2026-10-24"
+      }
+    },
+    "clip-caminandes-3-suspicious": {
+      "title": "I saw that",
+      "summary": "A penguin looks pleased with himself while the flattened llama gives him a sideways look.",
+      "use_when": "Someone acts innocent after doing the very thing you noticed.",
+      "avoid_when": "Open confrontation, or honest confusion with no hint of suspicion.",
+      "facets": {
+        "reactions": [
+          "skepticism",
+          "amusement"
+        ],
+        "contexts": [
+          "friends",
+          "family",
+          "food"
+        ],
+        "roles": [
+          "other",
+          "observer"
+        ],
+        "intensity": "quiet"
+      },
+      "human_validated": false,
+      "evidence": {
+        "method": "assistant_chronological_frame_review",
+        "source": "/assets/clips/caminandes-3-suspicious.mp4",
+        "source_movie_sha256": "5d57bf180186a1e2923d34824aae00f19d3ea658564e6e5ff36636f535375e66",
+        "clip_start_seconds": 22,
+        "clip_duration_seconds": 4,
+        "review_at_seconds": [
+          22.4,
+          24.0,
+          25.6
+        ],
+        "frame_sha256": [
+          "6eaee1333f07ce7d47ef817693e8a573c6bc4c731ec84cc5d4444e9d2cd90794",
+          "1ee80241a4f0a9ad5a34bc37b2ec2e3f2acbdb63e3519dc3c2855d9f98c9f8cc",
+          "77654f5d82368a3c7a885e2421c71ae668081b4c99b3ff163330c1c79dc84ae3"
+        ],
+        "observed_on": "2026-10-24"
+      }
+    },
+    "clip-caminandes-3-cold-stare": {
+      "title": "Here it comes",
+      "summary": "The llama looks toward an approaching train, then closes his eyes with a weary grimace.",
+      "use_when": "You can see a completely avoidable problem heading straight for you.",
+      "avoid_when": "An entirely unforeseen surprise, or actual danger where people need help.",
+      "facets": {
+        "reactions": [
+          "disappointment",
+          "fatigue"
+        ],
+        "contexts": [
+          "work",
+          "technology",
+          "everyday"
+        ],
+        "roles": [
+          "self"
+        ],
+        "intensity": "quiet"
+      },
+      "human_validated": false,
+      "evidence": {
+        "method": "assistant_chronological_frame_review",
+        "source": "/assets/clips/caminandes-3-cold-stare.mp4",
+        "source_movie_sha256": "5d57bf180186a1e2923d34824aae00f19d3ea658564e6e5ff36636f535375e66",
+        "clip_start_seconds": 40,
+        "clip_duration_seconds": 2.8,
+        "review_at_seconds": [
+          40.28,
+          41.4,
+          42.52
+        ],
+        "frame_sha256": [
+          "b7d76934e4996228be695cd78602d132dddc8410e2788cfae84037e6e18057d9",
+          "2bdfcf1dbc53ae3d4e22c07ec69a3b93beeeabac7699cb71ad2296941b6fe2f7",
+          "92099a56f36e7541dd896d7d7a22f689513f5a399a041b010a9a9b3116becfa7"
+        ],
+        "observed_on": "2026-10-24"
+      }
+    },
+    "clip-caminandes-3-last-snack": {
+      "title": "Just one bite",
+      "summary": "A wide-eyed llama watches a berry on his tongue while the penguin reacts beside him.",
+      "use_when": "A tiny treat gets far more attention than it reasonably deserves.",
+      "avoid_when": "Sharing a large meal, or being disgusted by food.",
+      "facets": {
+        "reactions": [
+          "anticipation"
+        ],
+        "contexts": [
+          "food",
+          "money",
+          "everyday"
+        ],
+        "roles": [
+          "self"
+        ],
+        "intensity": "expressive"
+      },
+      "human_validated": false,
+      "evidence": {
+        "method": "assistant_chronological_frame_review",
+        "source": "/assets/clips/caminandes-3-last-snack.mp4",
+        "source_movie_sha256": "5d57bf180186a1e2923d34824aae00f19d3ea658564e6e5ff36636f535375e66",
+        "clip_start_seconds": 50,
+        "clip_duration_seconds": 4,
+        "review_at_seconds": [
+          50.4,
+          52.0,
+          53.6
+        ],
+        "frame_sha256": [
+          "11f0e9d7c049b13561b0ae139b8de9eadbecee7a10caa4a8eef73d74b46d4a37",
+          "abf62f7c982435a5401982eda20e6cd215645cbb44e01b1568b4538195d45ec6",
+          "ccabb11d40a41ee3bbe75e8c88c1027950f644c4986eb672c0566e060b6d197c"
+        ],
+        "observed_on": "2026-10-24"
+      }
+    },
+    "clip-caminandes-3-big-plans": {
+      "title": "Eyes on the prize",
+      "summary": "A llama races through wooden scaffolding beside a penguin clutching an enormous bunch of berries.",
+      "use_when": "A small reward inspires a comically oversized effort.",
+      "avoid_when": "A quiet daydream, or enjoying a reward after the work is already done.",
+      "facets": {
+        "reactions": [
+          "anticipation",
+          "determination"
+        ],
+        "contexts": [
+          "money",
+          "food",
+          "everyday"
+        ],
+        "roles": [
+          "self",
+          "situation"
+        ],
+        "intensity": "exaggerated"
+      },
+      "human_validated": false,
+      "evidence": {
+        "method": "assistant_chronological_frame_review",
+        "source": "/assets/clips/caminandes-3-big-plans.mp4",
+        "source_movie_sha256": "5d57bf180186a1e2923d34824aae00f19d3ea658564e6e5ff36636f535375e66",
+        "clip_start_seconds": 73,
+        "clip_duration_seconds": 5,
+        "review_at_seconds": [
+          73.5,
+          75.5,
+          77.5
+        ],
+        "frame_sha256": [
+          "f3d19915e3a8d4816f7e622d33500ec17345d1f9f1824bfc9dbdae22abaaf9f7",
+          "4093d36e51222284c0b753a4d5095805bb03f1d6d5a60cd4bb964ce0fb08712a",
+          "784e999051811f21487bba07d8466240c1404f8a54f850f3fa71d518cde946c1"
+        ],
+        "observed_on": "2026-10-24"
+      }
+    },
+    "clip-caminandes-3-already-gone": {
+      "title": "You ate the last one",
+      "summary": "The penguin finishes a berry while the llama watches with an increasingly disappointed face.",
+      "use_when": "You discover the thing you were looking forward to has already been taken.",
+      "avoid_when": "You never wanted the thing, or are happily giving it away.",
+      "facets": {
+        "reactions": [
+          "disappointment",
+          "disbelief"
+        ],
+        "contexts": [
+          "food",
+          "friends",
+          "family"
+        ],
+        "roles": [
+          "self",
+          "observer"
+        ],
+        "intensity": "expressive"
+      },
+      "human_validated": false,
+      "evidence": {
+        "method": "assistant_chronological_frame_review",
+        "source": "/assets/clips/caminandes-3-already-gone.mp4",
+        "source_movie_sha256": "5d57bf180186a1e2923d34824aae00f19d3ea658564e6e5ff36636f535375e66",
+        "clip_start_seconds": 88,
+        "clip_duration_seconds": 5,
+        "review_at_seconds": [
+          88.5,
+          90.5,
+          92.5
+        ],
+        "frame_sha256": [
+          "f9c82c041a3692fad13ff9b851f08d515b5fcfd592313b7bc351913fe62e747f",
+          "c7a45cfe30778721f814adadd87b4689e7688b271f19eee412560cb9ec8b467f",
+          "9555423d1fc184ca4679c5e181f096407d24868cf1b270e94eff934d6f20c956"
+        ],
+        "observed_on": "2026-10-24"
+      }
+    },
+    "clip-caminandes-3-deflated": {
+      "title": "Never mind, then",
+      "summary": "The llama’s hopeful face settles into a long, heavy-lidded stare.",
+      "use_when": "A small letdown quietly drains all your enthusiasm.",
+      "avoid_when": "A loud argument or an urgent emergency.",
+      "facets": {
+        "reactions": [
+          "disappointment",
+          "fatigue"
+        ],
+        "contexts": [
+          "work",
+          "relationships",
+          "everyday"
+        ],
+        "roles": [
+          "self"
+        ],
+        "intensity": "quiet"
+      },
+      "human_validated": false,
+      "evidence": {
+        "method": "assistant_chronological_frame_review",
+        "source": "/assets/clips/caminandes-3-deflated.mp4",
+        "source_movie_sha256": "5d57bf180186a1e2923d34824aae00f19d3ea658564e6e5ff36636f535375e66",
+        "clip_start_seconds": 104,
+        "clip_duration_seconds": 5,
+        "review_at_seconds": [
+          104.5,
+          106.5,
+          108.5
+        ],
+        "frame_sha256": [
+          "3fbe94d5e06b2234772f62745035b950b2c3e1c4fd2e4cdb2403af0e9afe6e1e",
+          "644d0bb65b606a5ce797c1d4d11081ab9aa599bf9caa26cd2a0f8b87205cd341",
+          "bc9bce39e3d5e7eb2c85674aa4a7e5cb01001e1c16ccce1e7ba8b04852eb9e80"
+        ],
+        "observed_on": "2026-10-24"
+      }
+    },
+    "clip-caminandes-3-sharing": {
+      "title": "Saved you one",
+      "summary": "The llama offers the penguin a berry, then the two look up together.",
+      "use_when": "An ordinary act of sharing says more than a big speech.",
+      "avoid_when": "Taking credit for generosity that the scene does not show.",
+      "facets": {
+        "reactions": [
+          "affection",
+          "relief"
+        ],
+        "contexts": [
+          "friends",
+          "family",
+          "food"
+        ],
+        "roles": [
+          "self",
+          "other"
+        ],
+        "intensity": "quiet"
+      },
+      "human_validated": false,
+      "evidence": {
+        "method": "assistant_chronological_frame_review",
+        "source": "/assets/clips/caminandes-3-sharing.mp4",
+        "source_movie_sha256": "5d57bf180186a1e2923d34824aae00f19d3ea658564e6e5ff36636f535375e66",
+        "clip_start_seconds": 125,
+        "clip_duration_seconds": 5,
+        "review_at_seconds": [
+          125.5,
+          127.5,
+          129.5
+        ],
+        "frame_sha256": [
+          "5ad8e70cadb924cfe8c481485374af5a1c9b1385e1553d0f84bcf352185138f1",
+          "852e9b16301b5947a9e995c1b2e7806b8f347d2c1089bd3f6062ffcdc49b4a94",
+          "c61088dd2e6b3d04460d0dd17d220b0574e0388773d61d69bff8fee026b59c0b"
+        ],
+        "observed_on": "2026-10-24"
+      }
+    },
+    "clip-spring-small-delight": {
+      "title": "A very good little thing",
+      "summary": "A girl leans toward her dog, smiles, and examines a small object in her hands.",
+      "use_when": "Something tiny makes an otherwise ordinary day unexpectedly good.",
+      "avoid_when": "A huge public victory or smug triumph over someone else.",
+      "facets": {
+        "reactions": [
+          "affection",
+          "celebration"
+        ],
+        "contexts": [
+          "family",
+          "everyday"
+        ],
+        "roles": [
+          "self"
+        ],
+        "intensity": "quiet"
+      },
+      "human_validated": false,
+      "evidence": {
+        "method": "assistant_chronological_frame_review",
+        "source": "/assets/clips/spring-small-delight.mp4",
+        "source_movie_sha256": "9d11691b30a9fd192205224e9b0b59f918f33043ae600a791c9c6c1909d42309",
+        "clip_start_seconds": 52,
+        "clip_duration_seconds": 3.8,
+        "review_at_seconds": [
+          52.38,
+          53.9,
+          55.42
+        ],
+        "frame_sha256": [
+          "542dac75318a83bb71682f14e15c96438a19272778473dba18e3791c35768cae",
+          "8b99f9a27095050559b1c02498ac33a4351089964fcde7c3df7987c234c87178",
+          "7e06ae1dde6cc1e5b4cf15f8dd2b46dd1971fd5b858f87ea024d940ba1f73c48"
+        ],
+        "observed_on": "2026-10-24"
+      }
+    },
+    "clip-spring-not-so-sure": {
+      "title": "Starting to reconsider",
+      "summary": "Holding her staff, the girl’s tentative smile gives way to a doubtful look.",
+      "use_when": "You agreed before thinking through what the plan involved.",
+      "avoid_when": "You are completely certain, or already in full panic.",
+      "facets": {
+        "reactions": [
+          "skepticism",
+          "awkwardness"
+        ],
+        "contexts": [
+          "work",
+          "friends",
+          "everyday"
+        ],
+        "roles": [
+          "self"
+        ],
+        "intensity": "quiet"
+      },
+      "human_validated": false,
+      "evidence": {
+        "method": "assistant_chronological_frame_review",
+        "source": "/assets/clips/spring-not-so-sure.mp4",
+        "source_movie_sha256": "9d11691b30a9fd192205224e9b0b59f918f33043ae600a791c9c6c1909d42309",
+        "clip_start_seconds": 63,
+        "clip_duration_seconds": 5,
+        "review_at_seconds": [
+          63.5,
+          65.5,
+          67.5
+        ],
+        "frame_sha256": [
+          "5adaf0488319792ddd5c47ef219b97a08f83ae8a32476646e1ad089ed012fd2d",
+          "add182f52010287f3dc7099f2dd3f2c88e741346c75e77f5ae646c2d237e4dfd",
+          "1fe57a63f47ff1046b583efae14bc7bfa074cf10915db372f5e455f2b3dfe57c"
+        ],
+        "observed_on": "2026-10-24"
+      }
+    },
+    "clip-spring-heard-something": {
+      "title": "Did you hear that?",
+      "summary": "The girl pauses in a dark forest, glances sideways, then looks upward.",
+      "use_when": "You notice a small sign that something is off.",
+      "avoid_when": "A confirmed disaster, or accusing someone without any uncertainty.",
+      "facets": {
+        "reactions": [
+          "confusion",
+          "anticipation"
+        ],
+        "contexts": [
+          "technology",
+          "everyday"
+        ],
+        "roles": [
+          "self",
+          "observer"
+        ],
+        "intensity": "quiet"
+      },
+      "human_validated": false,
+      "evidence": {
+        "method": "assistant_chronological_frame_review",
+        "source": "/assets/clips/spring-heard-something.mp4",
+        "source_movie_sha256": "9d11691b30a9fd192205224e9b0b59f918f33043ae600a791c9c6c1909d42309",
+        "clip_start_seconds": 134,
+        "clip_duration_seconds": 5,
+        "review_at_seconds": [
+          134.5,
+          136.5,
+          138.5
+        ],
+        "frame_sha256": [
+          "608b1b6d78f36d28c34961b8fde066492d42b5a7ea64cacce9e1c12db9ac7c12",
+          "ee8cd59a186abab19eab09e00053193934b1768c8370a249c809191ef3b77daa",
+          "f469b18e5a41b7770827993c1f4e47071d6ba994dccb6420784593427e4132e2"
+        ],
+        "observed_on": "2026-10-24"
+      }
+    },
+    "clip-spring-little-light": {
+      "title": "There it is",
+      "summary": "A warm light glows in the girl’s hands as her concerned face softens into wonder.",
+      "use_when": "A small sign of progress makes a difficult task feel possible again.",
+      "avoid_when": "The whole problem is already solved, or the outcome is obviously bad.",
+      "facets": {
+        "reactions": [
+          "relief",
+          "anticipation"
+        ],
+        "contexts": [
+          "work",
+          "technology",
+          "everyday"
+        ],
+        "roles": [
+          "self"
+        ],
+        "intensity": "quiet"
+      },
+      "human_validated": false,
+      "evidence": {
+        "method": "assistant_chronological_frame_review",
+        "source": "/assets/clips/spring-little-light.mp4",
+        "source_movie_sha256": "9d11691b30a9fd192205224e9b0b59f918f33043ae600a791c9c6c1909d42309",
+        "clip_start_seconds": 230,
+        "clip_duration_seconds": 5,
+        "review_at_seconds": [
+          230.5,
+          232.5,
+          234.5
+        ],
+        "frame_sha256": [
+          "2cf290cdca5e506e31f69c1d4109e4f033a42f415e61e193b64c3a3bb2add76a",
+          "9da339e94f023bb706f45e2f78195c88e0103dbd2fb36cfa09ee521e4e55a935",
+          "4745cbf02533510f6b2f70366e9f631f15f3a7bf73e3b433560f9235d178ac34"
+        ],
+        "observed_on": "2026-10-24"
+      }
+    },
+    "clip-spring-keep-going": {
+      "title": "Confidence running out",
+      "summary": "The girl looks upward with an uneasy half-smile before the scene cuts to the looming spirit.",
+      "use_when": "You are trying to look capable while realizing how much bigger the task is.",
+      "avoid_when": "Effortless confidence or a finished, successful result.",
+      "facets": {
+        "reactions": [
+          "panic",
+          "determination"
+        ],
+        "contexts": [
+          "work",
+          "everyday"
+        ],
+        "roles": [
+          "self"
+        ],
+        "intensity": "expressive"
+      },
+      "human_validated": false,
+      "evidence": {
+        "method": "assistant_chronological_frame_review",
+        "source": "/assets/clips/spring-keep-going.mp4",
+        "source_movie_sha256": "9d11691b30a9fd192205224e9b0b59f918f33043ae600a791c9c6c1909d42309",
+        "clip_start_seconds": 292,
+        "clip_duration_seconds": 3.8,
+        "review_at_seconds": [
+          292.38,
+          293.9,
+          295.42
+        ],
+        "frame_sha256": [
+          "b786a4f5b6b0356c26adcb5328edaa2bfce979c32029c035db3ad652503b9014",
+          "026d4d0f3557fffe61333d002a6e0c1f20197963abb70bfea95cb1c60835160c",
+          "3d4e9ce621bb1b746ff17ebaa2ee7a313957452df3f4b3a5956fab8ccafa933e"
+        ],
+        "observed_on": "2026-10-24"
+      }
+    },
+    "clip-spring-made-it": {
+      "title": "We made it",
+      "summary": "The girl and her dog stand in bright mountain light as she turns and lifts her staff.",
+      "use_when": "A difficult stretch is over and you can finally enjoy the view.",
+      "avoid_when": "Bragging at someone else’s expense, or a problem that remains urgent.",
+      "facets": {
+        "reactions": [
+          "relief",
+          "celebration"
+        ],
+        "contexts": [
+          "work",
+          "friends",
+          "everyday"
+        ],
+        "roles": [
+          "self",
+          "situation"
+        ],
+        "intensity": "expressive"
+      },
+      "human_validated": false,
+      "evidence": {
+        "method": "assistant_chronological_frame_review",
+        "source": "/assets/clips/spring-made-it.mp4",
+        "source_movie_sha256": "9d11691b30a9fd192205224e9b0b59f918f33043ae600a791c9c6c1909d42309",
+        "clip_start_seconds": 390,
+        "clip_duration_seconds": 4,
+        "review_at_seconds": [
+          390.4,
+          392.0,
+          393.6
+        ],
+        "frame_sha256": [
+          "b52e038ed7033a792a56c52638f252cf9bcecc59d5e8e985d760498e148e3168",
+          "5cba2834c863a16b394e01047fc49d07b507f753d6e664979ead15082040b5b6",
+          "c48dcc7166e431a84cf8d666830735911ff19db7934ac8025a34b4f774d37cd2"
+        ],
+        "observed_on": "2026-10-24"
+      }
+    },
+    "clip-coffee-run-overcommitted": {
+      "title": "Still keeping up",
+      "summary": "A runner races down a steep path, pitches forward, and keeps moving through a stylized city.",
+      "use_when": "You are committed to a pace that is getting harder to maintain.",
+      "avoid_when": "A relaxed stroll or a sudden shock shown mainly through a face.",
+      "facets": {
+        "reactions": [
+          "panic",
+          "determination"
+        ],
+        "contexts": [
+          "work",
+          "everyday"
+        ],
+        "roles": [
+          "self",
+          "situation"
+        ],
+        "intensity": "expressive"
+      },
+      "human_validated": false,
+      "evidence": {
+        "method": "assistant_chronological_frame_review",
+        "source": "/assets/clips/coffee-run-overcommitted.mp4",
+        "source_movie_sha256": "ae9577a8dac9acea202df72f28999cdbd089fa5cbfbd9d8e9f038e85ce5f56f9",
+        "clip_start_seconds": 8,
+        "clip_duration_seconds": 3.6,
+        "review_at_seconds": [
+          8.36,
+          9.8,
+          11.24
+        ],
+        "frame_sha256": [
+          "00c8122a39ad193e4b532d6df33b9e20bd8b7ae21eeee674b88c4077d5ac2e95",
+          "3ce975bc4d4b160df5ca7909bbd82297da84e12b1d4a878dca3c4c395fb5cba6",
+          "d6772043c8e5556e771f6439fa71e572ef7bc18c19b98d0bb63d8f7e0d5ca60d"
+        ],
+        "observed_on": "2026-10-24"
+      }
+    },
+    "clip-coffee-run-finally-home": {
+      "title": "Nothing left in the tank",
+      "summary": "A woman slumps alone on a sofa in a dim, cluttered room.",
+      "use_when": "The day is over and you have no energy left for one more thing.",
+      "avoid_when": "A loud celebration or a sincere mental-health disclosure needing support.",
+      "facets": {
+        "reactions": [
+          "fatigue",
+          "disappointment"
+        ],
+        "contexts": [
+          "work",
+          "relationships",
+          "everyday"
+        ],
+        "roles": [
+          "self"
+        ],
+        "intensity": "quiet"
+      },
+      "human_validated": false,
+      "evidence": {
+        "method": "assistant_chronological_frame_review",
+        "source": "/assets/clips/coffee-run-finally-home.mp4",
+        "source_movie_sha256": "ae9577a8dac9acea202df72f28999cdbd089fa5cbfbd9d8e9f038e85ce5f56f9",
+        "clip_start_seconds": 154,
+        "clip_duration_seconds": 6,
+        "review_at_seconds": [
+          154.6,
+          157.0,
+          159.4
+        ],
+        "frame_sha256": [
+          "517de332248722a19529d47af6de104ca3a7b2d0d4a23bcef7b69d582263b0db",
+          "a42accb3f039f27e47b22a2464d3990b2167dfa325783942ccd5b2c4ecc7b1b3",
+          "9fb6d36cf6d163512126ffdaf7ef8e9e98eb0e1c17e9af2db1f6a5dc61c72fcb"
+        ],
+        "observed_on": "2026-10-24"
+      }
+    },
+    "clip-tears-of-steel-thinking-it-through": {
+      "title": "Let me explain",
+      "summary": "A man in a red shirt talks with open hands, then gestures more insistently at the people beside him.",
+      "use_when": "You are defending a decision that sounded much better in your head.",
+      "avoid_when": "An apology that needs sincerity rather than a joke.",
+      "facets": {
+        "reactions": [
+          "confusion",
+          "awkwardness"
+        ],
+        "contexts": [
+          "work",
+          "friends"
+        ],
+        "roles": [
+          "self",
+          "other"
+        ],
+        "intensity": "expressive"
+      },
+      "human_validated": false,
+      "evidence": {
+        "method": "assistant_chronological_frame_review",
+        "source": "/assets/clips/tears-of-steel-thinking-it-through.mp4",
+        "source_movie_sha256": "727f3af5a80ae9763426eb8ae9b5559b0a266cf5dc20b9442dd1973f90e26193",
+        "clip_start_seconds": 203,
+        "clip_duration_seconds": 3.3,
+        "review_at_seconds": [
+          203.33,
+          204.65,
+          205.97
+        ],
+        "frame_sha256": [
+          "ac00f2efef4a33300c7daaa43e01586c415ce5ac69e9f119798e5b054e310dcd",
+          "1779d7a41d8ed45ce237c3ae28a839763302fd88ad4360e7391586a44e7677c0",
+          "da3bac6715c0be3eed2b910e090365b68cf2b892e18af800b240b89c6f3ca9e1"
+        ],
+        "observed_on": "2026-10-24"
+      }
+    },
+    "clip-tears-of-steel-not-buying-it": {
+      "title": "Absolutely not",
+      "summary": "The red-shirted man launches into an emphatic protest, lifting his hands as he speaks.",
+      "use_when": "A suggestion is so unreasonable that a polite no is no longer enough.",
+      "avoid_when": "A mild private doubt or agreement disguised as enthusiasm.",
+      "facets": {
+        "reactions": [
+          "anger",
+          "dismissal"
+        ],
+        "contexts": [
+          "work",
+          "friends",
+          "everyday"
+        ],
+        "roles": [
+          "self",
+          "other"
+        ],
+        "intensity": "expressive"
+      },
+      "human_validated": false,
+      "evidence": {
+        "method": "assistant_chronological_frame_review",
+        "source": "/assets/clips/tears-of-steel-not-buying-it.mp4",
+        "source_movie_sha256": "727f3af5a80ae9763426eb8ae9b5559b0a266cf5dc20b9442dd1973f90e26193",
+        "clip_start_seconds": 213,
+        "clip_duration_seconds": 2.5,
+        "review_at_seconds": [
+          213.25,
+          214.25,
+          215.25
+        ],
+        "frame_sha256": [
+          "a9c31eb738f38870362e45e983e4073a3df5a0ec8b030e0dc1b3a3493a43cad6",
+          "cd7351c6f8085d8109878e42a1e1a076ee6908c6584a6179a7cfc1591f199dc6",
+          "5fc8babe9ae010dad8f1400eff5b847600253e599c7565a57387badd13a71d68"
+        ],
+        "observed_on": "2026-10-24"
+      }
+    },
+    "clip-tears-of-steel-too-close": {
+      "title": "Personal space, please",
+      "summary": "One man leans close with an arm around his companion, who stares ahead without enthusiasm.",
+      "use_when": "Someone is far more invested in explaining or sharing than the listener wants.",
+      "avoid_when": "An embrace where both people are visibly delighted.",
+      "facets": {
+        "reactions": [
+          "awkwardness",
+          "skepticism"
+        ],
+        "contexts": [
+          "friends",
+          "family",
+          "work"
+        ],
+        "roles": [
+          "other",
+          "observer"
+        ],
+        "intensity": "quiet"
+      },
+      "human_validated": false,
+      "evidence": {
+        "method": "assistant_chronological_frame_review",
+        "source": "/assets/clips/tears-of-steel-too-close.mp4",
+        "source_movie_sha256": "727f3af5a80ae9763426eb8ae9b5559b0a266cf5dc20b9442dd1973f90e26193",
+        "clip_start_seconds": 243,
+        "clip_duration_seconds": 5,
+        "review_at_seconds": [
+          243.5,
+          245.5,
+          247.5
+        ],
+        "frame_sha256": [
+          "51b95fc3dcb8cd5ca0d251e80fb54dbe399e768c8de9cc40bd108a7ebc2e755b",
+          "c0ab84d96c1159c5861d2c488861ddc0fee5927c2f342e205171a4ff94192ea2",
+          "4324c1b493bee133d5908db4ab27d3127ad04cf3dfc59cc9ff43adc29bcbedd2"
+        ],
+        "observed_on": "2026-10-24"
+      }
+    },
+    "clip-tears-of-steel-wait-what": {
+      "title": "That doesn’t follow",
+      "summary": "A young man looks aside with a furrowed brow, starts to speak, then lowers his gaze.",
+      "use_when": "You are trying to make sense of an explanation that keeps getting less convincing.",
+      "avoid_when": "A big jump scare or an obvious joke that everyone already understands.",
+      "facets": {
+        "reactions": [
+          "confusion",
+          "skepticism"
+        ],
+        "contexts": [
+          "work",
+          "technology",
+          "relationships"
+        ],
+        "roles": [
+          "self"
+        ],
+        "intensity": "quiet"
+      },
+      "human_validated": false,
+      "evidence": {
+        "method": "assistant_chronological_frame_review",
+        "source": "/assets/clips/tears-of-steel-wait-what.mp4",
+        "source_movie_sha256": "727f3af5a80ae9763426eb8ae9b5559b0a266cf5dc20b9442dd1973f90e26193",
+        "clip_start_seconds": 324,
+        "clip_duration_seconds": 3.5,
+        "review_at_seconds": [
+          324.35,
+          325.75,
+          327.15
+        ],
+        "frame_sha256": [
+          "4d36e1a35ced82ee2c93adbb2f5cc519ce8879534560a1bb1f2c9b2cc9f3cfdd",
+          "1b09cb8fad30817b0afd89a1cec69e959ab0c83530b2a72893884757d8de1dbd",
+          "de772880c546c6e08a843008fbc275113291cfb11e35f0d6a9cea1543ea5f545"
+        ],
+        "observed_on": "2026-10-24"
+      }
+    },
+    "clip-tears-of-steel-system-surprise": {
+      "title": "That was unexpected",
+      "summary": "A tense room cuts to a man with glasses staring at a screen, mouth open in alarm.",
+      "use_when": "An ordinary check produces a result you were thoroughly unprepared for.",
+      "avoid_when": "A pleasant small surprise or serious bad news requiring a sincere response.",
+      "facets": {
+        "reactions": [
+          "disbelief",
+          "panic"
+        ],
+        "contexts": [
+          "technology",
+          "work",
+          "everyday"
+        ],
+        "roles": [
+          "self",
+          "observer"
+        ],
+        "intensity": "exaggerated"
+      },
+      "human_validated": false,
+      "evidence": {
+        "method": "assistant_chronological_frame_review",
+        "source": "/assets/clips/tears-of-steel-system-surprise.mp4",
+        "source_movie_sha256": "727f3af5a80ae9763426eb8ae9b5559b0a266cf5dc20b9442dd1973f90e26193",
+        "clip_start_seconds": 373.2,
+        "clip_duration_seconds": 3,
+        "review_at_seconds": [
+          373.5,
+          374.7,
+          375.9
+        ],
+        "frame_sha256": [
+          "40aaf0f4ffbc65643faa31ee862e84de089ebea954395bb9ef408073475df038",
+          "013e2bcda820d216b009863088a91e925ab2c10d5641a0322949b054bb31f226",
+          "8a38a645efab695b6c4e6f657a74ae8280fe9df3e418e40d4be31931473167d9"
+        ],
+        "observed_on": "2026-10-24"
+      }
     }
   },
   "collections": [
@@ -2194,7 +3079,11 @@
         "gif-13hxeoyjotwtk8",
         "gif-1z02vuppxp1pa",
         "gif-3ornjld54i3eqymfpc",
-        "gif-apgxxvrpqaclqnxrlo"
+        "gif-apgxxvrpqaclqnxrlo",
+        "clip-spring-small-delight",
+        "clip-spring-little-light",
+        "clip-spring-made-it",
+        "clip-caminandes-3-sharing"
       ]
     },
     {
@@ -2220,7 +3109,11 @@
         "gif-3okipbcy65zkpvfwy8",
         "gif-2xpgqwsvyztoneiern",
         "gif-l1j9wxoc8w4jfmrey",
-        "not-bad-kid"
+        "not-bad-kid",
+        "clip-tears-of-steel-too-close",
+        "clip-caminandes-3-deflated",
+        "clip-coffee-run-finally-home",
+        "clip-spring-not-so-sure"
       ]
     },
     {
@@ -2240,7 +3133,10 @@
         "gif-qmdgpav8jkrxxtrnmr",
         "gif-xkiudcddxm7wyr1u6u",
         "clip-bbb-what-now",
-        "clip-bbb-processing"
+        "clip-bbb-processing",
+        "clip-tears-of-steel-wait-what",
+        "clip-tears-of-steel-system-surprise",
+        "clip-caminandes-3-already-gone"
       ]
     },
     {
@@ -2252,7 +3148,8 @@
         "gif-qbd2klb5qdmysexre9",
         "gif-ci3ncvx952lfg",
         "gif-3o6ztokgzqv6thhzj2",
-        "clip-bbb-waiting"
+        "clip-bbb-waiting",
+        "clip-spring-heard-something"
       ]
     },
     {
@@ -2276,7 +3173,11 @@
         "kalm-panik",
         "clip-bbb-back-at-it",
         "clip-bbb-patience",
-        "clip-bbb-changed-things"
+        "clip-bbb-changed-things",
+        "clip-tears-of-steel-thinking-it-through",
+        "clip-tears-of-steel-not-buying-it",
+        "clip-coffee-run-overcommitted",
+        "clip-spring-keep-going"
       ]
     },
     {
@@ -2290,26 +3191,57 @@
         "change-my-mind",
         "i-dont-think-i-will",
         "uno-reverse-card",
-        "gif-1dhuzohxkli1g"
+        "gif-1dhuzohxkli1g",
+        "clip-tears-of-steel-not-buying-it",
+        "clip-caminandes-3-suspicious"
       ]
     },
     {
       "id": "open-animation",
       "title": "HD animation",
-      "description": "Full HD reactions from Big Buck Bunny. Source credit stays in your download.",
+      "description": "Reactions from Big Buck Bunny, Caminandes, Spring, and Coffee Run. Original framing; source credit stays in your download.",
       "reference_ids": [
+        "clip-spring-small-delight",
+        "clip-caminandes-3-careful-now",
+        "clip-coffee-run-overcommitted",
         "clip-bbb-back-at-it",
+        "clip-spring-not-so-sure",
+        "clip-caminandes-3-immediate-regret",
+        "clip-coffee-run-finally-home",
         "clip-bbb-flowers",
+        "clip-spring-heard-something",
+        "clip-caminandes-3-suspicious",
         "clip-bbb-small-joy",
+        "clip-spring-little-light",
+        "clip-caminandes-3-cold-stare",
         "clip-bbb-what-now",
+        "clip-spring-keep-going",
+        "clip-caminandes-3-last-snack",
         "clip-bbb-not-impressed",
+        "clip-spring-made-it",
+        "clip-caminandes-3-big-plans",
         "clip-bbb-patience",
+        "clip-caminandes-3-already-gone",
         "clip-bbb-changed-things",
+        "clip-caminandes-3-deflated",
         "clip-bbb-group-chat",
+        "clip-caminandes-3-sharing",
         "clip-bbb-waiting",
         "clip-bbb-processing",
         "clip-bbb-delayed-fall",
         "clip-bbb-peace"
+      ]
+    },
+    {
+      "id": "live-action",
+      "title": "Live action",
+      "description": "Real actors, clear reactions, original cinema framing. Licensed excerpts from Tears of Steel.",
+      "reference_ids": [
+        "clip-tears-of-steel-wait-what",
+        "clip-tears-of-steel-too-close",
+        "clip-tears-of-steel-system-surprise",
+        "clip-tears-of-steel-thinking-it-through",
+        "clip-tears-of-steel-not-buying-it"
       ]
     }
   ]

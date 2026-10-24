@@ -12,7 +12,7 @@ import {
 } from '../src/catalogue-model.mjs';
 import { catalogue as legacy } from '../worker/src/catalogue.stage3000.generated.mjs';
 import { clipLibrary } from '../worker/src/clip-library.generated.mjs';
-import { catalogue, galleryCatalogue } from '../worker/src/catalogue.mjs';
+import { catalogue, galleryCatalogue, retrievalCatalogue } from '../worker/src/catalogue.mjs';
 const editorial = JSON.parse(
   await readFile(new URL('../catalogue/editorial.json', import.meta.url), 'utf8'),
 );
@@ -49,19 +49,19 @@ const compile = (extra = {}) =>
     exclusions,
     mediaChecks,
     annotations,
-    retrievalIds: legacy.map((record) => record.id),
+    retrievalIds: [...legacy, ...external].map((record) => record.id),
     ...extra,
   });
 
 test('one normalized catalogue keeps reference, asset and collection identities consistent', () => {
   const model = compile();
-  assert.equal(model.references.length, 4321);
-  assert.equal(model.assets.length, 4315);
+  assert.equal(model.references.length, legacy.length + clipLibrary.length + external.length);
+  assert.equal(model.assets.length, model.references.length - Object.keys(referenceAliases).length);
   assert.deepEqual(
     catalogue.map((record) => record.id),
     legacy.map((record) => record.id),
   );
-  assert.equal(galleryCatalogue.length, 4321);
+  assert.equal(galleryCatalogue.length, model.references.length);
   const assets = new Map(model.assets.map((asset) => [asset.id, asset]));
   for (const reference of model.references) {
     assert.ok(
@@ -88,7 +88,7 @@ test('editorial meaning reaches runtime consumers without replacing media or exi
   const model = compile();
   assert.equal(
     model.references.filter((reference) => reference.retrieval.eligible).length,
-    catalogue.filter((record) => record.catalogue_status === 'active').length,
+    retrievalCatalogue.filter((record) => record.catalogue_status === 'active').length,
   );
   assert.equal(
     model.references.find((reference) => reference.id === 'gif-l1j9n8zrmycfsrqfq').retrieval
@@ -183,9 +183,9 @@ test('source corrections and canonical aliases agree across browsing and runtime
       false,
     );
     assert.ok(
-      browseCatalogue(views, { query: legacy.find((record) => record.id === alias).name }).some(
-        (record) => record.id === target,
-      ),
+      browseCatalogue(views, {
+        query: legacy.find((record) => record.id === alias).name,
+      }).some((record) => record.id === target),
     );
   }
   const urls = views.map((record) => record.media_url);
@@ -198,7 +198,10 @@ test('source corrections and canonical aliases agree across browsing and runtime
     () =>
       resolveReferences(legacy, {
         assetOverrides: {
-          doge: { ...assetOverrides['oh-no-cringe'], url: 'https://example.com/cat.png' },
+          doge: {
+            ...assetOverrides['oh-no-cringe'],
+            url: 'https://example.com/cat.png',
+          },
         },
       }),
     /source evidence/,
@@ -253,7 +256,12 @@ test('machine visual evidence stays separate from selected editorial collections
       title: 'Doge visual fixture',
       evidence,
     },
-    measurement: { url: source, source_sha256: evidence.source_sha256, width: 512, height: 512 },
+    measurement: {
+      url: source,
+      source_sha256: evidence.source_sha256,
+      width: 512,
+      height: 512,
+    },
     evidence,
     human_validated: false,
   };
@@ -290,4 +298,20 @@ test('corrected media carries the same revision into browser and runtime consume
     assert.match(view.media_revision, /^[a-f0-9]{64}$/);
     assert.equal(view.media_revision, runtime.media_revision);
   }
+});
+
+test('resolution filters combine with reaction filters and keep unmeasured sources out', () => {
+  const views = catalogueViews(compile());
+  const hd = browseCatalogue(views, { resolution: '720' });
+  assert.ok(hd.length > 0);
+  assert.ok(hd.every((record) => ['720p', '1080p'].includes(record.quality.encoded_resolution)));
+  const fullHd = browseCatalogue(views, { resolution: '1080' });
+  assert.ok(fullHd.every((record) => record.quality.encoded_resolution === '1080p'));
+  const disbelief = browseCatalogue(views, {
+    resolution: '720',
+    reaction: 'disbelief',
+  });
+  assert.ok(disbelief.length > 0);
+  assert.ok(disbelief.every((record) => record.facets.reactions.includes('disbelief')));
+  assert.equal(browseCatalogue([{ ...views[0], quality: null }], { resolution: '720' }).length, 0);
 });

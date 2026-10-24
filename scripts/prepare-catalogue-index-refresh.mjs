@@ -2,7 +2,8 @@
 // exact existing IDs before a separate, explicit upsert and retain rollback data.
 import { readFile, writeFile } from 'node:fs/promises';
 import { getPlatformProxy } from 'wrangler';
-import { semanticText, exampleText } from '../src/catalogue-index.mjs';
+import { semanticText, exampleText, hostedVectorId } from '../src/catalogue-index.mjs';
+import { hostedRetrievalCatalogue } from '../worker/src/catalogue.mjs';
 const option = (name) =>
   process.argv.find((value) => value.startsWith('--' + name + '='))?.slice(name.length + 3);
 const baselinePath = option('baseline'),
@@ -31,23 +32,35 @@ const changed = current
       (semanticText(record) !== semanticText(baseline[index]) ||
         exampleText(record) !== exampleText(baseline[index])),
   );
+const includeHosted = process.argv.includes('--include-hosted');
+const additions = includeHosted
+  ? hostedRetrievalCatalogue.map((record) => ({ record, index: null }))
+  : [];
+const targets = [...changed, ...additions];
+const vectorId = (record, index, view) =>
+  index === null
+    ? hostedVectorId(record.id, view)
+    : `meme-${String(index + 1).padStart(4, '0')}-${view}`;
 const plan = {
   model: '@cf/baai/bge-base-en-v1.5',
   pooling: 'cls',
-  records: changed.map(({ record, index }) => ({
+  records: targets.map(({ record, index }) => ({
     id: record.id,
     index,
-    vector_ids: ['meaning', 'example'].map(
-      (view) => `meme-${String(index + 1).padStart(4, '0')}-${view}`,
-    ),
+    operation: index === null ? 'hosted_upsert' : 'legacy_update',
+    vector_ids: ['meaning', 'example'].map((view) => vectorId(record, index, view)),
   })),
 };
 await writeFile(output + '.plan.json', JSON.stringify(plan, null, 2) + '\n');
-const platform = await getPlatformProxy({ configPath: config, envFiles: [], persist: false });
+const platform = await getPlatformProxy({
+  configPath: config,
+  envFiles: [],
+  persist: false,
+});
 const entries = [];
 try {
-  for (let offset = 0; offset < changed.length; offset += 8) {
-    const batch = changed.slice(offset, offset + 8),
+  for (let offset = 0; offset < targets.length; offset += 8) {
+    const batch = targets.slice(offset, offset + 8),
       texts = batch.flatMap(({ record }) => [semanticText(record), exampleText(record)]);
     const response = await platform.env.FREE_AI.run('meme-lab', plan.model, {
       text: texts,
@@ -68,14 +81,14 @@ try {
       for (const [position, { record, index }] of batch.entries())
         for (const [viewIndex, view] of ['meaning', 'example'].entries())
           entries.push({
-            id: `meme-${String(index + 1).padStart(4, '0')}-${view}`,
+            id: vectorId(record, index, view),
             values: [...response.data[position * 2 + viewIndex]],
             metadata: {
               catalogue_id: record.id,
               canonical_id: record.canonical_id ?? record.id,
               name: record.name,
               stage: 3000,
-              control: index < 30,
+              control: index !== null && index < 30,
               core: record.core === true,
               view,
             },
@@ -85,8 +98,9 @@ try {
     }
     console.log(
       JSON.stringify({
-        prepared: Math.min(offset + batch.length, changed.length),
+        prepared: Math.min(offset + batch.length, targets.length),
         changed_records: changed.length,
+        hosted_records: additions.length,
       }),
     );
   }

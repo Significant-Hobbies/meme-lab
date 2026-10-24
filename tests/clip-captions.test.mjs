@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 import {catalogue} from '../worker/src/catalogue.stage3000.generated.mjs';
-import {clipLibrary as unifiedClips} from '../worker/src/catalogue.mjs';
+import {catalogue as currentCatalogue,clipLibrary as unifiedClips} from '../worker/src/catalogue.mjs';
 
 import {clipSource,clipCaptions,clipMedia,validateClipCaptions,validateClipFrames} from '../worker/src/clip-captions.mjs';
 import {planComposition} from '../worker/src/meme-composition.mjs';
@@ -17,6 +17,8 @@ const frames=[.2,.7,1.2].map(at_seconds=>({at_seconds,data_url:'data:image/jpeg;
 const answer=(value=output,extra={})=>Response.json({model:'served-model',choices:[{finish_reason:'stop',message:{content:JSON.stringify(value)}}],...extra});
 
 test('licensed hosted animations are registered identities and enforce MP4 delivery',async()=>{
+  for(const item of unifiedClips.filter(record=>record.media_url.startsWith('/assets/clips/')))
+    assert.equal(clipSource(item),item.media_url,item.id);
   const record=unifiedClips.find(record=>record.id==='clip-bbb-delayed-fall');assert.ok(record);
   assert.equal(clipSource(record),record.media_url);
   assert.equal(clipSource({...record,id:'unregistered-external'}),null);
@@ -39,7 +41,7 @@ test('clip generation sends one bounded, attributed automatic request with the s
   let calls=0;
   const response=await clipCaptions(request(),{FREE_AI:{fetch:async req=>{
     calls++;assert.equal(req.headers.get('x-gateway-project-id'),'meme-lab');const data=await req.json();
-    assert.equal(data.model,'auto');assert.equal(data.max_tokens,850);assert.equal(data.reasoning_effort,'low');assert.match(data.messages[0].content,/Caption style: deadpan/);assert.match(data.messages[0].content,/Developers/);assert.match(data.messages[0].content,/Use Clap/);assert.equal(data.messages.length,1);return answer();
+    assert.equal(data.model,'auto');assert.equal(data.max_tokens,850);assert.equal(data.reasoning_effort,'low');assert.match(data.messages[0].content,/Caption style: deadpan/);assert.match(data.messages[0].content,/Developers/);assert.ok(data.messages[0].content.includes(JSON.stringify(currentCatalogue.find(record=>record.id===clip.id).name)));assert.equal(data.messages.length,1);return answer();
   }}});
   assert.equal(calls,1);assert.equal(response.status,200);assert.deepEqual((await response.json()).captions,output.captions);
 });
