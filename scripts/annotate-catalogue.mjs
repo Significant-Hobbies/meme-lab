@@ -42,7 +42,11 @@ const pending = rows
   .filter((row) => !completed.has(row.id + ':' + row.measurement.source_sha256))
   .slice(0, limit);
 const promptVersion = 'catalogue-visual-v2';
-const platform = await getPlatformProxy({ configPath: config, envFiles: [], persist: false });
+const platform = await getPlatformProxy({
+  configPath: config,
+  envFiles: [],
+  persist: false,
+});
 await mkdir(dirname(resolve(output)), { recursive: true });
 try {
   for (let offset = 0; offset < pending.length; offset += 2) {
@@ -60,7 +64,10 @@ try {
         }),
       });
       for (const frame of row.frames)
-        content.push({ type: 'image_url', image_url: { url: frame, detail: 'low' } });
+        content.push({
+          type: 'image_url',
+          image_url: { url: frame, detail: 'low' },
+        });
     }
     const started = Date.now();
     const response = await platform.env.FREE_AI.fetch(
@@ -83,12 +90,20 @@ try {
       }),
     );
     if (!response.ok) {
-      await response.body?.cancel();
+      const failure = await response.json().catch(() => null);
+      const code =
+        typeof failure?.error?.code === 'string' ? failure.error.code.slice(0, 80) : null;
+      const message =
+        typeof failure?.error?.message === 'string'
+          ? failure.error.message.replace(/\s+/g, ' ').slice(0, 240)
+          : null;
       await appendFile(
         output + '.attempts.jsonl',
         JSON.stringify({
           ids: batch.map((row) => row.id),
           status: response.status,
+          error_code: code,
+          error_message: message,
           retry_after: response.headers.get('retry-after'),
           observed_at: new Date().toISOString(),
         }) + '\n',
@@ -159,7 +174,10 @@ try {
         pending: pending.length,
         served_model: raw.model,
         milliseconds: Date.now() - started,
-        associations: records.map((record) => ({ id: record.id, association: record.association })),
+        associations: records.map((record) => ({
+          id: record.id,
+          association: record.association,
+        })),
       }),
     );
     if (offset + 2 < pending.length) await new Promise((resolve) => setTimeout(resolve, 5000));

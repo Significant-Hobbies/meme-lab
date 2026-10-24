@@ -23187,8 +23187,8 @@
       "url": "/assets/clips/bbb-back-at-it.mp4",
       "width": 1920,
       "height": 1080,
-      "duration": 5.0,
-      "fps": 30.0,
+      "duration": 5,
+      "fps": 30,
       "bytes": 3049147,
       "codec": "h264",
       "mime_type": "video/mp4",
@@ -23222,7 +23222,7 @@
       "width": 1920,
       "height": 1080,
       "duration": 3.3,
-      "fps": 30.0,
+      "fps": 30,
       "bytes": 1201609,
       "codec": "h264",
       "mime_type": "video/mp4",
@@ -23255,8 +23255,8 @@
       "url": "/assets/clips/bbb-delayed-fall.mp4",
       "width": 1920,
       "height": 1080,
-      "duration": 5.0,
-      "fps": 30.0,
+      "duration": 5,
+      "fps": 30,
       "bytes": 5372392,
       "codec": "h264",
       "mime_type": "video/mp4",
@@ -23289,8 +23289,8 @@
       "url": "/assets/clips/bbb-flowers.mp4",
       "width": 1920,
       "height": 1080,
-      "duration": 6.0,
-      "fps": 30.0,
+      "duration": 6,
+      "fps": 30,
       "bytes": 3575840,
       "codec": "h264",
       "mime_type": "video/mp4",
@@ -23323,8 +23323,8 @@
       "url": "/assets/clips/bbb-group-chat.mp4",
       "width": 1920,
       "height": 1080,
-      "duration": 5.0,
-      "fps": 30.0,
+      "duration": 5,
+      "fps": 30,
       "bytes": 4463973,
       "codec": "h264",
       "mime_type": "video/mp4",
@@ -23357,8 +23357,8 @@
       "url": "/assets/clips/bbb-not-impressed.mp4",
       "width": 1920,
       "height": 1080,
-      "duration": 3.0,
-      "fps": 30.0,
+      "duration": 3,
+      "fps": 30,
       "bytes": 802365,
       "codec": "h264",
       "mime_type": "video/mp4",
@@ -23392,7 +23392,7 @@
       "width": 1920,
       "height": 1080,
       "duration": 2.5,
-      "fps": 30.0,
+      "fps": 30,
       "bytes": 907257,
       "codec": "h264",
       "mime_type": "video/mp4",
@@ -23425,8 +23425,8 @@
       "url": "/assets/clips/bbb-peace.mp4",
       "width": 1920,
       "height": 1080,
-      "duration": 5.0,
-      "fps": 30.0,
+      "duration": 5,
+      "fps": 30,
       "bytes": 2645361,
       "codec": "h264",
       "mime_type": "video/mp4",
@@ -23459,8 +23459,8 @@
       "url": "/assets/clips/bbb-processing.mp4",
       "width": 1920,
       "height": 1080,
-      "duration": 4.0,
-      "fps": 30.0,
+      "duration": 4,
+      "fps": 30,
       "bytes": 809465,
       "codec": "h264",
       "mime_type": "video/mp4",
@@ -23493,8 +23493,8 @@
       "url": "/assets/clips/bbb-small-joy.mp4",
       "width": 1920,
       "height": 1080,
-      "duration": 6.0,
-      "fps": 30.0,
+      "duration": 6,
+      "fps": 30,
       "bytes": 5402282,
       "codec": "h264",
       "mime_type": "video/mp4",
@@ -23527,8 +23527,8 @@
       "url": "/assets/clips/bbb-waiting.mp4",
       "width": 1920,
       "height": 1080,
-      "duration": 4.0,
-      "fps": 30.0,
+      "duration": 4,
+      "fps": 30,
       "bytes": 3124721,
       "codec": "h264",
       "mime_type": "video/mp4",
@@ -23561,8 +23561,8 @@
       "url": "/assets/clips/bbb-what-now.mp4",
       "width": 1920,
       "height": 1080,
-      "duration": 4.0,
-      "fps": 30.0,
+      "duration": 4,
+      "fps": 30,
       "bytes": 1905687,
       "codec": "h264",
       "mime_type": "video/mp4",
@@ -23584,6 +23584,754 @@
         "327753d7f42e4e832cd27e6ffa508f0dad46dc4c750d7602c0663e7b543d8151",
         "7e8e9da6215d410258f41386d109ce9abb6d794fc04d2545ff030bf24cda6cec",
         "0bbfd77c6e6146e51f6815b04ef163c2502bbdd9f4ebc7b1843beade0cf55008"
+      ]
+    }
+  },
+  "clip-caminandes-3-already-gone": {
+    "state": "available",
+    "source": "/assets/clips/caminandes-3-already-gone.mp4",
+    "observed_on": "2026-10-24",
+    "measurement": {
+      "url": "/assets/clips/caminandes-3-already-gone.mp4",
+      "width": 1920,
+      "height": 1080,
+      "duration": 5.0,
+      "fps": 24.0,
+      "bytes": 3580739,
+      "codec": "h264",
+      "mime_type": "video/mp4",
+      "has_audio": false,
+      "source_sha256": "799f38f8fbc61eb2d7e368ae95a79c9774e4ae25007c411d0fe28788522184da",
+      "frame_hashes": [
+        "652489e53de4a51411e0c570400ce16457e36fa2cfeeb046a2c93f416d02cd2f",
+        "ad336a0c1965441d34926a02570ad90254715d971a74f05cf17185e6e76d525a",
+        "64a3cb6e633c754777aa8f0e1c3e879d29d65531cf8044d73bc1163104ff6a7d"
+      ],
+      "motion_checked": true,
+      "distinct_frames": 3,
+      "eligible": true,
+      "observed_on": "2026-10-24"
+    },
+    "visual_evidence": {
+      "state": "prepared",
+      "frame_sha256": [
+        "652489e53de4a51411e0c570400ce16457e36fa2cfeeb046a2c93f416d02cd2f",
+        "ad336a0c1965441d34926a02570ad90254715d971a74f05cf17185e6e76d525a",
+        "64a3cb6e633c754777aa8f0e1c3e879d29d65531cf8044d73bc1163104ff6a7d"
+      ]
+    }
+  },
+  "clip-caminandes-3-big-plans": {
+    "state": "available",
+    "source": "/assets/clips/caminandes-3-big-plans.mp4",
+    "observed_on": "2026-10-24",
+    "measurement": {
+      "url": "/assets/clips/caminandes-3-big-plans.mp4",
+      "width": 1920,
+      "height": 1080,
+      "duration": 5.0,
+      "fps": 24.0,
+      "bytes": 4477137,
+      "codec": "h264",
+      "mime_type": "video/mp4",
+      "has_audio": false,
+      "source_sha256": "fe1d36d01b56abfe22648a7b45cf92bb554df4b82f905009a49e0cc6060a225e",
+      "frame_hashes": [
+        "1064e5f070741b3b3015472e3d5802d687fd95bcf747782050527732f557c93a",
+        "75ad5557477fcc20a4106bf2be7698a092a948a7cfa70725ef6d4313f4a6c976",
+        "f05e4a1968e541a535fc93452033778f15e89d4207e13e638a63c4016f898f19"
+      ],
+      "motion_checked": true,
+      "distinct_frames": 3,
+      "eligible": true,
+      "observed_on": "2026-10-24"
+    },
+    "visual_evidence": {
+      "state": "prepared",
+      "frame_sha256": [
+        "1064e5f070741b3b3015472e3d5802d687fd95bcf747782050527732f557c93a",
+        "75ad5557477fcc20a4106bf2be7698a092a948a7cfa70725ef6d4313f4a6c976",
+        "f05e4a1968e541a535fc93452033778f15e89d4207e13e638a63c4016f898f19"
+      ]
+    }
+  },
+  "clip-caminandes-3-careful-now": {
+    "state": "available",
+    "source": "/assets/clips/caminandes-3-careful-now.mp4",
+    "observed_on": "2026-10-24",
+    "measurement": {
+      "url": "/assets/clips/caminandes-3-careful-now.mp4",
+      "width": 1920,
+      "height": 1080,
+      "duration": 4.0,
+      "fps": 24.0,
+      "bytes": 953653,
+      "codec": "h264",
+      "mime_type": "video/mp4",
+      "has_audio": false,
+      "source_sha256": "c2058108aecb8d5d89e9c4a412598ffeeee2b1f93d475dcd70e6f4833923e1ac",
+      "frame_hashes": [
+        "d7672a3128bacdb44162f6cce0261cf9ec5b21b86f60fecccf4678795fba2dd5",
+        "6cd166baa0ea8e11dfd0c0985b68e4f1719234283d1350aeac08677477ee45c0",
+        "9454781a3f7d51df719fa539bc41604c199f2bd4313925aa49b094ac96b7d332"
+      ],
+      "motion_checked": true,
+      "distinct_frames": 3,
+      "eligible": true,
+      "observed_on": "2026-10-24"
+    },
+    "visual_evidence": {
+      "state": "prepared",
+      "frame_sha256": [
+        "d7672a3128bacdb44162f6cce0261cf9ec5b21b86f60fecccf4678795fba2dd5",
+        "6cd166baa0ea8e11dfd0c0985b68e4f1719234283d1350aeac08677477ee45c0",
+        "9454781a3f7d51df719fa539bc41604c199f2bd4313925aa49b094ac96b7d332"
+      ]
+    }
+  },
+  "clip-caminandes-3-cold-stare": {
+    "state": "available",
+    "source": "/assets/clips/caminandes-3-cold-stare.mp4",
+    "observed_on": "2026-10-24",
+    "measurement": {
+      "url": "/assets/clips/caminandes-3-cold-stare.mp4",
+      "width": 1920,
+      "height": 1080,
+      "duration": 2.833008,
+      "fps": 24.0,
+      "bytes": 1700260,
+      "codec": "h264",
+      "mime_type": "video/mp4",
+      "has_audio": false,
+      "source_sha256": "fac82abfed7d3df0ed7421352619ef58890982b2e37faec8805e8777d63f4f12",
+      "frame_hashes": [
+        "b51513e16739b8ef18f5bbf59e9c9d10908f76486ae80064d19a5c36f319fbba",
+        "e44809cf7b57192c3f41f95e572c6a99bd3a2fbdf0b4f59cc17a296f605ea2ce",
+        "144705789b84a9d8b1731b6bb619f1c7ffbcd5ad79ebca59515146b0bec116ef"
+      ],
+      "motion_checked": true,
+      "distinct_frames": 3,
+      "eligible": true,
+      "observed_on": "2026-10-24"
+    },
+    "visual_evidence": {
+      "state": "prepared",
+      "frame_sha256": [
+        "b51513e16739b8ef18f5bbf59e9c9d10908f76486ae80064d19a5c36f319fbba",
+        "e44809cf7b57192c3f41f95e572c6a99bd3a2fbdf0b4f59cc17a296f605ea2ce",
+        "144705789b84a9d8b1731b6bb619f1c7ffbcd5ad79ebca59515146b0bec116ef"
+      ]
+    }
+  },
+  "clip-caminandes-3-deflated": {
+    "state": "available",
+    "source": "/assets/clips/caminandes-3-deflated.mp4",
+    "observed_on": "2026-10-24",
+    "measurement": {
+      "url": "/assets/clips/caminandes-3-deflated.mp4",
+      "width": 1920,
+      "height": 1080,
+      "duration": 5.0,
+      "fps": 24.0,
+      "bytes": 892973,
+      "codec": "h264",
+      "mime_type": "video/mp4",
+      "has_audio": false,
+      "source_sha256": "eac112e0fd30d5e87aeba362f5b75a2c1b95d8598c3fb45dbcc8f82aa5422a62",
+      "frame_hashes": [
+        "1072c0225f33fc52e18af6aefa3ca400c6f4a08b9d38df951f39e5fed570ad1e",
+        "1f77ce3fe5f296d22b9f9e9fd866fe550ddecc5c96bf938ca905cc3a772fce9a",
+        "e8d996991fc3fe9b3d5e922cebb6d19d03fea70094d728236641332e2f49dde2"
+      ],
+      "motion_checked": true,
+      "distinct_frames": 3,
+      "eligible": true,
+      "observed_on": "2026-10-24"
+    },
+    "visual_evidence": {
+      "state": "prepared",
+      "frame_sha256": [
+        "1072c0225f33fc52e18af6aefa3ca400c6f4a08b9d38df951f39e5fed570ad1e",
+        "1f77ce3fe5f296d22b9f9e9fd866fe550ddecc5c96bf938ca905cc3a772fce9a",
+        "e8d996991fc3fe9b3d5e922cebb6d19d03fea70094d728236641332e2f49dde2"
+      ]
+    }
+  },
+  "clip-caminandes-3-immediate-regret": {
+    "state": "available",
+    "source": "/assets/clips/caminandes-3-immediate-regret.mp4",
+    "observed_on": "2026-10-24",
+    "measurement": {
+      "url": "/assets/clips/caminandes-3-immediate-regret.mp4",
+      "width": 1920,
+      "height": 1080,
+      "duration": 4.0,
+      "fps": 24.0,
+      "bytes": 970274,
+      "codec": "h264",
+      "mime_type": "video/mp4",
+      "has_audio": false,
+      "source_sha256": "70c355fc6be6a91fedf7fb3a6f1a0a8232e8aadacda1929093c241a6ee29bbda",
+      "frame_hashes": [
+        "306803b3a5a4d2db02c1ce3243394511b98b88366997fb663e2db0939b3e5f9d",
+        "b540b0a2c6cf58b316f665d398c7bf41aab21a05bc72af1764c17bdc14e2d7ad",
+        "2bbf48bd25f845969e086898a8addb29c0a87d9f4512d1da9fdf23f49cba97ba"
+      ],
+      "motion_checked": true,
+      "distinct_frames": 3,
+      "eligible": true,
+      "observed_on": "2026-10-24"
+    },
+    "visual_evidence": {
+      "state": "prepared",
+      "frame_sha256": [
+        "306803b3a5a4d2db02c1ce3243394511b98b88366997fb663e2db0939b3e5f9d",
+        "b540b0a2c6cf58b316f665d398c7bf41aab21a05bc72af1764c17bdc14e2d7ad",
+        "2bbf48bd25f845969e086898a8addb29c0a87d9f4512d1da9fdf23f49cba97ba"
+      ]
+    }
+  },
+  "clip-caminandes-3-last-snack": {
+    "state": "available",
+    "source": "/assets/clips/caminandes-3-last-snack.mp4",
+    "observed_on": "2026-10-24",
+    "measurement": {
+      "url": "/assets/clips/caminandes-3-last-snack.mp4",
+      "width": 1920,
+      "height": 1080,
+      "duration": 4.0,
+      "fps": 24.0,
+      "bytes": 1997770,
+      "codec": "h264",
+      "mime_type": "video/mp4",
+      "has_audio": false,
+      "source_sha256": "457643534fb2dda1e7a5842df803607c66e2c2e4997d107a8bde6b8dab6cddc3",
+      "frame_hashes": [
+        "5706895efddf4722c4f908e5c21ee3f9b056bb507acac56a81883028f2f96f1c",
+        "e9ca81ddf83694fcdd71a0711c9410f5c3c2540be58f67be9738b8a6b5a818ce",
+        "05e6022df34dd430f4143c7c6ecd8afe1f80a5eac93b06481183c53218d19ca7"
+      ],
+      "motion_checked": true,
+      "distinct_frames": 3,
+      "eligible": true,
+      "observed_on": "2026-10-24"
+    },
+    "visual_evidence": {
+      "state": "prepared",
+      "frame_sha256": [
+        "5706895efddf4722c4f908e5c21ee3f9b056bb507acac56a81883028f2f96f1c",
+        "e9ca81ddf83694fcdd71a0711c9410f5c3c2540be58f67be9738b8a6b5a818ce",
+        "05e6022df34dd430f4143c7c6ecd8afe1f80a5eac93b06481183c53218d19ca7"
+      ]
+    }
+  },
+  "clip-caminandes-3-sharing": {
+    "state": "available",
+    "source": "/assets/clips/caminandes-3-sharing.mp4",
+    "observed_on": "2026-10-24",
+    "measurement": {
+      "url": "/assets/clips/caminandes-3-sharing.mp4",
+      "width": 1920,
+      "height": 1080,
+      "duration": 5.0,
+      "fps": 24.0,
+      "bytes": 4623630,
+      "codec": "h264",
+      "mime_type": "video/mp4",
+      "has_audio": false,
+      "source_sha256": "a00684ce70f252f2e20c05c9280e0603d4d9a2478094c4aba5bba2680abe24b5",
+      "frame_hashes": [
+        "b79e174e664ac8a3e09a00b432799f5fbe9b604a9e5dcd1d84dc080259ae52fa",
+        "1cdbf574f17a67eaa4543010fee2193f7b689c23447b26ef53a3c8753f0204ea",
+        "34fab0f7c5c44b45bb1a190c1a9a0a2ce29e99a0da5ed010264fc477b7be053f"
+      ],
+      "motion_checked": true,
+      "distinct_frames": 3,
+      "eligible": true,
+      "observed_on": "2026-10-24"
+    },
+    "visual_evidence": {
+      "state": "prepared",
+      "frame_sha256": [
+        "b79e174e664ac8a3e09a00b432799f5fbe9b604a9e5dcd1d84dc080259ae52fa",
+        "1cdbf574f17a67eaa4543010fee2193f7b689c23447b26ef53a3c8753f0204ea",
+        "34fab0f7c5c44b45bb1a190c1a9a0a2ce29e99a0da5ed010264fc477b7be053f"
+      ]
+    }
+  },
+  "clip-caminandes-3-suspicious": {
+    "state": "available",
+    "source": "/assets/clips/caminandes-3-suspicious.mp4",
+    "observed_on": "2026-10-24",
+    "measurement": {
+      "url": "/assets/clips/caminandes-3-suspicious.mp4",
+      "width": 1920,
+      "height": 1080,
+      "duration": 4.0,
+      "fps": 24.0,
+      "bytes": 1242790,
+      "codec": "h264",
+      "mime_type": "video/mp4",
+      "has_audio": false,
+      "source_sha256": "e0736fa1b5fdcbe3cfeed5035b8affe454dfafc5b8bd890a60bc5f63fe0f2d73",
+      "frame_hashes": [
+        "1634903db367a8a73c7df435fa16db63c3e9f2974175cd0d2e953bbda050c534",
+        "cf2beb71af1850a80d4d2035ddefb6ed38a7d4d6da88bd35b9805bf4c68a9e1a",
+        "25b6c58d1de76605b81f243ae0cebd626815274fd49c3138cf9005d1878d256f"
+      ],
+      "motion_checked": true,
+      "distinct_frames": 3,
+      "eligible": true,
+      "observed_on": "2026-10-24"
+    },
+    "visual_evidence": {
+      "state": "prepared",
+      "frame_sha256": [
+        "1634903db367a8a73c7df435fa16db63c3e9f2974175cd0d2e953bbda050c534",
+        "cf2beb71af1850a80d4d2035ddefb6ed38a7d4d6da88bd35b9805bf4c68a9e1a",
+        "25b6c58d1de76605b81f243ae0cebd626815274fd49c3138cf9005d1878d256f"
+      ]
+    }
+  },
+  "clip-coffee-run-finally-home": {
+    "state": "available",
+    "source": "/assets/clips/coffee-run-finally-home.mp4",
+    "observed_on": "2026-10-24",
+    "measurement": {
+      "url": "/assets/clips/coffee-run-finally-home.mp4",
+      "width": 1920,
+      "height": 804,
+      "duration": 6.0,
+      "fps": 24.0,
+      "bytes": 1308792,
+      "codec": "h264",
+      "mime_type": "video/mp4",
+      "has_audio": false,
+      "source_sha256": "66deea64300b15f7cbd8caf8de54be4bf922ae66375775e01bbdacb231892e12",
+      "frame_hashes": [
+        "9fa2a265eab90827dbff2fbef21f02a33a3ff6f94743bf0263d9ff780ff4daf5",
+        "7657501f1722d673129e556eca82cdd8da06dc1cfae076d019d71d0c579d21f9",
+        "e7b447ea0fb4b440ad2906edb50c8e513765fbc4daaf12dbdec2dcbf52674561"
+      ],
+      "motion_checked": true,
+      "distinct_frames": 3,
+      "eligible": true,
+      "observed_on": "2026-10-24"
+    },
+    "visual_evidence": {
+      "state": "prepared",
+      "frame_sha256": [
+        "9fa2a265eab90827dbff2fbef21f02a33a3ff6f94743bf0263d9ff780ff4daf5",
+        "7657501f1722d673129e556eca82cdd8da06dc1cfae076d019d71d0c579d21f9",
+        "e7b447ea0fb4b440ad2906edb50c8e513765fbc4daaf12dbdec2dcbf52674561"
+      ]
+    }
+  },
+  "clip-coffee-run-overcommitted": {
+    "state": "available",
+    "source": "/assets/clips/coffee-run-overcommitted.mp4",
+    "observed_on": "2026-10-24",
+    "measurement": {
+      "url": "/assets/clips/coffee-run-overcommitted.mp4",
+      "width": 1920,
+      "height": 804,
+      "duration": 3.625,
+      "fps": 24.0,
+      "bytes": 1116283,
+      "codec": "h264",
+      "mime_type": "video/mp4",
+      "has_audio": false,
+      "source_sha256": "d56f15232dc5997ac8f85ecf8f31a93efdd338cd48ab890827a443ca18a06690",
+      "frame_hashes": [
+        "2ba9f1d1eeb804a2aa5d806f6b377cda02cbb2e00c2c46314aba17e7bc834d3f",
+        "83aeefd0930621385689ad32151a487eef96a85779ce3b6c85ca0aa3ed70c8f7",
+        "31ce9a99d222c2df616950e6721e805451b9d7f335dc9a82c23cff3ffa9a3573"
+      ],
+      "motion_checked": true,
+      "distinct_frames": 3,
+      "eligible": true,
+      "observed_on": "2026-10-24"
+    },
+    "visual_evidence": {
+      "state": "prepared",
+      "frame_sha256": [
+        "2ba9f1d1eeb804a2aa5d806f6b377cda02cbb2e00c2c46314aba17e7bc834d3f",
+        "83aeefd0930621385689ad32151a487eef96a85779ce3b6c85ca0aa3ed70c8f7",
+        "31ce9a99d222c2df616950e6721e805451b9d7f335dc9a82c23cff3ffa9a3573"
+      ]
+    }
+  },
+  "clip-spring-heard-something": {
+    "state": "available",
+    "source": "/assets/clips/spring-heard-something.mp4",
+    "observed_on": "2026-10-24",
+    "measurement": {
+      "url": "/assets/clips/spring-heard-something.mp4",
+      "width": 1920,
+      "height": 804,
+      "duration": 5.0,
+      "fps": 24.0,
+      "bytes": 856069,
+      "codec": "h264",
+      "mime_type": "video/mp4",
+      "has_audio": false,
+      "source_sha256": "bd7e9df03b1fa66212687f5280c9bf876267709675202ffabbbd406910926692",
+      "frame_hashes": [
+        "4ac2ebbe00e5e5d5da9bb338bb786dcb5f0b00e5564e146594765c7d7b6ca728",
+        "f2f04186835676410b124e3bba5b9caae578b39de2b801538a4c7629a198da85",
+        "c9597f8bb0b21a76e42a1c65935267546551092491f13012072785cd92888b64"
+      ],
+      "motion_checked": true,
+      "distinct_frames": 3,
+      "eligible": true,
+      "observed_on": "2026-10-24"
+    },
+    "visual_evidence": {
+      "state": "prepared",
+      "frame_sha256": [
+        "4ac2ebbe00e5e5d5da9bb338bb786dcb5f0b00e5564e146594765c7d7b6ca728",
+        "f2f04186835676410b124e3bba5b9caae578b39de2b801538a4c7629a198da85",
+        "c9597f8bb0b21a76e42a1c65935267546551092491f13012072785cd92888b64"
+      ]
+    }
+  },
+  "clip-spring-keep-going": {
+    "state": "available",
+    "source": "/assets/clips/spring-keep-going.mp4",
+    "observed_on": "2026-10-24",
+    "measurement": {
+      "url": "/assets/clips/spring-keep-going.mp4",
+      "width": 1920,
+      "height": 804,
+      "duration": 3.833333,
+      "fps": 24.0,
+      "bytes": 2100943,
+      "codec": "h264",
+      "mime_type": "video/mp4",
+      "has_audio": false,
+      "source_sha256": "b2afedd5d9f93ed86680495882d5e2df1a51b006a0b1f97be6d3f6031d13a83c",
+      "frame_hashes": [
+        "14d7872986514ef85cc19eea1beb0ae7524cd4aedc1a2385ecf2b5c40df2d860",
+        "fc8470dd2add3b16a9c2be378696e8d6cf42c045bbd2098bc508fe43132aae14",
+        "df0ee347dab678f5b382f789df61361c22df1f943ca1dc7f41bd32f506cc9460"
+      ],
+      "motion_checked": true,
+      "distinct_frames": 3,
+      "eligible": true,
+      "observed_on": "2026-10-24"
+    },
+    "visual_evidence": {
+      "state": "prepared",
+      "frame_sha256": [
+        "14d7872986514ef85cc19eea1beb0ae7524cd4aedc1a2385ecf2b5c40df2d860",
+        "fc8470dd2add3b16a9c2be378696e8d6cf42c045bbd2098bc508fe43132aae14",
+        "df0ee347dab678f5b382f789df61361c22df1f943ca1dc7f41bd32f506cc9460"
+      ]
+    }
+  },
+  "clip-spring-little-light": {
+    "state": "available",
+    "source": "/assets/clips/spring-little-light.mp4",
+    "observed_on": "2026-10-24",
+    "measurement": {
+      "url": "/assets/clips/spring-little-light.mp4",
+      "width": 1920,
+      "height": 804,
+      "duration": 5.0,
+      "fps": 24.0,
+      "bytes": 1729345,
+      "codec": "h264",
+      "mime_type": "video/mp4",
+      "has_audio": false,
+      "source_sha256": "b04d2f9c3998363cbfe6ba72a43e99399a8f561077dc1ec5b550e5cd95c41ddc",
+      "frame_hashes": [
+        "f886d2e3acf4a07059ae284f5d6e3483a90379e2703813ee12a41a69a2fb1f94",
+        "06eafa61c7065336742e2c439469c2b409573fd7459383020d19c316407fe93b",
+        "844f15379dffd61e5c387feef2fff5189500dd8259c1205f883b54c4f4fd51c6"
+      ],
+      "motion_checked": true,
+      "distinct_frames": 3,
+      "eligible": true,
+      "observed_on": "2026-10-24"
+    },
+    "visual_evidence": {
+      "state": "prepared",
+      "frame_sha256": [
+        "f886d2e3acf4a07059ae284f5d6e3483a90379e2703813ee12a41a69a2fb1f94",
+        "06eafa61c7065336742e2c439469c2b409573fd7459383020d19c316407fe93b",
+        "844f15379dffd61e5c387feef2fff5189500dd8259c1205f883b54c4f4fd51c6"
+      ]
+    }
+  },
+  "clip-spring-made-it": {
+    "state": "available",
+    "source": "/assets/clips/spring-made-it.mp4",
+    "observed_on": "2026-10-24",
+    "measurement": {
+      "url": "/assets/clips/spring-made-it.mp4",
+      "width": 1920,
+      "height": 804,
+      "duration": 4.0,
+      "fps": 24.0,
+      "bytes": 2036837,
+      "codec": "h264",
+      "mime_type": "video/mp4",
+      "has_audio": false,
+      "source_sha256": "f3fe15686190e86ab387339b32b9a1546e32ec5b5fba272144a6fef416497095",
+      "frame_hashes": [
+        "0f4be31569c7225c137cc88f63bd6aff400aec104101942698c06a9664b45c98",
+        "4fb62defa2cc95d202186ab09fffecd3bbec006aa177b9921d0727409b22b1af",
+        "cd7f78d6e3017fb74cf14df0b93481f267c9db4b65a8c89d89ec16efb00c1a93"
+      ],
+      "motion_checked": true,
+      "distinct_frames": 3,
+      "eligible": true,
+      "observed_on": "2026-10-24"
+    },
+    "visual_evidence": {
+      "state": "prepared",
+      "frame_sha256": [
+        "0f4be31569c7225c137cc88f63bd6aff400aec104101942698c06a9664b45c98",
+        "4fb62defa2cc95d202186ab09fffecd3bbec006aa177b9921d0727409b22b1af",
+        "cd7f78d6e3017fb74cf14df0b93481f267c9db4b65a8c89d89ec16efb00c1a93"
+      ]
+    }
+  },
+  "clip-spring-not-so-sure": {
+    "state": "available",
+    "source": "/assets/clips/spring-not-so-sure.mp4",
+    "observed_on": "2026-10-24",
+    "measurement": {
+      "url": "/assets/clips/spring-not-so-sure.mp4",
+      "width": 1920,
+      "height": 804,
+      "duration": 5.0,
+      "fps": 24.0,
+      "bytes": 1061483,
+      "codec": "h264",
+      "mime_type": "video/mp4",
+      "has_audio": false,
+      "source_sha256": "29aeb3c76c956adb2c46ab6bbd3cfcaefa0e52162b3aac8ac5979e5d0cdf025a",
+      "frame_hashes": [
+        "7a57033368875737bbb60a4d1773d55d67b8ed6fd1cfb88c3d54a22aa426c9c8",
+        "f3a2716fd87ef50eb8c0bf82ee6afb9128f5cdffe2ac760d92ac193deded1f3c",
+        "bdd8658352bb06f19fb28a419431bdccc0992df36fd7eccbc2b044f3e5fa9502"
+      ],
+      "motion_checked": true,
+      "distinct_frames": 3,
+      "eligible": true,
+      "observed_on": "2026-10-24"
+    },
+    "visual_evidence": {
+      "state": "prepared",
+      "frame_sha256": [
+        "7a57033368875737bbb60a4d1773d55d67b8ed6fd1cfb88c3d54a22aa426c9c8",
+        "f3a2716fd87ef50eb8c0bf82ee6afb9128f5cdffe2ac760d92ac193deded1f3c",
+        "bdd8658352bb06f19fb28a419431bdccc0992df36fd7eccbc2b044f3e5fa9502"
+      ]
+    }
+  },
+  "clip-spring-small-delight": {
+    "state": "available",
+    "source": "/assets/clips/spring-small-delight.mp4",
+    "observed_on": "2026-10-24",
+    "measurement": {
+      "url": "/assets/clips/spring-small-delight.mp4",
+      "width": 1920,
+      "height": 804,
+      "duration": 3.833333,
+      "fps": 24.0,
+      "bytes": 1452480,
+      "codec": "h264",
+      "mime_type": "video/mp4",
+      "has_audio": false,
+      "source_sha256": "c95657369f5dcba63ff8392e8dee6afeccbc2a9b7396110ab4fbb72446059597",
+      "frame_hashes": [
+        "b813320622a7e7cbef77b4542b4131720c9b840162564956997b8bf9df755dd6",
+        "7b0993531323ae93f9c212c63768ace9193e1c6a70c6c16e65e0e2647749564d",
+        "5b46d1273db426954aa9c0a9daf70752c799e1bf736f5f24d97ac91e27a921c0"
+      ],
+      "motion_checked": true,
+      "distinct_frames": 3,
+      "eligible": true,
+      "observed_on": "2026-10-24"
+    },
+    "visual_evidence": {
+      "state": "prepared",
+      "frame_sha256": [
+        "b813320622a7e7cbef77b4542b4131720c9b840162564956997b8bf9df755dd6",
+        "7b0993531323ae93f9c212c63768ace9193e1c6a70c6c16e65e0e2647749564d",
+        "5b46d1273db426954aa9c0a9daf70752c799e1bf736f5f24d97ac91e27a921c0"
+      ]
+    }
+  },
+  "clip-tears-of-steel-not-buying-it": {
+    "state": "available",
+    "source": "/assets/clips/tears-of-steel-not-buying-it.mp4",
+    "observed_on": "2026-10-24",
+    "measurement": {
+      "url": "/assets/clips/tears-of-steel-not-buying-it.mp4",
+      "width": 1920,
+      "height": 800,
+      "duration": 2.5,
+      "fps": 24.0,
+      "bytes": 1304095,
+      "codec": "h264",
+      "mime_type": "video/mp4",
+      "has_audio": false,
+      "source_sha256": "6555ea9e1cf790189211d87eaf2d0e93b54fcaa704c0161e1e2bfffc99656ea2",
+      "frame_hashes": [
+        "3829f352a3f0db7c230ce8d78fbcdaa253745583027bb15df9353aaf4e86f896",
+        "376f40c0e5aaecdc7f217438f480cd3a4a5bd0ff7fa953584c55e44a12843f13",
+        "2ec98282549a13a86a228994381f0ce84ea103e4c5a6892bd52d7f152fa0d298"
+      ],
+      "motion_checked": true,
+      "distinct_frames": 3,
+      "eligible": true,
+      "observed_on": "2026-10-24"
+    },
+    "visual_evidence": {
+      "state": "prepared",
+      "frame_sha256": [
+        "3829f352a3f0db7c230ce8d78fbcdaa253745583027bb15df9353aaf4e86f896",
+        "376f40c0e5aaecdc7f217438f480cd3a4a5bd0ff7fa953584c55e44a12843f13",
+        "2ec98282549a13a86a228994381f0ce84ea103e4c5a6892bd52d7f152fa0d298"
+      ]
+    }
+  },
+  "clip-tears-of-steel-system-surprise": {
+    "state": "available",
+    "source": "/assets/clips/tears-of-steel-system-surprise.mp4",
+    "observed_on": "2026-10-24",
+    "measurement": {
+      "url": "/assets/clips/tears-of-steel-system-surprise.mp4",
+      "width": 1920,
+      "height": 800,
+      "duration": 3.0,
+      "fps": 24.0,
+      "bytes": 1234055,
+      "codec": "h264",
+      "mime_type": "video/mp4",
+      "has_audio": false,
+      "source_sha256": "a34366eccdf7ea39faeb6d83f6102672febc8643c21e1aa2e3659ce08d30e18a",
+      "frame_hashes": [
+        "86c0413c23be45226413760776377d241412bcaf869610ddd4800287e5824f0c",
+        "27a5bc76669ef828c49e9a21847e905656332a91111c85c0087146f93fcb37e2",
+        "0a1910cccb1532f961f8655774eb4b91900cadb3e18db735bc155040d90c4c97"
+      ],
+      "motion_checked": true,
+      "distinct_frames": 3,
+      "eligible": true,
+      "observed_on": "2026-10-24"
+    },
+    "visual_evidence": {
+      "state": "prepared",
+      "frame_sha256": [
+        "86c0413c23be45226413760776377d241412bcaf869610ddd4800287e5824f0c",
+        "27a5bc76669ef828c49e9a21847e905656332a91111c85c0087146f93fcb37e2",
+        "0a1910cccb1532f961f8655774eb4b91900cadb3e18db735bc155040d90c4c97"
+      ]
+    }
+  },
+  "clip-tears-of-steel-thinking-it-through": {
+    "state": "available",
+    "source": "/assets/clips/tears-of-steel-thinking-it-through.mp4",
+    "observed_on": "2026-10-24",
+    "measurement": {
+      "url": "/assets/clips/tears-of-steel-thinking-it-through.mp4",
+      "width": 1920,
+      "height": 800,
+      "duration": 3.333008,
+      "fps": 24.0,
+      "bytes": 1414270,
+      "codec": "h264",
+      "mime_type": "video/mp4",
+      "has_audio": false,
+      "source_sha256": "5ab8e3180b47e5030d1521f7943964addaae800933e38a9aac4b0da0f5014f26",
+      "frame_hashes": [
+        "7e7b0b2c156c28afd7f83b0b0e10b2822f2e48fc73b88582350f243696c93705",
+        "2ab41c5eeb4d5ad20fca07dc2121220bbbfc2459701c23b53349f337ce861d2a",
+        "b620475a0249592755d24d0c84287cb24daf0254e33297f0c4fae7fd86cd855b"
+      ],
+      "motion_checked": true,
+      "distinct_frames": 3,
+      "eligible": true,
+      "observed_on": "2026-10-24"
+    },
+    "visual_evidence": {
+      "state": "prepared",
+      "frame_sha256": [
+        "7e7b0b2c156c28afd7f83b0b0e10b2822f2e48fc73b88582350f243696c93705",
+        "2ab41c5eeb4d5ad20fca07dc2121220bbbfc2459701c23b53349f337ce861d2a",
+        "b620475a0249592755d24d0c84287cb24daf0254e33297f0c4fae7fd86cd855b"
+      ]
+    }
+  },
+  "clip-tears-of-steel-too-close": {
+    "state": "available",
+    "source": "/assets/clips/tears-of-steel-too-close.mp4",
+    "observed_on": "2026-10-24",
+    "measurement": {
+      "url": "/assets/clips/tears-of-steel-too-close.mp4",
+      "width": 1920,
+      "height": 800,
+      "duration": 5.0,
+      "fps": 24.0,
+      "bytes": 2131290,
+      "codec": "h264",
+      "mime_type": "video/mp4",
+      "has_audio": false,
+      "source_sha256": "393e6bdf1417eec610c533eb949b9b05eff836bfa6f83fdb7efbaf23da66f037",
+      "frame_hashes": [
+        "d2aa3563e675e63e77fe848a8d5c9cd2798df760cafea6872f66c4754d3ef445",
+        "b950619e9d81e329bda713c65c9061aabceb56462b49284eeba5760739cbbad3",
+        "11bc267147fb0ec546f5b6aef9b97bbfebecd17f153bf10138f735f621119a65"
+      ],
+      "motion_checked": true,
+      "distinct_frames": 3,
+      "eligible": true,
+      "observed_on": "2026-10-24"
+    },
+    "visual_evidence": {
+      "state": "prepared",
+      "frame_sha256": [
+        "d2aa3563e675e63e77fe848a8d5c9cd2798df760cafea6872f66c4754d3ef445",
+        "b950619e9d81e329bda713c65c9061aabceb56462b49284eeba5760739cbbad3",
+        "11bc267147fb0ec546f5b6aef9b97bbfebecd17f153bf10138f735f621119a65"
+      ]
+    }
+  },
+  "clip-tears-of-steel-wait-what": {
+    "state": "available",
+    "source": "/assets/clips/tears-of-steel-wait-what.mp4",
+    "observed_on": "2026-10-24",
+    "measurement": {
+      "url": "/assets/clips/tears-of-steel-wait-what.mp4",
+      "width": 1920,
+      "height": 800,
+      "duration": 3.5,
+      "fps": 24.0,
+      "bytes": 880596,
+      "codec": "h264",
+      "mime_type": "video/mp4",
+      "has_audio": false,
+      "source_sha256": "dbdffce8cb8e65c7169729736b3d74987611f4ec9cac553292509c3f97c1f62c",
+      "frame_hashes": [
+        "9b8d8aea20b6ba6ed58aea010605a998fb4d7eec96a3d0eb3f15c079180a7e77",
+        "6d98267d874538b4fcca66c51e4f4233889f4703e24e58913110c8d98a3c2ac6",
+        "136f7a64f0550a1a5118f49642f83d44e56d91cd5c7c8f7ce9c98ad7f2092903"
+      ],
+      "motion_checked": true,
+      "distinct_frames": 3,
+      "eligible": true,
+      "observed_on": "2026-10-24"
+    },
+    "visual_evidence": {
+      "state": "prepared",
+      "frame_sha256": [
+        "9b8d8aea20b6ba6ed58aea010605a998fb4d7eec96a3d0eb3f15c079180a7e77",
+        "6d98267d874538b4fcca66c51e4f4233889f4703e24e58913110c8d98a3c2ac6",
+        "136f7a64f0550a1a5118f49642f83d44e56d91cd5c7c8f7ce9c98ad7f2092903"
       ]
     }
   },

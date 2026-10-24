@@ -63,7 +63,8 @@ export class ClipStudio {
     if(!this.ready||this.exporting||this.generating||!this.caption.value.trim()||this.blocked)return;
     this.exporting=true;this.exportAbort=new AbortController();const version=this.version;this.controls();
     try {
-      const {blob,extension}=await recordClip(this.video,this.canvas,()=>this.paint(),{signal:this.exportAbort.signal,fps:this.candidate.video_evidence?.fps??30,onProgress:percent=>this.message(`Exporting video… ${percent}% · keep this tab visible`)});
+      const preserveCadence=this.candidate.media_status==='approved'&&this.candidate.media_url?.startsWith('/assets/clips/')&&Boolean(this.candidate.provenance?.source_movie_sha256);
+      const {blob,extension}=await recordClip(this.video,this.canvas,()=>this.paint(),{signal:this.exportAbort.signal,fps:this.candidate.video_evidence?.fps??30,preserveCadence,onProgress:percent=>this.message(`Exporting video… ${percent}% · keep this tab visible`)});
       if(version!==this.version)return;
       const url=URL.createObjectURL(blob);const link=Object.assign(document.createElement('a'),{href:url,download:`${this.candidate.id}-captioned.${extension}`});link.click();setTimeout(()=>URL.revokeObjectURL(url),60000);
       this.message('Video exported. Your download is ready.');window.appHealthLog?.('clip.exported',{props:{format:extension}});

@@ -1,4 +1,12 @@
 // Stable retrieval views shared by seeding and qualified refreshes.
+// Prefix identities by family instead of appending to the positional legacy index.
+export function hostedVectorId(recordId, view) {
+  if (!/^clip-[a-z0-9]+(?:-[a-z0-9]+)+$/.test(recordId) || !['meaning', 'example'].includes(view))
+    throw Error('Invalid hosted vector identity.');
+  const id = 'hosted-' + recordId.slice(5) + '-' + view;
+  if (id.length > 64) throw Error('Hosted vector identity exceeds Vectorize limits.');
+  return id;
+}
 export function semanticText(record) {
   const nameTokens = new Set(
     record.name

@@ -183,12 +183,16 @@
   },
   {
     "id": "sad-pablo",
-    "name": "Sad Pablo Escobar",
-    "message": "Show lonely waiting, boredom, or an anticlimactic absence of activity.",
-    "relational_pattern": "Expected company or stimulation is missing.",
-    "example_context": "I cleared the whole evening for the game and everyone cancelled.",
-    "near_miss_context": "The speaker deliberately chose solitude and is enjoying it.",
+    "name": "Waiting Alone Collage",
+    "message": "A composite image of a man sitting and standing by himself in quiet, empty environments while waiting.",
+    "relational_pattern": "Illustrating long delays, waiting for a response, or feeling isolated and bored.",
+    "example_context": "Illustrating long delays, waiting for a response, or feeling isolated and bored.",
+    "near_miss_context": "Conveying high-energy celebrations, fast-paced action, or cheerful social gatherings.",
     "tags": [
+      "disappointment",
+      "fatigue",
+      "everyday",
+      "technology",
       "waiting",
       "boredom",
       "loneliness"
@@ -203,6 +207,35 @@
     "media_url": "https://i.imgflip.com/1c1uej.jpg",
     "preview_url": "https://i.imgflip.com/1c1uej.jpg",
     "mime_type": "image/jpeg",
+    "catalogue_profile": {
+      "facets": {
+        "reactions": [
+          "disappointment",
+          "fatigue"
+        ],
+        "contexts": [
+          "everyday",
+          "technology"
+        ],
+        "roles": [
+          "self",
+          "situation"
+        ],
+        "intensity": "quiet"
+      },
+      "evidence": {
+        "method": "model_visual_annotation",
+        "source": "https://i.imgflip.com/1c1uej.jpg",
+        "source_sha256": "c38881f289ed6784de2c5e1064295aa5a58da213a048c657acab06b653fa647c",
+        "frame_sha256": [
+          "afd8be207eb568bd3137382016395cbec3a41150eb4ce853ba813de65d57e4df"
+        ],
+        "model": "gemini-3.5-flash-lite",
+        "prompt_version": "catalogue-visual-v2",
+        "observed_on": "2026-10-24"
+      },
+      "human_validated": false
+    },
     "media_revision": "c38881f289ed6784de2c5e1064295aa5a58da213a048c657acab06b653fa647c",
     "asset_evidence": {
       "url": "https://i.imgflip.com/1c1uej.jpg",
@@ -276,15 +309,17 @@
   },
   {
     "id": "laughing-leo",
-    "name": "Laughing Leo",
-    "message": "Offer amused, smug disbelief at a statement or outcome.",
-    "relational_pattern": "An observer finds a claim or irony particularly entertaining.",
-    "example_context": "He said the software cannot have bugs because it compiled.",
-    "near_miss_context": "Someone shares a painful personal failure and is not inviting a roast.",
+    "name": "Leonardo DiCaprio Laughing with Drink",
+    "message": "A man in historical formal wear holds a drink and makes a strained, amused facial expression.",
+    "relational_pattern": "Reacting to an absurd situation, finding something cynically funny, or sharing an inside joke.",
+    "example_context": "Reacting to an absurd situation, finding something cynically funny, or sharing an inside joke.",
+    "near_miss_context": "Expressing genuine sadness, grief, or sincere support.",
     "tags": [
       "amusement",
-      "smugness",
-      "disbelief"
+      "disbelief",
+      "friends",
+      "everyday",
+      "smugness"
     ],
     "image_url": "https://i.imgflip.com/4acd7j.png",
     "media_status": "source-preview",
@@ -296,6 +331,34 @@
     "media_url": "https://i.imgflip.com/4acd7j.png",
     "preview_url": "https://i.imgflip.com/4acd7j.png",
     "mime_type": "image/png",
+    "catalogue_profile": {
+      "facets": {
+        "reactions": [
+          "amusement",
+          "disbelief"
+        ],
+        "contexts": [
+          "friends",
+          "everyday"
+        ],
+        "roles": [
+          "observer"
+        ],
+        "intensity": "expressive"
+      },
+      "evidence": {
+        "method": "model_visual_annotation",
+        "source": "https://i.imgflip.com/4acd7j.png",
+        "source_sha256": "079ac1e86c4d8fdf44a4ad50bb21950ba20c7f597c3e00492b9f4d54307f7c5a",
+        "frame_sha256": [
+          "8e9a3e302d23c618fdb19b9599d961ba1d7b543db1bbd157cca2d3fc6ef7e639"
+        ],
+        "model": "gemini-3.5-flash-lite",
+        "prompt_version": "catalogue-visual-v2",
+        "observed_on": "2026-10-24"
+      },
+      "human_validated": false
+    },
     "media_revision": "079ac1e86c4d8fdf44a4ad50bb21950ba20c7f597c3e00492b9f4d54307f7c5a",
     "asset_evidence": {
       "url": "https://i.imgflip.com/4acd7j.png",
@@ -309,13 +372,16 @@
   },
   {
     "id": "gatsby-toast",
-    "name": "Leonardo DiCaprio Cheers",
-    "message": "Acknowledge a win or a clever remark with a composed celebratory toast.",
-    "relational_pattern": "An observer gives stylish recognition without a long speech.",
-    "example_context": "After months of work, the first customer finally paid.",
-    "near_miss_context": "The person is requesting urgent instructions rather than celebration.",
+    "name": "Leonardo DiCaprio Toast",
+    "message": "A man in formal wear smiling and raising a glass in a toast toward the viewer.",
+    "relational_pattern": "Congratulating someone, celebrating a milestone, or acknowledging a job well done.",
+    "example_context": "Congratulating someone, celebrating a milestone, or acknowledging a job well done.",
+    "near_miss_context": "Serious workplace reprimands or somber situations.",
     "tags": [
       "celebration",
+      "agreement",
+      "friends",
+      "work",
       "recognition",
       "approval"
     ],
@@ -329,6 +395,34 @@
     "media_url": "https://i.imgflip.com/39t1o.jpg",
     "preview_url": "https://i.imgflip.com/39t1o.jpg",
     "mime_type": "image/jpeg",
+    "catalogue_profile": {
+      "facets": {
+        "reactions": [
+          "celebration",
+          "agreement"
+        ],
+        "contexts": [
+          "friends",
+          "work"
+        ],
+        "roles": [
+          "other"
+        ],
+        "intensity": "expressive"
+      },
+      "evidence": {
+        "method": "model_visual_annotation",
+        "source": "https://i.imgflip.com/39t1o.jpg",
+        "source_sha256": "6a86bde07c1e891ba74a0c208892b0d92271e9744151681d39fc24a0efdeb913",
+        "frame_sha256": [
+          "c80e68c6ad4e4e25a3b711625728b5136d955d9cfd4276dd8b11a45c0c1c086f"
+        ],
+        "model": "gemini-3.5-flash-lite",
+        "prompt_version": "catalogue-visual-v2",
+        "observed_on": "2026-10-24"
+      },
+      "human_validated": false
+    },
     "media_revision": "6a86bde07c1e891ba74a0c208892b0d92271e9744151681d39fc24a0efdeb913",
     "asset_evidence": {
       "url": "https://i.imgflip.com/39t1o.jpg",
@@ -66085,13 +66179,17 @@
   },
   {
     "id": "gif-yrufixsnwfvcxaxpmx",
-    "name": "Clap",
-    "message": "Use Clap when someone agrees with a statement without elaboration.",
-    "relational_pattern": "Clap communicates agreement in response to nod, making the intended emotion clear.",
-    "example_context": "For example, when a friend says 'I love pizza' and you nod without speaking.",
-    "near_miss_context": "Avoid Clap when the conversation is unrelated to either agreement or nod.",
+    "name": "Slow Clap Reaction",
+    "message": "A man in a suit claps slowly with a knowing smile, used for either genuine praise or sarcastic condescension.",
+    "relational_pattern": "Acknowledging someone's achievement or reacting to a predictable outcome with mock applause.",
+    "example_context": "Acknowledging someone's achievement or reacting to a predictable outcome with mock applause.",
+    "near_miss_context": "Expressing genuine grief, anger, or urgency where irony is inappropriate.",
     "tags": [
       "agreement",
+      "amusement",
+      "dismissal",
+      "work",
+      "everyday",
       "nod",
       "nonverbal",
       "reaction-gif",
@@ -66119,6 +66217,38 @@
       }
     },
     "availability": "live",
+    "catalogue_profile": {
+      "facets": {
+        "reactions": [
+          "agreement",
+          "amusement",
+          "dismissal"
+        ],
+        "contexts": [
+          "work",
+          "everyday"
+        ],
+        "roles": [
+          "observer",
+          "other"
+        ],
+        "intensity": "expressive"
+      },
+      "evidence": {
+        "method": "model_visual_annotation",
+        "source": "https://media.giphy.com/media/YRuFixSNWFVcXaxpmX/giphy.mp4",
+        "source_sha256": "5ec67608c0922c7659a56eb7e1007dd27769e58ec4db44d4289a9590d051289f",
+        "frame_sha256": [
+          "5bc90effd5b9e37b57237765f89292c174544338be1ff7b9f39dd5c875f19006",
+          "10e1c0196b765816245e092b5821d37dc57a2ef37527d3b4d9f6a29a25612b88",
+          "96d8e76e416474bcbf2bf256837f11399eef46f7e20a251808d53deb572a478e"
+        ],
+        "model": "gemini-3.5-flash-lite",
+        "prompt_version": "catalogue-visual-v2",
+        "observed_on": "2026-10-24"
+      },
+      "human_validated": false
+    },
     "media_revision": "5ec67608c0922c7659a56eb7e1007dd27769e58ec4db44d4289a9590d051289f",
     "video_evidence": {
       "url": "https://media.giphy.com/media/YRuFixSNWFVcXaxpmX/giphy.mp4",
@@ -66139,11 +66269,16 @@
   {
     "id": "gif-jumltr3dhegpw",
     "name": "Face Palm",
-    "message": "Use Face Palm when someone realizes a mistake they made.",
-    "relational_pattern": "A reaction to sudden self-awareness of an error.",
-    "example_context": "For example, when you forget your phone at home and realize it too late.",
-    "near_miss_context": "Avoid Face Palm when the conversation is unrelated to either realization or embarrassment.",
+    "message": "A man brings his hand up to cover his face in exasperation or disbelief.",
+    "relational_pattern": "Reacting to obvious blunders, foolish mistakes, or secondhand embarrassment.",
+    "example_context": "Reacting to obvious blunders, foolish mistakes, or secondhand embarrassment.",
+    "near_miss_context": "Expressing genuine grief, severe tragedy, or physical pain.",
     "tags": [
+      "disappointment",
+      "awkwardness",
+      "work",
+      "everyday",
+      "friends",
       "realization",
       "embarrassment",
       "self-correction",
@@ -66172,6 +66307,38 @@
       }
     },
     "availability": "live",
+    "catalogue_profile": {
+      "facets": {
+        "reactions": [
+          "disappointment",
+          "awkwardness"
+        ],
+        "contexts": [
+          "work",
+          "everyday",
+          "friends"
+        ],
+        "roles": [
+          "self",
+          "observer"
+        ],
+        "intensity": "expressive"
+      },
+      "evidence": {
+        "method": "model_visual_annotation",
+        "source": "https://media.giphy.com/media/JUMLTR3dHEGpW/giphy.mp4",
+        "source_sha256": "8fcae3b82e770dbe9563a5f0332524e0f35729dfb85e2959802e81362a42b7d1",
+        "frame_sha256": [
+          "0bdf12f1205257c0dbb270b8f0d538882cfdcf077ac63f64c699fa8778849c0a",
+          "55d45f407490508e218ced4dac2ce99bd2d4942795fc5510814b27f9648189ba",
+          "d3fc34358f3d468873aae6548b8c37386741ae33b08bdb58a131cf8c58f04614"
+        ],
+        "model": "gemini-3.5-flash-lite",
+        "prompt_version": "catalogue-visual-v2",
+        "observed_on": "2026-10-24"
+      },
+      "human_validated": false
+    },
     "media_revision": "8fcae3b82e770dbe9563a5f0332524e0f35729dfb85e2959802e81362a42b7d1",
     "video_evidence": {
       "url": "https://media.giphy.com/media/JUMLTR3dHEGpW/giphy.mp4",
@@ -66191,12 +66358,15 @@
   },
   {
     "id": "gif-5wwf7gr2nhgamhrneua",
-    "name": "Yes Agreed",
-    "message": "Use Yes Agreed when someone confirms a statement with emphasis.",
-    "relational_pattern": "Yes Agreed communicates repetition in response to confirmation, making the intended emotion clear.",
-    "example_context": "For example, when you say 'That's true' multiple times to show certainty.",
-    "near_miss_context": "Avoid Yes Agreed when the conversation is unrelated to either repetition or confirmation.",
+    "name": "Dwight Schrute Confirming True Statement",
+    "message": "A man in an office environment gestures and nods while affirming that something is true.",
+    "relational_pattern": "Confirming a fact or agreeing emphatically with someone's observation.",
+    "example_context": "Confirming a fact or agreeing emphatically with someone's observation.",
+    "near_miss_context": "Expressing disagreement, doubt, or sarcastic denial.",
     "tags": [
+      "agreement",
+      "work",
+      "everyday",
       "repetition",
       "confirmation",
       "affirmation",
@@ -66226,6 +66396,36 @@
       }
     },
     "availability": "live",
+    "catalogue_profile": {
+      "facets": {
+        "reactions": [
+          "agreement"
+        ],
+        "contexts": [
+          "work",
+          "everyday"
+        ],
+        "roles": [
+          "self",
+          "other"
+        ],
+        "intensity": "expressive"
+      },
+      "evidence": {
+        "method": "model_visual_annotation",
+        "source": "https://media.giphy.com/media/5wWf7GR2nhgamhRnEuA/giphy.mp4",
+        "source_sha256": "a117b98ae382e92bdd7def480d3136aa33cb1bfb45249ffa6fc1938e72ec1331",
+        "frame_sha256": [
+          "451530ff37a9dcdb24378a025f3ee43c955c42a1df6f873d6346bc6d1198b4eb",
+          "ad0680a75ebceea59c69e66b33a4e0f4598c8553a8e8fc6ea5bcf575003fa21c",
+          "f9a30e7a6d8bbf1a30dbab23411966f25c8877a318f46c3695f1dd4c3a93e85b"
+        ],
+        "model": "gemini-3.5-flash-lite",
+        "prompt_version": "catalogue-visual-v2",
+        "observed_on": "2026-10-24"
+      },
+      "human_validated": false
+    },
     "media_revision": "a117b98ae382e92bdd7def480d3136aa33cb1bfb45249ffa6fc1938e72ec1331",
     "video_evidence": {
       "url": "https://media.giphy.com/media/5wWf7GR2nhgamhRnEuA/giphy.mp4",

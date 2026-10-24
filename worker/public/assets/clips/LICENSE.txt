@@ -1,11 +1,40 @@
-Big Buck Bunny excerpts
+Licensed hosted excerpts
 
+Big Buck Bunny
 (c) copyright Blender Foundation | www.bigbuckbunny.org
-Licensed under Creative Commons Attribution 3.0 Unported.
-https://creativecommons.org/licenses/by/3.0/
+License: https://creativecommons.org/licenses/by/3.0/
 License statement: https://peach.blender.org/about/
-Official original: https://download.blender.org/demo/movies/BBB/bbb_sunflower_1080p_30fps_normal.mp4.zip
+Original source: https://download.blender.org/demo/movies/BBB/bbb_sunflower_1080p_30fps_normal.mp4.zip
+Native frame: 1920x1080 at 30 fps.
 
-Changes: short excerpts, H.264 encoding at original 1920x1080, audio omitted.
+Caminandes: Llamigos
+(CC) Blender Foundation | studio.blender.org
+License: https://creativecommons.org/licenses/by/4.0/
+License statement: https://studio.blender.org/projects/api/assets/2417/
+Original source: https://video.blender.org/object-storage/web_videos/23f3ef79-15dc-44c5-aa45-cf92e78a4509-1080.mp4
+Native frame: 1920x1080 at 24 fps.
+
+Coffee Run
+(CC) Blender Foundation | studio.blender.org
+License: https://creativecommons.org/licenses/by/4.0/
+License statement: https://studio.blender.org/projects/coffee-run/pages/licensing/
+Original source: https://video.blender.org/object-storage/web_videos/ff8fe61b-026f-4f07-b66b-2a790d6f6ab1-804.mp4
+Native frame: 1920x804 at 24 fps.
+
+Spring
+(CC) Blender Foundation | studio.blender.org
+License: https://creativecommons.org/licenses/by/4.0/
+License statement: https://studio.blender.org/projects/spring/pages/about/
+Original source: https://video.blender.org/object-storage/web_videos/3d95fb3d-c866-42c8-9db1-fe82f48ccb95-804.mp4
+Native frame: 1920x804 at 24 fps.
+
+Tears of Steel
+(CC) Blender Foundation | www.tearsofsteel.org
+License: https://creativecommons.org/licenses/by/3.0/
+License statement: https://mango.blender.org/sharing/
+Original source: https://video.blender.org/object-storage/web_videos/8533ea43-4271-4a57-9694-e9d0b35e1aa1-800.mp4
+Native frame: 1920x800 at 24 fps.
+
+Changes: short excerpts, H.264 encoding at native dimensions and cadence, audio omitted.
 Meme Lab adds user captions and a visible credit when exporting.
-The film creator does not endorse captions added by users.
+Film creators do not endorse captions added by users.

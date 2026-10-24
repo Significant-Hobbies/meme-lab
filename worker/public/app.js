@@ -37,6 +37,13 @@ function media(candidate,className) {
     wrap.append(Object.assign(document.createElement('span'),{className:'media-fallback',textContent:'Preview unavailable'}));
     return wrap;
   }
+  if(candidate.mime_type?.startsWith('video/')&&candidate.id) {
+    const video=Object.assign(document.createElement('video'),{controls:true,muted:true,playsInline:true,preload:'metadata',poster:candidate.preview_url||'',src:'/api/clips/media/'+encodeURIComponent(candidate.id)+(candidate.media_revision?'?v='+candidate.media_revision:'')});
+    video.setAttribute('aria-label',`${displayText(candidate.name)} reaction clip`);
+    wrap.classList.add('video-reaction');
+    wrap.append(video,Object.assign(document.createElement('span'),{className:'media-kind',textContent:'CLIP'}));
+    return wrap;
+  }
   const image=document.createElement('img');
   image.alt=`Meme preview: ${displayText(candidate.name)}`;
   image.referrerPolicy='no-referrer';
@@ -49,7 +56,7 @@ function media(candidate,className) {
     link.append(image);
     wrap.append(link);
   } else wrap.append(image);
-  if(candidate.media_type==='gif') wrap.append(Object.assign(document.createElement('span'),{className:'media-kind',textContent:'GIF'}));
+  if(candidate.media_type==='gif') wrap.append(Object.assign(document.createElement('span'),{className:'media-kind',textContent:'CLIP'}));
   return wrap;
 }
 

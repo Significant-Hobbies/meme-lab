@@ -1,4 +1,4 @@
-import {catalogue,clipLibrary} from './catalogue.mjs';
+import {catalogue,clipLibrary,retrievalCatalogue} from './catalogue.mjs';
 import {createGatewayClassifierFetch,hasMultiplePerspectives,humourBelongs,needsSeriousHandling,rankCandidates,rankCandidatesByPerspective,requiresFactualAnswer} from './classification.mjs';
 import {withClassifierDeadline} from './classifier-deadline.mjs';
 import {MAX_RECOMMENDATIONS,presentSelection,selectionFromRanking} from './recommendation.mjs';
@@ -12,7 +12,7 @@ import {composeMeme,compositionMedia,annaComposition} from './meme-composition.m
 import {clipCaptions,clipMedia} from './clip-captions.mjs';
 import {creationMediaUrl} from './meme-templates.mjs';
 
-const allowedIds=new Set(catalogue.map(record=>record.id));
+const allowedIds=new Set(retrievalCatalogue.map(record=>record.id));
 const catalogueById=new Map([...catalogue,...clipLibrary].map(record=>[record.id,record]));
 const CLASSIFIER_MODEL='free-ai:auto';
 const RETRIEVAL_FALLBACK_MODEL='vector-retrieval-fallback';
@@ -158,7 +158,7 @@ function memePage(record) {
     <article class="meme-detail">
       <div class="meme-detail-media">
         ${mediaUrl?record.mime_type?.startsWith('video/')?`<video controls playsinline loop muted preload="metadata" poster="${previewUrl}" src="/api/clips/media/${encodeURIComponent(record.id)}${record.media_revision?'?v='+record.media_revision:''}" aria-label="${name} reaction clip"></video>`:`<img src="${mediaUrl}" alt="${name} meme reference" referrerpolicy="no-referrer">`:'<span class="media-fallback">Preview unavailable</span>'}
-        ${record.media_type==='gif'?'<span class="media-kind">GIF</span>':''}
+        ${record.media_type==='gif'?'<span class="media-kind">CLIP</span>':''}
       </div>
       <div class="meme-detail-copy">
         <p class="eyebrow">MEME REFERENCE</p>
@@ -167,7 +167,7 @@ function memePage(record) {
         <dl class="meme-guide">
           ${record.video_evidence?`<div><dt>Source dimensions</dt><dd>${record.video_evidence.width} × ${record.video_evidence.height} encoded pixels · ${record.video_evidence.fps} fps · ${record.video_evidence.duration.toFixed(1)} seconds</dd></div>`:''}
           ${record.catalogue_scope!=='gallery'||record.catalogue_profile?`<div><dt>What it expresses</dt><dd>${escapeHtml(record.relational_pattern)}</dd></div><div><dt>Example</dt><dd>${escapeHtml(record.example_context)}</dd></div><div><dt>When not to use it</dt><dd>${escapeHtml(record.near_miss_context)}</dd></div>`:''}
-          ${record.catalogue_scope==='gallery'?'<div><dt>About this reaction</dt><dd>This clip is available to browse and caption. It has not been evaluated for automatic recommendations.</dd></div>':''}
+          ${record.catalogue_scope==='gallery'&&!allowedIds.has(record.id)?'<div><dt>About this reaction</dt><dd>This clip is available to browse and caption. It has not been evaluated for automatic recommendations.</dd></div>':''}
         </dl>
         <ul class="tag-list meme-detail-tags" aria-label="Related moods">${tags}</ul>
         <div class="meme-detail-actions">
@@ -224,7 +224,7 @@ function memeNotFound(request,asMarkdown) {
 }
 
 function sitemap() {
-  const urls=[...PUBLIC_ROUTES,...catalogue.filter(record=>record.id===record.canonical_id&&record.catalogue_status==='active').map(publicMemePath)];
+  const urls=[...PUBLIC_ROUTES,...retrievalCatalogue.filter(record=>record.id===record.canonical_id&&record.catalogue_status==='active').map(publicMemePath)];
   return `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls.map(path=>`  <url><loc>${SITE_ORIGIN}${path}</loc></url>`).join('\n')}\n</urlset>\n`;
 }
 

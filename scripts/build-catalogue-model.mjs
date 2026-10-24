@@ -1,5 +1,6 @@
 import { readFile, writeFile, stat } from 'node:fs/promises';
 import { createHash } from 'node:crypto';
+import { licensedCuts, validateLicensedRecord } from '../src/licensed-media.mjs';
 import { catalogue } from '../worker/src/catalogue.stage3000.generated.mjs';
 import { clipLibrary } from '../worker/src/clip-library.generated.mjs';
 import {
@@ -30,12 +31,18 @@ const annotationRows = (await readFile(new URL('catalogue/annotations.jsonl', ro
 const annotations = Object.fromEntries(annotationRows.map((row) => [row.id, row]));
 if (Object.keys(annotations).length !== annotationRows.length)
   throw Error('Repeated visual annotation identity.');
-const metadata = { profiles: editorial.profiles, annotations, mediaChecks, exclusions };
+const metadata = {
+  profiles: editorial.profiles,
+  annotations,
+  mediaChecks,
+  exclusions,
+};
 const animationCuts = JSON.parse(
   await readFile(new URL('catalogue/animation-cuts.json', root), 'utf8'),
 );
+const qualifiedCuts = licensedCuts(animationCuts);
 for (const record of external) {
-  const local = /^\/assets\/clips\/bbb-[a-z-]+\.mp4$/.test(record.media_url);
+  const local = /^\/assets\/clips\/[a-z0-9]+(?:-[a-z0-9]+)+\.mp4$/.test(record.media_url);
   const url = new URL(record.media_url, 'https://memes.significanthobbies.com');
   const remote =
     url.origin === 'https://upload.wikimedia.org' &&
@@ -47,7 +54,10 @@ for (const record of external) {
     url.search ||
     url.hash ||
     (local && record.mime_type !== 'video/mp4') ||
-    record.license_url !== 'https://creativecommons.org/licenses/by/3.0/' ||
+    ![
+      'https://creativecommons.org/licenses/by/3.0/',
+      'https://creativecommons.org/licenses/by/4.0/',
+    ].includes(record.license_url) ||
     !record.attribution ||
     !record.video_evidence?.eligible ||
     record.video_evidence.bytes > 20 * 1024 * 1024 ||
@@ -56,15 +66,9 @@ for (const record of external) {
   )
     throw Error('Unqualified external clip: ' + record.id);
   if (local) {
-    const cut = animationCuts.clips.find((clip) => clip.id === record.id),
-      file = new URL('worker/public' + record.media_url, root);
+    validateLicensedRecord(record, qualifiedCuts.get(record.id));
+    const file = new URL('worker/public' + record.media_url, root);
     if (
-      !cut ||
-      record.media_url !== '/assets/clips/' + cut.slug + '.mp4' ||
-      record.provenance.source_movie_sha256 !== animationCuts.source.source_sha256 ||
-      record.video_evidence.width !== 1920 ||
-      record.video_evidence.height !== 1080 ||
-      record.video_evidence.fps !== 30 ||
       (await stat(file)).size !== record.video_evidence.bytes ||
       createHash('sha256')
         .update(await readFile(file))
@@ -73,17 +77,30 @@ for (const record of external) {
       throw Error('Hosted animation differs from its qualified source: ' + record.id);
   }
 }
+for (const record of external) {
+  const poster = record.poster_evidence;
+  if (!poster) continue;
+  const file = new URL('worker/public' + poster.url, root);
+  if (
+    (await stat(file)).size !== poster.bytes ||
+    createHash('sha256')
+      .update(await readFile(file))
+      .digest('hex') !== poster.source_sha256
+  )
+    throw Error('Hosted poster differs from its reviewed frame: ' + record.id);
+}
 const model = compileCatalogue([...catalogue, ...clipLibrary, ...external], {
   ...editorial,
   ...metadata,
   assetOverrides,
   referenceAliases,
-  retrievalIds: catalogue.map((record) => record.id),
+  retrievalIds: [...catalogue, ...external].map((record) => record.id),
 });
 const profiles = editorial.profiles;
-const resolved = resolveReferences(catalogue, { assetOverrides, referenceAliases }).map((record) =>
-  applyCatalogueMetadata(record, metadata),
-);
+const resolved = resolveReferences(catalogue, {
+  assetOverrides,
+  referenceAliases,
+}).map((record) => applyCatalogueMetadata(record, metadata));
 const retrieval = resolved.map(
   ({
     id,
@@ -155,6 +172,15 @@ const health = {
   unknown_near_miss: model.references.filter((reference) => !reference.meaning.avoid_when).length,
 };
 const outputs = {
+  'worker/public/assets/clips/LICENSE.txt':
+    'Licensed hosted excerpts\n\n' +
+    Object.values(animationCuts.sources ?? { bbb: animationCuts.source })
+      .map(
+        (source) =>
+          `${source.title}\n${source.copyright}\nLicense: ${source.license_url}\nLicense statement: ${source.license_source_url}\nOriginal source: ${source.url}\nNative frame: ${source.width}x${source.height} at ${source.fps} fps.\n\n`,
+      )
+      .join('') +
+    'Changes: short excerpts, H.264 encoding at native dimensions and cadence, audio omitted.\nMeme Lab adds user captions and a visible credit when exporting.\nFilm creators do not endorse captions added by users.\n',
   'worker/public/catalogue-v2.json': JSON.stringify(model) + '\n',
   'worker/public/catalogue-model.js': await readFile(
     new URL('src/catalogue-model.mjs', root),

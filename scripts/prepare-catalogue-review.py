@@ -26,7 +26,7 @@ def prepare(reference):
   if row.get('source_url')==url and row.get('status')=='prepared':return row
  row={'id':key,'source_url':url,'observed_at':datetime.datetime.now(datetime.timezone.utc).isoformat(),'status':'failed'}
  try:
-  if re.fullmatch(r'/assets/clips/bbb-[a-z-]+\.mp4',url):
+  if re.fullmatch(r'/assets/clips/[a-z0-9]+(?:-[a-z0-9]+)+\.mp4',url):
    path=ROOT/'worker/public'/url.lstrip('/')
    if path.stat().st_size>20*1024*1024:raise ValueError('source_too_large')
    data=path.read_bytes()

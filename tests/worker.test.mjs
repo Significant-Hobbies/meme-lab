@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import worker from '../worker/src/index.mjs';
-import {catalogue as runtimeCatalogue} from '../worker/src/catalogue.mjs';
+import {catalogue as runtimeCatalogue,retrievalCatalogue} from '../worker/src/catalogue.mjs';
 import {createGatewayClassifierFetch,FIT_LABELS,hasMultiplePerspectives,humourBelongs,needsSeriousHandling,PERSPECTIVES,rankCandidates,rankCandidatesByPerspective,requiresFactualAnswer} from '../worker/src/classification.mjs';
 import {MINIMUM_VISIBLE_FIT,MINIMUM_VISIBLE_PERSPECTIVE_FIT,validateSelection,normalizeSelection,normalizeRankedSelection,validateRankedSelection,presentSelection,selectionFromRanking} from '../worker/src/recommendation.mjs';
 import {CORE_RESERVE,EMBEDDING_MODEL,mergeWithReserve,retrieveCandidates} from '../worker/src/retrieval.mjs';
@@ -142,6 +142,23 @@ test('production retrieval queries broad and core indexed views and returns uniq
   const records=await retrieveCandidates(retrievalEnv,'A situation worth testing.',3);
   assert.deepEqual(filters,[{view:'meaning'},{view:'example'},{core:true,view:'meaning'},{core:true,view:'example'}]);
   assert.deepEqual(records.map(record=>record.id),['this-is-fine','first-try','waiting-skeleton']);
+});
+
+test('hosted clips hydrate from stable supplemental vectors and survive recommendation validation',async()=>{
+  const id='clip-spring-small-delight';
+  const records=await retrieveCandidates({
+    NEURON_BUDGET:budget,
+    FREE_AI:{run:async()=>({data:[[1,0,0]]})},
+    MEME_INDEX:{query:async(_vector,options)=>({matches:[{id:'hosted-spring-small-delight-'+options.filter.view,metadata:{catalogue_id:id,view:options.filter.view,core:false}}]})}
+  },'A tiny thing made my day.',3);
+  assert.deepEqual(records.map(record=>record.id),[id]);
+  assert.equal(records[0].video_evidence.width,1920);
+  assert.equal(records[0].catalogue_profile.human_validated,false);
+  const selected=normalizeSelection({decision:'meme',confidence:'medium',none_reason:'',candidates:[{id,score:88,reason:'A very good little thing matches the small delight that brightened this ordinary day.'}]});
+  assert.doesNotThrow(()=>validateSelection(selected));
+  const presented=presentSelection(selected);
+  assert.equal(presented.candidates[0].mime_type,'video/mp4');
+  assert.equal(presented.candidates[0].preview_url,'/assets/clips/spring-small-delight.jpg');
 });
 
 test('production retrieval requires the private gateway and fails before direct AI when absent',async()=>{
@@ -682,7 +699,7 @@ test('SEO routes expose robots, the full sitemap, and crawlable meme details',as
   const sitemap=await worker.fetch(new Request('https://example.test/sitemap.xml'),env);
   assert.equal(sitemap.headers.get('content-type'),'application/xml; charset=utf-8');
   const xml=await sitemap.text();
-  assert.equal((xml.match(/<loc>/g)??[]).length,3+runtimeCatalogue.filter(record=>record.id===record.canonical_id&&record.catalogue_status==='active').length);
+  assert.equal((xml.match(/<loc>/g)??[]).length,3+retrievalCatalogue.filter(record=>record.id===record.canonical_id&&record.catalogue_status==='active').length);
   assert.match(xml,/\/memes\/absolute-cinema<\/loc>/);
 
   const detail=await worker.fetch(new Request('https://example.test/memes/absolute-cinema'),env);
