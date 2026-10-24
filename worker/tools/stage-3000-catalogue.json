@@ -2,11 +2,15 @@
   {
     "id": "absolute-cinema",
     "name": "Absolute Cinema",
-    "message": "Treat an event as an outstanding piece of entertainment, sincerely or with playful exaggeration.",
-    "relational_pattern": "Ordinary events are elevated into a grand spectacle.",
-    "example_context": "The underdog won after three improbable reversals in the final minute.",
-    "near_miss_context": "Someone needs practical help during an upsetting event; treating it as entertainment would be insensitive.",
+    "message": "Expressing peak admiration or dramatic appreciation for media or creative work.",
+    "relational_pattern": "Reacting to a brilliantly crafted piece of media, a clever plot twist, or high artistic achievement.",
+    "example_context": "Reacting to a brilliantly crafted piece of media, a clever plot twist, or high artistic achievement.",
+    "near_miss_context": "In serious, professional, or somber contexts where dramatic hyperbole is inappropriate.",
     "tags": [
+      "agreement",
+      "celebration",
+      "everyday",
+      "friends",
       "admiration",
       "spectacle",
       "dramatic-payoff"
@@ -18,12 +22,16 @@
   },
   {
     "id": "this-is-fine",
-    "name": "This Is Fine",
-    "message": "Maintain a facade of calm while circumstances are visibly falling apart.",
-    "relational_pattern": "Claimed wellbeing contradicts obvious surrounding trouble.",
-    "example_context": "Three deadlines moved to today. I have decided everything is perfectly under control.",
-    "near_miss_context": "Things really are going well and the speaker is sincerely relieved.",
+    "name": "This is fine",
+    "message": "Pretending everything is under control while the situation visibly falls apart.",
+    "relational_pattern": "The speaker downplays a problem that everyone can see.",
+    "example_context": "The speaker downplays a problem that everyone can see.",
+    "near_miss_context": "Sincere calm, genuine relief, or a crisis that calls for practical help.",
     "tags": [
+      "panic",
+      "skepticism",
+      "work",
+      "everyday",
       "denial",
       "chaos",
       "irony"
@@ -35,13 +43,15 @@
   },
   {
     "id": "monkey-puppet",
-    "name": "Monkey Puppet",
-    "message": "React awkwardly while trying not to reveal knowledge or involvement.",
-    "relational_pattern": "The observer has a reason to avoid attention.",
-    "example_context": "Everyone is asking who finished the dessert, and I am quietly washing my spoon.",
-    "near_miss_context": "The speaker has nothing to hide and wants a straightforward explanation.",
+    "name": "Monkey puppet",
+    "message": "Looking away after recognizing an uncomfortable resemblance to yourself.",
+    "relational_pattern": "A criticism or awkward detail unexpectedly implicates the observer.",
+    "example_context": "A criticism or awkward detail unexpectedly implicates the observer.",
+    "near_miss_context": "Open confrontation or genuine confusion about what happened.",
     "tags": [
       "awkwardness",
+      "friends",
+      "work",
       "guilt",
       "side-eye"
     ],
@@ -69,12 +79,16 @@
   },
   {
     "id": "hide-pain-harold",
-    "name": "Hide the Pain Harold",
-    "message": "Keep a strained pleasant expression despite internal discomfort.",
-    "relational_pattern": "Public politeness conceals private suffering.",
-    "example_context": "My boss asked whether I enjoyed the four-hour meeting. I smiled and said absolutely.",
-    "near_miss_context": "The person is genuinely happy rather than putting on a brave face.",
+    "name": "Hide the pain, Harold",
+    "message": "A polite smile barely conceals discomfort.",
+    "relational_pattern": "Someone tries to look fine despite an awkward or disappointing situation.",
+    "example_context": "Someone tries to look fine despite an awkward or disappointing situation.",
+    "near_miss_context": "Unambiguous happiness or a situation that needs sincere support.",
     "tags": [
+      "awkwardness",
+      "disappointment",
+      "work",
+      "everyday",
       "forced-smile",
       "discomfort",
       "politeness"
@@ -121,13 +135,16 @@
   {
     "id": "waiting-skeleton",
     "name": "Waiting Skeleton",
-    "message": "Exaggerate how long an anticipated response or event is taking.",
-    "relational_pattern": "A supposedly brief delay stretches beyond patience.",
-    "example_context": "They said they would send the invite in five minutes. That was last week.",
-    "near_miss_context": "The wait is normal, short, and explicitly expected.",
+    "message": "A wait has become absurdly long.",
+    "relational_pattern": "An overdue reply, promised delivery, or unresolved task keeps getting delayed.",
+    "example_context": "An overdue reply, promised delivery, or unresolved task keeps getting delayed.",
+    "near_miss_context": "A short or clearly expected wait.",
     "tags": [
-      "delay",
       "impatience",
+      "work",
+      "friends",
+      "everyday",
+      "delay",
       "exaggeration"
     ],
     "meme_strength": 61,
@@ -171,12 +188,16 @@
   },
   {
     "id": "spiderman-pointing",
-    "name": "Spider-Man Pointing",
-    "message": "Recognize matching identities, behaviour, or mutual accusations.",
-    "relational_pattern": "Two parties mirror the same relevant property.",
-    "example_context": "Two services each claim the other one is responsible for authentication.",
-    "near_miss_context": "One party has a clearly different role and there is no symmetry.",
+    "name": "Spider-Man pointing",
+    "message": "Both sides recognize the same behavior in each other.",
+    "relational_pattern": "Two people accuse one another of the same thing or turn out to be alike.",
+    "example_context": "Two people accuse one another of the same thing or turn out to be alike.",
+    "near_miss_context": "Only one person is involved or the comparison is one-sided.",
     "tags": [
+      "disbelief",
+      "amusement",
+      "friends",
+      "work",
       "symmetry",
       "same-behavior",
       "mutual-blame"
@@ -495,11 +516,15 @@
   {
     "id": "facepalm",
     "name": "Facepalm",
-    "message": "React with embarrassed exasperation to an avoidable mistake.",
-    "relational_pattern": "An obvious error is difficult to watch without reacting.",
-    "example_context": "I spent ten minutes looking for the glasses that were on my head.",
-    "near_miss_context": "A beginner asks a reasonable question and is trying to learn.",
+    "message": "A quiet response to an avoidable mistake or painfully obvious oversight.",
+    "relational_pattern": "Someone misses something that was right in front of them.",
+    "example_context": "Someone misses something that was right in front of them.",
+    "near_miss_context": "A genuine learning question or a difficult mistake that deserves care.",
     "tags": [
+      "disappointment",
+      "skepticism",
+      "technology",
+      "everyday",
       "exasperation",
       "avoidable-mistake",
       "embarrassment"
@@ -512,11 +537,13 @@
   {
     "id": "surprised-pikachu",
     "name": "Surprised Pikachu",
-    "message": "Express ironic surprise at a predictable result, especially after ignoring a warning.",
-    "relational_pattern": "A chosen action produces its foreseeable consequence.",
-    "example_context": "I ignored every low-battery warning and now the laptop shut down. How could this happen?",
-    "near_miss_context": "The outcome was genuinely unforeseeable; mocking surprise would miss the point.",
+    "message": "Surprise at a predictable consequence.",
+    "relational_pattern": "Someone ignores an obvious warning and is surprised by the result.",
+    "example_context": "Someone ignores an obvious warning and is surprised by the result.",
+    "near_miss_context": "An outcome that nobody could reasonably predict.",
     "tags": [
+      "disbelief",
+      "everyday",
       "predictable-consequence",
       "irony",
       "surprise"
@@ -528,12 +555,15 @@
   },
   {
     "id": "you-guys-getting-paid",
-    "name": "You Guys Are Getting Paid?",
-    "message": "Reveal that one person lacks even the basic benefit others are comparing.",
-    "relational_pattern": "A comparison exposes a more fundamental disparity.",
-    "example_context": "Everyone is debating how big their bonuses were. I did the same work unpaid.",
-    "near_miss_context": "The speaker already has the same benefit and is merely comparing amounts.",
+    "name": "You guys are getting paid?",
+    "message": "Discovering that others receive something you assumed nobody did.",
+    "relational_pattern": "An unexpected comparison reveals unequal rewards or treatment.",
+    "example_context": "An unexpected comparison reveals unequal rewards or treatment.",
+    "near_miss_context": "Everyone already knows about the difference.",
     "tags": [
+      "disbelief",
+      "work",
+      "money",
       "disparity",
       "missing-benefit",
       "revelation"
@@ -545,12 +575,15 @@
   },
   {
     "id": "same-picture",
-    "name": "They're The Same Picture",
-    "message": "Dismiss a supposedly meaningful distinction between two things.",
-    "relational_pattern": "Two presented alternatives are equivalent in the relevant respect.",
-    "example_context": "They replaced the mandatory meeting with a mandatory alignment session.",
-    "near_miss_context": "The alternatives differ materially in the way the conversation cares about.",
+    "name": "They are the same picture",
+    "message": "Two supposedly different options are effectively identical.",
+    "relational_pattern": "A distinction makes no practical difference.",
+    "example_context": "A distinction makes no practical difference.",
+    "near_miss_context": "The alternatives have a meaningful difference.",
     "tags": [
+      "skepticism",
+      "work",
+      "everyday",
       "equivalence",
       "rebranding",
       "false-distinction"
@@ -562,12 +595,15 @@
   },
   {
     "id": "drake-preference",
-    "name": "Drake Hotline Bling",
-    "message": "Reject one option and enthusiastically prefer another, often for an ironic reason.",
-    "relational_pattern": "A paired contrast makes the preference clear.",
-    "example_context": "Reading a two-page guide? No. Spending an hour searching for a video? Yes.",
-    "near_miss_context": "There is no pair of options or meaningful preference to contrast.",
+    "name": "Drake — No / yes",
+    "message": "Reject one option and prefer another.",
+    "relational_pattern": "Two alternatives expose a funny preference or misplaced priority.",
+    "example_context": "Two alternatives expose a funny preference or misplaced priority.",
+    "near_miss_context": "There is no meaningful contrast between two options.",
     "tags": [
+      "dismissal",
+      "agreement",
+      "everyday",
       "preference",
       "contrast",
       "irony"
@@ -579,12 +615,16 @@
   },
   {
     "id": "two-buttons",
-    "name": "Two Buttons",
-    "message": "Show an uncomfortable choice between conflicting goals or commitments.",
-    "relational_pattern": "Two desired positions cannot both be maintained.",
-    "example_context": "I want fewer notifications, but I also want to know every update immediately.",
-    "near_miss_context": "Both choices can easily be taken without any conflict.",
+    "name": "Two buttons",
+    "message": "Two incompatible choices, neither easy to give up.",
+    "relational_pattern": "A person has conflicting goals or commitments.",
+    "example_context": "A person has conflicting goals or commitments.",
+    "near_miss_context": "Both options are compatible or the choice has already been made.",
     "tags": [
+      "confusion",
+      "panic",
+      "work",
+      "everyday",
       "dilemma",
       "contradiction",
       "indecision"
@@ -596,12 +636,15 @@
   },
   {
     "id": "distracted-boyfriend",
-    "name": "Distracted Boyfriend",
-    "message": "Use Distracted Boyfriend when someone who was satisfied with an existing choice suddenly notices a tempting new alternative.",
-    "relational_pattern": "A person shifts attention from a current commitment toward a more exciting option while the neglected choice looks on.",
-    "example_context": "I was perfectly happy with my current phone until I saw the shiny new model.",
-    "near_miss_context": "Avoid when someone is choosing between two options for the first time and has no existing commitment to neglect.",
+    "name": "Distracted boyfriend",
+    "message": "A tempting alternative distracts from an existing commitment.",
+    "relational_pattern": "Someone neglects what they already chose for something new.",
+    "example_context": "Someone neglects what they already chose for something new.",
+    "near_miss_context": "A first-time choice with no prior commitment.",
     "tags": [
+      "amusement",
+      "relationships",
+      "everyday",
       "distraction",
       "novelty",
       "neglected-commitment",
@@ -616,12 +659,16 @@
   },
   {
     "id": "grus-plan",
-    "name": "Gru's Plan",
-    "message": "Present a confident plan that contains the seed of its own failure.",
-    "relational_pattern": "The planner discovers a self-defeating step in their own plan.",
-    "example_context": "I disabled all reminders to improve focus, then forgot the appointment I was focusing on.",
-    "near_miss_context": "A sound plan failed because of a completely unrelated external event.",
+    "name": "Gru’s plan",
+    "message": "A confident plan reveals its own fatal flaw.",
+    "relational_pattern": "The final step contradicts what the planner wanted.",
+    "example_context": "The final step contradicts what the planner wanted.",
+    "near_miss_context": "An external obstacle derails a plan that was otherwise coherent.",
     "tags": [
+      "confusion",
+      "disbelief",
+      "work",
+      "everyday",
       "backfire",
       "self-defeat",
       "planning"
@@ -702,11 +749,14 @@
   {
     "id": "evil-kermit",
     "name": "Evil Kermit",
-    "message": "Contrast a sensible intention with a tempting, worse inner suggestion.",
-    "relational_pattern": "Internal temptation argues against the original sensible plan.",
-    "example_context": "I should go to bed. Or I could start a three-hour movie.",
-    "near_miss_context": "Both voices are giving equally sensible advice.",
+    "message": "An inner voice encourages the tempting, worse choice.",
+    "relational_pattern": "Someone knows the sensible option but argues themselves into an indulgence.",
+    "example_context": "Someone knows the sensible option but argues themselves into an indulgence.",
+    "near_miss_context": "An external person coerces the choice or no temptation exists.",
     "tags": [
+      "amusement",
+      "money",
+      "everyday",
       "temptation",
       "inner-dialogue",
       "impulse"
@@ -769,12 +819,16 @@
   },
   {
     "id": "is-this-a-pigeon",
-    "name": "Is This A Pigeon",
-    "message": "Highlight a confident or naive misidentification.",
-    "relational_pattern": "An observed thing is assigned a clearly mismatched label.",
-    "example_context": "They renamed unpaid overtime as a personal growth opportunity.",
-    "near_miss_context": "The label accurately captures the thing being described.",
+    "name": "Is this a pigeon?",
+    "message": "Confidently giving something the wrong name.",
+    "relational_pattern": "A person mistakes or euphemistically relabels something obvious.",
+    "example_context": "A person mistakes or euphemistically relabels something obvious.",
+    "near_miss_context": "A correct label or a situation without a misidentification.",
     "tags": [
+      "confusion",
+      "skepticism",
+      "work",
+      "everyday",
       "mislabeling",
       "misunderstanding",
       "irony"
@@ -803,12 +857,15 @@
   },
   {
     "id": "expanding-brain",
-    "name": "Expanding Brain",
-    "message": "Escalate an idea through increasingly grand or absurd levels.",
-    "relational_pattern": "A ranked sequence exaggerates intellectual sophistication.",
-    "example_context": "First we wrote a list, then an app, then a platform just to remember groceries.",
-    "near_miss_context": "Only one idea is offered and there is no escalation.",
+    "name": "Expanding brain",
+    "message": "An idea escalates from reasonable to increasingly absurd.",
+    "relational_pattern": "Several approaches grow more elaborate while solving the same problem.",
+    "example_context": "Several approaches grow more elaborate while solving the same problem.",
+    "near_miss_context": "One isolated idea without an escalation.",
     "tags": [
+      "amusement",
+      "technology",
+      "everyday",
       "escalation",
       "overengineering",
       "ironic-ranking"
@@ -855,11 +912,14 @@
   {
     "id": "exit-ramp",
     "name": "Left Exit 12 Off Ramp",
-    "message": "Show a sudden diversion away from the sensible route toward temptation.",
-    "relational_pattern": "An actor abruptly abandons the expected direction.",
-    "example_context": "I was on my way to buy vegetables and saw the bakery sign.",
-    "near_miss_context": "The changed plan follows a calm decision based on new information.",
+    "message": "A car abruptly swerves from the sensible route onto another exit.",
+    "relational_pattern": "Someone abandons a stated plan for an impulsive alternative.",
+    "example_context": "Someone abandons a stated plan for an impulsive alternative.",
+    "near_miss_context": "A slow change of mind or a choice made without a prior commitment.",
     "tags": [
+      "amusement",
+      "work",
+      "everyday",
       "diversion",
       "temptation",
       "impulse"
@@ -956,12 +1016,16 @@
   },
   {
     "id": "panik-kalm-panik",
-    "name": "Panik Kalm Panik",
-    "message": "Move from alarm to relief and back to alarm as more information arrives.",
-    "relational_pattern": "A reassuring interpretation is overturned by a second revelation.",
-    "example_context": "The file is missing. There is a backup. The backup is the missing file.",
-    "near_miss_context": "The reassuring information actually resolves the concern permanently.",
+    "name": "Panik, Kalm, Panik",
+    "message": "Three panels move from alarm to reassurance and straight back to alarm.",
+    "relational_pattern": "A reassuring detail briefly helps before another detail makes things worse.",
+    "example_context": "A reassuring detail briefly helps before another detail makes things worse.",
+    "near_miss_context": "A problem that stays resolved or an actual panic attack.",
     "tags": [
+      "panic",
+      "relief",
+      "technology",
+      "everyday",
       "reversal",
       "temporary-relief",
       "realization"
@@ -973,12 +1037,16 @@
   },
   {
     "id": "undertaker-behind",
-    "name": "AJ Styles and Undertaker",
-    "message": "Show someone feeling secure while an unnoticed threat or consequence approaches.",
-    "relational_pattern": "The audience sees what the confident actor has not noticed.",
-    "example_context": "I finished my tasks early, unaware that three meeting invites had just arrived.",
-    "near_miss_context": "The actor is already fully aware of the approaching problem.",
+    "name": "Undertaker Behind AJ Styles",
+    "message": "An unsuspecting wrestler has a looming opponent directly behind him.",
+    "relational_pattern": "Someone celebrates or relaxes without noticing the approaching consequence.",
+    "example_context": "Someone celebrates or relaxes without noticing the approaching consequence.",
+    "near_miss_context": "A danger they already know about, or a real threat to someone’s safety.",
     "tags": [
+      "disbelief",
+      "panic",
+      "work",
+      "everyday",
       "dramatic-irony",
       "unseen-threat",
       "false-security"
@@ -1024,12 +1092,15 @@
   },
   {
     "id": "change-my-mind",
-    "name": "Change My Mind",
-    "message": "Use when a situation calls for a change my mind reaction.",
-    "relational_pattern": "React to a situation by framing it with a recognizable visual contrast or emotional response.",
-    "example_context": "A broadly relatable moment where the speaker wants to signal change my mind without a long explanation.",
-    "near_miss_context": "Avoid when the situation does not clearly support the change my mind reaction or requires a specific caption to make sense.",
+    "name": "Change my mind",
+    "message": "An opinion offered with conspicuously confident certainty.",
+    "relational_pattern": "A person invites disagreement while acting difficult to persuade.",
+    "example_context": "A person invites disagreement while acting difficult to persuade.",
+    "near_miss_context": "A sincere request for advice or an open question with no stated position.",
     "tags": [
+      "skepticism",
+      "friends",
+      "everyday",
       "reaction",
       "classic",
       "trending"
@@ -1041,12 +1112,17 @@
   },
   {
     "id": "one-does-not-simply",
-    "name": "One Does Not Simply",
-    "message": "Use when a situation calls for a one does not simply reaction.",
-    "relational_pattern": "React to a situation by framing it with a recognizable visual contrast or emotional response.",
-    "example_context": "A broadly relatable moment where the speaker wants to signal one does not simply without a long explanation.",
-    "near_miss_context": "Avoid when the situation does not clearly support the one does not simply reaction or requires a specific caption to make sense.",
+    "name": "One does not simply",
+    "message": "A supposedly easy task is harder than people claim.",
+    "relational_pattern": "A casual instruction overlooks a familiar difficulty.",
+    "example_context": "A casual instruction overlooks a familiar difficulty.",
+    "near_miss_context": "A task that is genuinely simple or a serious request for instructions.",
     "tags": [
+      "skepticism",
+      "disbelief",
+      "work",
+      "technology",
+      "everyday",
       "movie",
       "classic",
       "reaction"
@@ -1130,12 +1206,16 @@
   },
   {
     "id": "say-the-line-bart",
-    "name": "Say the Line Bart",
-    "message": "Use when a situation calls for a say the line bart reaction.",
-    "relational_pattern": "React to a situation by framing it with a recognizable visual contrast or emotional response.",
-    "example_context": "A broadly relatable moment where the speaker wants to signal say the line bart without a long explanation.",
-    "near_miss_context": "Avoid when the situation does not clearly support the say the line bart reaction or requires a specific caption to make sense.",
+    "name": "Say the Line, Bart",
+    "message": "A class pressures Bart to repeat the familiar line, then cheers.",
+    "relational_pattern": "A group keeps asking someone for the one joke they are known for.",
+    "example_context": "A group keeps asking someone for the one joke they are known for.",
+    "near_miss_context": "An original joke or a sincere request for an explanation.",
     "tags": [
+      "impatience",
+      "amusement",
+      "friends",
+      "work",
       "cartoon",
       "reaction",
       "multi-panel"
@@ -1183,20 +1263,24 @@
   },
   {
     "id": "they-are-the-same-picture",
-    "name": "They Are The Same Picture",
-    "message": "Use to declare that two supposedly different options, labels, or explanations are effectively identical.",
-    "relational_pattern": "Equivalence: two distinct-looking choices collapse into the same outcome.",
-    "example_context": "“Empowered delivery sync” is the same meeting as “status meeting,” just renamed.",
-    "near_miss_context": "Avoid when the two subjects are merely similar rather than interchangeable.",
+    "name": "They are the same picture",
+    "message": "Two supposedly different options are effectively identical.",
+    "relational_pattern": "A distinction makes no practical difference.",
+    "example_context": "A distinction makes no practical difference.",
+    "near_miss_context": "The alternatives have a meaningful difference.",
     "tags": [
-      "comparison",
+      "skepticism",
+      "work",
+      "everyday",
       "equivalence",
-      "workplace"
+      "rebranding",
+      "false-distinction"
     ],
-    "meme_strength": 65,
+    "meme_strength": 64,
     "asset_quality": 69,
     "uniqueness_score": 6,
-    "core": true
+    "core": true,
+    "canonical_id": "same-picture"
   },
   {
     "id": "types-of-headaches",
@@ -1217,12 +1301,16 @@
   },
   {
     "id": "well-yes-but-actually-no",
-    "name": "Well Yes But Actually No",
-    "message": "Use when a situation calls for a well yes but actually no reaction.",
-    "relational_pattern": "React to a situation by framing it with a recognizable visual contrast or emotional response.",
-    "example_context": "A broadly relatable moment where the speaker wants to signal well yes but actually no without a long explanation.",
-    "near_miss_context": "Avoid when the situation does not clearly support the well yes but actually no reaction or requires a specific caption to make sense.",
+    "name": "Well Yes, but Actually No",
+    "message": "An animated pirate gives an answer that immediately qualifies itself.",
+    "relational_pattern": "A technically correct yes hides a practical no.",
+    "example_context": "A technically correct yes hides a practical no.",
+    "near_miss_context": "An unambiguous agreement or a question that needs a factual answer.",
     "tags": [
+      "skepticism",
+      "confusion",
+      "technology",
+      "work",
       "reaction",
       "movie",
       "trending"
@@ -1252,17 +1340,18 @@
   {
     "id": "success-kid",
     "name": "Success Kid",
-    "message": "Use Success Kid to celebrate a small but satisfying victory, especially when the outcome beat expectations.",
-    "relational_pattern": "A person gets an unexpectedly favorable result and responds with a compact, triumphant fist-pump.",
-    "example_context": "I guessed on the final question and it was the one answer that pushed me over the passing grade.",
-    "near_miss_context": "Avoid when the achievement is solemn, routine, or belongs to someone who is disappointed by the result.",
+    "message": "A small, unexpectedly satisfying win.",
+    "relational_pattern": "An ordinary task works out better than expected.",
+    "example_context": "An ordinary task works out better than expected.",
+    "near_miss_context": "A solemn achievement or an outcome the speaker dislikes.",
     "tags": [
+      "celebration",
+      "everyday",
       "success",
       "small-victory",
       "unexpected-win",
       "triumph",
-      "fist-pump",
-      "celebration"
+      "fist-pump"
     ],
     "meme_strength": 63,
     "asset_quality": 56,
@@ -1703,12 +1792,16 @@
   },
   {
     "id": "am-i-a-joke-to-you",
-    "name": "Am I A Joke To You",
-    "message": "Use when a situation calls for a am i a joke to you reaction.",
-    "relational_pattern": "React to a situation by framing it with a recognizable visual contrast or emotional response.",
-    "example_context": "A broadly relatable moment where the speaker wants to signal am i a joke to you without a long explanation.",
-    "near_miss_context": "Avoid when the situation does not clearly support the am i a joke to you reaction or requires a specific caption to make sense.",
+    "name": "Am I a Joke to You?",
+    "message": "A man asks why he is being treated as an afterthought.",
+    "relational_pattern": "Someone overlooks your contribution or ignores an obvious option.",
+    "example_context": "Someone overlooks your contribution or ignores an obvious option.",
+    "near_miss_context": "A neutral misunderstanding or a serious account of mistreatment.",
     "tags": [
+      "disappointment",
+      "skepticism",
+      "friends",
+      "work",
       "reaction",
       "trending"
     ],
@@ -1720,11 +1813,14 @@
   {
     "id": "soldier-protecting-sleeping-child",
     "name": "Soldier Protecting Sleeping Child",
-    "message": "Use when a situation calls for a soldier protecting sleeping child reaction.",
-    "relational_pattern": "React to a situation by framing it with a recognizable visual contrast or emotional response.",
-    "example_context": "A broadly relatable moment where the speaker wants to signal soldier protecting sleeping child without a long explanation.",
-    "near_miss_context": "Avoid when the situation does not clearly support the soldier protecting sleeping child reaction or requires a specific caption to make sense.",
+    "message": "A protector absorbs the trouble so someone else can rest.",
+    "relational_pattern": "Someone quietly shields another person from inconvenience or criticism.",
+    "example_context": "Someone quietly shields another person from inconvenience or criticism.",
+    "near_miss_context": "Ordinary personal success, or situations involving actual violence.",
     "tags": [
+      "affection",
+      "family",
+      "work",
       "wholesome",
       "label",
       "two-panel",
@@ -1737,20 +1833,24 @@
   },
   {
     "id": "galaxy-brain",
-    "name": "Galaxy Brain",
-    "message": "Use when a situation calls for a galaxy brain reaction.",
-    "relational_pattern": "React to a situation by framing it with a recognizable visual contrast or emotional response.",
-    "example_context": "A broadly relatable moment where the speaker wants to signal galaxy brain without a long explanation.",
-    "near_miss_context": "Avoid when the situation does not clearly support the galaxy brain reaction or requires a specific caption to make sense.",
+    "name": "Expanding brain",
+    "message": "An idea escalates from reasonable to increasingly absurd.",
+    "relational_pattern": "Several approaches grow more elaborate while solving the same problem.",
+    "example_context": "Several approaches grow more elaborate while solving the same problem.",
+    "near_miss_context": "One isolated idea without an escalation.",
     "tags": [
-      "expanding",
-      "multi-panel",
-      "reaction"
+      "amusement",
+      "technology",
+      "everyday",
+      "escalation",
+      "overengineering",
+      "ironic-ranking"
     ],
     "meme_strength": 69,
     "asset_quality": 62,
     "uniqueness_score": 4,
-    "core": true
+    "core": true,
+    "canonical_id": "expanding-brain"
   },
   {
     "id": "tis-but-a-scratch",
@@ -1788,47 +1888,57 @@
   },
   {
     "id": "the-office-same-picture",
-    "name": "Corporate Needs You To Find The Difference",
-    "message": "Use when a situation calls for a corporate needs you to find the difference reaction.",
-    "relational_pattern": "React to a situation by framing it with a recognizable visual contrast or emotional response.",
-    "example_context": "A broadly relatable moment where the speaker wants to signal corporate needs you to find the difference without a long explanation.",
-    "near_miss_context": "Avoid when the situation does not clearly support the corporate needs you to find the difference reaction or requires a specific caption to make sense.",
+    "name": "They are the same picture",
+    "message": "Two supposedly different options are effectively identical.",
+    "relational_pattern": "A distinction makes no practical difference.",
+    "example_context": "A distinction makes no practical difference.",
+    "near_miss_context": "The alternatives have a meaningful difference.",
     "tags": [
-      "comparison",
-      "workplace",
-      "trending",
-      "reaction"
+      "skepticism",
+      "work",
+      "everyday",
+      "equivalence",
+      "rebranding",
+      "false-distinction"
     ],
     "meme_strength": 64,
     "asset_quality": 69,
     "uniqueness_score": 6,
-    "core": true
+    "core": true,
+    "canonical_id": "same-picture"
   },
   {
     "id": "road-split",
-    "name": "Road Split",
-    "message": "Use when a situation calls for a road split reaction.",
-    "relational_pattern": "React to a situation by framing it with a recognizable visual contrast or emotional response.",
-    "example_context": "A broadly relatable moment where the speaker wants to signal road split without a long explanation.",
-    "near_miss_context": "Avoid when the situation does not clearly support the road split reaction or requires a specific caption to make sense.",
+    "name": "Left Exit 12 Off Ramp",
+    "message": "A car abruptly swerves from the sensible route onto another exit.",
+    "relational_pattern": "Someone abandons a stated plan for an impulsive alternative.",
+    "example_context": "Someone abandons a stated plan for an impulsive alternative.",
+    "near_miss_context": "A slow change of mind or a choice made without a prior commitment.",
     "tags": [
-      "comparison",
-      "reaction",
-      "label"
+      "amusement",
+      "work",
+      "everyday",
+      "diversion",
+      "temptation",
+      "impulse"
     ],
-    "meme_strength": 63,
-    "asset_quality": 61,
+    "meme_strength": 64,
+    "asset_quality": 62,
     "uniqueness_score": 11,
-    "core": true
+    "core": true,
+    "canonical_id": "exit-ramp"
   },
   {
     "id": "ive-won-but-at-what-cost",
-    "name": "Ive Won But At What Cost",
-    "message": "Use when a situation calls for a ive won but at what cost reaction.",
-    "relational_pattern": "React to a situation by framing it with a recognizable visual contrast or emotional response.",
-    "example_context": "A broadly relatable moment where the speaker wants to signal ive won but at what cost without a long explanation.",
-    "near_miss_context": "Avoid when the situation does not clearly support the ive won but at what cost reaction or requires a specific caption to make sense.",
+    "name": "I’ve Won, but at What Cost?",
+    "message": "A victory feels hollow because of what it required.",
+    "relational_pattern": "You got the result you wanted, but the tradeoff spoiled it.",
+    "example_context": "You got the result you wanted, but the tradeoff spoiled it.",
+    "near_miss_context": "An uncomplicated win, or genuine grief that needs support.",
     "tags": [
+      "disappointment",
+      "everyday",
+      "work",
       "reaction",
       "dark",
       "relatable"
@@ -1890,12 +2000,15 @@
   },
   {
     "id": "uno-reverse-card",
-    "name": "Uno Reverse Card",
-    "message": "Use when a situation calls for a uno reverse card reaction.",
-    "relational_pattern": "React to a situation by framing it with a recognizable visual contrast or emotional response.",
-    "example_context": "A broadly relatable moment where the speaker wants to signal uno reverse card without a long explanation.",
-    "near_miss_context": "Avoid when the situation does not clearly support the uno reverse card reaction or requires a specific caption to make sense.",
+    "name": "UNO Reverse Card",
+    "message": "A blue reverse card turns the direction back on the other person.",
+    "relational_pattern": "A playful accusation or request can be returned to its sender.",
+    "example_context": "A playful accusation or request can be returned to its sender.",
+    "near_miss_context": "A simple refusal with no reversal, or a serious accusation.",
     "tags": [
+      "dismissal",
+      "amusement",
+      "friends",
       "gaming",
       "reaction",
       "trending"
@@ -1924,11 +2037,15 @@
   {
     "id": "spongebob-imagination",
     "name": "SpongeBob Imagination",
-    "message": "Use when a situation calls for a spongebob imagination reaction.",
-    "relational_pattern": "React to a situation by framing it with a recognizable visual contrast or emotional response.",
-    "example_context": "A broadly relatable moment where the speaker wants to signal spongebob imagination without a long explanation.",
-    "near_miss_context": "Avoid when the situation does not clearly support the spongebob imagination reaction or requires a specific caption to make sense.",
+    "message": "SpongeBob spreads his hands beneath a rainbow.",
+    "relational_pattern": "An implausible idea is offered with cheerful confidence.",
+    "example_context": "An implausible idea is offered with cheerful confidence.",
+    "near_miss_context": "A literal explanation or a serious promise that should be taken at face value.",
     "tags": [
+      "amusement",
+      "skepticism",
+      "technology",
+      "work",
       "cartoon",
       "classic",
       "reaction"
@@ -1940,12 +2057,16 @@
   },
   {
     "id": "oh-no-cringe",
-    "name": "Oh No Cringe",
-    "message": "Use when a situation calls for a oh no cringe reaction.",
-    "relational_pattern": "React to a situation by framing it with a recognizable visual contrast or emotional response.",
-    "example_context": "A broadly relatable moment where the speaker wants to signal oh no cringe without a long explanation.",
-    "near_miss_context": "Avoid when the situation does not clearly support the oh no cringe reaction or requires a specific caption to make sense.",
+    "name": "Oh No, Cringe",
+    "message": "A wide-eyed orange cat reacts with visible discomfort.",
+    "relational_pattern": "You witness an awkward moment and cannot look away.",
+    "example_context": "You witness an awkward moment and cannot look away.",
+    "near_miss_context": "Celebrating someone’s sincere effort or mocking a vulnerable person.",
     "tags": [
+      "awkwardness",
+      "disbelief",
+      "friends",
+      "everyday",
       "reaction",
       "awkward"
     ],
@@ -1956,12 +2077,16 @@
   },
   {
     "id": "kalm-panik",
-    "name": "Kalm Panik",
-    "message": "Use when a situation calls for a kalm panik reaction.",
-    "relational_pattern": "React to a situation by framing it with a recognizable visual contrast or emotional response.",
-    "example_context": "A broadly relatable moment where the speaker wants to signal kalm panik without a long explanation.",
-    "near_miss_context": "Avoid when the situation does not clearly support the kalm panik reaction or requires a specific caption to make sense.",
+    "name": "Kalm, Panik",
+    "message": "Two panels shift from a calm mannequin head to a panicked one.",
+    "relational_pattern": "A new detail turns an ordinary situation into a problem.",
+    "example_context": "A new detail turns an ordinary situation into a problem.",
+    "near_miss_context": "Three reversals with temporary reassurance; use Panik, Kalm, Panik for that.",
     "tags": [
+      "panic",
+      "disbelief",
+      "technology",
+      "work",
       "multi-panel",
       "reaction"
     ],
@@ -1973,11 +2098,15 @@
   {
     "id": "i-pretend-i-do-not-see-it",
     "name": "I Pretend I Do Not See It",
-    "message": "Use when a situation calls for a i pretend i do not see it reaction.",
-    "relational_pattern": "React to a situation by framing it with a recognizable visual contrast or emotional response.",
-    "example_context": "A broadly relatable moment where the speaker wants to signal i pretend i do not see it without a long explanation.",
-    "near_miss_context": "Avoid when the situation does not clearly support the i pretend i do not see it reaction or requires a specific caption to make sense.",
+    "message": "A closed-eye emoji deliberately ignores an inconvenient fact.",
+    "relational_pattern": "You notice something awkward and choose to keep scrolling.",
+    "example_context": "You notice something awkward and choose to keep scrolling.",
+    "near_miss_context": "Someone who genuinely did not notice, or a request for urgent help.",
     "tags": [
+      "dismissal",
+      "awkwardness",
+      "friends",
+      "everyday",
       "animal",
       "reaction",
       "relatable"
@@ -1989,12 +2118,16 @@
   },
   {
     "id": "not-bad-kid",
-    "name": "Not Bad Kid",
-    "message": "Use when a situation calls for a not bad kid reaction.",
-    "relational_pattern": "React to a situation by framing it with a recognizable visual contrast or emotional response.",
-    "example_context": "A broadly relatable moment where the speaker wants to signal not bad kid without a long explanation.",
-    "near_miss_context": "Avoid when the situation does not clearly support the not bad kid reaction or requires a specific caption to make sense.",
+    "name": "Not Bad, Kid",
+    "message": "An animated Peter Parker gives a small, approving smile.",
+    "relational_pattern": "Someone less experienced does something surprisingly well.",
+    "example_context": "Someone less experienced does something surprisingly well.",
+    "near_miss_context": "Celebrating your own win or mocking someone’s sincere effort.",
     "tags": [
+      "agreement",
+      "affection",
+      "friends",
+      "work",
       "reaction",
       "approval"
     ],
@@ -2022,29 +2155,36 @@
   },
   {
     "id": "drakeposting",
-    "name": "Drakeposting",
-    "message": "Use to contrast a rejected option with a preferred alternative.",
-    "relational_pattern": "Preference contrast: one panel rejects the first choice and approves the second.",
-    "example_context": "“Manual spreadsheet updates” gets a no; “automated report” gets an enthusiastic yes.",
-    "near_miss_context": "Avoid when there is no clear two-way preference.",
+    "name": "Drake — No / yes",
+    "message": "Reject one option and prefer another.",
+    "relational_pattern": "Two alternatives expose a funny preference or misplaced priority.",
+    "example_context": "Two alternatives expose a funny preference or misplaced priority.",
+    "near_miss_context": "There is no meaningful contrast between two options.",
     "tags": [
+      "dismissal",
+      "agreement",
+      "everyday",
       "preference",
       "contrast",
-      "choice"
+      "irony"
     ],
-    "meme_strength": 61,
-    "asset_quality": 59,
-    "uniqueness_score": 6,
-    "core": true
+    "meme_strength": 64,
+    "asset_quality": 67,
+    "uniqueness_score": 54,
+    "core": true,
+    "canonical_id": "drake-preference"
   },
   {
     "id": "i-dont-think-i-will",
-    "name": "No I Dont Think I Will",
-    "message": "Use when a situation calls for a no i dont think i will reaction.",
-    "relational_pattern": "React to a situation by framing it with a recognizable visual contrast or emotional response.",
-    "example_context": "A broadly relatable moment where the speaker wants to signal no i dont think i will without a long explanation.",
-    "near_miss_context": "Avoid when the situation does not clearly support the no i dont think i will reaction or requires a specific caption to make sense.",
+    "name": "No, I Don’t Think I Will",
+    "message": "An older Captain America calmly declines to explain himself.",
+    "relational_pattern": "A low-stakes request gets a deliberate, unbothered refusal.",
+    "example_context": "A low-stakes request gets a deliberate, unbothered refusal.",
+    "near_miss_context": "A person who cannot comply, or someone asking for important help.",
     "tags": [
+      "dismissal",
+      "friends",
+      "work",
       "movie",
       "reaction"
     ],
@@ -3803,20 +3943,25 @@
   },
   {
     "id": "aj-styles-undertaker",
-    "name": "AJ Styles & Undertaker",
-    "message": "A reaction for aj styles & undertaker situations.",
-    "relational_pattern": "Use when the situation matches the template's visible reaction or contrast.",
-    "example_context": "When the situation calls for aj styles & undertaker, this template makes the reaction immediately legible.",
-    "near_miss_context": "Do not use when the reaction is unrelated to the pictured situation or requires specific fandom knowledge.",
+    "name": "Undertaker Behind AJ Styles",
+    "message": "An unsuspecting wrestler has a looming opponent directly behind him.",
+    "relational_pattern": "Someone celebrates or relaxes without noticing the approaching consequence.",
+    "example_context": "Someone celebrates or relaxes without noticing the approaching consequence.",
+    "near_miss_context": "A danger they already know about, or a real threat to someone’s safety.",
     "tags": [
-      "reaction",
-      "relatable",
-      "internet-culture"
+      "disbelief",
+      "panic",
+      "work",
+      "everyday",
+      "dramatic-irony",
+      "unseen-threat",
+      "false-security"
     ],
     "meme_strength": 64,
     "asset_quality": 54,
-    "uniqueness_score": 9,
-    "core": true
+    "uniqueness_score": 10,
+    "core": true,
+    "canonical_id": "undertaker-behind"
   },
   {
     "id": "i-m-the-captain-now",
@@ -5085,11 +5230,13 @@
   {
     "id": "disaster-girl",
     "name": "Disaster Girl",
-    "message": "Use Disaster Girl when someone caused, anticipated, or quietly enjoys the chaos unfolding behind them.",
-    "relational_pattern": "A suspiciously calm observer watches the consequences of a disaster with a knowing, satisfied expression.",
-    "example_context": "I changed one production setting, watched every alert turn red, and tried not to look pleased with the chaos I caused.",
-    "near_miss_context": "Avoid when the person is frightened by the crisis, trying to stop it, or has no implied connection to the trouble.",
+    "message": "Looking pleased with the trouble unfolding behind you.",
+    "relational_pattern": "Someone caused, anticipated, or quietly enjoys a harmless mess.",
+    "example_context": "Someone caused, anticipated, or quietly enjoys a harmless mess.",
+    "near_miss_context": "Real harm, an innocent bystander, or someone frightened by the event.",
     "tags": [
+      "amusement",
+      "everyday",
       "caused-chaos",
       "watching-consequences",
       "smug-satisfaction",
@@ -31079,11 +31226,16 @@
   {
     "id": "gif-s2e0eucjhwjr6x9pbw",
     "name": "My Name Is Jeff",
-    "message": "Use My Name Is Jeff when someone introduces themselves with a fake identity.",
-    "relational_pattern": "A person pretending to be someone else to avoid revealing their true identity.",
-    "example_context": "For example, when a stranger claims to be a detective but is actually a student.",
-    "near_miss_context": "Avoid when someone genuinely wants to share their real name.",
+    "message": "Making a silly, awkward, or obviously absurd self-introduction.",
+    "relational_pattern": "Introducing oneself jokingly, pointing out an obvious misidentification, or creating deadpan awkwardness.",
+    "example_context": "Introducing oneself jokingly, pointing out an obvious misidentification, or creating deadpan awkwardness.",
+    "near_miss_context": "During formal introductions or serious professional situations requiring clear communication.",
     "tags": [
+      "amusement",
+      "awkwardness",
+      "everyday",
+      "friends",
+      "work",
       "fake identity",
       "introduction",
       "identity deception",
@@ -31114,7 +31266,8 @@
     "meme_strength": 92,
     "asset_quality": 70,
     "uniqueness_score": 100,
-    "core": false
+    "core": false,
+    "catalogue_status": "unavailable"
   },
   {
     "id": "gif-yrufixsnwfvcxaxpmx",
@@ -31176,13 +31329,16 @@
   },
   {
     "id": "gif-5xaoclde64vmf4lqqrk",
-    "name": "Clap Applause",
-    "message": "Use Clap Applause when someone is excitedly celebrating a success.",
-    "relational_pattern": "Clap Applause communicates celebration in response to excitement, making the intended emotion clear.",
-    "example_context": "For example, when a friend wins a game and they cheer loudly.",
-    "near_miss_context": "Avoid when someone is just mildly pleased with a small achievement.",
+    "name": "A round of applause",
+    "message": "Visible applause marks a satisfying achievement.",
+    "relational_pattern": "A success or overdue improvement deserves recognition.",
+    "example_context": "A success or overdue improvement deserves recognition.",
+    "near_miss_context": "Assuming sarcasm without context, or confusing applause with a nod.",
     "tags": [
       "celebration",
+      "agreement",
+      "work",
+      "friends",
       "excitement",
       "applause",
       "reaction-gif",
@@ -31421,7 +31577,8 @@
     "meme_strength": 86,
     "asset_quality": 70,
     "uniqueness_score": 100,
-    "core": false
+    "core": false,
+    "catalogue_status": "unavailable"
   },
   {
     "id": "gif-us9ibqg4h0mtc",
@@ -31917,13 +32074,14 @@
   },
   {
     "id": "gif-ci3ncvx952lfg",
-    "name": "Disappointed Head Shake",
-    "message": "Use Disappointed Head Shake when someone's reaction shows mild disappointment.",
-    "relational_pattern": "The subtle expression of disapproval through head movements.",
-    "example_context": "For example, share Disappointed Head Shake when a moment involving head shake deserves a clear disappointment response.",
-    "near_miss_context": "Avoid Disappointed Head Shake when the conversation is unrelated to either disappointment or head shake.",
+    "name": "Well, that’s disappointing",
+    "message": "A deflated reaction to a small letdown.",
+    "relational_pattern": "An ordinary hope is followed by an anticlimax or missed opportunity.",
+    "example_context": "An ordinary hope is followed by an anticlimax or missed opportunity.",
+    "near_miss_context": "Severe loss, sincere grief, or a triumphant outcome.",
     "tags": [
       "disappointment",
+      "everyday",
       "head shake",
       "mild",
       "disapproval",
@@ -32371,7 +32529,8 @@
     "meme_strength": 86,
     "asset_quality": 70,
     "uniqueness_score": 100,
-    "core": false
+    "core": false,
+    "catalogue_status": "unavailable"
   },
   {
     "id": "gif-sr2yaench4sog",
@@ -32771,12 +32930,15 @@
   },
   {
     "id": "gif-ycllbrn3kx27e",
-    "name": "Roll Eyes",
-    "message": "Use Roll Eyes when someone is expressing mild annoyance through eye-rolling.",
-    "relational_pattern": "Roll Eyes communicates annoyed in response to roll, making the intended emotion clear.",
-    "example_context": "For example, share Roll Eyes when a moment involving roll deserves a clear annoyed response.",
-    "near_miss_context": "Avoid Roll Eyes when the conversation is unrelated to either annoyed or roll.",
+    "name": "The eye roll",
+    "message": "A weary response to something irritatingly familiar.",
+    "relational_pattern": "Someone repeats an excuse or behavior the speaker has heard before.",
+    "example_context": "Someone repeats an excuse or behavior the speaker has heard before.",
+    "near_miss_context": "Genuine surprise, enthusiastic agreement, or someone asking for support.",
     "tags": [
+      "skepticism",
+      "work",
+      "friends",
       "annoyed",
       "roll",
       "mild",
@@ -32884,7 +33046,8 @@
     "meme_strength": 86,
     "asset_quality": 70,
     "uniqueness_score": 100,
-    "core": false
+    "core": false,
+    "catalogue_status": "unavailable"
   },
   {
     "id": "gif-zkmipbcdfpkbo",
@@ -33019,13 +33182,17 @@
   },
   {
     "id": "gif-3diweulyyuplq",
-    "name": "Confused",
-    "message": "Use Confused when you want to respond with confusion to a moment involving unclear.",
-    "relational_pattern": "A user signals confusion through a lack of clear response.",
-    "example_context": "For example, when a friend sends a message that's unclear.",
-    "near_miss_context": "Avoid Confused when the conversation is unrelated to either confusion or unclear.",
+    "name": "Trying to make sense of it",
+    "message": "A visibly puzzled reaction to something that does not add up.",
+    "relational_pattern": "Two statements contradict each other or an explanation makes things less clear.",
+    "example_context": "Two statements contradict each other or an explanation makes things less clear.",
+    "near_miss_context": "A predictable consequence presented as a surprise.",
     "tags": [
       "confusion",
+      "disbelief",
+      "technology",
+      "friends",
+      "everyday",
       "unclear",
       "message",
       "reaction-gif",
@@ -33056,12 +33223,15 @@
   },
   {
     "id": "gif-3o6ztokgzqv6thhzj2",
-    "name": "Bored Not Interested",
-    "message": "Use Bored Not Interested when someone is disengaged from a conversation.",
-    "relational_pattern": "A user signals disinterest through a lack of engagement.",
-    "example_context": "For example, share Bored Not Interested when a moment involving disinterest deserves a clear boredom response.",
-    "near_miss_context": "Avoid when someone is just being polite but not bored.",
+    "name": "This meeting could have ended",
+    "message": "A suited man closes his eyes and rubs his face in weary boredom.",
+    "relational_pattern": "A conversation has continued long after it stopped being useful.",
+    "example_context": "A conversation has continued long after it stopped being useful.",
+    "near_miss_context": "A confusing idea that still deserves your attention.",
     "tags": [
+      "impatience",
+      "skepticism",
+      "work",
       "boredom",
       "disinterest",
       "unengaged",
@@ -33247,12 +33417,15 @@
   },
   {
     "id": "gif-3okip8knutjjl3zt0i",
-    "name": "Sips Tea",
-    "message": "Use Sips Tea when someone is relaxing with a beverage.",
-    "relational_pattern": "A user shows calmness through a quiet activity.",
-    "example_context": "For example, share Sips Tea when a moment involving tea deserves a clear relaxation response.",
-    "near_miss_context": "Avoid Sips Tea when the conversation is unrelated to either relaxation or tea.",
+    "name": "Just sipping my tea",
+    "message": "A woman peers over a white mug with a knowing sideways glance.",
+    "relational_pattern": "An awkward conversation is unfolding and you are staying out of it.",
+    "example_context": "An awkward conversation is unfolding and you are staying out of it.",
+    "near_miss_context": "A literal tea recommendation or invented gossip about a person.",
     "tags": [
+      "amusement",
+      "awkwardness",
+      "friends",
       "relaxation",
       "tea",
       "calm",
@@ -33526,15 +33699,17 @@
   },
   {
     "id": "gif-sneeoh54kcfxe",
-    "name": "Panic Nervous",
-    "message": "Use Panic Nervous when showing anxiety about an upcoming situation.",
-    "relational_pattern": "The visible stress response to uncertainty or potential negative outcomes.",
-    "example_context": "For example, a student feeling nervous before an important exam.",
-    "near_miss_context": "Avoid when the anxiety is not about an immediate situation or when the response is not physical.",
+    "name": "Panic setting in",
+    "message": "A frantic response to an escalating situation.",
+    "relational_pattern": "A small problem is suddenly getting out of hand.",
+    "example_context": "A small problem is suddenly getting out of hand.",
+    "near_miss_context": "A calm response, a happy surprise, or a real emergency needing help.",
     "tags": [
+      "panic",
+      "work",
+      "everyday",
       "anxiety",
       "nervous",
-      "panic",
       "reaction-gif",
       "anxious"
     ],
@@ -33810,12 +33985,16 @@
   },
   {
     "id": "gif-1z02vuppxp1pa",
-    "name": "Thank Grateful Reaction 2",
-    "message": "Use Thank Grateful Reaction 2 when someone expresses sincere appreciation for your help.",
-    "relational_pattern": "A direct acknowledgment of gratitude from a recipient to a helper.",
-    "example_context": "For example, after helping a friend fix their computer, they send this to show thanks.",
-    "near_miss_context": "Avoid when someone is being sarcastic about a situation they don't appreciate.",
+    "name": "Thank you. Finally.",
+    "message": "Michael Scott leans forward and emphatically says “Thank you”.",
+    "relational_pattern": "Someone finally says the point you have been trying to make.",
+    "example_context": "Someone finally says the point you have been trying to make.",
+    "near_miss_context": "Quiet gratitude or an unrelated victory.",
     "tags": [
+      "agreement",
+      "relief",
+      "work",
+      "friends",
       "gratitude",
       "appreciation",
       "thankyou",
@@ -33904,12 +34083,15 @@
   },
   {
     "id": "gif-3o6ztqbpye9nzbldvg",
-    "name": "Gossip Sips Tea",
-    "message": "Use Gossip Sips Tea when you're sharing a secret with a friend.",
-    "relational_pattern": "A response to confidential conversations between close friends.",
-    "example_context": "For example, when you tell a friend about a secret you discovered.",
-    "near_miss_context": "Avoid when someone is being overly direct about a problem.",
+    "name": "Taking a very small sip",
+    "message": "A child looks sideways at the camera and slowly lifts a mug.",
+    "relational_pattern": "You are watching low-stakes drama without joining in.",
+    "example_context": "You are watching low-stakes drama without joining in.",
+    "near_miss_context": "Celebrating someone’s bad news or claiming to know a secret.",
     "tags": [
+      "amusement",
+      "skepticism",
+      "friends",
       "gossip",
       "secret",
       "friend",
@@ -34072,12 +34254,15 @@
   },
   {
     "id": "gif-10ojgycutszrna",
-    "name": "Emergency Hug Emergencyl Hug",
-    "message": "Use Emergency Hug Emergencyl Hug when you're comforting a friend.",
-    "relational_pattern": "A response to emotional support during a difficult time.",
-    "example_context": "For example, when your friend is upset after a breakup.",
-    "near_miss_context": "Avoid Emergency Hug Emergencyl Hug when the conversation is unrelated to either comfort or emotional.",
+    "name": "Emergency hug",
+    "message": "An animated girl rushes in and hugs a pink pig.",
+    "relational_pattern": "A friend needs a small, affectionate pick-me-up.",
+    "example_context": "A friend needs a small, affectionate pick-me-up.",
+    "near_miss_context": "Treating a serious request for help as a substitute for support.",
     "tags": [
+      "affection",
+      "friends",
+      "family",
       "comfort",
       "emotional",
       "support",
@@ -34167,12 +34352,14 @@
   },
   {
     "id": "gif-nuq1tz0fhqeeu",
-    "name": "NOPE NOPE NOPE NOPE",
-    "message": "Use NOPE NOPE NOPE NOPE when you're rejecting an idea.",
-    "relational_pattern": "A reaction to declining a proposal or suggestion.",
-    "example_context": "For example, when you're not interested in a new project idea.",
-    "near_miss_context": "Avoid NOPE NOPE NOPE NOPE when the conversation is unrelated to either reject or idea.",
+    "name": "Absolutely not",
+    "message": "An immediate, emphatic refusal.",
+    "relational_pattern": "A proposal is unappealing enough to reject without deliberation.",
+    "example_context": "A proposal is unappealing enough to reject without deliberation.",
+    "near_miss_context": "Mild uncertainty or a request the speaker wants to accept.",
     "tags": [
+      "dismissal",
+      "everyday",
       "reject",
       "idea",
       "no",
@@ -34301,15 +34488,17 @@
   },
   {
     "id": "gif-13hxeoyjotwtk8",
-    "name": "Happy Dance Happy",
-    "message": "Use Happy Dance Happy when celebrating minor victories with energetic movement.",
-    "relational_pattern": "A joyful physical expression of small successes through dancing.",
-    "example_context": "For example, a team member dancing after scoring a point in a game.",
-    "near_miss_context": "Avoid when someone is dancing due to exhaustion or frustration.",
+    "name": "The victory dance",
+    "message": "A child dances on a classroom chair while classmates watch.",
+    "relational_pattern": "A small personal win deserves an unnecessarily big celebration.",
+    "example_context": "A small personal win deserves an unnecessarily big celebration.",
+    "near_miss_context": "Someone else’s failure or an understated acknowledgment.",
     "tags": [
+      "celebration",
+      "friends",
+      "everyday",
       "happy",
       "dance",
-      "celebration",
       "victory",
       "reaction-gif",
       "happy dance"
@@ -34475,12 +34664,16 @@
   },
   {
     "id": "gif-3ornjld54i3eqymfpc",
-    "name": "High Five",
-    "message": "Use High Five when acknowledging a shared achievement with physical contact.",
-    "relational_pattern": "A gesture of mutual recognition through hand contact.",
-    "example_context": "For example, share High Five when a moment involving five deserves a clear high response.",
-    "near_miss_context": "Avoid when the person is high-fiving someone they don't know.",
+    "name": "A well-earned high five",
+    "message": "Two talk-show guests turn toward each other and high-five.",
+    "relational_pattern": "You and someone else just pulled something off together.",
+    "example_context": "You and someone else just pulled something off together.",
+    "near_miss_context": "An individual win with no shared contribution.",
     "tags": [
+      "celebration",
+      "agreement",
+      "friends",
+      "work",
       "high",
       "five",
       "acknowledgment",
@@ -34610,12 +34803,14 @@
   },
   {
     "id": "gif-10jhvifuu2gwd6",
-    "name": "Laugh Hysterical",
-    "message": "Use Laugh Hysterical when expressing uncontrollable laughter through physical comedy.",
-    "relational_pattern": "A sudden, uncontrollable burst of laughter without words.",
-    "example_context": "For example, a friend laughing uncontrollably after a funny comment.",
-    "near_miss_context": "Avoid when the person is laughing at a serious situation.",
+    "name": "Cannot stop laughing",
+    "message": "A man in a red sweater throws his head back and laughs.",
+    "relational_pattern": "A joke lands so well that a normal laugh is not enough.",
+    "example_context": "A joke lands so well that a normal laugh is not enough.",
+    "near_miss_context": "Polite appreciation, or laughing at someone’s distress.",
     "tags": [
+      "amusement",
+      "friends",
       "hysterical",
       "laughter",
       "comedy",
@@ -34665,7 +34860,8 @@
     "meme_strength": 82,
     "asset_quality": 70,
     "uniqueness_score": 100,
-    "core": false
+    "core": false,
+    "catalogue_status": "unavailable"
   },
   {
     "id": "gif-xtitnhxbroaz1b1mo8",
@@ -35146,7 +35342,8 @@
     "meme_strength": 82,
     "asset_quality": 70,
     "uniqueness_score": 100,
-    "core": false
+    "core": false,
+    "catalogue_status": "excluded"
   },
   {
     "id": "gif-mt9mufafzpwufyssme",
@@ -35183,7 +35380,8 @@
     "meme_strength": 82,
     "asset_quality": 70,
     "uniqueness_score": 100,
-    "core": false
+    "core": false,
+    "catalogue_status": "unavailable"
   },
   {
     "id": "gif-ekrgvyz7zlvjrgznzn",
@@ -35316,7 +35514,8 @@
     "meme_strength": 82,
     "asset_quality": 70,
     "uniqueness_score": 100,
-    "core": false
+    "core": false,
+    "catalogue_status": "unavailable"
   },
   {
     "id": "gif-l4hnkwijjajqb04zq",
@@ -35808,12 +36007,16 @@
   },
   {
     "id": "gif-116a8zosxwa0si",
-    "name": "Frustrated Confused",
-    "message": "Use Frustrated Confused when someone is struggling to understand a complex situation.",
-    "relational_pattern": "The reaction shows a mix of confusion and frustration when trying to process information.",
-    "example_context": "For example, when a friend explains something too complicated to follow.",
-    "near_miss_context": "Avoid Frustrated Confused when the conversation is unrelated to either confused or frustration.",
+    "name": "Let me process that",
+    "message": "A man lowers his head into one hand, then rubs his mouth.",
+    "relational_pattern": "You need a moment after an exhausting explanation or obvious mistake.",
+    "example_context": "You need a moment after an exhausting explanation or obvious mistake.",
+    "near_miss_context": "A simple question or an idea you agree with.",
     "tags": [
+      "disappointment",
+      "skepticism",
+      "work",
+      "technology",
       "confused",
       "frustration",
       "complex",
@@ -35903,7 +36106,8 @@
     "meme_strength": 82,
     "asset_quality": 70,
     "uniqueness_score": 100,
-    "core": false
+    "core": false,
+    "catalogue_status": "unavailable"
   },
   {
     "id": "gif-zqljk9d31jlmq",
@@ -36025,12 +36229,14 @@
   },
   {
     "id": "gif-1dhuzohxkli1g",
-    "name": "Bye",
-    "message": "Use Bye when you want to respond with goodbye to a moment involving polite.",
-    "relational_pattern": "The reaction shows a friendly, casual way to close a conversation.",
-    "example_context": "For example, when two friends are finishing a chat before going to different places.",
-    "near_miss_context": "Avoid when the person is ending a conversation with anger or frustration.",
+    "name": "Bye.",
+    "message": "A woman in sunglasses signs off with a casual hand gesture.",
+    "relational_pattern": "You are cheerfully leaving an unproductive conversation.",
+    "example_context": "You are cheerfully leaving an unproductive conversation.",
+    "near_miss_context": "A solemn goodbye or a request that deserves an answer.",
     "tags": [
+      "dismissal",
+      "friends",
       "goodbye",
       "polite",
       "casual",
@@ -36385,13 +36591,15 @@
   },
   {
     "id": "gif-1m9fmo1wafvk0",
-    "name": "But Why",
-    "message": "Use But Why when someone questions a decision with a sense of confusion.",
-    "relational_pattern": "A person's questioning creates a moment of seeking clarification from the other.",
-    "example_context": "For example, a friend might use it after a confusing decision to ask for more details.",
-    "near_miss_context": "Avoid But Why when the conversation is unrelated to either confusion or questioning.",
+    "name": "But why?",
+    "message": "A man in medical scrubs tilts his head and asks “But why?”.",
+    "relational_pattern": "A decision makes no sense and you want the reasoning.",
+    "example_context": "A decision makes no sense and you want the reasoning.",
+    "near_miss_context": "A request for actual medical information or an answer you already know.",
     "tags": [
       "confusion",
+      "work",
+      "everyday",
       "questioning",
       "seeking clarification",
       "reaction-gif",
@@ -37191,12 +37399,16 @@
   },
   {
     "id": "gif-11vhiw1iuxzfpc",
-    "name": "Seriously Shock",
-    "message": "Use Seriously Shock when someone's reaction is shockingly incredulous about a situation.",
-    "relational_pattern": "The contrast between disbelief and the absurdity of the situation.",
-    "example_context": "For example, when a friend says they saw a unicorn at the grocery store.",
-    "near_miss_context": "Avoid when someone is genuinely surprised by a minor event.",
+    "name": "You cannot be serious",
+    "message": "A man in a patterned scarf tilts his head with a skeptical frown.",
+    "relational_pattern": "A low-stakes claim is difficult to take seriously.",
+    "example_context": "A low-stakes claim is difficult to take seriously.",
+    "near_miss_context": "Genuine surprise, joy, or a person asking for reassurance.",
     "tags": [
+      "skepticism",
+      "confusion",
+      "friends",
+      "work",
       "incredulous",
       "shock",
       "questioning",
@@ -37740,7 +37952,8 @@
     "meme_strength": 82,
     "asset_quality": 70,
     "uniqueness_score": 100,
-    "core": false
+    "core": false,
+    "catalogue_status": "unavailable"
   },
   {
     "id": "gif-pvami8qym42n6",
@@ -37764,12 +37977,15 @@
   },
   {
     "id": "gif-3ofzm25c9cypt1tydc",
-    "name": "Roll Eyes Whatever",
-    "message": "Use Roll Eyes Whatever when you want to respond with dismissive to a moment involving irritation.",
-    "relational_pattern": "Roll Eyes Whatever communicates dismissive in response to irritation, making the intended emotion clear.",
-    "example_context": "For example, rolling eyes when a friend complains about minor things.",
-    "near_miss_context": "Avoid Roll Eyes Whatever when the conversation is unrelated to either dismissive or irritation.",
+    "name": "The patient eye roll",
+    "message": "A woman in glasses rolls her eyes, then looks away.",
+    "relational_pattern": "You have heard the same weak excuse one time too many.",
+    "example_context": "You have heard the same weak excuse one time too many.",
+    "near_miss_context": "Confusion, enthusiastic agreement, or sincere vulnerability.",
     "tags": [
+      "skepticism",
+      "work",
+      "friends",
       "dismissive",
       "irritation",
       "complaint",
@@ -37877,12 +38093,14 @@
   },
   {
     "id": "gif-3okipbcy65zkpvfwy8",
-    "name": "Yes Cheering",
-    "message": "Use Yes Cheering when you want to respond with clap to a moment involving approval.",
-    "relational_pattern": "Yes Cheering communicates clap in response to approval, making the intended emotion clear.",
-    "example_context": "For example, share Yes Cheering when a moment involving approval deserves a clear clap response.",
-    "near_miss_context": "Avoid Yes Cheering when the conversation is unrelated to either clap or approval.",
+    "name": "Deadpool gives a little wave",
+    "message": "Deadpool lifts one hand in a brief, casual wave.",
+    "relational_pattern": "A playful hello or a small acknowledgment from the sidelines.",
+    "example_context": "A playful hello or a small acknowledgment from the sidelines.",
+    "near_miss_context": "Applause, cheering, or a major celebration; the clip shows a wave.",
     "tags": [
+      "agreement",
+      "friends",
       "clap",
       "approval",
       "enthusiasm",
@@ -38290,12 +38508,15 @@
   },
   {
     "id": "gif-qbd2klb5qdmysexre9",
-    "name": "Waiting",
-    "message": "Use Waiting when someone is anticipating a response or event.",
-    "relational_pattern": "The reaction shows a person's patience while waiting for something.",
-    "example_context": "For example, a friend might send this GIF while waiting for a reply to their message.",
-    "near_miss_context": "Avoid Waiting when the conversation is unrelated to either waiting or anticipation.",
+    "name": "Still waiting",
+    "message": "A sustained reaction to a wait that keeps going.",
+    "relational_pattern": "A reply or promised event is overdue.",
+    "example_context": "A reply or promised event is overdue.",
+    "near_miss_context": "Fast service, a completed task, or anger unrelated to waiting.",
     "tags": [
+      "impatience",
+      "friends",
+      "everyday",
       "waiting",
       "anticipation",
       "patience",
@@ -39123,7 +39344,8 @@
     "meme_strength": 78,
     "asset_quality": 70,
     "uniqueness_score": 100,
-    "core": false
+    "core": false,
+    "catalogue_status": "unavailable"
   },
   {
     "id": "gif-14sdcyktbbydag",
@@ -40444,7 +40666,8 @@
     "meme_strength": 78,
     "asset_quality": 70,
     "uniqueness_score": 100,
-    "core": false
+    "core": false,
+    "catalogue_status": "unavailable"
   },
   {
     "id": "gif-tniwx7mpsycw4",
@@ -41798,7 +42021,8 @@
     "meme_strength": 78,
     "asset_quality": 70,
     "uniqueness_score": 100,
-    "core": false
+    "core": false,
+    "catalogue_status": "unavailable"
   },
   {
     "id": "gif-l3q2lh45xelelrzrm",
@@ -44281,7 +44505,8 @@
     "meme_strength": 72,
     "asset_quality": 70,
     "uniqueness_score": 100,
-    "core": false
+    "core": false,
+    "catalogue_status": "unavailable"
   },
   {
     "id": "gif-s239qjih56srw",
@@ -48558,7 +48783,8 @@
     "meme_strength": 72,
     "asset_quality": 70,
     "uniqueness_score": 100,
-    "core": false
+    "core": false,
+    "catalogue_status": "unavailable"
   },
   {
     "id": "gif-ivtifdvulinia",
@@ -49179,7 +49405,8 @@
     "meme_strength": 72,
     "asset_quality": 70,
     "uniqueness_score": 100,
-    "core": false
+    "core": false,
+    "catalogue_status": "unavailable"
   },
   {
     "id": "gif-dxqlrg8cinwns",
@@ -50283,7 +50510,8 @@
     "meme_strength": 72,
     "asset_quality": 70,
     "uniqueness_score": 100,
-    "core": false
+    "core": false,
+    "catalogue_status": "unavailable"
   },
   {
     "id": "gif-beo0fxlfjloxy",
@@ -52069,7 +52297,8 @@
     "meme_strength": 72,
     "asset_quality": 70,
     "uniqueness_score": 100,
-    "core": false
+    "core": false,
+    "catalogue_status": "unavailable"
   },
   {
     "id": "gif-8x4gk03nejffm",

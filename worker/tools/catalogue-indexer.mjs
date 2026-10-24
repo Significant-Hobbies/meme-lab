@@ -2,6 +2,7 @@ import stage300Catalogue from './stage-300-catalogue.json' with {type:'json'};
 import stage1000Catalogue from './stage-1000-catalogue.json' with {type:'json'};
 import stage3000Catalogue from './stage-3000-catalogue.json' with {type:'json'};
 import {reciprocalRankFuse} from '../src/rank-fusion.mjs';
+import {semanticText,exampleText} from '../../src/catalogue-index.mjs';
 
 const EMBEDDING_MODEL='@cf/baai/bge-base-en-v1.5';
 const EMBEDDING_POOLING='cls';
@@ -18,28 +19,6 @@ export function configuredCatalogue(env) {
   throw new Error(`Unsupported catalogue stage: ${stage}.`);
 }
 
-function semanticText(record) {
-  const nameTokens=new Set(record.name.toLowerCase().split(/[^a-z0-9]+/).filter(Boolean));
-  const genericTags=new Set(['reaction','context','meme','template','uncategorized']);
-  const meaningfulTags=record.tags.filter(tag=>{
-    const normalized=tag.toLowerCase().trim();
-    return normalized&&!genericTags.has(normalized)&&!nameTokens.has(normalized);
-  });
-  return [
-    `Meme: ${record.name}`,
-    `Meaning: ${record.message}`,
-    `Social dynamic: ${record.relational_pattern}`,
-    meaningfulTags.length?`Tags: ${meaningfulTags.join(', ')}`:''
-  ].filter(Boolean).join('\n');
-}
-
-function exampleText(record) {
-  return [
-    `Meme: ${record.name}`,
-    `Send it when: ${record.example_context}`,
-    `Underlying pattern: ${record.relational_pattern}`
-  ].join('\n');
-}
 
 async function embed(env,texts) {
   const response=await env.AI.run(EMBEDDING_MODEL,{text:texts,pooling:EMBEDDING_POOLING});
@@ -185,11 +164,9 @@ export default {
         const rangeLimit=Math.max(1,Math.min(500,Number.isFinite(requestedLimit)?requestedLimit:500));
         const rangeEnd=Math.min(catalogue.length,rangeStart+rangeLimit);
         const selectedCatalogue=catalogue.slice(rangeStart,rangeEnd);
-        const generatedIds=selectedCatalogue.flatMap((_,index)=>{
-          const base=`meme-${String(rangeStart+index+1).padStart(4,'0')}`;
-          return [base,`${base}-meaning`,`${base}-example`];
-        });
-        for(let start=0;start<generatedIds.length;start+=100) await env.MEME_INDEX.deleteByIds(generatedIds.slice(start,start+100));
+        // Stable view IDs are replaced atomically by upsert. Never delete the
+        // working index before an embedding request that can fail. Legacy IDs
+        // remain until an independently verified migration can retire them.
         let upserted=0;
         for(let start=0;start<selectedCatalogue.length;start+=BATCH_SIZE) {
           const batch=selectedCatalogue.slice(start,start+BATCH_SIZE);

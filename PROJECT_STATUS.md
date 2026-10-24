@@ -3,6 +3,14 @@
 **Updated:** 9 October 2026
 **Lifecycle:** Live meme picker and prefilled caption Studio; Anna 1.3.0 candidate prepared, public Store publication remains gated.
 
+## Catalog rebuild (24 October 2026)
+
+The catalog now separates references, canonical aliases, media variants, meaning and editorial collections. The candidate has 77 selected reactions, seven shelves, 12 licensed native 1080p animation excerpts, 12 corrected source associations, six canonical aliases and dated technical checks across the full 4,315-reference catalog. Seventeen missing videos and one source mismatch are excluded from usable results. Compatibility IDs and the 3,000-record index membership remain intact; retrieval resolves aliases and excludes unavailable assets.
+
+Generation and export consume the same source metadata, with media revision URLs preventing stale cached artwork after corrections. Licensed raw clips retain embedded source credits, and captioned downloads include a visible credit. Package checks, 310 tests, responsive gallery/export checks and a real native HD captioned download pass locally. Bulk visual annotation remains incomplete: four machine annotations are retained separately from authored curation, with further annotation stopped by the shared gateway’s quota. Human preference and overall humour superiority remain unproven. Release and index-refresh evidence are tracked in #79.
+
+The earlier gallery/fidelity work is already live from main `4c73b6e` (#77); the older authentication-pending notes below describe prior checkpoints.
+
 ## Gallery creation — 23 October 2026
 
 The gallery can now open supported static templates directly in the existing caption Studio and turn reaction GIF sources into captioned video. Search, format/mood filters, direct reference links, optional audience/style, three clip-caption choices, local edits, source retry, cancellation and browser video export are implemented. Unsupported static sources remain original reactions. No production dependencies, bindings or production configuration changed.

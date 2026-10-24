@@ -211,7 +211,7 @@ fleet-footer-extension:has(saas-maker-newsletter-capture){padding-bottom:calc(88
 
 .meme-detail-main{padding-top:36px}.back-link{display:inline-block;margin-bottom:20px;color:var(--muted);font-size:12px;font-weight:700;text-decoration:none}.back-link:hover{color:var(--blue)}
 .meme-detail{display:grid;overflow:hidden;border:1px solid var(--line);border-radius:6px;background:var(--card);grid-template-columns:minmax(340px,.9fr) minmax(420px,1.1fr);box-shadow:none}
-.meme-detail-media{position:relative;display:grid;min-height:560px;padding:30px;place-items:center;background:var(--media-frame)}.meme-detail-media img{display:block;max-width:100%;max-height:500px;border-radius:6px;object-fit:contain}
+.meme-detail-media{position:relative;display:grid;min-height:560px;padding:30px;place-items:center;background:var(--media-frame)}.meme-detail-media :is(img,video){display:block;max-width:100%;max-height:500px;border-radius:6px;object-fit:contain}
 .meme-detail-copy{padding:48px}.meme-detail-copy h1{font-size:clamp(36px,5vw,58px)}.meme-definition{margin:18px 0 28px;color:var(--muted);font-size:17px;line-height:1.65}
 .meme-guide{display:grid;margin:0;gap:0}.meme-guide div{padding:18px 0;border-top:1px solid var(--line)}.meme-guide dt{color:var(--ink);font-size:11px;font-weight:850;letter-spacing:.7px;text-transform:uppercase}.meme-guide dd{margin:7px 0 0;color:var(--muted);font-size:14px;line-height:1.6}
 .meme-detail-tags{margin:20px 0 0;padding:0;list-style:none}.meme-detail-tags li{padding:4px 7px;border-radius:999px;color:var(--muted);background:var(--muted-bg);font-size:10px;font-weight:650}.meme-detail-actions{display:flex;margin-top:28px;gap:16px;align-items:center;flex-wrap:wrap}.source-link{color:var(--muted);font-size:11px}.not-found{display:grid;min-height:100vh;padding:40px;place-content:center;justify-items:start}.not-found .primary{width:max-content}
@@ -278,3 +278,9 @@ saas-maker-newsletter-capture{
 .collection-skeleton .collection-copy span{display:block;height:18px;width:85%;border-radius:4px;background:var(--muted-bg)}
 .collection-skeleton .collection-copy span:last-child{width:55%}
 #collection-error[hidden]{display:none}
+/* Structured discovery shares the existing Studio form controls. */
+.collection-facets{display:flex;gap:14px;flex-wrap:wrap;margin-top:18px}.collection-facets label{flex:1 1 170px;margin:0}.collection-facets select{display:block;width:100%;min-height:44px;margin-top:7px;padding:8px 12px;border:1px solid var(--line-strong);border-radius:6px;color:var(--ink);background:var(--surface);font:inherit;font-size:13px}.collection-shelf-description{margin:12px 0 0;color:var(--muted);font-size:13px;line-height:1.5}
+
+.collection-media video{display:block;max-width:100%;max-height:182px;object-fit:contain}.collection-media video[hidden],.collection-media img[hidden]{display:none}
+
+.collection-refine{flex:1 1 170px;align-self:flex-start}.collection-refine summary{display:flex;min-height:44px;margin-top:20px;align-items:center;gap:8px;color:var(--muted);font-size:13px;cursor:pointer}.collection-refine summary::after{content:'+';color:var(--blue)}.collection-refine[open] summary::after{content:'−'}.collection-refine-fields{display:flex;flex-wrap:wrap;gap:14px;margin-top:12px}.collection-refine-fields label{flex-basis:140px}

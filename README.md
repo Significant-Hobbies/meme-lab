@@ -6,6 +6,36 @@ Read [PRODUCT.md](PRODUCT.md) for the current product contract and [PRD.md](PRD.
 
 Paste one comment and get ranked meme options at **https://memes.significanthobbies.com**. One-tap feedback is retained for 30 days so the ranking can improve. The live 3,000-reference catalogue contains 1,805 static memes and 1,195 usage-backed reaction GIFs; the earlier artwork fillers and six inert editing canvases are excluded. The `workers.dev` route remains an equivalent preview URL.
 
+## Catalog architecture
+
+`catalogue/` owns the corrections, canonical aliases, editorial profiles, collections,
+visual annotations, source measurements and exclusions. The inherited source pools
+stay intact. A reference carries meaning; a media asset carries variants, measured
+quality and rights; a collection carries an intentional order. Aliases retain their
+old IDs without becoming duplicate discoveries. Reaction, situation, perspective
+and intensity use the controlled vocabulary in `src/catalogue-model.mjs`.
+
+`pnpm build:catalogue` validates these relationships and generates the shared
+Worker adapter, browser model, compatibility collection and `catalogue-health.json`.
+The picker, reference pages, caption creators and index metadata consume these
+same corrections. `pnpm check` rejects generated drift. Index membership remains
+separate: new gallery material does not enter automatic recommendations merely
+because it has tags or passes a technical media check. Index refresh uses stable
+view IDs and upserts; failed embeddings never delete the working vectors.
+
+The collection starts with selected reactions and offers shelves plus composable
+format, mood, situation and energy filters. Unreviewed source metadata remains
+explicitly unreviewed. Machine annotations retain exact source/frame hashes,
+served model and prompt version; they do not become human validation or automatic
+editorial picks. Unknown dimensions and transformation rights remain unknown.
+The HD animation shelf contains twelve frame-reviewed 1920 × 1080 excerpts from Blender’s official Big Buck Bunny original. Source credits stay in the video metadata and in the captioned download. The exact source, license, hashes and trim intervals live in `catalogue/animation-cuts.json`; `scripts/build-licensed-animation.py --source <frozen-original.mp4>` reproduces the hosted assets without upscaling.
+
+For bounded visual review, use `scripts/prepare-catalogue-review.py` (Pillow,
+ffmpeg and ffprobe required), then `scripts/annotate-catalogue.mjs` with its prepared
+JSONL and an existing local remote gateway configuration. Both stages resume from
+retained evidence. Annotation uses Free AI `auto`, attributed to `meme-lab`; quota
+and validation failures stop the run without promoting partial or invalid data.
+
 ## Open it locally
 
 Requires **Node.js 22 or newer**. No dependency installation or build step.

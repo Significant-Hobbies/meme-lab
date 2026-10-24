@@ -53,3 +53,12 @@ test('stage-3000 hybrid queries broad and core meaning/example views',{skip:inde
   assert.deepEqual(filters,[{view:'meaning'},{view:'example'},{core:true,view:'meaning'},{core:true,view:'example'}]);
   assert.deepEqual(body.matches.map(match=>match.id),['broad','core']);
 });
+
+ test('a failed embedding never deletes or replaces working vectors',async()=>{
+  const mutations=[];
+  const response=await indexer.default.fetch(new Request('https://example.test/seed?start=0&limit=1',{method:'POST'}),{
+    CATALOGUE_STAGE:'3000',AI:{run:async()=>{throw Error('Embedding unavailable');}},
+    MEME_INDEX:{deleteByIds:async()=>mutations.push('delete'),upsert:async()=>mutations.push('upsert')}
+  });
+  assert.equal(response.status,500);assert.deepEqual(mutations,[]);
+ });

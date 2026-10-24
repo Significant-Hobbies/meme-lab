@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import worker from '../worker/src/index.mjs';
+import {catalogue as runtimeCatalogue} from '../worker/src/catalogue.mjs';
 import {createGatewayClassifierFetch,FIT_LABELS,hasMultiplePerspectives,humourBelongs,needsSeriousHandling,PERSPECTIVES,rankCandidates,rankCandidatesByPerspective,requiresFactualAnswer} from '../worker/src/classification.mjs';
 import {MINIMUM_VISIBLE_FIT,MINIMUM_VISIBLE_PERSPECTIVE_FIT,validateSelection,normalizeSelection,normalizeRankedSelection,validateRankedSelection,presentSelection,selectionFromRanking} from '../worker/src/recommendation.mjs';
 import {CORE_RESERVE,EMBEDDING_MODEL,mergeWithReserve,retrieveCandidates} from '../worker/src/retrieval.mjs';
@@ -58,7 +59,7 @@ test('public worker returns a validated known meme without exposing prompt data'
   assert.equal(body.candidates[0].media_url,body.candidates[0].image_url);
   assert.equal(body.candidates[0].preview_url,body.candidates[0].image_url);
   assert.equal(body.candidates[0].source_url,body.candidates[0].image_url);
-  assert.match(body.candidates[0].signal_summary,/meme strength at 61\/100 and image quality at 50\/100/);
+  assert.match(body.candidates[0].signal_summary,/source pixels · source preview/);assert.doesNotMatch(body.candidates[0].signal_summary,/\/100|reviewed image/);
   assert.equal(body.confidence,'high');
   assert.equal(body.feedback_enabled,true);
   assert(!JSON.stringify(body).includes('CATALOGUE_JSON'));
@@ -97,8 +98,8 @@ test('static prior only breaks close calls after relevance chooses the eligible 
 test('static signals stay deterministic and describe both public scores',()=>{
   const signals=staticCandidateSignals({id:'waiting-skeleton',image_url:'https://i.imgflip.com/2fm6x.jpg',media_status:'source-preview'});
   assert.deepEqual({meme_strength:signals.meme_strength,asset_quality:signals.asset_quality,static_prior:signals.static_prior},{meme_strength:90,asset_quality:78,static_prior:86});
-  assert.match(signals.signal_summary,/^Static signals rate meme strength at 90\/100 and image quality at 78\/100 \(direct source preview\)\.$/);
-  assert.match(staticCandidateSignals({id:'low-quality',meme_strength:60,asset_quality:43,image_url:'https://example.com/image.jpg',media_status:'source-preview'}).signal_summary,/\(lower-quality source preview\)\.$/);
+  assert.equal(signals.signal_summary,'Source dimensions not yet checked · source preview.');
+  assert.match(staticCandidateSignals({id:'low-quality',meme_strength:60,asset_quality:43,image_url:'https://example.com/image.jpg',media_status:'source-preview'}).signal_summary,/Source dimensions not yet checked · source preview/ );
 });
 
 test('semantic retrieval fuses meaning and example ranks without duplicate memes',()=>{
@@ -681,7 +682,7 @@ test('SEO routes expose robots, the full sitemap, and crawlable meme details',as
   const sitemap=await worker.fetch(new Request('https://example.test/sitemap.xml'),env);
   assert.equal(sitemap.headers.get('content-type'),'application/xml; charset=utf-8');
   const xml=await sitemap.text();
-  assert.equal((xml.match(/<loc>/g)??[]).length,3003);
+  assert.equal((xml.match(/<loc>/g)??[]).length,3+runtimeCatalogue.filter(record=>record.id===record.canonical_id&&record.catalogue_status==='active').length);
   assert.match(xml,/\/memes\/absolute-cinema<\/loc>/);
 
   const detail=await worker.fetch(new Request('https://example.test/memes/absolute-cinema'),env);
@@ -690,7 +691,7 @@ test('SEO routes expose robots, the full sitemap, and crawlable meme details',as
   const html=await detail.text();
   assert.match(html,/<link rel="canonical" href="https:\/\/memes\.significanthobbies\.com\/memes\/absolute-cinema">/);
   assert.match(html,/<script type="application\/ld\+json">/);
-  assert.match(html,/The underdog won after three improbable reversals/);
+  assert.match(html,/peak admiration|dramatic appreciation/);
 
   const missing=await worker.fetch(new Request('https://example.test/memes/not-in-the-catalogue'),env);
   assert.equal(missing.status,404);
@@ -753,3 +754,13 @@ for(const mode of ['missing','denied','malformed','http-error','throws']) {
     assert.equal(calls,0);
   });
 }
+
+ test('legacy aliases redirect to canonical pages and source mismatches are not published',async()=>{
+  for(const suffix of ['','.md'])for(const method of ['GET','HEAD']){
+    const response=await worker.fetch(new Request('https://example.test/memes/drakeposting'+suffix,{method}),env);
+    assert.equal(response.status,308);assert.equal(response.headers.get('location'),'https://memes.significanthobbies.com/memes/drake-preference'+suffix);
+  }
+  const excluded=await worker.fetch(new Request('https://example.test/memes/gif-46zrxz8ljkwmwwrqr7'),env);assert.equal(excluded.status,404);
+  const detail=await worker.fetch(new Request('https://example.test/memes/clip-bbb-delayed-fall'),env);
+  const html=await detail.text();assert.match(html,/<video controls/);assert.match(html,/Blender Foundation/);assert.match(html,/real injury|overlooked problem|real harm/i);
+ });

@@ -1,0 +1,8 @@
+{
+  "gif-46zrxz8ljkwmwwrqr7": {
+    "reason": "The asset is an animated HEX badge, not the named blinking reaction.",
+    "method": "assistant_three_frame_review",
+    "source": "https://media.giphy.com/media/46zrxz8LjKwmWwrQR7/giphy.mp4",
+    "observed_on": "2026-10-24"
+  }
+}

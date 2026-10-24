@@ -1,4 +1,4 @@
-import {catalogue} from './catalogue.stage3000.generated.mjs';
+import {catalogue} from './catalogue.mjs';
 import {needsSeriousHandling,requiresFactualAnswer} from './classification.mjs';
 import {creationMediaUrl,templateFor,unchangedReactionFor} from './meme-templates.mjs';
 import {captionBrief} from './caption-brief.mjs';
@@ -72,7 +72,7 @@ export async function composeMeme(request,env) {
     const output=raw?.choices?.[0];
     if(output?.finish_reason&&output.finish_reason!=='stop') throw new Error('Incomplete generation.');
     const data=validateComposition(JSON.parse(output?.message?.content??''),record,profile);
-    return json({...data,media_url:`/api/create/media/${encodeURIComponent(record.id)}`,source_url:record.provenance?.source_url??record.source_url??record.image_url,media_status:record.media_status});
+    return json({...data,media_url:`/api/create/media/${encodeURIComponent(record.id)}${record.media_revision?'?v='+record.media_revision:''}`,source_url:record.provenance?.source_url??record.source_url??record.image_url,media_status:record.media_status});
   } catch {
     // Do not log provider payloads: they may contain the situation or captions.
     return json({error:'Could not generate a complete caption layout. Try again or choose another template.'},503);

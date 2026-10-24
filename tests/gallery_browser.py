@@ -13,8 +13,11 @@ BASE='http://127.0.0.1:'+PORT
 proc=subprocess.Popen(['node','scripts/preview-landing.mjs',PORT],cwd=ROOT,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
 captions=['Changed nothing. Fixed everything.','The fix was running it again.','My contribution: the up arrow.']
 extras=json.loads((ROOT/'worker/public/clips.json').read_text())
-clip_count=f'{1195+len(extras):,}'
-all_count=f'{3000+len(extras):,}'
+external=json.loads((ROOT/'catalogue/external-clips.json').read_text())
+model=json.loads((ROOT/'worker/public/catalogue-v2.json').read_text())
+active=[record for record in model['references'] if record['canonical_id']==record['id'] and record['status']=='active']
+clip_count=f'{sum(record["kind"]=="clip" for record in active):,}'
+all_count=f'{len(active):,}'
 report={'synthetic_ai':True,'synthetic_clip':True,'widths':[]}
 try:
  for _ in range(100):
@@ -36,7 +39,7 @@ try:
      else:r.abort()
      return
     path=url.removeprefix(BASE)
-    if path=='/clips.json' and mode['library']=='error':
+    if path in ['/catalogue-v2.json','/clips.json'] and mode['library']=='error':
      r.fulfill(status=503,json={'error':'Synthetic unavailable extra library'});return
     if path.startswith('/api/clips/media/'):
      if mode['media']=='error':r.fulfill(status=502,json={'error':'Synthetic unavailable source'});return
@@ -56,6 +59,13 @@ try:
    page.goto(BASE+'/collection');page.locator('.collection-create-button').first.wait_for()
    assert page.locator('.collection-card').count()==24
    assert not page.evaluate('document.documentElement.scrollWidth>innerWidth')
+   assert f'{len(json.loads((ROOT/"catalogue/editorial.json").read_text())["profiles"])} memes' in page.locator('#collection-count').inner_text()
+   page.locator('#collection-shelf').select_option('quiet-reactions')
+   page.locator('#collection-refine summary').click();page.locator('#collection-intensity').select_option('quiet')
+   assert page.locator('.collection-card').count()>0
+   assert 'collection=quiet-reactions' in page.url and 'intensity=quiet' in page.url
+   page.locator('#collection-intensity').select_option('')
+   page.locator('#collection-shelf').select_option('all')
    page.locator('[data-format="gif"]').click();assert clip_count in page.locator('#collection-count').inner_text()
    assert page.locator('.media-kind').first.inner_text()=='CLIP'
    page.locator('[data-mood="awkward"]').click();assert 'mood=awkward' in page.url
@@ -124,7 +134,7 @@ try:
    assert static.value.suggested_filename.endswith('.png')
    assert not page.locator('#collection-create').evaluate('(node)=>node.scrollWidth>node.clientWidth')
    page.locator('.studio-grid').scroll_into_view_if_needed();page.screenshot(path=str(OUT/f'static-editor-{width}.png'))
-   mode['library']='error';page.goto(BASE+'/collection');page.locator('#collection-library-status').wait_for(state='visible');assert '3,000' in page.locator('#collection-count').inner_text()
+   mode['library']='error';page.goto(BASE+'/collection');page.locator('#collection-library-status').wait_for(state='visible');assert f'{sum(not r.get("canonical_id") and r.get("catalogue_status","active")=="active" for r in json.loads((ROOT/"worker/public/collection.json").read_text())):,}' in page.locator('#collection-count').inner_text()
    mode['library']='success';page.reload();expect(page.locator('#collection-count')).to_contain_text(all_count);page.locator('#collection-library-status').wait_for(state='hidden')
    assert not errors,errors
    report['widths'].append({'width':width,'passed':True,'export':{'duration':duration,'width':stream['width'],'height':stream['height'],'codec':stream['codec_name'],'bytes':file.stat().st_size},'exported_file_played':True})

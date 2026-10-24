@@ -1,4 +1,4 @@
-import {catalogue} from './catalogue.stage3000.generated.mjs';
+import {catalogue} from './catalogue.mjs';
 
 export const CLOSE_RELEVANCE_MARGIN=0.03;
 
@@ -27,22 +27,17 @@ function inferredAssetQuality(record) {
   }
 }
 
-function assetLabel(score) {
-  if(score>=86) return 'reviewed image';
-  if(score>=72) return 'direct source preview';
-  if(score>=50) return 'source preview needing review';
-  if(score>0) return 'lower-quality source preview';
-  return 'no usable preview';
-}
-
 export function staticCandidateSignals(record) {
   const memeStrength=clampScore(Number.isFinite(Number(record.meme_strength))?Number(record.meme_strength):inferredMemeStrength(record));
   const assetQuality=clampScore(Number.isFinite(Number(record.asset_quality))?Number(record.asset_quality):inferredAssetQuality(record));
+  const measurement=record.video_evidence??record.asset_evidence;
+  const dimensions=Number.isInteger(measurement?.width)&&Number.isInteger(measurement?.height)?`${measurement.width} × ${measurement.height} source pixels`:'Source dimensions not yet checked';
+  const rights=record.media_status==='approved'?'licensed source':'source preview';
   return {
     meme_strength:memeStrength,
     asset_quality:assetQuality,
     static_prior:Math.round(memeStrength*0.7+assetQuality*0.3),
-    signal_summary:`Static signals rate meme strength at ${memeStrength}/100 and image quality at ${assetQuality}/100 (${assetLabel(assetQuality)}).`
+    signal_summary:`${dimensions} · ${rights}.`
   };
 }
 
