@@ -5,6 +5,7 @@ import {catalogue} from '../worker/src/catalogue.stage3000.generated.mjs';
 import {clipLibrary} from '../worker/src/clip-library.generated.mjs';
 import {clipSource,clipCaptions} from '../worker/src/clip-captions.mjs';
 import worker from '../worker/src/index.mjs';
+import {clipWriterOutput} from './fixtures/clip-writer-output.mjs';
 
 test('gallery expansion contains measured distinct animations while retrieval stays frozen',async()=>{
   const report=JSON.parse(await readFile(new URL('../expansion/sources/gallery-clips-report.json',import.meta.url),'utf8'));
@@ -27,7 +28,7 @@ test('new gallery references are browsable and captionable without pretending co
   const page=await worker.fetch(new Request('https://example.test/memes/'+record.id),{});assert.equal(page.status,200);
   const html=await page.text();assert.match(html,/Source quality/);assert.match(html,/not been evaluated for automatic recommendations/);assert.ok(html.includes('/collection?meme='+record.id));assert.doesNotMatch(html,/undefined|<dt>Example<\/dt>/);
   const request=new Request('https://example.test/api/clips/captions',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({candidate_id:record.id,comment:'The tests passed after changing absolutely nothing.'})});
-  const response=await clipCaptions(request,{FREE_AI:{fetch:async()=>Response.json({model:'served-model',choices:[{finish_reason:'stop',message:{content:JSON.stringify({decision:'captions',captions:['Changed nothing. Fixed everything.','The fix was running it again.','A very productive up arrow.']})}}]})}});
+  const response=await clipCaptions(request,{FREE_AI:{fetch:async()=>Response.json({model:'served-model',choices:[{finish_reason:'stop',message:{content:JSON.stringify(clipWriterOutput(['Changed nothing. Fixed everything.','The fix was running it again.','A very productive up arrow.']))}}]})}});
   assert.equal(response.status,200);assert.equal((await response.json()).candidate_id,record.id);
 });
 
