@@ -1,8 +1,9 @@
 import {clampBox,renderMeme} from './meme-renderer.js';
 
 export class MemeStudio {
-  constructor(host,{generateDraft,mediaBase='',downloadBlob}={}) {
+  constructor(host,{generateDraft,mediaBase='',downloadBlob,onExportOutcome}={}) {
     this.generateDraft=generateDraft;this.mediaBase=mediaBase;this.downloadBlob=downloadBlob;
+    this.onExportOutcome=onExportOutcome;
     this.host=host;this.version=0;this.image=null;this.layers=[];this.originals=[];this.selected=null;this.busy=false;this.blocked=false;
     host.innerHTML=`<header class="studio-header"><div><p class="eyebrow">MAKE IT YOURS</p><h2 id="studio-heading">Meme Studio</h2><p class="studio-context"></p></div><div class="studio-actions"><button type="button" data-action="regenerate">New captions</button><button type="button" class="primary" data-action="download">Download PNG</button></div></header>
       <p class="studio-status" role="status" aria-live="polite"></p>
@@ -201,12 +202,15 @@ export class MemeStudio {
   async download() {
     if(this.$('[data-action="download"]').disabled)return;
     const filename=`meme-${this.candidate.id}.png`,version=this.version;
+    const notify=this.onExportOutcome;
+    const report=outcome=>{try{notify?.(outcome);}catch{}};
     try {
       // Selection handles live in a separate DOM overlay, never in the image.
       const blob=await new Promise((resolve,reject)=>{try{this.canvas.toBlob(value=>value?resolve(value):reject(new Error()),'image/png');}catch(error){reject(error);}});
-      if(this.downloadBlob){await this.downloadBlob(blob);if(version===this.version)this.message('Anna opened the PNG download. The meme is saved privately too.');return;}
+      if(this.downloadBlob){await this.downloadBlob(blob);report('download_requested');if(version===this.version)this.message('Anna opened the PNG download. The meme is saved privately too.');return;}
       const url=URL.createObjectURL(blob),link=document.createElement('a');link.href=url;link.download=filename;document.body.append(link);link.click();link.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);
+      report('download_requested');
       if(version===this.version)this.message('PNG download started at the original image resolution.');
-    } catch {if(version===this.version)this.message('Could not export this image. Your edits are still here; try again.',true);}
+    } catch {report('export_failed');if(version===this.version)this.message('Could not export this image. Your edits are still here; try again.',true);}
   }
 }

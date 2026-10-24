@@ -219,7 +219,7 @@ test('configured App Health endpoint telemetry measures supported routes without
 
     const recommendation=await worker.fetch(new Request('https://example.test/api/recommend?private=query-value',{
       method:'POST',
-      headers:{'Content-Type':'application/json'},
+      headers:{'Content-Type':'application/json','X-Fleet-Traffic':'qa'},
       body:JSON.stringify({comment:'PRIVATE_PROMPT_SENTINEL'}),
     }),telemetryEnv,context);
     assert.equal(recommendation.status,200);
@@ -228,7 +228,7 @@ test('configured App Health endpoint telemetry measures supported routes without
 
     const feedback=await worker.fetch(new Request('https://example.test/api/feedback?private=query-value',{
       method:'POST',
-      headers:{'Content-Type':'application/json'},
+      headers:{'Content-Type':'application/json','X-Fleet-Traffic':'qa'},
       body:JSON.stringify({request_id:recommendationBody.request_id,verdict:'landed',candidate_id:'waiting-skeleton'}),
     }),telemetryEnv,context);
     assert.equal(feedback.status,200);
@@ -249,6 +249,16 @@ test('configured App Health endpoint telemetry measures supported routes without
     assert(events.every(event=>Number.isFinite(event.duration_ms)&&event.duration_ms>=0));
     const payloads=endpointRequests.map(request=>request.options.body).join('\n');
     assert.doesNotMatch(payloads,/PRIVATE_PROMPT_SENTINEL|PRIVATE_PATH_SENTINEL|query-value|request_id|verdict|candidate_id/);
+    const logs=requests.filter(request=>request.url==='https://ingest.sassmaker.com/v1/logs').flatMap(request=>JSON.parse(request.options.body).logs);
+    const created=logs.find(log=>log.event==='recommendation.created');
+    const saved=logs.find(log=>log.event==='feedback.submitted');
+    assert.equal(created.props.recommendation_id,recommendationBody.request_id);
+    assert.equal(saved.props.recommendation_id,recommendationBody.request_id);
+    assert.equal(created.props.stage,'server');
+    assert.equal(saved.props.stage,'server');
+    assert.equal(created.props.traffic_class,'qa');
+    assert.equal(saved.props.traffic_class,'qa');
+    assert.doesNotMatch(JSON.stringify(logs),/PRIVATE_PROMPT_SENTINEL|PRIVATE_PATH_SENTINEL|query-value|comment_text/);
   } finally {
     globalThis.fetch=originalFetch;
   }

@@ -4,6 +4,25 @@ The public Worker sends endpoint measurements and explicit failures or
 degradation to the Meme Lab production environment in App Health. Those
 records distinguish low-confidence retrieval fallback from successful ranking.
 
+The existing per-recommendation UUID now joins server `recommendation.created`
+and `feedback.submitted` with browser `recommendation.shown`,
+`recommendation.detail_open_requested`, `recommendation.candidate_selected`,
+`recommendation.feedback_saved`, `recommendation.download_requested` and
+`recommendation.export_failed`. Automatic opening of the initial editor is not
+a user selection. Export records mean the browser started a download request,
+not that a file was saved, shared or used. The clip gallery is outside this
+bounded static-meme outcome trace.
+
+These records contain categorical decision/ranking/degradation, candidate count
+and rank, plus the existing recommendation ID; no comment, caption, candidate
+name, URL or user identity is added. `?fleet_qa=1` and `?fleet_internal=1`
+explicitly mark QA/internal traffic. Everything else is `unclassified`, never
+assumed external. Labels are self-declared diagnostic tags, not authentication.
+Count unique recommendation IDs separately at each server/browser stage; do not
+add server and browser events together as people or confirmations. Missing or
+blocked client logs leave delivery/outcomes unknown. A natural cohort and an
+evidence-led product decision still have to accrue after release.
+
 The hourly GitHub production picker check also sends `production.probe.passed`
 or error-level `production.probe.failed` to the same App Health app. Reporting
 covers an unreachable public site as well as HTTP 200 degradation. Events are
