@@ -263,6 +263,18 @@ async function persistRecommendation(env,recommendation,comment,model=CLASSIFIER
     .run();
 }
 
+function requestTrafficClass(request) {
+  const value=request.headers.get('x-fleet-traffic');
+  return value==='qa'||value==='internal'?value:'unclassified';
+}
+
+function reportRecommendationCreated(request,env,ctx,recommendation,details) {
+  ctx?.waitUntil(pingFor(env)('recommendation.created',{
+    title:`decision: ${recommendation.decision}`,
+    props:{decision:recommendation.decision,confidence:recommendation.confidence,candidates:recommendation.candidates.length,...details,recommendation_id:recommendation.request_id,stage:'server',traffic_class:requestTrafficClass(request)}
+  }));
+}
+
 async function saveFeedback(request,env,ctx) {
   if(request.headers.get('content-type')?.split(';')[0]!=='application/json') return json({error:'Expected JSON.'},415);
   const contentLength=Number(request.headers.get('content-length')??0);
@@ -281,7 +293,7 @@ async function saveFeedback(request,env,ctx) {
     .bind(crypto.randomUUID(),body.request_id,body.verdict,body.candidate_id,new Date().toISOString())
     .run();
   console.log(JSON.stringify({event:'feedback',verdict:body.verdict}));
-  ctx?.waitUntil(pingFor(env)('feedback.submitted',{title:`verdict: ${body.verdict}`,props:{verdict:body.verdict}}));
+  ctx?.waitUntil(pingFor(env)('feedback.submitted',{title:`verdict: ${body.verdict}`,props:{verdict:body.verdict,recommendation_id:body.request_id,stage:'server',traffic_class:requestTrafficClass(request)}}));
   return json({saved:true,verdict:body.verdict});
 }
 
@@ -317,6 +329,7 @@ async function recommend(request,env,ctx) {
             console.error(JSON.stringify({event:'recommendation_store',status:'error',error:safeError(error)}));
           }
           console.log(JSON.stringify({event:'recommendation',status:'ok',duration_ms:Date.now()-started,decision:'none',confidence:'low',candidate_count:0,classifier_gate}));
+          reportRecommendationCreated(request,env,ctx,recommendation,{ranking_mode:'safety_gate',classifier_gate});
           return json({...recommendation,feedback_enabled});
         }
         classifier_gate='humour';
@@ -332,7 +345,8 @@ async function recommend(request,env,ctx) {
           console.error(JSON.stringify({event:'recommendation_store',status:'error',error:safeError(storeError)}));
         }
         console.error(JSON.stringify({event:'classifier_gate',status:classifier_gate,error:safeError(error)}));
-        reportPickerHealth(env,ctx,'recommendation.degraded',{route:'/api/recommend',classifier_gate,duration_ms:Date.now()-started});
+        reportPickerHealth(env,ctx,'recommendation.degraded',{route:'/api/recommend',classifier_gate,duration_ms:Date.now()-started,recommendation_id:recommendation.request_id,stage:'server',traffic_class:requestTrafficClass(request)});
+        reportRecommendationCreated(request,env,ctx,recommendation,{ranking_mode:'safety_gate',classifier_gate});
         return json({...recommendation,feedback_enabled,degraded:true});
       }
     }
@@ -374,17 +388,17 @@ async function recommend(request,env,ctx) {
     }
     const selection=selectionFromRanking(ranked);
     const degraded=ranking_mode==='retrieval_fallback'||ranking_mode==='general_fallback';
-    if(degraded) reportPickerHealth(env,ctx,'recommendation.degraded',{route:'/api/recommend',ranking_mode,classifier_gate,duration_ms:Date.now()-started});
     console.log(JSON.stringify({event:'recommendation',status:degraded?'degraded':'ok',duration_ms:Date.now()-started,decision:selection.decision,confidence:selection.confidence,candidate_count:selection.candidates.length,classifier_gate,classifier_ranked:ranking_mode!=='retrieval_fallback',ranking_mode}));
     const perspectives=new Map((ranked??[]).filter(record=>record.perspective).map(record=>[record.id,{perspective:record.perspective,perspective_label:record.perspective_label}]));
     const recommendation=presentSelection(selection,{perspectives});
+    if(degraded) reportPickerHealth(env,ctx,'recommendation.degraded',{route:'/api/recommend',ranking_mode,classifier_gate,duration_ms:Date.now()-started,recommendation_id:recommendation.request_id,stage:'server',traffic_class:requestTrafficClass(request)});
     let feedback_enabled=true;
     try { await persistRecommendation(env,recommendation,comment,ranking_model); }
     catch(error) {
       feedback_enabled=false;
       console.error(JSON.stringify({event:'recommendation_store',status:'error',error:safeError(error)}));
     }
-    ctx?.waitUntil(pingFor(env)('recommendation.created',{title:`decision: ${selection.decision}`,props:{decision:selection.decision,confidence:selection.confidence,candidates:selection.candidates.length,ranking_mode,classifier_gate}}));
+    reportRecommendationCreated(request,env,ctx,recommendation,{ranking_mode,classifier_gate});
     return json({...recommendation,feedback_enabled,degraded,ranking_mode});
   } catch(error) {
     if(error instanceof BudgetUnavailableError) return json({error:'Meme matching is temporarily unavailable. Try again shortly.'},503,{'Retry-After':'60'});
@@ -399,7 +413,7 @@ function secureAsset(response) {
 }
 
 function queueEndpointMeasurement(request,env,ctx,route,status_code,startedAt) {
-  if(status_code>=500) reportPickerHealth(env,ctx,'endpoint.failed',{method:request.method,route,status_code,duration_ms:Date.now()-startedAt});
+  if(status_code>=500) reportPickerHealth(env,ctx,'endpoint.failed',{method:request.method,route,status_code,duration_ms:Date.now()-startedAt,stage:'server',traffic_class:requestTrafficClass(request)});
   if(!env.APP_HEALTH_INGEST_KEY||typeof ctx?.waitUntil!=='function') return;
   ctx.waitUntil(endpointFor(env)({
     method:request.method,
