@@ -44,7 +44,13 @@ function secondaryReport(){const human=raterKind==='human'&&review.rater.atteste
 const reply=(res,status,body,type='application/json')=>{res.writeHead(status,{'Content-Type':type,'Cache-Control':'no-store','X-Content-Type-Options':'nosniff','Referrer-Policy':'no-referrer','Content-Security-Policy':"default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; media-src 'self' blob:; connect-src 'self'; frame-ancestors 'none'"});res.end(type==='application/json'?JSON.stringify(body):body);};
 const server=createServer(async(req,res)=>{
   try{
-    const url=new URL(req.url,'http://127.0.0.1:'+port);
+    const host=req.headers.host;
+    const hostCount=req.rawHeaders.filter((_,index)=>index%2===0&&req.rawHeaders[index].toLowerCase()==='host').length;
+    if(hostCount!==1||!['127.0.0.1:'+port,'localhost:'+port].includes(host))return reply(res,403,{error:'Use the local review page.'});
+    const origin='http://'+host;
+    if(req.headers.origin!==undefined&&req.headers.origin!==origin)return reply(res,403,{error:'Use the local review page.'});
+    const url=new URL(req.url,origin);
+    if(url.origin!==origin)return reply(res,403,{error:'Use the local review page.'});
     if(req.method==='GET'){
       if(url.pathname==='/')return reply(res,200,await readFile(new URL('./fixtures/clip-caption-review.html',import.meta.url)),'text/html; charset=utf-8');
       if(url.pathname==='/review.js')return reply(res,200,await readFile(new URL('./fixtures/clip-caption-review.js',import.meta.url)),'text/javascript');
@@ -53,7 +59,7 @@ const server=createServer(async(req,res)=>{
       if(url.pathname.startsWith('/media/')&&allowedMedia.has(basename(url.pathname)))return reply(res,200,await readFile(resolve(root,'media',allowedMedia.get(basename(url.pathname)))),'video/mp4');
       return reply(res,404,{error:'Not found.'});
     }
-    if(req.method!=='POST'||!['http://127.0.0.1:'+port,'http://localhost:'+port].includes(req.headers.origin)||req.headers['content-type']!=='application/json')return reply(res,403,{error:'Use the local review page.'});
+    if(req.method!=='POST'||req.headers.origin!==origin||req.headers['content-type']!=='application/json')return reply(res,403,{error:'Use the local review page.'});
     let length=0,parts=[];for await(const part of req){length+=part.length;if(length>64000)return reply(res,413,{error:'Request too large.'});parts.push(part);}
     const body=JSON.parse(Buffer.concat(parts).toString());
     if(url.pathname==='/vote'){
