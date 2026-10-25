@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {spawn} from 'node:child_process';
 import {createServer,request} from 'node:http';
-import {mkdtemp,mkdir,readFile,writeFile} from 'node:fs/promises';
+import {mkdtemp,mkdir,readFile,writeFile,rmdir} from 'node:fs/promises';
 import {tmpdir} from 'node:os';
 import {resolve} from 'node:path';
 import {createHash} from 'node:crypto';
@@ -68,6 +68,8 @@ test('Host and supplied Origin are validated before every route without exposing
     for(const path of routes)assert.equal((await send(path,{origin:foreign})).status,403,foreign+' '+path);
     for(const path of ['/vote','/finish'])assert.equal((await send(path,{method:'POST',origin:foreign,body:vote})).status,403);
   }
+  for(const site of ['cross-site','same-site'])for(const path of routes)assert.equal((await send(path,{headers:{'Sec-Fetch-Site':site}})).status,403);
+  for(const site of ['same-origin','none'])assert.equal((await send('/data',{headers:{'Sec-Fetch-Site':site}})).status,200);
   assert.equal((await send('/vote',{method:'POST',body:vote})).status,403);
   for(const hostLines of ['Host: 127.0.0.1:'+port+'\r\nHost: evil.test\r\n','']){
     const response=await new Promise((done,reject)=>{
@@ -79,4 +81,30 @@ test('Host and supplied Origin are validated before every route without exposing
   assert.equal((await send('http://evil.test/data')).status,403);
   assert.equal(await readFile(resolve(run,'human-review.json'),'utf8'),saved);
   const final=JSON.parse((await send()).text);assert.equal(final.ratings.length,1);assert.equal(final.ratings[0].choice,'b');
+});
+
+test('failed durable writes cannot publish votes or lock the review, and concurrent votes are retained',async t=>{
+  const {send,port,run}=await startReview(t);const origin='http://127.0.0.1:'+port;
+  const data=JSON.parse((await send()).text),temporary=resolve(run,'human-review.json.tmp');
+  await mkdir(temporary);
+  assert.equal((await send('/vote',{method:'POST',origin,body:{case_id:data.cases[0].id,choice:'a'}})).status,400);
+  assert.deepEqual(JSON.parse((await send()).text).ratings,[]);
+  await assert.rejects(readFile(resolve(run,'human-review.json')),{code:'ENOENT'});
+  await rmdir(temporary);
+  const reportTemporary=resolve(run,'preference-report.json.tmp');await mkdir(reportTemporary);
+  const diagnostic=await send('/vote',{method:'POST',origin,body:{case_id:data.cases[0].id,choice:'b'}});
+  assert.equal(diagnostic.status,200);assert.equal(JSON.parse(diagnostic.text).report_saved,false);
+  assert.equal(JSON.parse(await readFile(resolve(run,'human-review.json'),'utf8')).ratings[0].choice,'b');
+  await rmdir(reportTemporary);
+  const responses=await Promise.all(data.cases.map(fixture=>send('/vote',{method:'POST',origin,body:{case_id:fixture.id,choice:'a'}})));
+  assert.ok(responses.every(response=>response.status===200));
+  const saved=await readFile(resolve(run,'human-review.json'),'utf8');assert.equal(JSON.parse(saved).ratings.length,29);
+  await mkdir(temporary);
+  assert.equal((await send('/finish',{method:'POST',origin,body:{attested:true}})).status,400);
+  assert.equal(JSON.parse((await send()).text).finished,false);
+  assert.equal(await readFile(resolve(run,'human-review.json'),'utf8'),saved);
+  await rmdir(temporary);
+  assert.equal((await send('/finish',{method:'POST',origin,body:{attested:true}})).status,200);
+  assert.equal(JSON.parse((await send()).text).finished,true);
+  assert.equal((await send('/vote',{method:'POST',origin,body:{case_id:data.cases[0].id,choice:'b'}})).status,409);
 });

@@ -104,7 +104,7 @@ test('draft selection returns only three ranked captions and rejects invalid pro
 
 test('the draft protocol preserves public caption and abstention responses without leaking drafts',async()=>{
   const selected=clipWriterOutput(output.captions);selected.selected=[2,0,1];
-  for(const value of [selected,{decision:'none',drafts:[],selected:[]},{decision:'reference',drafts:[],selected:[]}]){
+  for(const value of [selected,{decision:'none',drafts:[],selected:[]},{decision:'reference',drafts:[],selected:[]},{decision:'none'},{decision:'reference',captions:[]}]){
     const response=await clipCaptions(request(),{FREE_AI:{fetch:async()=>answer(value)}});
     assert.equal(response.status,200);const result=await response.json();
     assert.equal(result.decision,value.decision);assert.equal(result.candidate_id,clip.id);assert.equal(result.grounding,'catalogue');
@@ -112,7 +112,7 @@ test('the draft protocol preserves public caption and abstention responses witho
     for(const field of ['drafts','selected','reaction','tension'])assert.equal(Object.hasOwn(result,field),false);
     if(value.decision!=='captions')assert.ok(result.message);
   }
-  for(const value of [{...selected,selected:[0,0,1]},{...selected,drafts:selected.drafts.slice(0,5)},{...selected,reaction:''},{...selected,decision:'none'},output]){
+  for(const value of [{...selected,selected:[0,0,1]},{...selected,drafts:selected.drafts.slice(0,5)},{...selected,reaction:''},{...selected,decision:'none'},{decision:'reference',captions:['contradictory']},{decision:'none',drafts:'invalid'},output]){
     let calls=0;const response=await clipCaptions(request(),{FREE_AI:{fetch:async()=>{calls++;return answer(value);}}});
     assert.equal(calls,1);assert.equal(response.status,503);assert.deepEqual(Object.keys(await response.json()),['error']);
   }

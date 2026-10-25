@@ -19,11 +19,12 @@ If the reaction is emotionally incompatible or unreadable: {"decision":"referenc
 const shortText=(value,max)=>typeof value==='string'&&value.trim()&&Array.from(value.trim()).length<=max&&!/[\u0000-\u0008\u000b-\u001f\u007f]/u.test(value);
 
 export function selectClipDrafts(value) {
-  if(!value||!['captions','none','reference'].includes(value.decision)||!Array.isArray(value.drafts)||!Array.isArray(value.selected))throw new Error('Invalid caption drafts.');
+  if(!value||!['captions','none','reference'].includes(value.decision))throw new Error('Invalid caption drafts.');
   if(value.decision!=='captions'){
-    if(value.drafts.length||value.selected.length)throw new Error('Contradictory caption drafts.');
+    if(['drafts','selected','captions'].some(key=>value[key]!==undefined&&(!Array.isArray(value[key])||value[key].length)))throw new Error('Contradictory caption drafts.');
     return {decision:value.decision,captions:[]};
   }
+  if(!Array.isArray(value.drafts)||!Array.isArray(value.selected))throw new Error('Invalid caption drafts.');
   if(!shortText(value.reaction,160)||!shortText(value.tension,200)||value.drafts.length!==6||value.drafts.some(draft=>!draft||!shortText(draft.text,140)||!shortText(draft.angle,80))||value.selected.length!==3||new Set(value.selected).size!==3||value.selected.some(index=>!Number.isInteger(index)||index<0||index>=6))throw new Error('Incomplete caption drafts.');
   const captions=value.selected.map(index=>value.drafts[index].text.trim());
   if(new Set(captions).size!==3)throw new Error('Duplicate selected captions.');
