@@ -2,6 +2,8 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 import {catalogue} from '../worker/src/catalogue.stage3000.generated.mjs';
+import {catalogue as currentCatalogue,clipLibrary as unifiedClips} from '../worker/src/catalogue.mjs';
+
 import {clipSource,clipCaptions,clipMedia,validateClipCaptions,validateClipFrames} from '../worker/src/clip-captions.mjs';
 import {planComposition} from '../worker/src/meme-composition.mjs';
 import worker from '../worker/src/index.mjs';
@@ -16,6 +18,20 @@ const frameBytes=await readFile(new URL('./fixtures/public-ux/frame.jpg',import.
 const frames=[.2,.7,1.2].map(at_seconds=>({at_seconds,data_url:'data:image/jpeg;base64,'+frameBytes.toString('base64')}));
 const answer=(value=clipWriterOutput(output.captions),extra={})=>Response.json({model:'served-model',choices:[{finish_reason:'stop',message:{content:JSON.stringify(value)}}],...extra});
 
+test('licensed hosted animations are registered identities and enforce MP4 delivery',async()=>{
+  for(const item of unifiedClips.filter(record=>record.media_url.startsWith('/assets/clips/')))
+    assert.equal(clipSource(item),item.media_url,item.id);
+  const record=unifiedClips.find(record=>record.id==='clip-bbb-delayed-fall');assert.ok(record);
+  assert.equal(clipSource(record),record.media_url);
+  assert.equal(clipSource({...record,id:'unregistered-external'}),null);
+  assert.equal(clipSource({...record,media_url:'https://example.com/movie.webm'}),null);
+  const mp4=new Uint8Array([0,0,0,20,102,116,121,112,105,115,111,109,0,0,0,0]);
+  const response=await clipMedia(record.id,async(url,options)=>{assert.equal(url,record.media_url);assert.equal(options.redirect,'manual');assert.equal(options.headers.Accept,'video/mp4');return new Response(mp4,{headers:{'Content-Type':'video/mp4'}});});
+  assert.equal(response.status,200);assert.equal(response.headers.get('content-type'),'video/mp4');assert.deepEqual(new Uint8Array(await response.arrayBuffer()),mp4);
+  assert.equal((await clipMedia(record.id,async()=>new Response('not a video at all',{headers:{'Content-Type':'video/mp4'}}))).status,502);
+  assert.equal((await clipMedia(record.id,async()=>new Response(mp4,{headers:{'Content-Type':'video/webm'}}))).status,502);
+});
+
 test('reaction video URLs derive only from the existing catalogue source',()=>{
   assert.equal(clipSource(clip),'https://media.giphy.com/media/YRuFixSNWFVcXaxpmX/giphy.mp4');
   assert.equal(catalogue.filter(record=>clipSource(record)).length,1195);
@@ -27,9 +43,20 @@ test('clip generation sends one bounded, attributed automatic request with the s
   let calls=0;
   const response=await clipCaptions(request(),{FREE_AI:{fetch:async req=>{
     calls++;assert.equal(req.headers.get('x-gateway-project-id'),'meme-lab');const data=await req.json();
-    assert.equal(data.model,'auto');assert.equal(data.max_tokens,1200);assert.equal(data.reasoning_effort,'low');assert.match(data.messages[0].content,/Caption style: deadpan/);assert.match(data.messages[1].content,/Developers/);assert.match(data.messages[1].content,/Use Clap/);assert.equal(data.messages.length,2);assert.equal(data.messages[0].role,'system');return answer();
+    assert.equal(data.model,'auto');assert.equal(data.max_tokens,1200);assert.equal(data.reasoning_effort,'low');assert.match(data.messages[0].content,/Caption style: deadpan/);assert.match(data.messages[1].content,/Developers/);assert.ok(data.messages[1].content.includes(JSON.stringify(currentCatalogue.find(record=>record.id===clip.id).name)));assert.equal(data.messages.length,2);assert.equal(data.messages[0].role,'system');return answer();
   }}});
   assert.equal(calls,1);assert.equal(response.status,200);assert.deepEqual((await response.json()).captions,output.captions);
+});
+
+test('ordinary request-and-response stories reach captioning while actual help still stops before inference',async()=>{
+  let calls=0;
+  const service={FREE_AI:{fetch:async()=>{calls++;return answer();}}};
+  const situation={...body,candidate_id:'clip-tears-of-steel-wait-what',comment:'I asked for a simple status update and got a forty-minute explanation.'};
+  const response=await clipCaptions(request(situation),service);
+  assert.equal(response.status,200);assert.equal((await response.json()).decision,'captions');assert.equal(calls,1);
+  calls=0;
+  const serious=await clipCaptions(request({...situation,comment:'I asked for an update about my medication and got no answer.'}),service);
+  assert.equal((await serious.json()).decision,'none');assert.equal(calls,0);
 });
 
 test('serious and factual inputs return no caption before inference',async()=>{

@@ -1,4 +1,4 @@
-import {catalogue} from './catalogue.stage3000.generated.mjs';
+import {retrievalCatalogue as catalogue} from './catalogue.mjs';
 import {reciprocalRankFuse} from './rank-fusion.mjs';
 import {reserveRetrievalBudget} from './ai-budget.mjs';
 
@@ -26,9 +26,10 @@ export function semanticRetriever({catalogue:records,embed,query,limit=30}) {
     const seen=new Set();
     const shortlist=[];
     for(const match of matches) {
-      if(typeof match?.id!=='string'||seen.has(match.id)||!recordsById.has(match.id)) continue;
-      seen.add(match.id);
-      shortlist.push(recordsById.get(match.id));
+      const record=recordsById.get(match?.id),id=record?.canonical_id??record?.id;
+      if(!record||record.catalogue_status&&record.catalogue_status!=='active'||seen.has(id)) continue;
+      seen.add(id);
+      shortlist.push(recordsById.get(id)??record);
       if(shortlist.length===limit) break;
     }
     if(shortlist.length===0) throw new Error('Semantic retrieval returned no known catalogue IDs.');
@@ -68,9 +69,14 @@ export async function retrieveCandidates(env,comment,topK=30) {
     coreReserve>0?retrieveViewPair(env,vector,coreReserve,{core:true}):[]
   ]);
   const seen=new Set();
-  let candidates=mergeWithReserve(broadMatches,coreMatches,{limit:topK,reserve:coreReserve})
+  const canonicalMatches=matches=>matches.flatMap(match=>{
+    const record=byId.get(match.catalogue_id),canonical=byId.get(record?.canonical_id)??record;
+    return canonical?.catalogue_status==='active'?[{...match,catalogue_id:canonical.id}]:[];
+  });
+  let candidates=mergeWithReserve(canonicalMatches(broadMatches),canonicalMatches(coreMatches),{limit:topK,reserve:coreReserve})
     .map(match=>byId.get(match.catalogue_id))
-    .filter(record=>record&&!seen.has(record.id)&&seen.add(record.id))
+    .map(record=>byId.get(record?.canonical_id)??record)
+    .filter(record=>record&&record.catalogue_status==='active'&&!seen.has(record.id)&&seen.add(record.id))
     .slice(0,topK);
   // Older Vectorize uploads may lack searchable metadata indexes. Keep the
   // matcher usable until those vectors can be reindexed with view/core filters.
@@ -78,7 +84,8 @@ export async function retrieveCandidates(env,comment,topK=30) {
     const unfiltered=await env.MEME_INDEX.query(vector,{topK:Math.min(50,topK*2),returnMetadata:'all'});
     candidates=(unfiltered?.matches??[])
       .map(match=>byId.get(match.metadata?.catalogue_id))
-      .filter(record=>record&&!seen.has(record.id)&&seen.add(record.id))
+      .map(record=>byId.get(record?.canonical_id)??record)
+      .filter(record=>record&&record.catalogue_status==='active'&&!seen.has(record.id)&&seen.add(record.id))
       .slice(0,topK);
   }
   if(candidates.length===0) throw new Error('Semantic retrieval returned no known memes.');

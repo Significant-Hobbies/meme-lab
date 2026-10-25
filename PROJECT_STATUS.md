@@ -3,6 +3,14 @@
 **Updated:** 9 October 2026
 **Lifecycle:** Live meme picker and prefilled caption Studio; Anna 1.3.0 candidate prepared, public Store publication remains gated.
 
+## Catalog rebuild (24 October 2026)
+
+The catalog separates canonical references, media variants, meaning, editorial collections and measured evidence. The next catalog candidate has 99 authored selections, eight shelves and 34 licensed native clips from five films, including five live-action reactions. Twenty-two clips are new in this batch. Sources keep their original 1920-pixel width and 24/30 fps; cinema framing is preserved rather than stretched to 1080p. Cards show exact dimensions and source films; measured-resolution filters compose with existing facets.
+
+Hosted clips now have separate stable retrieval identities, alongside the unchanged 3,000-record positional base and core reserve. Generation, previews, pages and exports share the same source revision, license and authored use/near-miss context. Twelve machine annotations retain source/frame/model evidence independently of editorial selections. Further annotation encountered provider timeouts; no human preference or market-wide superiority is established.
+
+The previous catalog release (#80, main `e39d637`) is live. This candidate's verification and release progress remain in #79. Earlier authentication-pending checkpoints below are historical.
+
 ## Gallery creation — 23 October 2026
 
 The gallery can now open supported static templates directly in the existing caption Studio and turn reaction GIF sources into captioned video. Search, format/mood filters, direct reference links, optional audience/style, three clip-caption choices, local edits, source retry, cancellation and browser video export are implemented. Unsupported static sources remain original reactions. No production dependencies, bindings or production configuration changed.

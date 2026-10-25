@@ -1,5 +1,4 @@
-import {catalogue} from './catalogue.stage3000.generated.mjs';
-import {clipLibrary} from './clip-library.generated.mjs';
+import {catalogue,clipLibrary,retrievalCatalogue} from './catalogue.mjs';
 import {createGatewayClassifierFetch,hasMultiplePerspectives,humourBelongs,needsSeriousHandling,rankCandidates,rankCandidatesByPerspective,requiresFactualAnswer} from './classification.mjs';
 import {withClassifierDeadline} from './classifier-deadline.mjs';
 import {MAX_RECOMMENDATIONS,presentSelection,selectionFromRanking} from './recommendation.mjs';
@@ -13,7 +12,7 @@ import {composeMeme,compositionMedia,annaComposition} from './meme-composition.m
 import {clipCaptions,clipMedia} from './clip-captions.mjs';
 import {creationMediaUrl} from './meme-templates.mjs';
 
-const allowedIds=new Set(catalogue.map(record=>record.id));
+const allowedIds=new Set(retrievalCatalogue.map(record=>record.id));
 const catalogueById=new Map([...catalogue,...clipLibrary].map(record=>[record.id,record]));
 const CLASSIFIER_MODEL='free-ai:auto';
 const RETRIEVAL_FALLBACK_MODEL='vector-retrieval-fallback';
@@ -158,21 +157,24 @@ function memePage(record) {
     <a class="back-link" href="/collection">&larr; Back to the collection</a>
     <article class="meme-detail">
       <div class="meme-detail-media">
-        ${mediaUrl?`<img src="${mediaUrl}" alt="${name} meme reference" referrerpolicy="no-referrer">`:'<span class="media-fallback">Preview unavailable</span>'}
-        ${record.media_type==='gif'?'<span class="media-kind">GIF</span>':''}
+        ${mediaUrl?record.mime_type?.startsWith('video/')?`<video controls playsinline loop muted preload="metadata" poster="${previewUrl}" src="/api/clips/media/${encodeURIComponent(record.id)}${record.media_revision?'?v='+record.media_revision:''}" aria-label="${name} reaction clip"></video>`:`<img src="${mediaUrl}" alt="${name} meme reference" referrerpolicy="no-referrer">`:'<span class="media-fallback">Preview unavailable</span>'}
+        ${record.media_type==='gif'?'<span class="media-kind">CLIP</span>':''}
       </div>
       <div class="meme-detail-copy">
         <p class="eyebrow">MEME REFERENCE</p>
         <h1>${name}</h1>
         <p class="meme-definition">${escapeHtml(record.message)}</p>
         <dl class="meme-guide">
-          ${record.catalogue_scope==='gallery'?`<div><dt>Source quality</dt><dd>${record.video_evidence.width} × ${record.video_evidence.height} pixels · ${record.video_evidence.fps} fps · ${record.video_evidence.duration.toFixed(1)} seconds</dd></div><div><dt>About this reaction</dt><dd>Browse and create using the source tags. This clip has not been evaluated for automatic recommendations.</dd></div>`:`<div><dt>What it expresses</dt><dd>${escapeHtml(record.relational_pattern)}</dd></div><div><dt>Example</dt><dd>${escapeHtml(record.example_context)}</dd></div><div><dt>When not to use it</dt><dd>${escapeHtml(record.near_miss_context)}</dd></div>`}
+          ${record.video_evidence?`<div><dt>Source dimensions</dt><dd>${record.video_evidence.width} × ${record.video_evidence.height} encoded pixels · ${record.video_evidence.fps} fps · ${record.video_evidence.duration.toFixed(1)} seconds</dd></div>`:''}
+          ${record.catalogue_scope!=='gallery'||record.catalogue_profile?`<div><dt>What it expresses</dt><dd>${escapeHtml(record.relational_pattern)}</dd></div><div><dt>Example</dt><dd>${escapeHtml(record.example_context)}</dd></div><div><dt>When not to use it</dt><dd>${escapeHtml(record.near_miss_context)}</dd></div>`:''}
+          ${record.catalogue_scope==='gallery'&&!allowedIds.has(record.id)?'<div><dt>About this reaction</dt><dd>This clip is available to browse and caption. It has not been evaluated for automatic recommendations.</dd></div>':''}
         </dl>
         <ul class="tag-list meme-detail-tags" aria-label="Related moods">${tags}</ul>
         <div class="meme-detail-actions">
           ${record.media_type==='gif'||creationMediaUrl(record)?`<a class="primary" href="/collection?meme=${encodeURIComponent(record.id)}">${record.media_type==='gif'?'Caption this clip':'Make this meme'} <span aria-hidden="true">&rarr;</span></a>`:''}
           <a href="/">Find a meme for your situation</a>
-          ${record.image_url?`<a class="source-link" href="${escapeHtml(record.image_url)}" target="_blank" rel="noopener noreferrer">${sourceNote}</a>`:''}
+          ${record.image_url?`<a class="source-link" href="${escapeHtml(record.provenance?.source_url||record.image_url)}" target="_blank" rel="noopener noreferrer">${sourceNote}</a>`:''}
+          ${record.attribution?`<p class="source-credit">${escapeHtml(record.attribution)}</p>`:''}
         </div>
       </div>
     </article>
@@ -222,7 +224,7 @@ function memeNotFound(request,asMarkdown) {
 }
 
 function sitemap() {
-  const urls=[...PUBLIC_ROUTES,...catalogue.map(publicMemePath)];
+  const urls=[...PUBLIC_ROUTES,...retrievalCatalogue.filter(record=>record.id===record.canonical_id&&record.catalogue_status==='active').map(publicMemePath)];
   return `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls.map(path=>`  <url><loc>${SITE_ORIGIN}${path}</loc></url>`).join('\n')}\n</urlset>\n`;
 }
 
@@ -261,6 +263,18 @@ async function persistRecommendation(env,recommendation,comment,model=CLASSIFIER
     .run();
 }
 
+function requestTrafficClass(request) {
+  const value=request.headers.get('x-fleet-traffic');
+  return value==='qa'||value==='internal'?value:'unclassified';
+}
+
+function reportRecommendationCreated(request,env,ctx,recommendation,details) {
+  ctx?.waitUntil(pingFor(env)('recommendation.created',{
+    title:`decision: ${recommendation.decision}`,
+    props:{decision:recommendation.decision,confidence:recommendation.confidence,candidates:recommendation.candidates.length,...details,recommendation_id:recommendation.request_id,stage:'server',traffic_class:requestTrafficClass(request)}
+  }));
+}
+
 async function saveFeedback(request,env,ctx) {
   if(request.headers.get('content-type')?.split(';')[0]!=='application/json') return json({error:'Expected JSON.'},415);
   const contentLength=Number(request.headers.get('content-length')??0);
@@ -279,7 +293,7 @@ async function saveFeedback(request,env,ctx) {
     .bind(crypto.randomUUID(),body.request_id,body.verdict,body.candidate_id,new Date().toISOString())
     .run();
   console.log(JSON.stringify({event:'feedback',verdict:body.verdict}));
-  ctx?.waitUntil(pingFor(env)('feedback.submitted',{title:`verdict: ${body.verdict}`,props:{verdict:body.verdict}}));
+  ctx?.waitUntil(pingFor(env)('feedback.submitted',{title:`verdict: ${body.verdict}`,props:{verdict:body.verdict,recommendation_id:body.request_id,stage:'server',traffic_class:requestTrafficClass(request)}}));
   return json({saved:true,verdict:body.verdict});
 }
 
@@ -315,6 +329,7 @@ async function recommend(request,env,ctx) {
             console.error(JSON.stringify({event:'recommendation_store',status:'error',error:safeError(error)}));
           }
           console.log(JSON.stringify({event:'recommendation',status:'ok',duration_ms:Date.now()-started,decision:'none',confidence:'low',candidate_count:0,classifier_gate}));
+          reportRecommendationCreated(request,env,ctx,recommendation,{ranking_mode:'safety_gate',classifier_gate});
           return json({...recommendation,feedback_enabled});
         }
         classifier_gate='humour';
@@ -330,7 +345,8 @@ async function recommend(request,env,ctx) {
           console.error(JSON.stringify({event:'recommendation_store',status:'error',error:safeError(storeError)}));
         }
         console.error(JSON.stringify({event:'classifier_gate',status:classifier_gate,error:safeError(error)}));
-        reportPickerHealth(env,ctx,'recommendation.degraded',{route:'/api/recommend',classifier_gate,duration_ms:Date.now()-started});
+        reportPickerHealth(env,ctx,'recommendation.degraded',{route:'/api/recommend',classifier_gate,duration_ms:Date.now()-started,recommendation_id:recommendation.request_id,stage:'server',traffic_class:requestTrafficClass(request)});
+        reportRecommendationCreated(request,env,ctx,recommendation,{ranking_mode:'safety_gate',classifier_gate});
         return json({...recommendation,feedback_enabled,degraded:true});
       }
     }
@@ -372,17 +388,17 @@ async function recommend(request,env,ctx) {
     }
     const selection=selectionFromRanking(ranked);
     const degraded=ranking_mode==='retrieval_fallback'||ranking_mode==='general_fallback';
-    if(degraded) reportPickerHealth(env,ctx,'recommendation.degraded',{route:'/api/recommend',ranking_mode,classifier_gate,duration_ms:Date.now()-started});
     console.log(JSON.stringify({event:'recommendation',status:degraded?'degraded':'ok',duration_ms:Date.now()-started,decision:selection.decision,confidence:selection.confidence,candidate_count:selection.candidates.length,classifier_gate,classifier_ranked:ranking_mode!=='retrieval_fallback',ranking_mode}));
     const perspectives=new Map((ranked??[]).filter(record=>record.perspective).map(record=>[record.id,{perspective:record.perspective,perspective_label:record.perspective_label}]));
     const recommendation=presentSelection(selection,{perspectives});
+    if(degraded) reportPickerHealth(env,ctx,'recommendation.degraded',{route:'/api/recommend',ranking_mode,classifier_gate,duration_ms:Date.now()-started,recommendation_id:recommendation.request_id,stage:'server',traffic_class:requestTrafficClass(request)});
     let feedback_enabled=true;
     try { await persistRecommendation(env,recommendation,comment,ranking_model); }
     catch(error) {
       feedback_enabled=false;
       console.error(JSON.stringify({event:'recommendation_store',status:'error',error:safeError(error)}));
     }
-    ctx?.waitUntil(pingFor(env)('recommendation.created',{title:`decision: ${selection.decision}`,props:{decision:selection.decision,confidence:selection.confidence,candidates:selection.candidates.length,ranking_mode,classifier_gate}}));
+    reportRecommendationCreated(request,env,ctx,recommendation,{ranking_mode,classifier_gate});
     return json({...recommendation,feedback_enabled,degraded,ranking_mode});
   } catch(error) {
     if(error instanceof BudgetUnavailableError) return json({error:'Meme matching is temporarily unavailable. Try again shortly.'},503,{'Retry-After':'60'});
@@ -397,7 +413,7 @@ function secureAsset(response) {
 }
 
 function queueEndpointMeasurement(request,env,ctx,route,status_code,startedAt) {
-  if(status_code>=500) reportPickerHealth(env,ctx,'endpoint.failed',{method:request.method,route,status_code,duration_ms:Date.now()-startedAt});
+  if(status_code>=500) reportPickerHealth(env,ctx,'endpoint.failed',{method:request.method,route,status_code,duration_ms:Date.now()-startedAt,stage:'server',traffic_class:requestTrafficClass(request)});
   if(!env.APP_HEALTH_INGEST_KEY||typeof ctx?.waitUntil!=='function') return;
   ctx.waitUntil(endpointFor(env)({
     method:request.method,
@@ -430,7 +446,8 @@ export default {
     });
     if(isRead&&url.pathname.startsWith('/api/clips/media/'))return withEndpointMeasurement(request,env,ctx,'/api/clips/media/{id}',async()=>{
       let id;try{id=decodeURIComponent(url.pathname.slice('/api/clips/media/'.length));}catch{return json({error:'Unknown reaction clip.'},400);}
-      return forHead(request,await clipMedia(id,fetch,request.signal));
+      const sourceFetch=(source,options)=>source.startsWith('/assets/clips/')?env.ASSETS.fetch(new Request(new URL(source,request.url),options)):fetch(source,options);
+      return forHead(request,await clipMedia(id,sourceFetch,request.signal));
     });
     if(url.pathname==='/api/create'&&request.method==='POST') return withEndpointMeasurement(request,env,ctx,'/api/create',()=>{
       const origin=request.headers.get('origin');
@@ -463,7 +480,8 @@ export default {
       try { id=decodeURIComponent(slug); }
       catch { return forHead(request,memeNotFound(request,markdownPath)); }
       const record=catalogueById.get(id);
-      if(!record) return forHead(request,memeNotFound(request,markdownPath));
+      if(!record||record.catalogue_status!=='active') return forHead(request,memeNotFound(request,markdownPath));
+      if(record.canonical_id&&record.canonical_id!==id) return forHead(request,Response.redirect(`${SITE_ORIGIN}/memes/${encodeURIComponent(record.canonical_id)}${markdownPath?'.md':''}`,308));
       if(markdownPath||wantsMarkdown(request)) {
         return forHead(request,textResponse(memeMarkdown(record),{contentType:'text/markdown; charset=utf-8'}));
       }

@@ -1,0 +1,3248 @@
+{
+  "version": 1,
+  "profiles": {
+    "this-is-fine": {
+      "title": "This is fine",
+      "summary": "Pretending everything is under control while the situation visibly falls apart.",
+      "use_when": "The speaker downplays a problem that everyone can see.",
+      "avoid_when": "Sincere calm, genuine relief, or a crisis that calls for practical help.",
+      "facets": {
+        "reactions": [
+          "panic",
+          "skepticism"
+        ],
+        "contexts": [
+          "work",
+          "everyday"
+        ],
+        "roles": [
+          "self",
+          "observer"
+        ],
+        "intensity": "quiet"
+      },
+      "human_validated": false,
+      "evidence": {
+        "method": "assistant_semantic_review",
+        "source": "https://i.imgflip.com/wxica.jpg",
+        "observed_on": "2026-10-24"
+      }
+    },
+    "success-kid": {
+      "title": "Success Kid",
+      "summary": "A small, unexpectedly satisfying win.",
+      "use_when": "An ordinary task works out better than expected.",
+      "avoid_when": "A solemn achievement or an outcome the speaker dislikes.",
+      "facets": {
+        "reactions": [
+          "celebration"
+        ],
+        "contexts": [
+          "everyday"
+        ],
+        "roles": [
+          "self",
+          "observer"
+        ],
+        "intensity": "expressive"
+      },
+      "human_validated": false,
+      "evidence": {
+        "method": "assistant_semantic_review",
+        "source": "https://i.imgflip.com/1bhk.jpg",
+        "observed_on": "2026-10-24"
+      }
+    },
+    "drake-preference": {
+      "title": "Drake — No / yes",
+      "summary": "Reject one option and prefer another.",
+      "use_when": "Two alternatives expose a funny preference or misplaced priority.",
+      "avoid_when": "There is no meaningful contrast between two options.",
+      "facets": {
+        "reactions": [
+          "dismissal",
+          "agreement"
+        ],
+        "contexts": [
+          "everyday"
+        ],
+        "roles": [
+          "situation"
+        ],
+        "intensity": "expressive"
+      },
+      "human_validated": false,
+      "evidence": {
+        "method": "assistant_semantic_review",
+        "source": "https://i.imgflip.com/30b1gx.jpg",
+        "observed_on": "2026-10-24"
+      }
+    },
+    "two-buttons": {
+      "title": "Two buttons",
+      "summary": "Two incompatible choices, neither easy to give up.",
+      "use_when": "A person has conflicting goals or commitments.",
+      "avoid_when": "Both options are compatible or the choice has already been made.",
+      "facets": {
+        "reactions": [
+          "confusion",
+          "panic"
+        ],
+        "contexts": [
+          "work",
+          "everyday"
+        ],
+        "roles": [
+          "situation"
+        ],
+        "intensity": "expressive"
+      },
+      "human_validated": false,
+      "evidence": {
+        "method": "assistant_semantic_review",
+        "source": "https://i.imgflip.com/1g8my4.jpg",
+        "observed_on": "2026-10-24"
+      }
+    },
+    "distracted-boyfriend": {
+      "title": "Distracted boyfriend",
+      "summary": "A tempting alternative distracts from an existing commitment.",
+      "use_when": "Someone neglects what they already chose for something new.",
+      "avoid_when": "A first-time choice with no prior commitment.",
+      "facets": {
+        "reactions": [
+          "amusement"
+        ],
+        "contexts": [
+          "relationships",
+          "everyday"
+        ],
+        "roles": [
+          "situation"
+        ],
+        "intensity": "expressive"
+      },
+      "human_validated": false,
+      "evidence": {
+        "method": "assistant_semantic_review",
+        "source": "https://i.imgflip.com/1ur9b0.jpg",
+        "observed_on": "2026-10-24"
+      }
+    },
+    "waiting-skeleton": {
+      "title": "Waiting Skeleton",
+      "summary": "A wait has become absurdly long.",
+      "use_when": "An overdue reply, promised delivery, or unresolved task keeps getting delayed.",
+      "avoid_when": "A short or clearly expected wait.",
+      "facets": {
+        "reactions": [
+          "impatience"
+        ],
+        "contexts": [
+          "work",
+          "friends",
+          "everyday"
+        ],
+        "roles": [
+          "self",
+          "observer"
+        ],
+        "intensity": "exaggerated"
+      },
+      "human_validated": false,
+      "evidence": {
+        "method": "assistant_semantic_review",
+        "source": "https://i.imgflip.com/2fm6x.jpg",
+        "observed_on": "2026-10-24"
+      }
+    },
+    "surprised-pikachu": {
+      "title": "Surprised Pikachu",
+      "summary": "Surprise at a predictable consequence.",
+      "use_when": "Someone ignores an obvious warning and is surprised by the result.",
+      "avoid_when": "An outcome that nobody could reasonably predict.",
+      "facets": {
+        "reactions": [
+          "disbelief"
+        ],
+        "contexts": [
+          "everyday"
+        ],
+        "roles": [
+          "self",
+          "observer"
+        ],
+        "intensity": "expressive"
+      },
+      "human_validated": false,
+      "evidence": {
+        "method": "assistant_semantic_review",
+        "source": "https://i.imgflip.com/2kbn1e.jpg",
+        "observed_on": "2026-10-24"
+      }
+    },
+    "is-this-a-pigeon": {
+      "title": "Is this a pigeon?",
+      "summary": "Confidently giving something the wrong name.",
+      "use_when": "A person mistakes or euphemistically relabels something obvious.",
+      "avoid_when": "A correct label or a situation without a misidentification.",
+      "facets": {
+        "reactions": [
+          "confusion",
+          "skepticism"
+        ],
+        "contexts": [
+          "work",
+          "everyday"
+        ],
+        "roles": [
+          "situation"
+        ],
+        "intensity": "expressive"
+      },
+      "human_validated": false,
+      "evidence": {
+        "method": "assistant_semantic_review",
+        "source": "https://i.imgflip.com/1o00in.jpg",
+        "observed_on": "2026-10-24"
+      }
+    },
+    "expanding-brain": {
+      "title": "Expanding brain",
+      "summary": "An idea escalates from reasonable to increasingly absurd.",
+      "use_when": "Several approaches grow more elaborate while solving the same problem.",
+      "avoid_when": "One isolated idea without an escalation.",
+      "facets": {
+        "reactions": [
+          "amusement"
+        ],
+        "contexts": [
+          "technology",
+          "everyday"
+        ],
+        "roles": [
+          "situation"
+        ],
+        "intensity": "exaggerated"
+      },
+      "human_validated": false,
+      "evidence": {
+        "method": "assistant_semantic_review",
+        "source": "https://i.imgflip.com/1jwhww.jpg",
+        "observed_on": "2026-10-24"
+      }
+    },
+    "disaster-girl": {
+      "title": "Disaster Girl",
+      "summary": "Looking pleased with the trouble unfolding behind you.",
+      "use_when": "Someone caused, anticipated, or quietly enjoys a harmless mess.",
+      "avoid_when": "Real harm, an innocent bystander, or someone frightened by the event.",
+      "facets": {
+        "reactions": [
+          "amusement"
+        ],
+        "contexts": [
+          "everyday"
+        ],
+        "roles": [
+          "situation"
+        ],
+        "intensity": "quiet"
+      },
+      "human_validated": false,
+      "evidence": {
+        "method": "assistant_semantic_review",
+        "source": "https://i.imgflip.com/23ls.jpg",
+        "observed_on": "2026-10-24"
+      }
+    },
+    "change-my-mind": {
+      "title": "Change my mind",
+      "summary": "An opinion offered with conspicuously confident certainty.",
+      "use_when": "A person invites disagreement while acting difficult to persuade.",
+      "avoid_when": "A sincere request for advice or an open question with no stated position.",
+      "facets": {
+        "reactions": [
+          "skepticism"
+        ],
+        "contexts": [
+          "friends",
+          "everyday"
+        ],
+        "roles": [
+          "situation"
+        ],
+        "intensity": "quiet"
+      },
+      "human_validated": false,
+      "evidence": {
+        "method": "assistant_semantic_review",
+        "source": "https://i.imgflip.com/24y43o.jpg",
+        "observed_on": "2026-10-24"
+      }
+    },
+    "one-does-not-simply": {
+      "title": "One does not simply",
+      "summary": "A supposedly easy task is harder than people claim.",
+      "use_when": "A casual instruction overlooks a familiar difficulty.",
+      "avoid_when": "A task that is genuinely simple or a serious request for instructions.",
+      "facets": {
+        "reactions": [
+          "skepticism",
+          "disbelief"
+        ],
+        "contexts": [
+          "work",
+          "technology",
+          "everyday"
+        ],
+        "roles": [
+          "situation"
+        ],
+        "intensity": "quiet"
+      },
+      "human_validated": false,
+      "evidence": {
+        "method": "assistant_semantic_review",
+        "source": "https://i.imgflip.com/1bij.jpg",
+        "observed_on": "2026-10-24"
+      }
+    },
+    "hide-pain-harold": {
+      "title": "Hide the pain, Harold",
+      "summary": "A polite smile barely conceals discomfort.",
+      "use_when": "Someone tries to look fine despite an awkward or disappointing situation.",
+      "avoid_when": "Unambiguous happiness or a situation that needs sincere support.",
+      "facets": {
+        "reactions": [
+          "awkwardness",
+          "disappointment"
+        ],
+        "contexts": [
+          "work",
+          "everyday"
+        ],
+        "roles": [
+          "self",
+          "observer"
+        ],
+        "intensity": "quiet"
+      },
+      "human_validated": false,
+      "evidence": {
+        "method": "assistant_semantic_review",
+        "source": "https://i.imgflip.com/gk5el.jpg",
+        "observed_on": "2026-10-24"
+      }
+    },
+    "monkey-puppet": {
+      "title": "Monkey puppet",
+      "summary": "Looking away after recognizing an uncomfortable resemblance to yourself.",
+      "use_when": "A criticism or awkward detail unexpectedly implicates the observer.",
+      "avoid_when": "Open confrontation or genuine confusion about what happened.",
+      "facets": {
+        "reactions": [
+          "awkwardness"
+        ],
+        "contexts": [
+          "friends",
+          "work"
+        ],
+        "roles": [
+          "self",
+          "observer"
+        ],
+        "intensity": "quiet"
+      },
+      "human_validated": false,
+      "evidence": {
+        "method": "assistant_semantic_review",
+        "source": "https://i.imgflip.com/2gnnjh.jpg",
+        "observed_on": "2026-10-24"
+      }
+    },
+    "spiderman-pointing": {
+      "title": "Spider-Man pointing",
+      "summary": "Both sides recognize the same behavior in each other.",
+      "use_when": "Two people accuse one another of the same thing or turn out to be alike.",
+      "avoid_when": "Only one person is involved or the comparison is one-sided.",
+      "facets": {
+        "reactions": [
+          "disbelief",
+          "amusement"
+        ],
+        "contexts": [
+          "friends",
+          "work"
+        ],
+        "roles": [
+          "situation"
+        ],
+        "intensity": "expressive"
+      },
+      "human_validated": false,
+      "evidence": {
+        "method": "assistant_semantic_review",
+        "source": "https://i.imgflip.com/1tkjq9.jpg",
+        "observed_on": "2026-10-24"
+      }
+    },
+    "facepalm": {
+      "title": "Facepalm",
+      "summary": "A quiet response to an avoidable mistake or painfully obvious oversight.",
+      "use_when": "Someone misses something that was right in front of them.",
+      "avoid_when": "A genuine learning question or a difficult mistake that deserves care.",
+      "facets": {
+        "reactions": [
+          "disappointment",
+          "skepticism"
+        ],
+        "contexts": [
+          "technology",
+          "everyday"
+        ],
+        "roles": [
+          "self",
+          "observer"
+        ],
+        "intensity": "quiet"
+      },
+      "human_validated": false,
+      "evidence": {
+        "method": "assistant_semantic_review",
+        "source": "https://api.memegen.link/images/facepalm.jpg",
+        "observed_on": "2026-10-24"
+      }
+    },
+    "same-picture": {
+      "title": "They are the same picture",
+      "summary": "Two supposedly different options are effectively identical.",
+      "use_when": "A distinction makes no practical difference.",
+      "avoid_when": "The alternatives have a meaningful difference.",
+      "facets": {
+        "reactions": [
+          "skepticism"
+        ],
+        "contexts": [
+          "work",
+          "everyday"
+        ],
+        "roles": [
+          "situation"
+        ],
+        "intensity": "quiet"
+      },
+      "human_validated": false,
+      "evidence": {
+        "method": "assistant_semantic_review",
+        "source": "https://i.imgflip.com/2za3u1.jpg",
+        "observed_on": "2026-10-24"
+      }
+    },
+    "you-guys-getting-paid": {
+      "title": "You guys are getting paid?",
+      "summary": "Discovering that others receive something you assumed nobody did.",
+      "use_when": "An unexpected comparison reveals unequal rewards or treatment.",
+      "avoid_when": "Everyone already knows about the difference.",
+      "facets": {
+        "reactions": [
+          "disbelief"
+        ],
+        "contexts": [
+          "work",
+          "money"
+        ],
+        "roles": [
+          "self",
+          "observer"
+        ],
+        "intensity": "expressive"
+      },
+      "human_validated": false,
+      "evidence": {
+        "method": "assistant_semantic_review",
+        "source": "https://i.imgflip.com/2xscjb.png",
+        "observed_on": "2026-10-24"
+      }
+    },
+    "grus-plan": {
+      "title": "Gru’s plan",
+      "summary": "A confident plan reveals its own fatal flaw.",
+      "use_when": "The final step contradicts what the planner wanted.",
+      "avoid_when": "An external obstacle derails a plan that was otherwise coherent.",
+      "facets": {
+        "reactions": [
+          "confusion",
+          "disbelief"
+        ],
+        "contexts": [
+          "work",
+          "everyday"
+        ],
+        "roles": [
+          "situation"
+        ],
+        "intensity": "expressive"
+      },
+      "human_validated": false,
+      "evidence": {
+        "method": "assistant_semantic_review",
+        "source": "https://i.imgflip.com/26jxvz.jpg",
+        "observed_on": "2026-10-24"
+      }
+    },
+    "evil-kermit": {
+      "title": "Evil Kermit",
+      "summary": "An inner voice encourages the tempting, worse choice.",
+      "use_when": "Someone knows the sensible option but argues themselves into an indulgence.",
+      "avoid_when": "An external person coerces the choice or no temptation exists.",
+      "facets": {
+        "reactions": [
+          "amusement"
+        ],
+        "contexts": [
+          "money",
+          "everyday"
+        ],
+        "roles": [
+          "situation"
+        ],
+        "intensity": "expressive"
+      },
+      "human_validated": false,
+      "evidence": {
+        "method": "assistant_semantic_review",
+        "source": "https://i.imgflip.com/1e7ql7.jpg",
+        "observed_on": "2026-10-24"
+      }
+    },
+    "gif-3o7abgqa0arjuurpii": {
+      "title": "SpongeBob — Many thumbs up",
+      "summary": "An extravagantly enthusiastic show of approval.",
+      "use_when": "An ordinary success gets a deliberately oversized celebration.",
+      "avoid_when": "Quiet sympathy, sincere disappointment, or disapproval.",
+      "facets": {
+        "reactions": [
+          "agreement",
+          "celebration"
+        ],
+        "contexts": [
+          "everyday"
+        ],
+        "roles": [
+          "self",
+          "observer"
+        ],
+        "intensity": "exaggerated"
+      },
+      "human_validated": false,
+      "evidence": {
+        "method": "assistant_three_frame_review",
+        "source": "https://giphy.com/gifs/3o7abGQa0aRJUurpII",
+        "observed_on": "2026-10-24"
+      }
+    },
+    "gif-l1j9n8zrmycfsrqfq": {
+      "title": "Yes, please",
+      "summary": "Trying to stay composed while eagerly accepting an appealing offer.",
+      "use_when": "Someone offers exactly the thing the speaker hoped for.",
+      "avoid_when": "Refusal, reluctance, or an offer the speaker does not want.",
+      "facets": {
+        "reactions": [
+          "agreement",
+          "relief"
+        ],
+        "contexts": [
+          "work",
+          "everyday"
+        ],
+        "roles": [
+          "self",
+          "observer"
+        ],
+        "intensity": "quiet"
+      },
+      "human_validated": false,
+      "evidence": {
+        "method": "assistant_three_frame_review",
+        "source": "https://giphy.com/gifs/l1J9N8zrmYCfSrQFq",
+        "observed_on": "2026-10-24"
+      }
+    },
+    "gif-a7zsbrshi3dtbtqpqw": {
+      "title": "Bugs Bunny — What a maroon",
+      "summary": "A dismissive judgment after an obvious blunder.",
+      "use_when": "A harmless, confidently wrong move invites a mocking reaction.",
+      "avoid_when": "A sincere question, an innocent misunderstanding, or someone needing support.",
+      "facets": {
+        "reactions": [
+          "skepticism",
+          "dismissal"
+        ],
+        "contexts": [
+          "friends",
+          "everyday"
+        ],
+        "roles": [
+          "self",
+          "observer"
+        ],
+        "intensity": "expressive"
+      },
+      "human_validated": false,
+      "evidence": {
+        "method": "assistant_three_frame_review",
+        "source": "https://giphy.com/gifs/A7ZSbrshi3dTBTQPQW",
+        "observed_on": "2026-10-24"
+      }
+    },
+    "gif-5xaoclde64vmf4lqqrk": {
+      "title": "A round of applause",
+      "summary": "Visible applause marks a satisfying achievement.",
+      "use_when": "A success or overdue improvement deserves recognition.",
+      "avoid_when": "Assuming sarcasm without context, or confusing applause with a nod.",
+      "facets": {
+        "reactions": [
+          "celebration",
+          "agreement"
+        ],
+        "contexts": [
+          "work",
+          "friends"
+        ],
+        "roles": [
+          "self",
+          "observer"
+        ],
+        "intensity": "expressive"
+      },
+      "human_validated": false,
+      "evidence": {
+        "method": "assistant_three_frame_review",
+        "source": "https://giphy.com/gifs/5xaOcLDE64VMF4LqqrK",
+        "observed_on": "2026-10-24"
+      }
+    },
+    "gif-sneeoh54kcfxe": {
+      "title": "Panic setting in",
+      "summary": "A frantic response to an escalating situation.",
+      "use_when": "A small problem is suddenly getting out of hand.",
+      "avoid_when": "A calm response, a happy surprise, or a real emergency needing help.",
+      "facets": {
+        "reactions": [
+          "panic"
+        ],
+        "contexts": [
+          "work",
+          "everyday"
+        ],
+        "roles": [
+          "self",
+          "observer"
+        ],
+        "intensity": "exaggerated"
+      },
+      "human_validated": false,
+      "evidence": {
+        "method": "assistant_three_frame_review",
+        "source": "https://giphy.com/gifs/snEeOh54kCFxe",
+        "observed_on": "2026-10-24"
+      }
+    },
+    "gif-3diweulyyuplq": {
+      "title": "Trying to make sense of it",
+      "summary": "A visibly puzzled reaction to something that does not add up.",
+      "use_when": "Two statements contradict each other or an explanation makes things less clear.",
+      "avoid_when": "A predictable consequence presented as a surprise.",
+      "facets": {
+        "reactions": [
+          "confusion",
+          "disbelief"
+        ],
+        "contexts": [
+          "technology",
+          "friends",
+          "everyday"
+        ],
+        "roles": [
+          "self",
+          "observer"
+        ],
+        "intensity": "expressive"
+      },
+      "human_validated": false,
+      "evidence": {
+        "method": "assistant_three_frame_review",
+        "source": "https://giphy.com/gifs/3diweulYyUpLq",
+        "observed_on": "2026-10-24"
+      }
+    },
+    "gif-ycllbrn3kx27e": {
+      "title": "The eye roll",
+      "summary": "A weary response to something irritatingly familiar.",
+      "use_when": "Someone repeats an excuse or behavior the speaker has heard before.",
+      "avoid_when": "Genuine surprise, enthusiastic agreement, or someone asking for support.",
+      "facets": {
+        "reactions": [
+          "skepticism"
+        ],
+        "contexts": [
+          "work",
+          "friends"
+        ],
+        "roles": [
+          "self",
+          "observer"
+        ],
+        "intensity": "quiet"
+      },
+      "human_validated": false,
+      "evidence": {
+        "method": "assistant_three_frame_review",
+        "source": "https://giphy.com/gifs/ycllbrN3Kx27e",
+        "observed_on": "2026-10-24"
+      }
+    },
+    "gif-nuq1tz0fhqeeu": {
+      "title": "Absolutely not",
+      "summary": "An immediate, emphatic refusal.",
+      "use_when": "A proposal is unappealing enough to reject without deliberation.",
+      "avoid_when": "Mild uncertainty or a request the speaker wants to accept.",
+      "facets": {
+        "reactions": [
+          "dismissal"
+        ],
+        "contexts": [
+          "everyday"
+        ],
+        "roles": [
+          "self",
+          "observer"
+        ],
+        "intensity": "expressive"
+      },
+      "human_validated": false,
+      "evidence": {
+        "method": "assistant_three_frame_review",
+        "source": "https://giphy.com/gifs/NuQ1Tz0fhqeEU",
+        "observed_on": "2026-10-24"
+      }
+    },
+    "gif-qbd2klb5qdmysexre9": {
+      "title": "Still waiting",
+      "summary": "A sustained reaction to a wait that keeps going.",
+      "use_when": "A reply or promised event is overdue.",
+      "avoid_when": "Fast service, a completed task, or anger unrelated to waiting.",
+      "facets": {
+        "reactions": [
+          "impatience"
+        ],
+        "contexts": [
+          "friends",
+          "everyday"
+        ],
+        "roles": [
+          "self",
+          "observer"
+        ],
+        "intensity": "quiet"
+      },
+      "human_validated": false,
+      "evidence": {
+        "method": "assistant_three_frame_review",
+        "source": "https://giphy.com/gifs/QBd2kLB5qDmysEXre9",
+        "observed_on": "2026-10-24"
+      }
+    },
+    "gif-ci3ncvx952lfg": {
+      "title": "Well, that’s disappointing",
+      "summary": "A deflated reaction to a small letdown.",
+      "use_when": "An ordinary hope is followed by an anticlimax or missed opportunity.",
+      "avoid_when": "Severe loss, sincere grief, or a triumphant outcome.",
+      "facets": {
+        "reactions": [
+          "disappointment"
+        ],
+        "contexts": [
+          "everyday"
+        ],
+        "roles": [
+          "self",
+          "observer"
+        ],
+        "intensity": "quiet"
+      },
+      "human_validated": false,
+      "evidence": {
+        "method": "assistant_three_frame_review",
+        "source": "https://giphy.com/gifs/Ci3nCVx952lfG",
+        "observed_on": "2026-10-24"
+      }
+    },
+    "clip-bbb-delayed-fall": {
+      "title": "The delayed fall",
+      "summary": "A squirrel hangs in mid-air, notices the drop, and starts to fall.",
+      "use_when": "An overlooked consequence catches up just as you realize the problem.",
+      "avoid_when": "Real injury, an urgent safety question, or a consequence already anticipated.",
+      "facets": {
+        "reactions": [
+          "disbelief",
+          "panic"
+        ],
+        "contexts": [
+          "work",
+          "everyday"
+        ],
+        "roles": [
+          "self"
+        ],
+        "intensity": "expressive"
+      },
+      "evidence": {
+        "method": "assistant_three_frame_review",
+        "source": "https://download.blender.org/demo/movies/BBB/bbb_sunflower_1080p_30fps_normal.mp4.zip",
+        "source_movie_sha256": "ae51005850b0ff757fe60c3dd7a12d754d3cd2397d87d939b55235e457f97658",
+        "clip_start_seconds": 437,
+        "frame_sha256": [
+          "77223deb720f42070ecdaad51d194928b12c8c1a6040ec54ee41576f46e5c42d",
+          "88bfde52dfb3b6bc93c898e0a01de88116a0f6c02acee41eb4e66d3452a14058",
+          "ced6cb4ab4c1099c5f863afe855d1242b0c896fee18f88e73a15c4fcd533aa51"
+        ],
+        "observed_on": "2026-10-24"
+      },
+      "human_validated": false
+    },
+    "soldier-protecting-sleeping-child": {
+      "title": "Soldier Protecting Sleeping Child",
+      "summary": "A protector absorbs the trouble so someone else can rest.",
+      "use_when": "Someone quietly shields another person from inconvenience or criticism.",
+      "avoid_when": "Ordinary personal success, or situations involving actual violence.",
+      "facets": {
+        "reactions": [
+          "affection"
+        ],
+        "contexts": [
+          "family",
+          "work"
+        ],
+        "roles": [
+          "observer"
+        ],
+        "intensity": "quiet"
+      },
+      "evidence": {
+        "method": "assistant_source_and_visual_review",
+        "source": "https://imgflip.com/memetemplate/459942419/Soldier-protecting-sleeping-child-HQ",
+        "observed_on": "2026-10-24"
+      },
+      "human_validated": false
+    },
+    "ive-won-but-at-what-cost": {
+      "title": "I’ve Won, but at What Cost?",
+      "summary": "A victory feels hollow because of what it required.",
+      "use_when": "You got the result you wanted, but the tradeoff spoiled it.",
+      "avoid_when": "An uncomplicated win, or genuine grief that needs support.",
+      "facets": {
+        "reactions": [
+          "disappointment"
+        ],
+        "contexts": [
+          "everyday",
+          "work"
+        ],
+        "roles": [
+          "self"
+        ],
+        "intensity": "quiet"
+      },
+      "evidence": {
+        "method": "assistant_source_and_visual_review",
+        "source": "https://imgflip.com/memetemplate/355539368/Ive-won-but-at-what-cost",
+        "observed_on": "2026-10-24"
+      },
+      "human_validated": false
+    },
+    "i-pretend-i-do-not-see-it": {
+      "title": "I Pretend I Do Not See It",
+      "summary": "A closed-eye emoji deliberately ignores an inconvenient fact.",
+      "use_when": "You notice something awkward and choose to keep scrolling.",
+      "avoid_when": "Someone who genuinely did not notice, or a request for urgent help.",
+      "facets": {
+        "reactions": [
+          "dismissal",
+          "awkwardness"
+        ],
+        "contexts": [
+          "friends",
+          "everyday"
+        ],
+        "roles": [
+          "self"
+        ],
+        "intensity": "quiet"
+      },
+      "evidence": {
+        "method": "assistant_source_and_visual_review",
+        "source": "https://imgflip.com/memetemplate/407209233/i-pretend-i-do-not-see-it",
+        "observed_on": "2026-10-24"
+      },
+      "human_validated": false
+    },
+    "i-dont-think-i-will": {
+      "title": "No, I Don’t Think I Will",
+      "summary": "An older Captain America calmly declines to explain himself.",
+      "use_when": "A low-stakes request gets a deliberate, unbothered refusal.",
+      "avoid_when": "A person who cannot comply, or someone asking for important help.",
+      "facets": {
+        "reactions": [
+          "dismissal"
+        ],
+        "contexts": [
+          "friends",
+          "work"
+        ],
+        "roles": [
+          "self"
+        ],
+        "intensity": "quiet"
+      },
+      "evidence": {
+        "method": "assistant_source_and_visual_review",
+        "source": "https://imgflip.com/memetemplate/184651058/No-I-dont-think-I-will",
+        "observed_on": "2026-10-24"
+      },
+      "human_validated": false
+    },
+    "am-i-a-joke-to-you": {
+      "title": "Am I a Joke to You?",
+      "summary": "A man asks why he is being treated as an afterthought.",
+      "use_when": "Someone overlooks your contribution or ignores an obvious option.",
+      "avoid_when": "A neutral misunderstanding or a serious account of mistreatment.",
+      "facets": {
+        "reactions": [
+          "disappointment",
+          "skepticism"
+        ],
+        "contexts": [
+          "friends",
+          "work"
+        ],
+        "roles": [
+          "self"
+        ],
+        "intensity": "expressive"
+      },
+      "evidence": {
+        "method": "assistant_source_and_visual_review",
+        "source": "https://imgflip.com/memetemplate/155988880/Am-I-a-joke-to-you",
+        "observed_on": "2026-10-24"
+      },
+      "human_validated": false
+    },
+    "well-yes-but-actually-no": {
+      "title": "Well Yes, but Actually No",
+      "summary": "An animated pirate gives an answer that immediately qualifies itself.",
+      "use_when": "A technically correct yes hides a practical no.",
+      "avoid_when": "An unambiguous agreement or a question that needs a factual answer.",
+      "facets": {
+        "reactions": [
+          "skepticism",
+          "confusion"
+        ],
+        "contexts": [
+          "technology",
+          "work"
+        ],
+        "roles": [
+          "self"
+        ],
+        "intensity": "quiet"
+      },
+      "evidence": {
+        "method": "assistant_source_and_visual_review",
+        "source": "https://imgflip.com/memetemplate/171918715/Well-yes-but-actually-no",
+        "observed_on": "2026-10-24"
+      },
+      "human_validated": false
+    },
+    "uno-reverse-card": {
+      "title": "UNO Reverse Card",
+      "summary": "A blue reverse card turns the direction back on the other person.",
+      "use_when": "A playful accusation or request can be returned to its sender.",
+      "avoid_when": "A simple refusal with no reversal, or a serious accusation.",
+      "facets": {
+        "reactions": [
+          "dismissal",
+          "amusement"
+        ],
+        "contexts": [
+          "friends"
+        ],
+        "roles": [
+          "self"
+        ],
+        "intensity": "quiet"
+      },
+      "evidence": {
+        "method": "assistant_source_and_visual_review",
+        "source": "https://imgflip.com/memetemplate/147731198/uno-reverse-card",
+        "observed_on": "2026-10-24"
+      },
+      "human_validated": false
+    },
+    "oh-no-cringe": {
+      "title": "Oh No, Cringe",
+      "summary": "A wide-eyed orange cat reacts with visible discomfort.",
+      "use_when": "You witness an awkward moment and cannot look away.",
+      "avoid_when": "Celebrating someone’s sincere effort or mocking a vulnerable person.",
+      "facets": {
+        "reactions": [
+          "awkwardness",
+          "disbelief"
+        ],
+        "contexts": [
+          "friends",
+          "everyday"
+        ],
+        "roles": [
+          "observer"
+        ],
+        "intensity": "expressive"
+      },
+      "evidence": {
+        "method": "assistant_source_and_visual_review",
+        "source": "https://imgflip.com/memetemplate/375941090/oh-no-cringe",
+        "observed_on": "2026-10-24"
+      },
+      "human_validated": false
+    },
+    "spongebob-imagination": {
+      "title": "SpongeBob Imagination",
+      "summary": "SpongeBob spreads his hands beneath a rainbow.",
+      "use_when": "An implausible idea is offered with cheerful confidence.",
+      "avoid_when": "A literal explanation or a serious promise that should be taken at face value.",
+      "facets": {
+        "reactions": [
+          "amusement",
+          "skepticism"
+        ],
+        "contexts": [
+          "technology",
+          "work"
+        ],
+        "roles": [
+          "observer"
+        ],
+        "intensity": "expressive"
+      },
+      "evidence": {
+        "method": "assistant_source_and_visual_review",
+        "source": "https://api.imgflip.com/get_memes",
+        "observed_on": "2026-10-24"
+      },
+      "human_validated": false
+    },
+    "say-the-line-bart": {
+      "title": "Say the Line, Bart",
+      "summary": "A class pressures Bart to repeat the familiar line, then cheers.",
+      "use_when": "A group keeps asking someone for the one joke they are known for.",
+      "avoid_when": "An original joke or a sincere request for an explanation.",
+      "facets": {
+        "reactions": [
+          "impatience",
+          "amusement"
+        ],
+        "contexts": [
+          "friends",
+          "work"
+        ],
+        "roles": [
+          "situation"
+        ],
+        "intensity": "expressive"
+      },
+      "evidence": {
+        "method": "assistant_source_and_visual_review",
+        "source": "https://api.imgflip.com/get_memes",
+        "observed_on": "2026-10-24"
+      },
+      "human_validated": false
+    },
+    "exit-ramp": {
+      "title": "Left Exit 12 Off Ramp",
+      "summary": "A car abruptly swerves from the sensible route onto another exit.",
+      "use_when": "Someone abandons a stated plan for an impulsive alternative.",
+      "avoid_when": "A slow change of mind or a choice made without a prior commitment.",
+      "facets": {
+        "reactions": [
+          "amusement"
+        ],
+        "contexts": [
+          "work",
+          "everyday"
+        ],
+        "roles": [
+          "situation"
+        ],
+        "intensity": "exaggerated"
+      },
+      "evidence": {
+        "method": "assistant_source_and_visual_review",
+        "source": "https://memes.significanthobbies.com/memes/exit-ramp",
+        "observed_on": "2026-10-24"
+      },
+      "human_validated": false
+    },
+    "panik-kalm-panik": {
+      "title": "Panik, Kalm, Panik",
+      "summary": "Three panels move from alarm to reassurance and straight back to alarm.",
+      "use_when": "A reassuring detail briefly helps before another detail makes things worse.",
+      "avoid_when": "A problem that stays resolved or an actual panic attack.",
+      "facets": {
+        "reactions": [
+          "panic",
+          "relief"
+        ],
+        "contexts": [
+          "technology",
+          "everyday"
+        ],
+        "roles": [
+          "self"
+        ],
+        "intensity": "expressive"
+      },
+      "evidence": {
+        "method": "assistant_source_and_visual_review",
+        "source": "https://memes.significanthobbies.com/memes/panik-kalm-panik",
+        "observed_on": "2026-10-24"
+      },
+      "human_validated": false
+    },
+    "undertaker-behind": {
+      "title": "Undertaker Behind AJ Styles",
+      "summary": "An unsuspecting wrestler has a looming opponent directly behind him.",
+      "use_when": "Someone celebrates or relaxes without noticing the approaching consequence.",
+      "avoid_when": "A danger they already know about, or a real threat to someone’s safety.",
+      "facets": {
+        "reactions": [
+          "disbelief",
+          "panic"
+        ],
+        "contexts": [
+          "work",
+          "everyday"
+        ],
+        "roles": [
+          "observer"
+        ],
+        "intensity": "expressive"
+      },
+      "evidence": {
+        "method": "assistant_source_and_visual_review",
+        "source": "https://memes.significanthobbies.com/memes/undertaker-behind",
+        "observed_on": "2026-10-24"
+      },
+      "human_validated": false
+    },
+    "gif-10jhvifuu2gwd6": {
+      "title": "Cannot stop laughing",
+      "summary": "A man in a red sweater throws his head back and laughs.",
+      "use_when": "A joke lands so well that a normal laugh is not enough.",
+      "avoid_when": "Polite appreciation, or laughing at someone’s distress.",
+      "facets": {
+        "reactions": [
+          "amusement"
+        ],
+        "contexts": [
+          "friends"
+        ],
+        "roles": [
+          "self"
+        ],
+        "intensity": "exaggerated"
+      },
+      "evidence": {
+        "method": "assistant_three_frame_review",
+        "source": "https://media.giphy.com/media/10JhviFuU2gWD6/giphy.mp4",
+        "source_sha256": "8727e836b10c78daa88dfc65eef6faef616536381608fd38918540e0f392ce5e",
+        "frame_sha256": [
+          "19d36650716ecf6a01bb2d8a054caa3f0b75c5a61f9af10a9cddad3ad20b35f4",
+          "5bb0f23434109686ee14090c7787c3005f32990e3bb5b198f585503b4c1d766b",
+          "52af09144508158f69b8a940774bcdde94b6e4487ad8cfd0e59df57000330f69"
+        ],
+        "observed_on": "2026-10-24"
+      },
+      "human_validated": false
+    },
+    "gif-10ojgycutszrna": {
+      "title": "Emergency hug",
+      "summary": "An animated girl rushes in and hugs a pink pig.",
+      "use_when": "A friend needs a small, affectionate pick-me-up.",
+      "avoid_when": "Treating a serious request for help as a substitute for support.",
+      "facets": {
+        "reactions": [
+          "affection"
+        ],
+        "contexts": [
+          "friends",
+          "family"
+        ],
+        "roles": [
+          "self"
+        ],
+        "intensity": "expressive"
+      },
+      "evidence": {
+        "method": "assistant_three_frame_review",
+        "source": "https://media.giphy.com/media/10oJGyCUTsZrna/giphy.mp4",
+        "source_sha256": "082caa1d6796a51a2fbe3a211628e4530e7d65518bb9dfb9b5f20b282a397ff3",
+        "frame_sha256": [
+          "1f8001c797b5f594497cdbb5999f52ae7d1087ef5c0403fd95199f0ff99eafd9",
+          "a45bd85c6ce1e87df74efd1c732983b3c4afb966615680d9b86f525b9a0d1c5e",
+          "c64b42a0bb4d122d9f3f20a152f0fb100a214c9392d0397e649bae77174b19f6"
+        ],
+        "observed_on": "2026-10-24"
+      },
+      "human_validated": false
+    },
+    "gif-13hxeoyjotwtk8": {
+      "title": "The victory dance",
+      "summary": "A child dances on a classroom chair while classmates watch.",
+      "use_when": "A small personal win deserves an unnecessarily big celebration.",
+      "avoid_when": "Someone else’s failure or an understated acknowledgment.",
+      "facets": {
+        "reactions": [
+          "celebration"
+        ],
+        "contexts": [
+          "friends",
+          "everyday"
+        ],
+        "roles": [
+          "self"
+        ],
+        "intensity": "exaggerated"
+      },
+      "evidence": {
+        "method": "assistant_three_frame_review",
+        "source": "https://media.giphy.com/media/13hxeOYjoTWtK8/giphy.mp4",
+        "source_sha256": "d0d109c8d82923ff1f2daa904406844ac694a91a7289504ced8f30e42ad3a41a",
+        "frame_sha256": [
+          "8d554222e0798509b011591d2f2eaf5eda10c992a0334d01a53e46d68a838f9e",
+          "2bd35ed96f1559b73b22403cf6de1f9abaea08fe56cf29a595c23142bb94d2d4",
+          "7199a398aac96a060b5fc6660a2b6feaada3543e5ed729e4b14f9d6ac2c95ad4"
+        ],
+        "observed_on": "2026-10-24"
+      },
+      "human_validated": false
+    },
+    "gif-1dhuzohxkli1g": {
+      "title": "Bye.",
+      "summary": "A woman in sunglasses signs off with a casual hand gesture.",
+      "use_when": "You are cheerfully leaving an unproductive conversation.",
+      "avoid_when": "A solemn goodbye or a request that deserves an answer.",
+      "facets": {
+        "reactions": [
+          "dismissal"
+        ],
+        "contexts": [
+          "friends"
+        ],
+        "roles": [
+          "self"
+        ],
+        "intensity": "quiet"
+      },
+      "evidence": {
+        "method": "assistant_three_frame_review",
+        "source": "https://media.giphy.com/media/1DhUzOhxkLI1G/giphy.mp4",
+        "source_sha256": "3afba82e8b62b948f9cd593dd182c04e1e26c74459e515fa4bac82a1f89516a4",
+        "frame_sha256": [
+          "cdd3dcdce427e2e74dedfca6c0748aec810d5893186c7fd0eb809818aa8aca44",
+          "cbd6438677a7653e6d569ed4df4215eaf82650c8655f3a2c86e645ed20d75dc6",
+          "db355926b23c239ae99ea94ed264e387006d298114e7cc28289125ed821fe712"
+        ],
+        "observed_on": "2026-10-24"
+      },
+      "human_validated": false
+    },
+    "gif-1m9fmo1wafvk0": {
+      "title": "But why?",
+      "summary": "A man in medical scrubs tilts his head and asks “But why?”.",
+      "use_when": "A decision makes no sense and you want the reasoning.",
+      "avoid_when": "A request for actual medical information or an answer you already know.",
+      "facets": {
+        "reactions": [
+          "confusion"
+        ],
+        "contexts": [
+          "work",
+          "everyday"
+        ],
+        "roles": [
+          "self"
+        ],
+        "intensity": "quiet"
+      },
+      "evidence": {
+        "method": "assistant_three_frame_review",
+        "source": "https://media.giphy.com/media/1M9fmo1WAFVK0/giphy.mp4",
+        "source_sha256": "4fb27b23c5286cc8060b338343296bbd391ad2d13dcfc06e52cf9a679476c5dc",
+        "frame_sha256": [
+          "d6f34fae630bf30add90df4e5641aedd09c55fca1df700749297d3fa4ffd5c4b",
+          "1f31843be07fe7808e625df6cfc71023c2d068b17df36109a0d5ba5f727eb48d",
+          "93a7fd1b9159a696c501410b4b4ee3cdebbb2804e80bf2bd316516c8743fea85"
+        ],
+        "observed_on": "2026-10-24"
+      },
+      "human_validated": false
+    },
+    "gif-1z02vuppxp1pa": {
+      "title": "Thank you. Finally.",
+      "summary": "Michael Scott leans forward and emphatically says “Thank you”.",
+      "use_when": "Someone finally says the point you have been trying to make.",
+      "avoid_when": "Quiet gratitude or an unrelated victory.",
+      "facets": {
+        "reactions": [
+          "agreement",
+          "relief"
+        ],
+        "contexts": [
+          "work",
+          "friends"
+        ],
+        "roles": [
+          "self"
+        ],
+        "intensity": "expressive"
+      },
+      "evidence": {
+        "method": "assistant_three_frame_review",
+        "source": "https://media.giphy.com/media/1Z02vuppxP1Pa/giphy.mp4",
+        "source_sha256": "16a7f757ae20780d30c194a860742b97d5bc73c67b5031aceb5a9d50f14da454",
+        "frame_sha256": [
+          "3762caefa83574dd44501394b1e6586eb00cd70d0ccd56090cf236abf71c807a",
+          "cd0e47ccc2299eaee17b2e86a574057dc2c93abd552480101a20d6b873e6d3df",
+          "a4156a3e2f24fb6007566fa0cd5cd6e3f877639e234f1b7690ae43134154b4b3"
+        ],
+        "observed_on": "2026-10-24"
+      },
+      "human_validated": false
+    },
+    "gif-3o6ztokgzqv6thhzj2": {
+      "title": "This meeting could have ended",
+      "summary": "A suited man closes his eyes and rubs his face in weary boredom.",
+      "use_when": "A conversation has continued long after it stopped being useful.",
+      "avoid_when": "A confusing idea that still deserves your attention.",
+      "facets": {
+        "reactions": [
+          "impatience",
+          "skepticism"
+        ],
+        "contexts": [
+          "work"
+        ],
+        "roles": [
+          "self"
+        ],
+        "intensity": "quiet"
+      },
+      "evidence": {
+        "method": "assistant_three_frame_review",
+        "source": "https://media.giphy.com/media/3o6ZtokgzQv6ThHzj2/giphy.mp4",
+        "source_sha256": "6a76da9373e1fec5ac2620915af95b5f33c691f34faf397c8598af3bb0412a4f",
+        "frame_sha256": [
+          "f7c278a7dbdd6f4f53369ebd2a2ad4239cb8242441e6bc67a00f6bd80ee67afd",
+          "92f6205b2aa2d2bad8ee930f7be17184c65576d2fc7e9d94d289ad341c5b25d3",
+          "5a59f35a5a235a82e0486f8e3cc02228a136336c638033d6f86db2db82e03e0f"
+        ],
+        "observed_on": "2026-10-24"
+      },
+      "human_validated": false
+    },
+    "gif-3o6ztqbpye9nzbldvg": {
+      "title": "Taking a very small sip",
+      "summary": "A child looks sideways at the camera and slowly lifts a mug.",
+      "use_when": "You are watching low-stakes drama without joining in.",
+      "avoid_when": "Celebrating someone’s bad news or claiming to know a secret.",
+      "facets": {
+        "reactions": [
+          "amusement",
+          "skepticism"
+        ],
+        "contexts": [
+          "friends"
+        ],
+        "roles": [
+          "observer"
+        ],
+        "intensity": "quiet"
+      },
+      "evidence": {
+        "method": "assistant_three_frame_review",
+        "source": "https://media.giphy.com/media/3o6ZtqBpYE9nzBLDvG/giphy.mp4",
+        "source_sha256": "72c80bc64b48c4d50e0c1e37aa8987a6ca58d9b99fd19417de2837cdf8460d64",
+        "frame_sha256": [
+          "67d6ce436f9c5b12bfd6f951f256a1f99b0892683a11e1ff6cfb4e6c10ab2190",
+          "3c9c1b5bebe6383d5e0ef4b3cce6083e395e75be3c99000260710d497e80905e",
+          "c6452fa7d46b72fa797e9e73c4c9e67d65cb40bd0b17378dfbc62b27fab0deaf"
+        ],
+        "observed_on": "2026-10-24"
+      },
+      "human_validated": false
+    },
+    "gif-3ofzm25c9cypt1tydc": {
+      "title": "The patient eye roll",
+      "summary": "A woman in glasses rolls her eyes, then looks away.",
+      "use_when": "You have heard the same weak excuse one time too many.",
+      "avoid_when": "Confusion, enthusiastic agreement, or sincere vulnerability.",
+      "facets": {
+        "reactions": [
+          "skepticism"
+        ],
+        "contexts": [
+          "work",
+          "friends"
+        ],
+        "roles": [
+          "self"
+        ],
+        "intensity": "quiet"
+      },
+      "evidence": {
+        "method": "assistant_three_frame_review",
+        "source": "https://media.giphy.com/media/3oFzm25c9cyPt1TYDC/giphy.mp4",
+        "source_sha256": "d2fe47abf5edae8e082237f6e78a7d90a8e239719b7c2482a4f2912f72b55a41",
+        "frame_sha256": [
+          "b7ee08651f9557bbbd07cd89b11569975c1bcaeeff5b1428d91036a11b5da030",
+          "b79fd438fb23a08aa0bdb117f5ee833d6dc42a3e0a119dd38b0e02521d778a47",
+          "d5cc8b6f1d7aef44cd52d27472fa98f813516e5214497e3151860db76ee166c3"
+        ],
+        "observed_on": "2026-10-24"
+      },
+      "human_validated": false
+    },
+    "gif-3okip8knutjjl3zt0i": {
+      "title": "Just sipping my tea",
+      "summary": "A woman peers over a white mug with a knowing sideways glance.",
+      "use_when": "An awkward conversation is unfolding and you are staying out of it.",
+      "avoid_when": "A literal tea recommendation or invented gossip about a person.",
+      "facets": {
+        "reactions": [
+          "amusement",
+          "awkwardness"
+        ],
+        "contexts": [
+          "friends"
+        ],
+        "roles": [
+          "observer"
+        ],
+        "intensity": "quiet"
+      },
+      "evidence": {
+        "method": "assistant_three_frame_review",
+        "source": "https://media.giphy.com/media/3oKIP8kNuTJJL3zT0I/giphy.mp4",
+        "source_sha256": "dafef0da7dd1be02def96cf105e8ca1c91c28a144ae105ec37aa25bbeb303455",
+        "frame_sha256": [
+          "b593958ac857e3f032c9f65c05ed0f567fc0828fe6d00875de90814e404dba3a",
+          "2ac7e2521d0dee32b751e71baf4b0bf9a0527a2b18a96f521194b4e716e05e63",
+          "95b7e2ca885e50e57a5a0d66162bf80e99c4e5166c40b7b40f706009edf26507"
+        ],
+        "observed_on": "2026-10-24"
+      },
+      "human_validated": false
+    },
+    "gif-3okipbcy65zkpvfwy8": {
+      "title": "Deadpool gives a little wave",
+      "summary": "Deadpool lifts one hand in a brief, casual wave.",
+      "use_when": "A playful hello or a small acknowledgment from the sidelines.",
+      "avoid_when": "Applause, cheering, or a major celebration; the clip shows a wave.",
+      "facets": {
+        "reactions": [
+          "agreement"
+        ],
+        "contexts": [
+          "friends"
+        ],
+        "roles": [
+          "self"
+        ],
+        "intensity": "quiet"
+      },
+      "evidence": {
+        "method": "assistant_three_frame_review",
+        "source": "https://media.giphy.com/media/3oKIPBcy65ZKpvFWY8/giphy.mp4",
+        "source_sha256": "b21211cb72d4f1bf279c73a101fdcdd2ca145ef14436587edc0158ecd0cc7071",
+        "frame_sha256": [
+          "b078a70bf29bcccae3ef9bc2f2bff1b5705294fc4257d134caba199bf1b07f70",
+          "fab94ec1f9c1e867989d51869be6602e17aeb14f14189bc2cecfda8bb804cb88",
+          "a21b2b8d05f38037c90c5afe8e1da2d00c6f0d848f6e17a47c84e7bce7e17085"
+        ],
+        "observed_on": "2026-10-24"
+      },
+      "human_validated": false
+    },
+    "gif-3ornjld54i3eqymfpc": {
+      "title": "A well-earned high five",
+      "summary": "Two talk-show guests turn toward each other and high-five.",
+      "use_when": "You and someone else just pulled something off together.",
+      "avoid_when": "An individual win with no shared contribution.",
+      "facets": {
+        "reactions": [
+          "celebration",
+          "agreement"
+        ],
+        "contexts": [
+          "friends",
+          "work"
+        ],
+        "roles": [
+          "self"
+        ],
+        "intensity": "expressive"
+      },
+      "evidence": {
+        "method": "assistant_three_frame_review",
+        "source": "https://media.giphy.com/media/3ornjLd54I3eQYmfpC/giphy.mp4",
+        "source_sha256": "af96a3ebbbcabd6578e917668834a5823c376396c50fd9bb59d49ed2935f335c",
+        "frame_sha256": [
+          "54853cfd73a1557866bdab3ba7a7b10a1c8af4e4274afe3faf5e07ad1b7e3b24",
+          "91ad283ee4f2a232b21628c98afd29b9da904abee8127df4ae9c97437225c6aa",
+          "7cd8e85fba9edd070abbc4115f92b61e9f19e346f536630214051d35f98adfd6"
+        ],
+        "observed_on": "2026-10-24"
+      },
+      "human_validated": false
+    },
+    "gif-116a8zosxwa0si": {
+      "title": "Let me process that",
+      "summary": "A man lowers his head into one hand, then rubs his mouth.",
+      "use_when": "You need a moment after an exhausting explanation or obvious mistake.",
+      "avoid_when": "A simple question or an idea you agree with.",
+      "facets": {
+        "reactions": [
+          "disappointment",
+          "skepticism"
+        ],
+        "contexts": [
+          "work",
+          "technology"
+        ],
+        "roles": [
+          "self"
+        ],
+        "intensity": "quiet"
+      },
+      "evidence": {
+        "method": "assistant_three_frame_review",
+        "source": "https://media.giphy.com/media/116a8zosxwA0SI/giphy.mp4",
+        "source_sha256": "7c3553d43c3f4aae3fee66d5444f65a084ce07ab991df4b35e03c7c703e23256",
+        "frame_sha256": [
+          "ceea6e97460d31f180ca8bb91874b2ed46f2f6489a83972fdbf4b230c007b41d",
+          "22f1eb6b9f8d9e01f09bf74d3f885cbaa3a66590c2d95e79423445b69dee1cbb",
+          "e678fcdd58a38d07aad229854f929b2dcdee32988adfbb21cb62196588d26dab"
+        ],
+        "observed_on": "2026-10-24"
+      },
+      "human_validated": false
+    },
+    "gif-11vhiw1iuxzfpc": {
+      "title": "You cannot be serious",
+      "summary": "A man in a patterned scarf tilts his head with a skeptical frown.",
+      "use_when": "A low-stakes claim is difficult to take seriously.",
+      "avoid_when": "Genuine surprise, joy, or a person asking for reassurance.",
+      "facets": {
+        "reactions": [
+          "skepticism",
+          "confusion"
+        ],
+        "contexts": [
+          "friends",
+          "work"
+        ],
+        "roles": [
+          "self"
+        ],
+        "intensity": "quiet"
+      },
+      "evidence": {
+        "method": "assistant_three_frame_review",
+        "source": "https://media.giphy.com/media/11VhiW1iUxZFpC/giphy.mp4",
+        "source_sha256": "09a4c5191a1766abdc99103a7c4641ca4b994a627f2ee23d9abb32eff4a8c5ab",
+        "frame_sha256": [
+          "74cfd4e55dc4f1c08618fdbb1dc49dd6a6f1306daea4b7b8aaf6cc4038bb5d6b",
+          "bbac1384d1243a9e1c2dedf03d165aab7dea6eb04c997fb313a06c3679fd2755",
+          "e24aa3571b8f4c31cbf2e2db545496a298a4de31a0b37913bc14cb049322e24c"
+        ],
+        "observed_on": "2026-10-24"
+      },
+      "human_validated": false
+    },
+    "gif-26brq84rhisrcfvuq": {
+      "title": "The news-desk faceplant",
+      "summary": "A news presenter slowly lowers his forehead onto the desk beneath “WHY???”.",
+      "use_when": "One more avoidable complication is more than you can be bothered to explain.",
+      "avoid_when": "A small confusion that can be solved with a straightforward answer.",
+      "facets": {
+        "reactions": [
+          "disappointment",
+          "anger"
+        ],
+        "contexts": [
+          "work",
+          "technology"
+        ],
+        "roles": [
+          "self"
+        ],
+        "intensity": "exaggerated"
+      },
+      "evidence": {
+        "method": "assistant_three_frame_review",
+        "source": "https://media.giphy.com/media/26BRq84rhISRcFVUQ/giphy.mp4",
+        "source_sha256": "0e625e1433aac02f0792445e703fc421756025a729fef526b7c34e29687e76b0",
+        "frame_sha256": [
+          "21d5b54c1832acd86e8c2ec09b7b7020b98e3d07807bec47ad19aeb24232a510",
+          "a9a901ee6fb3cdefe796f4f0286c3a0d9e232c8a3b1b7882c9eb4b8a2172a46a",
+          "b4f228fb4d9df569435e039f52b38a16745b5531fed7eae09012ca44e47aff35"
+        ],
+        "observed_on": "2026-10-24"
+      },
+      "human_validated": false
+    },
+    "gif-qmdgpav8jkrxxtrnmr": {
+      "title": "Something is not adding up",
+      "summary": "A man in a blue checked shirt looks from side to side with a skeptical frown.",
+      "use_when": "Someone’s explanation leaves an obvious contradiction unresolved.",
+      "avoid_when": "Impatience about a delay, or enthusiastic agreement.",
+      "facets": {
+        "reactions": [
+          "skepticism",
+          "confusion"
+        ],
+        "contexts": [
+          "friends",
+          "work"
+        ],
+        "roles": [
+          "self"
+        ],
+        "intensity": "quiet"
+      },
+      "evidence": {
+        "method": "assistant_three_frame_review",
+        "source": "https://media.giphy.com/media/QmDgpAv8JKrxXtrnmR/giphy.mp4",
+        "source_sha256": "5a70f747cbfc4aacf47ac0ac66969cef12590f6b1656e836b3406e648121d6bf",
+        "frame_sha256": [
+          "59ecf2fa8d9565fbd84dfa161a1f89748a7eb5a045fed75bf4070adea3467112",
+          "edd9501217be9f39788360f08023959d861e740cc101a516d908e0a5fd117be1",
+          "e1b83f50eaed4d13fea80712eba48964a1c9d6fc279ee29e839c7dd48ca07f56"
+        ],
+        "observed_on": "2026-10-24"
+      },
+      "human_validated": false
+    },
+    "gif-apgxxvrpqaclqnxrlo": {
+      "title": "Do you, boo",
+      "summary": "A woman points toward the camera and gives an encouraging clap.",
+      "use_when": "A friend chooses their own harmless way of doing something.",
+      "avoid_when": "A warning about a harmful decision, or dismissing someone’s concern.",
+      "facets": {
+        "reactions": [
+          "agreement",
+          "affection"
+        ],
+        "contexts": [
+          "friends"
+        ],
+        "roles": [
+          "self"
+        ],
+        "intensity": "expressive"
+      },
+      "evidence": {
+        "method": "assistant_three_frame_review",
+        "source": "https://media.giphy.com/media/aPGXxVrpqacLqnXRLO/giphy.mp4",
+        "source_sha256": "ccaf642b77b6ed8aa1efe096e8f597c626c713a12422b0cd726175b8e43486da",
+        "frame_sha256": [
+          "713ee17d02317be0a95775f77099c2dfff1426acbc1dddba4923643934e61008",
+          "473afa8533fb8439b610a07283d6396ecab8ca3ce1e10b6d2e1b23e44fbf037a",
+          "0d616067ec6f18c1a88b007cc7d65bc25cc847863e17945ea1895d8cf382ca4b"
+        ],
+        "observed_on": "2026-10-24"
+      },
+      "human_validated": false
+    },
+    "gif-2xpgqwsvyztoneiern": {
+      "title": "I like that",
+      "summary": "A bearded man turns toward someone and breaks into an approving smile.",
+      "use_when": "An idea unexpectedly wins you over.",
+      "avoid_when": "Disbelief, sarcastic disapproval, or a decision you still oppose.",
+      "facets": {
+        "reactions": [
+          "agreement",
+          "amusement"
+        ],
+        "contexts": [
+          "friends",
+          "work"
+        ],
+        "roles": [
+          "self"
+        ],
+        "intensity": "quiet"
+      },
+      "evidence": {
+        "method": "assistant_three_frame_review",
+        "source": "https://media.giphy.com/media/2xPGQWsvyztoneIerN/giphy.mp4",
+        "source_sha256": "2934d9fc75a23865cbd374a3144ccd76eafeb4244bd624cf17c9e548922c4b94",
+        "frame_sha256": [
+          "5ef4526743d3df3ac2415ffbc95d842bbcb5962bfe7a37a47ae16021813b9425",
+          "53c70b86404e6b2a097a855191b42eee3a41de2550d13dd9408346fa0f78c32d",
+          "e3dff36ea2569200339c4e03f0be62d441a9bbe66e09d44984cc8753802caeb2"
+        ],
+        "observed_on": "2026-10-24"
+      },
+      "human_validated": false
+    },
+    "gif-l1j9wxoc8w4jfmrey": {
+      "title": "That’s correct",
+      "summary": "A man in a black sweater gives a small nod while “THAT’S CORRECT” appears.",
+      "use_when": "A simple confirmation needs no extra explanation.",
+      "avoid_when": "An uncertain guess or a punchline built around being wrong.",
+      "facets": {
+        "reactions": [
+          "agreement"
+        ],
+        "contexts": [
+          "work",
+          "friends"
+        ],
+        "roles": [
+          "self"
+        ],
+        "intensity": "quiet"
+      },
+      "evidence": {
+        "method": "assistant_three_frame_review",
+        "source": "https://media.giphy.com/media/l1J9wXoC8W4JFmREY/giphy.mp4",
+        "source_sha256": "8c5d82ced7324379db5fd79cee8e31a12fe982bbe24882f93078b1975e6d0de3",
+        "frame_sha256": [
+          "65b92e8cd18fd35019ed9b43e26b565fffbbb6b86dfcb85806d7fd3d14504dc4",
+          "939cab64f6e1e3417922a1aba9f319918211c140b0381775000ee4d2306a24d6",
+          "fd8ce285049e572bbf816528ab06b03e6b7ddf84079aec5b6a963711580f1925"
+        ],
+        "observed_on": "2026-10-24"
+      },
+      "human_validated": false
+    },
+    "gif-xkiudcddxm7wyr1u6u": {
+      "title": "Did I hear that correctly?",
+      "summary": "A woman seated in a courtroom reacts with widened eyes and an open mouth.",
+      "use_when": "An unexpected low-stakes revelation deserves a second look.",
+      "avoid_when": "A mild clarification, or serious news that calls for support.",
+      "facets": {
+        "reactions": [
+          "disbelief"
+        ],
+        "contexts": [
+          "friends"
+        ],
+        "roles": [
+          "observer"
+        ],
+        "intensity": "expressive"
+      },
+      "evidence": {
+        "method": "assistant_three_frame_review",
+        "source": "https://media.giphy.com/media/xkiUdCddXm7wYR1U6U/giphy.mp4",
+        "source_sha256": "fe8f14514608ed4b254333be4b85d482850c5e38878dc9e8b167681bd3687c63",
+        "frame_sha256": [
+          "7c2dd8bb3d8aa099c19f50c36e1686c7329947315f31f1937390f2391f3b12c0",
+          "4fe7469ca97e868e1d3ecab7ce00657f5dfc6aae4d07257c28af1ceef908aee1",
+          "6302a958c3464b16a27a6e343fab3d79271e6089ab32055e2b69dce5e2031bf9"
+        ],
+        "observed_on": "2026-10-24"
+      },
+      "human_validated": false
+    },
+    "not-bad-kid": {
+      "title": "Not Bad, Kid",
+      "summary": "An animated Peter Parker gives a small, approving smile.",
+      "use_when": "Someone less experienced does something surprisingly well.",
+      "avoid_when": "Celebrating your own win or mocking someone’s sincere effort.",
+      "facets": {
+        "reactions": [
+          "agreement",
+          "affection"
+        ],
+        "contexts": [
+          "friends",
+          "work"
+        ],
+        "roles": [
+          "observer"
+        ],
+        "intensity": "quiet"
+      },
+      "evidence": {
+        "method": "assistant_source_and_visual_review",
+        "source": "https://imgflip.com/memetemplate/229562943/Not-bad-kid",
+        "observed_on": "2026-10-24"
+      },
+      "human_validated": false
+    },
+    "kalm-panik": {
+      "title": "Kalm, Panik",
+      "summary": "Two panels shift from a calm mannequin head to a panicked one.",
+      "use_when": "A new detail turns an ordinary situation into a problem.",
+      "avoid_when": "Three reversals with temporary reassurance; use Panik, Kalm, Panik for that.",
+      "facets": {
+        "reactions": [
+          "panic",
+          "disbelief"
+        ],
+        "contexts": [
+          "technology",
+          "work"
+        ],
+        "roles": [
+          "self"
+        ],
+        "intensity": "expressive"
+      },
+      "evidence": {
+        "method": "assistant_source_and_visual_review",
+        "source": "https://imgflip.com/memetemplate/289134876/Kalm-Panik",
+        "observed_on": "2026-10-24"
+      },
+      "human_validated": false
+    },
+    "clip-bbb-back-at-it": {
+      "title": "Back at it",
+      "summary": "A sleepy rabbit shuffles out of his burrow and lifts his head.",
+      "use_when": "Starting a routine task before you feel fully awake.",
+      "avoid_when": "An energetic entrance or a triumphant return.",
+      "facets": {
+        "reactions": [
+          "fatigue"
+        ],
+        "contexts": [
+          "work",
+          "everyday"
+        ],
+        "roles": [
+          "self"
+        ],
+        "intensity": "quiet"
+      },
+      "evidence": {
+        "method": "assistant_three_frame_review",
+        "source": "https://download.blender.org/demo/movies/BBB/bbb_sunflower_1080p_30fps_normal.mp4.zip",
+        "source_movie_sha256": "ae51005850b0ff757fe60c3dd7a12d754d3cd2397d87d939b55235e457f97658",
+        "clip_start_seconds": 57,
+        "frame_sha256": [
+          "b078dd27d072bacb2ad4eb4bc70d38ec19eba1ccb0853dd833376ee5305d6e1c",
+          "2d718b67ea5b4c87fac65b78878f1428e758cee4e95423654015647331020bdc",
+          "efce323e4d9440e17f7157d7b1b928b971bd820389c5a17d8635abfd5230739a"
+        ],
+        "observed_on": "2026-10-24"
+      },
+      "human_validated": false
+    },
+    "clip-bbb-flowers": {
+      "title": "A minute of peace",
+      "summary": "Bunny leans into a patch of flowers and takes a slow sniff.",
+      "use_when": "A small pleasant break in an otherwise busy day.",
+      "avoid_when": "Stress, disgust, or an interruption that ruins the moment.",
+      "facets": {
+        "reactions": [
+          "relief",
+          "affection"
+        ],
+        "contexts": [
+          "everyday"
+        ],
+        "roles": [
+          "self"
+        ],
+        "intensity": "quiet"
+      },
+      "evidence": {
+        "method": "assistant_three_frame_review",
+        "source": "https://download.blender.org/demo/movies/BBB/bbb_sunflower_1080p_30fps_normal.mp4.zip",
+        "source_movie_sha256": "ae51005850b0ff757fe60c3dd7a12d754d3cd2397d87d939b55235e457f97658",
+        "clip_start_seconds": 68,
+        "frame_sha256": [
+          "097fa6f6b51ef402466b00b5d5ef4ef6f67bcf8dcac5a9af11e3b0ce5a944046",
+          "93d4fb5fb1351206771a35144f441fccbfab6f7cb1a23d0f1ddbb1a006e3e6da",
+          "80bdac4f1ea83bdd1019128f47c45d77affc8322ae649084a5fffe0e743a57c8"
+        ],
+        "observed_on": "2026-10-24"
+      },
+      "human_validated": false
+    },
+    "clip-bbb-small-joy": {
+      "title": "A very small joy",
+      "summary": "A butterfly settles above Bunny, who smiles and clasps his paws.",
+      "use_when": "A modest, unexpectedly lovely thing makes your day.",
+      "avoid_when": "Sarcastic approval or celebrating someone else’s disappointment.",
+      "facets": {
+        "reactions": [
+          "affection",
+          "celebration"
+        ],
+        "contexts": [
+          "friends",
+          "everyday"
+        ],
+        "roles": [
+          "self"
+        ],
+        "intensity": "quiet"
+      },
+      "evidence": {
+        "method": "assistant_three_frame_review",
+        "source": "https://download.blender.org/demo/movies/BBB/bbb_sunflower_1080p_30fps_normal.mp4.zip",
+        "source_movie_sha256": "ae51005850b0ff757fe60c3dd7a12d754d3cd2397d87d939b55235e457f97658",
+        "clip_start_seconds": 82,
+        "frame_sha256": [
+          "a33dcee015fab40ce0c8dabe959ecb36346dbd9c1b046bfb317a0cbbd6cb9121",
+          "bb32ea6c60f52b034218fa972528b60c1e49cab28e3516f6c6a5ebc392b3f8f8",
+          "af0b57623d8a4513b4ad24e4f7932bc26b5f3bd8925e31da5b818d8eeb439731"
+        ],
+        "observed_on": "2026-10-24"
+      },
+      "human_validated": false
+    },
+    "clip-bbb-what-now": {
+      "title": "What was that?",
+      "summary": "Bunny blinks, then looks up at the butterfly above his head.",
+      "use_when": "A small unexpected detail breaks your concentration.",
+      "avoid_when": "A huge fright or an angry outburst; this is a mild double take.",
+      "facets": {
+        "reactions": [
+          "confusion",
+          "disbelief"
+        ],
+        "contexts": [
+          "everyday",
+          "work"
+        ],
+        "roles": [
+          "self"
+        ],
+        "intensity": "quiet"
+      },
+      "evidence": {
+        "method": "assistant_three_frame_review",
+        "source": "https://download.blender.org/demo/movies/BBB/bbb_sunflower_1080p_30fps_normal.mp4.zip",
+        "source_movie_sha256": "ae51005850b0ff757fe60c3dd7a12d754d3cd2397d87d939b55235e457f97658",
+        "clip_start_seconds": 132,
+        "frame_sha256": [
+          "327753d7f42e4e832cd27e6ffa508f0dad46dc4c750d7602c0663e7b543d8151",
+          "7e8e9da6215d410258f41386d109ce9abb6d794fc04d2545ff030bf24cda6cec",
+          "0bbfd77c6e6146e51f6815b04ef163c2502bbdd9f4ebc7b1843beade0cf55008"
+        ],
+        "observed_on": "2026-10-24"
+      },
+      "human_validated": false
+    },
+    "clip-bbb-not-impressed": {
+      "title": "Still not impressed",
+      "summary": "Bunny pauses in the meadow and gives a flat, skeptical look.",
+      "use_when": "An unconvincing explanation leaves you completely unmoved.",
+      "avoid_when": "Full-on rage or wholehearted agreement.",
+      "facets": {
+        "reactions": [
+          "skepticism"
+        ],
+        "contexts": [
+          "work",
+          "friends"
+        ],
+        "roles": [
+          "self"
+        ],
+        "intensity": "quiet"
+      },
+      "evidence": {
+        "method": "assistant_three_frame_review",
+        "source": "https://download.blender.org/demo/movies/BBB/bbb_sunflower_1080p_30fps_normal.mp4.zip",
+        "source_movie_sha256": "ae51005850b0ff757fe60c3dd7a12d754d3cd2397d87d939b55235e457f97658",
+        "clip_start_seconds": 161,
+        "frame_sha256": [
+          "a0cbed03880bd9ed8b0c0c64c5a71d8c844b163b4fee5f1f8066da7bcd8e9214",
+          "d0054033706e150522ea254247b96330368bc614af40cd7ed37dc17d7cf241f7",
+          "f52cb9df3fce3690e7d2ae32c1b28beb09634cbbedfcbb5393951ad3b1d341d5"
+        ],
+        "observed_on": "2026-10-24"
+      },
+      "human_validated": false
+    },
+    "clip-bbb-patience": {
+      "title": "The last straw",
+      "summary": "A smirking squirrel gives way to Bunny’s increasingly stern stare.",
+      "use_when": "One more avoidable annoyance arrives after several others.",
+      "avoid_when": "Actual harm or grief, or a harmless first misunderstanding.",
+      "facets": {
+        "reactions": [
+          "anger",
+          "disappointment"
+        ],
+        "contexts": [
+          "work",
+          "everyday"
+        ],
+        "roles": [
+          "self"
+        ],
+        "intensity": "expressive"
+      },
+      "evidence": {
+        "method": "assistant_three_frame_review",
+        "source": "https://download.blender.org/demo/movies/BBB/bbb_sunflower_1080p_30fps_normal.mp4.zip",
+        "source_movie_sha256": "ae51005850b0ff757fe60c3dd7a12d754d3cd2397d87d939b55235e457f97658",
+        "clip_start_seconds": 193,
+        "frame_sha256": [
+          "b78c27b2074d0048edfbb63ce7428f2d58559a0d480fe86e400ecc9805b9e1a3",
+          "98e04c10f8891592c0bf0c34a3f9d474982a34f965952cceda29262284c67ae7",
+          "5955c7c34575acafe7fa4f6bd0b898e33d2609e2f04da6eacdb6c07f24adb674"
+        ],
+        "observed_on": "2026-10-24"
+      },
+      "human_validated": false
+    },
+    "clip-bbb-changed-things": {
+      "title": "That changes things",
+      "summary": "A cut from the grinning trio to Bunny’s stunned, uncertain look.",
+      "use_when": "A new detail suddenly changes how you feel about the situation.",
+      "avoid_when": "An uncomplicated win or a serious incident that needs support.",
+      "facets": {
+        "reactions": [
+          "disbelief",
+          "confusion"
+        ],
+        "contexts": [
+          "work",
+          "friends"
+        ],
+        "roles": [
+          "self"
+        ],
+        "intensity": "expressive"
+      },
+      "evidence": {
+        "method": "assistant_three_frame_review",
+        "source": "https://download.blender.org/demo/movies/BBB/bbb_sunflower_1080p_30fps_normal.mp4.zip",
+        "source_movie_sha256": "ae51005850b0ff757fe60c3dd7a12d754d3cd2397d87d939b55235e457f97658",
+        "clip_start_seconds": 223.7,
+        "frame_sha256": [
+          "1d29bfa4f189fb8771c7fc2ebc380f3ad15ec8a0951ad8b95adedbc46c04eecd",
+          "be046e9d0b84a1a08b2a40fbca1b8642f8d7018ae51cde69ae470d2fea581bd2",
+          "5ca60ebf69afca5686184cbdae73c6dec838d7e3bcaecc98e0fe44a44543e217"
+        ],
+        "observed_on": "2026-10-24"
+      },
+      "human_validated": false
+    },
+    "clip-bbb-group-chat": {
+      "title": "The group chat has a plan",
+      "summary": "Three small forest characters exchange mischievous looks.",
+      "use_when": "Your friends agree on something that looks suspiciously chaotic.",
+      "avoid_when": "A solitary reaction or a serious plan that needs a straight answer.",
+      "facets": {
+        "reactions": [
+          "amusement"
+        ],
+        "contexts": [
+          "friends"
+        ],
+        "roles": [
+          "other"
+        ],
+        "intensity": "expressive"
+      },
+      "evidence": {
+        "method": "assistant_three_frame_review",
+        "source": "https://download.blender.org/demo/movies/BBB/bbb_sunflower_1080p_30fps_normal.mp4.zip",
+        "source_movie_sha256": "ae51005850b0ff757fe60c3dd7a12d754d3cd2397d87d939b55235e457f97658",
+        "clip_start_seconds": 328,
+        "frame_sha256": [
+          "92573f678daffa7e882d4d8618cd273e5accf04df4008bfc7896915400eb3b95",
+          "e19052887a813eff5a59be7f0bc1bb86fad825ec87baa0d9a82e1c2399e8b179",
+          "f5d497e88814d084bac6f331fbed459031cfc74a39dfdbc786cf4f2523cd712b"
+        ],
+        "observed_on": "2026-10-24"
+      },
+      "human_validated": false
+    },
+    "clip-bbb-waiting": {
+      "title": "Ready when you are",
+      "summary": "Bunny stands almost motionless with his paws held behind his back.",
+      "use_when": "You are patiently waiting for someone else to make the next move.",
+      "avoid_when": "Impatient pacing, panic, or a task that has already finished.",
+      "facets": {
+        "reactions": [
+          "impatience"
+        ],
+        "contexts": [
+          "work",
+          "friends"
+        ],
+        "roles": [
+          "self"
+        ],
+        "intensity": "quiet"
+      },
+      "evidence": {
+        "method": "assistant_three_frame_review",
+        "source": "https://download.blender.org/demo/movies/BBB/bbb_sunflower_1080p_30fps_normal.mp4.zip",
+        "source_movie_sha256": "ae51005850b0ff757fe60c3dd7a12d754d3cd2397d87d939b55235e457f97658",
+        "clip_start_seconds": 373,
+        "frame_sha256": [
+          "6939131b03fc47603ad7263fdb20a29cd637948886deb1dd19f7a98e245b9182",
+          "014714e72d5a1424a80eb52c46da12c6964573ecac812c91b982ac84123d3e18",
+          "d1476c307ae9942a1fb2a4d356b05f1cbc37a72d0437edb27db43e91f5eead5c"
+        ],
+        "observed_on": "2026-10-24"
+      },
+      "human_validated": false
+    },
+    "clip-bbb-processing": {
+      "title": "Still processing that",
+      "summary": "Something drops past a wide-eyed bird, which looks straight ahead.",
+      "use_when": "A strange, low-stakes event takes a moment to register.",
+      "avoid_when": "A triumphant celebration or an actual threat that needs attention.",
+      "facets": {
+        "reactions": [
+          "confusion",
+          "disbelief"
+        ],
+        "contexts": [
+          "friends",
+          "work"
+        ],
+        "roles": [
+          "observer"
+        ],
+        "intensity": "quiet"
+      },
+      "evidence": {
+        "method": "assistant_three_frame_review",
+        "source": "https://download.blender.org/demo/movies/BBB/bbb_sunflower_1080p_30fps_normal.mp4.zip",
+        "source_movie_sha256": "ae51005850b0ff757fe60c3dd7a12d754d3cd2397d87d939b55235e457f97658",
+        "clip_start_seconds": 389,
+        "frame_sha256": [
+          "7927b86f7e57ca387fcbc50dacd7045f56519b3869f5b161c8a864b1fffc2b15",
+          "730e55fb87678eb9bb7a6383aad7fac3818ec635b2d4e6868fb71088204d416f",
+          "9041210a6b9c5499009d15edd750eee1ecd47ed92764cb307effa4dd5c6a2020"
+        ],
+        "observed_on": "2026-10-24"
+      },
+      "human_validated": false
+    },
+    "clip-bbb-peace": {
+      "title": "Just one more interruption",
+      "summary": "Bunny starts to smile, then a butterfly flutters right into his face.",
+      "use_when": "You get one quiet moment before another small interruption.",
+      "avoid_when": "Uninterrupted calm or completed work that stays finished.",
+      "facets": {
+        "reactions": [
+          "impatience",
+          "amusement"
+        ],
+        "contexts": [
+          "work",
+          "everyday"
+        ],
+        "roles": [
+          "self"
+        ],
+        "intensity": "quiet"
+      },
+      "evidence": {
+        "method": "assistant_three_frame_review",
+        "source": "https://download.blender.org/demo/movies/BBB/bbb_sunflower_1080p_30fps_normal.mp4.zip",
+        "source_movie_sha256": "ae51005850b0ff757fe60c3dd7a12d754d3cd2397d87d939b55235e457f97658",
+        "clip_start_seconds": 475,
+        "frame_sha256": [
+          "09c8dd984d2e9d234d20e0ba4fed0d214d0c9a711fd5fd455112198f8769cfb4",
+          "2ac25ed245702fb3077921b7ca534a5fc87e816e67fab52371c68f567e8784d7",
+          "3768b7e1bd55fa67be41d378c1ca0fb8617aac3919b0746cda4c6370d6dbd513"
+        ],
+        "observed_on": "2026-10-24"
+      },
+      "human_validated": false
+    },
+    "clip-caminandes-3-careful-now": {
+      "title": "One careful step",
+      "summary": "A llama recovers his balance and tries to take a dignified step across slippery ice.",
+      "use_when": "A simple task suddenly needs all your concentration.",
+      "avoid_when": "A deliberate confident entrance, or a fall that has already happened.",
+      "facets": {
+        "reactions": [
+          "panic",
+          "determination"
+        ],
+        "contexts": [
+          "work",
+          "everyday"
+        ],
+        "roles": [
+          "self"
+        ],
+        "intensity": "expressive"
+      },
+      "human_validated": false,
+      "evidence": {
+        "method": "assistant_chronological_frame_review",
+        "source": "/assets/clips/caminandes-3-careful-now.mp4",
+        "source_movie_sha256": "5d57bf180186a1e2923d34824aae00f19d3ea658564e6e5ff36636f535375e66",
+        "clip_start_seconds": 10,
+        "clip_duration_seconds": 4,
+        "review_at_seconds": [
+          10.4,
+          12.0,
+          13.6
+        ],
+        "frame_sha256": [
+          "10ccdb1df1a32edb7c518cc55a6063577a61f0dd1d9a94916d8a41996584605f",
+          "d6dec407ca3ac5cbe174fa839ee9a694f3eb5c6326f8cc89093c5029d9522230",
+          "4ff0a772870cd63cf424ba18a50bb8135f135f5483a6ed1804ec99ad22ce2982"
+        ],
+        "observed_on": "2026-10-24"
+      }
+    },
+    "clip-caminandes-3-immediate-regret": {
+      "title": "That went well",
+      "summary": "The llama takes one confident step and lands flat on his face.",
+      "use_when": "Confidence meets an immediate, very visible consequence.",
+      "avoid_when": "A slow disappointment or a serious injury that deserves concern.",
+      "facets": {
+        "reactions": [
+          "awkwardness",
+          "disappointment"
+        ],
+        "contexts": [
+          "work",
+          "technology",
+          "everyday"
+        ],
+        "roles": [
+          "self",
+          "observer"
+        ],
+        "intensity": "exaggerated"
+      },
+      "human_validated": false,
+      "evidence": {
+        "method": "assistant_chronological_frame_review",
+        "source": "/assets/clips/caminandes-3-immediate-regret.mp4",
+        "source_movie_sha256": "5d57bf180186a1e2923d34824aae00f19d3ea658564e6e5ff36636f535375e66",
+        "clip_start_seconds": 15.5,
+        "clip_duration_seconds": 4,
+        "review_at_seconds": [
+          15.9,
+          17.5,
+          19.1
+        ],
+        "frame_sha256": [
+          "af4463e0331fabecb9e0e661b36efdf31e5793f83fee61a28322fb8c5170d82a",
+          "48f8784c2c0b146e542aa5fee35005137d421800b5a6a3735588c3f04cf2fd2d",
+          "40b4f3c5338e38eea3b9dec724f80f8a69ea1c9f85417e372482357725474956"
+        ],
+        "observed_on": "2026-10-24"
+      }
+    },
+    "clip-caminandes-3-suspicious": {
+      "title": "I saw that",
+      "summary": "A penguin looks pleased with himself while the flattened llama gives him a sideways look.",
+      "use_when": "Someone acts innocent after doing the very thing you noticed.",
+      "avoid_when": "Open confrontation, or honest confusion with no hint of suspicion.",
+      "facets": {
+        "reactions": [
+          "skepticism",
+          "amusement"
+        ],
+        "contexts": [
+          "friends",
+          "family",
+          "food"
+        ],
+        "roles": [
+          "other",
+          "observer"
+        ],
+        "intensity": "quiet"
+      },
+      "human_validated": false,
+      "evidence": {
+        "method": "assistant_chronological_frame_review",
+        "source": "/assets/clips/caminandes-3-suspicious.mp4",
+        "source_movie_sha256": "5d57bf180186a1e2923d34824aae00f19d3ea658564e6e5ff36636f535375e66",
+        "clip_start_seconds": 22,
+        "clip_duration_seconds": 4,
+        "review_at_seconds": [
+          22.4,
+          24.0,
+          25.6
+        ],
+        "frame_sha256": [
+          "6eaee1333f07ce7d47ef817693e8a573c6bc4c731ec84cc5d4444e9d2cd90794",
+          "1ee80241a4f0a9ad5a34bc37b2ec2e3f2acbdb63e3519dc3c2855d9f98c9f8cc",
+          "77654f5d82368a3c7a885e2421c71ae668081b4c99b3ff163330c1c79dc84ae3"
+        ],
+        "observed_on": "2026-10-24"
+      }
+    },
+    "clip-caminandes-3-cold-stare": {
+      "title": "Here it comes",
+      "summary": "The llama looks toward an approaching train, then closes his eyes with a weary grimace.",
+      "use_when": "You can see a completely avoidable problem heading straight for you.",
+      "avoid_when": "An entirely unforeseen surprise, or actual danger where people need help.",
+      "facets": {
+        "reactions": [
+          "disappointment",
+          "fatigue"
+        ],
+        "contexts": [
+          "work",
+          "technology",
+          "everyday"
+        ],
+        "roles": [
+          "self"
+        ],
+        "intensity": "quiet"
+      },
+      "human_validated": false,
+      "evidence": {
+        "method": "assistant_chronological_frame_review",
+        "source": "/assets/clips/caminandes-3-cold-stare.mp4",
+        "source_movie_sha256": "5d57bf180186a1e2923d34824aae00f19d3ea658564e6e5ff36636f535375e66",
+        "clip_start_seconds": 40,
+        "clip_duration_seconds": 2.8,
+        "review_at_seconds": [
+          40.28,
+          41.4,
+          42.52
+        ],
+        "frame_sha256": [
+          "b7d76934e4996228be695cd78602d132dddc8410e2788cfae84037e6e18057d9",
+          "2bdfcf1dbc53ae3d4e22c07ec69a3b93beeeabac7699cb71ad2296941b6fe2f7",
+          "92099a56f36e7541dd896d7d7a22f689513f5a399a041b010a9a9b3116becfa7"
+        ],
+        "observed_on": "2026-10-24"
+      }
+    },
+    "clip-caminandes-3-last-snack": {
+      "title": "Just one bite",
+      "summary": "A wide-eyed llama watches a berry on his tongue while the penguin reacts beside him.",
+      "use_when": "A tiny treat gets far more attention than it reasonably deserves.",
+      "avoid_when": "Sharing a large meal, or being disgusted by food.",
+      "facets": {
+        "reactions": [
+          "anticipation"
+        ],
+        "contexts": [
+          "food",
+          "money",
+          "everyday"
+        ],
+        "roles": [
+          "self"
+        ],
+        "intensity": "expressive"
+      },
+      "human_validated": false,
+      "evidence": {
+        "method": "assistant_chronological_frame_review",
+        "source": "/assets/clips/caminandes-3-last-snack.mp4",
+        "source_movie_sha256": "5d57bf180186a1e2923d34824aae00f19d3ea658564e6e5ff36636f535375e66",
+        "clip_start_seconds": 50,
+        "clip_duration_seconds": 4,
+        "review_at_seconds": [
+          50.4,
+          52.0,
+          53.6
+        ],
+        "frame_sha256": [
+          "11f0e9d7c049b13561b0ae139b8de9eadbecee7a10caa4a8eef73d74b46d4a37",
+          "abf62f7c982435a5401982eda20e6cd215645cbb44e01b1568b4538195d45ec6",
+          "ccabb11d40a41ee3bbe75e8c88c1027950f644c4986eb672c0566e060b6d197c"
+        ],
+        "observed_on": "2026-10-24"
+      }
+    },
+    "clip-caminandes-3-big-plans": {
+      "title": "Eyes on the prize",
+      "summary": "A llama races through wooden scaffolding beside a penguin clutching an enormous bunch of berries.",
+      "use_when": "A small reward inspires a comically oversized effort.",
+      "avoid_when": "A quiet daydream, or enjoying a reward after the work is already done.",
+      "facets": {
+        "reactions": [
+          "anticipation",
+          "determination"
+        ],
+        "contexts": [
+          "money",
+          "food",
+          "everyday"
+        ],
+        "roles": [
+          "self",
+          "situation"
+        ],
+        "intensity": "exaggerated"
+      },
+      "human_validated": false,
+      "evidence": {
+        "method": "assistant_chronological_frame_review",
+        "source": "/assets/clips/caminandes-3-big-plans.mp4",
+        "source_movie_sha256": "5d57bf180186a1e2923d34824aae00f19d3ea658564e6e5ff36636f535375e66",
+        "clip_start_seconds": 73,
+        "clip_duration_seconds": 5,
+        "review_at_seconds": [
+          73.5,
+          75.5,
+          77.5
+        ],
+        "frame_sha256": [
+          "f3d19915e3a8d4816f7e622d33500ec17345d1f9f1824bfc9dbdae22abaaf9f7",
+          "4093d36e51222284c0b753a4d5095805bb03f1d6d5a60cd4bb964ce0fb08712a",
+          "784e999051811f21487bba07d8466240c1404f8a54f850f3fa71d518cde946c1"
+        ],
+        "observed_on": "2026-10-24"
+      }
+    },
+    "clip-caminandes-3-already-gone": {
+      "title": "You ate the last one",
+      "summary": "The penguin finishes a berry while the llama watches with an increasingly disappointed face.",
+      "use_when": "You discover the thing you were looking forward to has already been taken.",
+      "avoid_when": "You never wanted the thing, or are happily giving it away.",
+      "facets": {
+        "reactions": [
+          "disappointment",
+          "disbelief"
+        ],
+        "contexts": [
+          "food",
+          "friends",
+          "family"
+        ],
+        "roles": [
+          "self",
+          "observer"
+        ],
+        "intensity": "expressive"
+      },
+      "human_validated": false,
+      "evidence": {
+        "method": "assistant_chronological_frame_review",
+        "source": "/assets/clips/caminandes-3-already-gone.mp4",
+        "source_movie_sha256": "5d57bf180186a1e2923d34824aae00f19d3ea658564e6e5ff36636f535375e66",
+        "clip_start_seconds": 88,
+        "clip_duration_seconds": 5,
+        "review_at_seconds": [
+          88.5,
+          90.5,
+          92.5
+        ],
+        "frame_sha256": [
+          "f9c82c041a3692fad13ff9b851f08d515b5fcfd592313b7bc351913fe62e747f",
+          "c7a45cfe30778721f814adadd87b4689e7688b271f19eee412560cb9ec8b467f",
+          "9555423d1fc184ca4679c5e181f096407d24868cf1b270e94eff934d6f20c956"
+        ],
+        "observed_on": "2026-10-24"
+      }
+    },
+    "clip-caminandes-3-deflated": {
+      "title": "Never mind, then",
+      "summary": "The llama’s hopeful face settles into a long, heavy-lidded stare.",
+      "use_when": "A small letdown quietly drains all your enthusiasm.",
+      "avoid_when": "A loud argument or an urgent emergency.",
+      "facets": {
+        "reactions": [
+          "disappointment",
+          "fatigue"
+        ],
+        "contexts": [
+          "work",
+          "relationships",
+          "everyday"
+        ],
+        "roles": [
+          "self"
+        ],
+        "intensity": "quiet"
+      },
+      "human_validated": false,
+      "evidence": {
+        "method": "assistant_chronological_frame_review",
+        "source": "/assets/clips/caminandes-3-deflated.mp4",
+        "source_movie_sha256": "5d57bf180186a1e2923d34824aae00f19d3ea658564e6e5ff36636f535375e66",
+        "clip_start_seconds": 104,
+        "clip_duration_seconds": 5,
+        "review_at_seconds": [
+          104.5,
+          106.5,
+          108.5
+        ],
+        "frame_sha256": [
+          "3fbe94d5e06b2234772f62745035b950b2c3e1c4fd2e4cdb2403af0e9afe6e1e",
+          "644d0bb65b606a5ce797c1d4d11081ab9aa599bf9caa26cd2a0f8b87205cd341",
+          "bc9bce39e3d5e7eb2c85674aa4a7e5cb01001e1c16ccce1e7ba8b04852eb9e80"
+        ],
+        "observed_on": "2026-10-24"
+      }
+    },
+    "clip-caminandes-3-sharing": {
+      "title": "Saved you one",
+      "summary": "The llama offers the penguin a berry, then the two look up together.",
+      "use_when": "An ordinary act of sharing says more than a big speech.",
+      "avoid_when": "Taking credit for generosity that the scene does not show.",
+      "facets": {
+        "reactions": [
+          "affection",
+          "relief"
+        ],
+        "contexts": [
+          "friends",
+          "family",
+          "food"
+        ],
+        "roles": [
+          "self",
+          "other"
+        ],
+        "intensity": "quiet"
+      },
+      "human_validated": false,
+      "evidence": {
+        "method": "assistant_chronological_frame_review",
+        "source": "/assets/clips/caminandes-3-sharing.mp4",
+        "source_movie_sha256": "5d57bf180186a1e2923d34824aae00f19d3ea658564e6e5ff36636f535375e66",
+        "clip_start_seconds": 125,
+        "clip_duration_seconds": 5,
+        "review_at_seconds": [
+          125.5,
+          127.5,
+          129.5
+        ],
+        "frame_sha256": [
+          "5ad8e70cadb924cfe8c481485374af5a1c9b1385e1553d0f84bcf352185138f1",
+          "852e9b16301b5947a9e995c1b2e7806b8f347d2c1089bd3f6062ffcdc49b4a94",
+          "c61088dd2e6b3d04460d0dd17d220b0574e0388773d61d69bff8fee026b59c0b"
+        ],
+        "observed_on": "2026-10-24"
+      }
+    },
+    "clip-spring-small-delight": {
+      "title": "A very good little thing",
+      "summary": "A girl leans toward her dog, smiles, and examines a small object in her hands.",
+      "use_when": "Something tiny makes an otherwise ordinary day unexpectedly good.",
+      "avoid_when": "A huge public victory or smug triumph over someone else.",
+      "facets": {
+        "reactions": [
+          "affection",
+          "celebration"
+        ],
+        "contexts": [
+          "family",
+          "everyday"
+        ],
+        "roles": [
+          "self"
+        ],
+        "intensity": "quiet"
+      },
+      "human_validated": false,
+      "evidence": {
+        "method": "assistant_chronological_frame_review",
+        "source": "/assets/clips/spring-small-delight.mp4",
+        "source_movie_sha256": "9d11691b30a9fd192205224e9b0b59f918f33043ae600a791c9c6c1909d42309",
+        "clip_start_seconds": 52,
+        "clip_duration_seconds": 3.8,
+        "review_at_seconds": [
+          52.38,
+          53.9,
+          55.42
+        ],
+        "frame_sha256": [
+          "542dac75318a83bb71682f14e15c96438a19272778473dba18e3791c35768cae",
+          "8b99f9a27095050559b1c02498ac33a4351089964fcde7c3df7987c234c87178",
+          "7e06ae1dde6cc1e5b4cf15f8dd2b46dd1971fd5b858f87ea024d940ba1f73c48"
+        ],
+        "observed_on": "2026-10-24"
+      }
+    },
+    "clip-spring-not-so-sure": {
+      "title": "Starting to reconsider",
+      "summary": "Holding her staff, the girl’s tentative smile gives way to a doubtful look.",
+      "use_when": "You agreed before thinking through what the plan involved.",
+      "avoid_when": "You are completely certain, or already in full panic.",
+      "facets": {
+        "reactions": [
+          "skepticism",
+          "awkwardness"
+        ],
+        "contexts": [
+          "work",
+          "friends",
+          "everyday"
+        ],
+        "roles": [
+          "self"
+        ],
+        "intensity": "quiet"
+      },
+      "human_validated": false,
+      "evidence": {
+        "method": "assistant_chronological_frame_review",
+        "source": "/assets/clips/spring-not-so-sure.mp4",
+        "source_movie_sha256": "9d11691b30a9fd192205224e9b0b59f918f33043ae600a791c9c6c1909d42309",
+        "clip_start_seconds": 63,
+        "clip_duration_seconds": 5,
+        "review_at_seconds": [
+          63.5,
+          65.5,
+          67.5
+        ],
+        "frame_sha256": [
+          "5adaf0488319792ddd5c47ef219b97a08f83ae8a32476646e1ad089ed012fd2d",
+          "add182f52010287f3dc7099f2dd3f2c88e741346c75e77f5ae646c2d237e4dfd",
+          "1fe57a63f47ff1046b583efae14bc7bfa074cf10915db372f5e455f2b3dfe57c"
+        ],
+        "observed_on": "2026-10-24"
+      }
+    },
+    "clip-spring-heard-something": {
+      "title": "Did you hear that?",
+      "summary": "The girl pauses in a dark forest, glances sideways, then looks upward.",
+      "use_when": "You notice a small sign that something is off.",
+      "avoid_when": "A confirmed disaster, or accusing someone without any uncertainty.",
+      "facets": {
+        "reactions": [
+          "confusion",
+          "anticipation"
+        ],
+        "contexts": [
+          "technology",
+          "everyday"
+        ],
+        "roles": [
+          "self",
+          "observer"
+        ],
+        "intensity": "quiet"
+      },
+      "human_validated": false,
+      "evidence": {
+        "method": "assistant_chronological_frame_review",
+        "source": "/assets/clips/spring-heard-something.mp4",
+        "source_movie_sha256": "9d11691b30a9fd192205224e9b0b59f918f33043ae600a791c9c6c1909d42309",
+        "clip_start_seconds": 134,
+        "clip_duration_seconds": 5,
+        "review_at_seconds": [
+          134.5,
+          136.5,
+          138.5
+        ],
+        "frame_sha256": [
+          "608b1b6d78f36d28c34961b8fde066492d42b5a7ea64cacce9e1c12db9ac7c12",
+          "ee8cd59a186abab19eab09e00053193934b1768c8370a249c809191ef3b77daa",
+          "f469b18e5a41b7770827993c1f4e47071d6ba994dccb6420784593427e4132e2"
+        ],
+        "observed_on": "2026-10-24"
+      }
+    },
+    "clip-spring-little-light": {
+      "title": "There it is",
+      "summary": "A warm light glows in the girl’s hands as her concerned face softens into wonder.",
+      "use_when": "A small sign of progress makes a difficult task feel possible again.",
+      "avoid_when": "The whole problem is already solved, or the outcome is obviously bad.",
+      "facets": {
+        "reactions": [
+          "relief",
+          "anticipation"
+        ],
+        "contexts": [
+          "work",
+          "technology",
+          "everyday"
+        ],
+        "roles": [
+          "self"
+        ],
+        "intensity": "quiet"
+      },
+      "human_validated": false,
+      "evidence": {
+        "method": "assistant_chronological_frame_review",
+        "source": "/assets/clips/spring-little-light.mp4",
+        "source_movie_sha256": "9d11691b30a9fd192205224e9b0b59f918f33043ae600a791c9c6c1909d42309",
+        "clip_start_seconds": 230,
+        "clip_duration_seconds": 5,
+        "review_at_seconds": [
+          230.5,
+          232.5,
+          234.5
+        ],
+        "frame_sha256": [
+          "2cf290cdca5e506e31f69c1d4109e4f033a42f415e61e193b64c3a3bb2add76a",
+          "9da339e94f023bb706f45e2f78195c88e0103dbd2fb36cfa09ee521e4e55a935",
+          "4745cbf02533510f6b2f70366e9f631f15f3a7bf73e3b433560f9235d178ac34"
+        ],
+        "observed_on": "2026-10-24"
+      }
+    },
+    "clip-spring-keep-going": {
+      "title": "Confidence running out",
+      "summary": "The girl looks upward with an uneasy half-smile before the scene cuts to the looming spirit.",
+      "use_when": "You are trying to look capable while realizing how much bigger the task is.",
+      "avoid_when": "Effortless confidence or a finished, successful result.",
+      "facets": {
+        "reactions": [
+          "panic",
+          "determination"
+        ],
+        "contexts": [
+          "work",
+          "everyday"
+        ],
+        "roles": [
+          "self"
+        ],
+        "intensity": "expressive"
+      },
+      "human_validated": false,
+      "evidence": {
+        "method": "assistant_chronological_frame_review",
+        "source": "/assets/clips/spring-keep-going.mp4",
+        "source_movie_sha256": "9d11691b30a9fd192205224e9b0b59f918f33043ae600a791c9c6c1909d42309",
+        "clip_start_seconds": 292,
+        "clip_duration_seconds": 3.8,
+        "review_at_seconds": [
+          292.38,
+          293.9,
+          295.42
+        ],
+        "frame_sha256": [
+          "b786a4f5b6b0356c26adcb5328edaa2bfce979c32029c035db3ad652503b9014",
+          "026d4d0f3557fffe61333d002a6e0c1f20197963abb70bfea95cb1c60835160c",
+          "3d4e9ce621bb1b746ff17ebaa2ee7a313957452df3f4b3a5956fab8ccafa933e"
+        ],
+        "observed_on": "2026-10-24"
+      }
+    },
+    "clip-spring-made-it": {
+      "title": "We made it",
+      "summary": "The girl and her dog stand in bright mountain light as she turns and lifts her staff.",
+      "use_when": "A difficult stretch is over and you can finally enjoy the view.",
+      "avoid_when": "Bragging at someone else’s expense, or a problem that remains urgent.",
+      "facets": {
+        "reactions": [
+          "relief",
+          "celebration"
+        ],
+        "contexts": [
+          "work",
+          "friends",
+          "everyday"
+        ],
+        "roles": [
+          "self",
+          "situation"
+        ],
+        "intensity": "expressive"
+      },
+      "human_validated": false,
+      "evidence": {
+        "method": "assistant_chronological_frame_review",
+        "source": "/assets/clips/spring-made-it.mp4",
+        "source_movie_sha256": "9d11691b30a9fd192205224e9b0b59f918f33043ae600a791c9c6c1909d42309",
+        "clip_start_seconds": 390,
+        "clip_duration_seconds": 4,
+        "review_at_seconds": [
+          390.4,
+          392.0,
+          393.6
+        ],
+        "frame_sha256": [
+          "b52e038ed7033a792a56c52638f252cf9bcecc59d5e8e985d760498e148e3168",
+          "5cba2834c863a16b394e01047fc49d07b507f753d6e664979ead15082040b5b6",
+          "c48dcc7166e431a84cf8d666830735911ff19db7934ac8025a34b4f774d37cd2"
+        ],
+        "observed_on": "2026-10-24"
+      }
+    },
+    "clip-coffee-run-overcommitted": {
+      "title": "Still keeping up",
+      "summary": "A runner races down a steep path, pitches forward, and keeps moving through a stylized city.",
+      "use_when": "You are committed to a pace that is getting harder to maintain.",
+      "avoid_when": "A relaxed stroll or a sudden shock shown mainly through a face.",
+      "facets": {
+        "reactions": [
+          "panic",
+          "determination"
+        ],
+        "contexts": [
+          "work",
+          "everyday"
+        ],
+        "roles": [
+          "self",
+          "situation"
+        ],
+        "intensity": "expressive"
+      },
+      "human_validated": false,
+      "evidence": {
+        "method": "assistant_chronological_frame_review",
+        "source": "/assets/clips/coffee-run-overcommitted.mp4",
+        "source_movie_sha256": "ae9577a8dac9acea202df72f28999cdbd089fa5cbfbd9d8e9f038e85ce5f56f9",
+        "clip_start_seconds": 8,
+        "clip_duration_seconds": 3.6,
+        "review_at_seconds": [
+          8.36,
+          9.8,
+          11.24
+        ],
+        "frame_sha256": [
+          "00c8122a39ad193e4b532d6df33b9e20bd8b7ae21eeee674b88c4077d5ac2e95",
+          "3ce975bc4d4b160df5ca7909bbd82297da84e12b1d4a878dca3c4c395fb5cba6",
+          "d6772043c8e5556e771f6439fa71e572ef7bc18c19b98d0bb63d8f7e0d5ca60d"
+        ],
+        "observed_on": "2026-10-24"
+      }
+    },
+    "clip-coffee-run-finally-home": {
+      "title": "Nothing left in the tank",
+      "summary": "A woman slumps alone on a sofa in a dim, cluttered room.",
+      "use_when": "The day is over and you have no energy left for one more thing.",
+      "avoid_when": "A loud celebration or a sincere mental-health disclosure needing support.",
+      "facets": {
+        "reactions": [
+          "fatigue",
+          "disappointment"
+        ],
+        "contexts": [
+          "work",
+          "relationships",
+          "everyday"
+        ],
+        "roles": [
+          "self"
+        ],
+        "intensity": "quiet"
+      },
+      "human_validated": false,
+      "evidence": {
+        "method": "assistant_chronological_frame_review",
+        "source": "/assets/clips/coffee-run-finally-home.mp4",
+        "source_movie_sha256": "ae9577a8dac9acea202df72f28999cdbd089fa5cbfbd9d8e9f038e85ce5f56f9",
+        "clip_start_seconds": 154,
+        "clip_duration_seconds": 6,
+        "review_at_seconds": [
+          154.6,
+          157.0,
+          159.4
+        ],
+        "frame_sha256": [
+          "517de332248722a19529d47af6de104ca3a7b2d0d4a23bcef7b69d582263b0db",
+          "a42accb3f039f27e47b22a2464d3990b2167dfa325783942ccd5b2c4ecc7b1b3",
+          "9fb6d36cf6d163512126ffdaf7ef8e9e98eb0e1c17e9af2db1f6a5dc61c72fcb"
+        ],
+        "observed_on": "2026-10-24"
+      }
+    },
+    "clip-tears-of-steel-thinking-it-through": {
+      "title": "Let me explain",
+      "summary": "A man in a red shirt talks with open hands, then gestures more insistently at the people beside him.",
+      "use_when": "You are defending a decision that sounded much better in your head.",
+      "avoid_when": "An apology that needs sincerity rather than a joke.",
+      "facets": {
+        "reactions": [
+          "confusion",
+          "awkwardness"
+        ],
+        "contexts": [
+          "work",
+          "friends"
+        ],
+        "roles": [
+          "self",
+          "other"
+        ],
+        "intensity": "expressive"
+      },
+      "human_validated": false,
+      "evidence": {
+        "method": "assistant_chronological_frame_review",
+        "source": "/assets/clips/tears-of-steel-thinking-it-through.mp4",
+        "source_movie_sha256": "727f3af5a80ae9763426eb8ae9b5559b0a266cf5dc20b9442dd1973f90e26193",
+        "clip_start_seconds": 203,
+        "clip_duration_seconds": 3.3,
+        "review_at_seconds": [
+          203.33,
+          204.65,
+          205.97
+        ],
+        "frame_sha256": [
+          "ac00f2efef4a33300c7daaa43e01586c415ce5ac69e9f119798e5b054e310dcd",
+          "1779d7a41d8ed45ce237c3ae28a839763302fd88ad4360e7391586a44e7677c0",
+          "da3bac6715c0be3eed2b910e090365b68cf2b892e18af800b240b89c6f3ca9e1"
+        ],
+        "observed_on": "2026-10-24"
+      }
+    },
+    "clip-tears-of-steel-not-buying-it": {
+      "title": "Absolutely not",
+      "summary": "The red-shirted man launches into an emphatic protest, lifting his hands as he speaks.",
+      "use_when": "A suggestion is so unreasonable that a polite no is no longer enough.",
+      "avoid_when": "A mild private doubt or agreement disguised as enthusiasm.",
+      "facets": {
+        "reactions": [
+          "anger",
+          "dismissal"
+        ],
+        "contexts": [
+          "work",
+          "friends",
+          "everyday"
+        ],
+        "roles": [
+          "self",
+          "other"
+        ],
+        "intensity": "expressive"
+      },
+      "human_validated": false,
+      "evidence": {
+        "method": "assistant_chronological_frame_review",
+        "source": "/assets/clips/tears-of-steel-not-buying-it.mp4",
+        "source_movie_sha256": "727f3af5a80ae9763426eb8ae9b5559b0a266cf5dc20b9442dd1973f90e26193",
+        "clip_start_seconds": 213,
+        "clip_duration_seconds": 2.5,
+        "review_at_seconds": [
+          213.25,
+          214.25,
+          215.25
+        ],
+        "frame_sha256": [
+          "a9c31eb738f38870362e45e983e4073a3df5a0ec8b030e0dc1b3a3493a43cad6",
+          "cd7351c6f8085d8109878e42a1e1a076ee6908c6584a6179a7cfc1591f199dc6",
+          "5fc8babe9ae010dad8f1400eff5b847600253e599c7565a57387badd13a71d68"
+        ],
+        "observed_on": "2026-10-24"
+      }
+    },
+    "clip-tears-of-steel-too-close": {
+      "title": "Personal space, please",
+      "summary": "One man leans close with an arm around his companion, who stares ahead without enthusiasm.",
+      "use_when": "Someone is far more invested in explaining or sharing than the listener wants.",
+      "avoid_when": "An embrace where both people are visibly delighted.",
+      "facets": {
+        "reactions": [
+          "awkwardness",
+          "skepticism"
+        ],
+        "contexts": [
+          "friends",
+          "family",
+          "work"
+        ],
+        "roles": [
+          "other",
+          "observer"
+        ],
+        "intensity": "quiet"
+      },
+      "human_validated": false,
+      "evidence": {
+        "method": "assistant_chronological_frame_review",
+        "source": "/assets/clips/tears-of-steel-too-close.mp4",
+        "source_movie_sha256": "727f3af5a80ae9763426eb8ae9b5559b0a266cf5dc20b9442dd1973f90e26193",
+        "clip_start_seconds": 243,
+        "clip_duration_seconds": 5,
+        "review_at_seconds": [
+          243.5,
+          245.5,
+          247.5
+        ],
+        "frame_sha256": [
+          "51b95fc3dcb8cd5ca0d251e80fb54dbe399e768c8de9cc40bd108a7ebc2e755b",
+          "c0ab84d96c1159c5861d2c488861ddc0fee5927c2f342e205171a4ff94192ea2",
+          "4324c1b493bee133d5908db4ab27d3127ad04cf3dfc59cc9ff43adc29bcbedd2"
+        ],
+        "observed_on": "2026-10-24"
+      }
+    },
+    "clip-tears-of-steel-wait-what": {
+      "title": "That doesn’t follow",
+      "summary": "A young man looks aside with a furrowed brow, starts to speak, then lowers his gaze.",
+      "use_when": "You are trying to make sense of an explanation that keeps getting less convincing.",
+      "avoid_when": "A big jump scare or an obvious joke that everyone already understands.",
+      "facets": {
+        "reactions": [
+          "confusion",
+          "skepticism"
+        ],
+        "contexts": [
+          "work",
+          "technology",
+          "relationships"
+        ],
+        "roles": [
+          "self"
+        ],
+        "intensity": "quiet"
+      },
+      "human_validated": false,
+      "evidence": {
+        "method": "assistant_chronological_frame_review",
+        "source": "/assets/clips/tears-of-steel-wait-what.mp4",
+        "source_movie_sha256": "727f3af5a80ae9763426eb8ae9b5559b0a266cf5dc20b9442dd1973f90e26193",
+        "clip_start_seconds": 324,
+        "clip_duration_seconds": 3.5,
+        "review_at_seconds": [
+          324.35,
+          325.75,
+          327.15
+        ],
+        "frame_sha256": [
+          "4d36e1a35ced82ee2c93adbb2f5cc519ce8879534560a1bb1f2c9b2cc9f3cfdd",
+          "1b09cb8fad30817b0afd89a1cec69e959ab0c83530b2a72893884757d8de1dbd",
+          "de772880c546c6e08a843008fbc275113291cfb11e35f0d6a9cea1543ea5f545"
+        ],
+        "observed_on": "2026-10-24"
+      }
+    },
+    "clip-tears-of-steel-system-surprise": {
+      "title": "That was unexpected",
+      "summary": "A tense room cuts to a man with glasses staring at a screen, mouth open in alarm.",
+      "use_when": "An ordinary check produces a result you were thoroughly unprepared for.",
+      "avoid_when": "A pleasant small surprise or serious bad news requiring a sincere response.",
+      "facets": {
+        "reactions": [
+          "disbelief",
+          "panic"
+        ],
+        "contexts": [
+          "technology",
+          "work",
+          "everyday"
+        ],
+        "roles": [
+          "self",
+          "observer"
+        ],
+        "intensity": "exaggerated"
+      },
+      "human_validated": false,
+      "evidence": {
+        "method": "assistant_chronological_frame_review",
+        "source": "/assets/clips/tears-of-steel-system-surprise.mp4",
+        "source_movie_sha256": "727f3af5a80ae9763426eb8ae9b5559b0a266cf5dc20b9442dd1973f90e26193",
+        "clip_start_seconds": 373.2,
+        "clip_duration_seconds": 3,
+        "review_at_seconds": [
+          373.5,
+          374.7,
+          375.9
+        ],
+        "frame_sha256": [
+          "40aaf0f4ffbc65643faa31ee862e84de089ebea954395bb9ef408073475df038",
+          "013e2bcda820d216b009863088a91e925ab2c10d5641a0322949b054bb31f226",
+          "8a38a645efab695b6c4e6f657a74ae8280fe9df3e418e40d4be31931473167d9"
+        ],
+        "observed_on": "2026-10-24"
+      }
+    }
+  },
+  "collections": [
+    {
+      "id": "small-wins",
+      "title": "Small wins",
+      "description": "The little things that deserve a reaction.",
+      "reference_ids": [
+        "success-kid",
+        "gif-3o7abgqa0arjuurpii",
+        "clip-bbb-small-joy",
+        "clip-bbb-flowers",
+        "gif-l1j9n8zrmycfsrqfq",
+        "gif-5xaoclde64vmf4lqqrk",
+        "gif-10jhvifuu2gwd6",
+        "gif-13hxeoyjotwtk8",
+        "gif-1z02vuppxp1pa",
+        "gif-3ornjld54i3eqymfpc",
+        "gif-apgxxvrpqaclqnxrlo",
+        "clip-spring-small-delight",
+        "clip-spring-little-light",
+        "clip-spring-made-it",
+        "clip-caminandes-3-sharing"
+      ]
+    },
+    {
+      "id": "quiet-reactions",
+      "title": "Say less",
+      "description": "Understatement, awkward glances, and a well-timed eye roll.",
+      "reference_ids": [
+        "hide-pain-harold",
+        "monkey-puppet",
+        "clip-bbb-not-impressed",
+        "clip-bbb-peace",
+        "gif-ycllbrn3kx27e",
+        "gif-l1j9n8zrmycfsrqfq",
+        "same-picture",
+        "this-is-fine",
+        "i-dont-think-i-will",
+        "i-pretend-i-do-not-see-it",
+        "well-yes-but-actually-no",
+        "gif-10ojgycutszrna",
+        "gif-3o6ztqbpye9nzbldvg",
+        "gif-3ofzm25c9cypt1tydc",
+        "gif-3okip8knutjjl3zt0i",
+        "gif-3okipbcy65zkpvfwy8",
+        "gif-2xpgqwsvyztoneiern",
+        "gif-l1j9wxoc8w4jfmrey",
+        "not-bad-kid",
+        "clip-tears-of-steel-too-close",
+        "clip-caminandes-3-deflated",
+        "clip-coffee-run-finally-home",
+        "clip-spring-not-so-sure"
+      ]
+    },
+    {
+      "id": "does-not-add-up",
+      "title": "That doesn’t add up",
+      "description": "Contradictions, questionable logic, and predictable surprises.",
+      "reference_ids": [
+        "gif-3diweulyyuplq",
+        "surprised-pikachu",
+        "is-this-a-pigeon",
+        "spiderman-pointing",
+        "grus-plan",
+        "well-yes-but-actually-no",
+        "ive-won-but-at-what-cost",
+        "gif-1m9fmo1wafvk0",
+        "gif-11vhiw1iuxzfpc",
+        "gif-qmdgpav8jkrxxtrnmr",
+        "gif-xkiudcddxm7wyr1u6u",
+        "clip-bbb-what-now",
+        "clip-bbb-processing",
+        "clip-tears-of-steel-wait-what",
+        "clip-tears-of-steel-system-surprise",
+        "clip-caminandes-3-already-gone"
+      ]
+    },
+    {
+      "id": "waiting",
+      "title": "Still waiting",
+      "description": "The reply, the delivery, the thing that was supposed to happen.",
+      "reference_ids": [
+        "waiting-skeleton",
+        "gif-qbd2klb5qdmysexre9",
+        "gif-ci3ncvx952lfg",
+        "gif-3o6ztokgzqv6thhzj2",
+        "clip-bbb-waiting",
+        "clip-spring-heard-something"
+      ]
+    },
+    {
+      "id": "work",
+      "title": "At work",
+      "description": "Deadlines, meetings, and decisions that became everyone’s problem.",
+      "reference_ids": [
+        "this-is-fine",
+        "two-buttons",
+        "one-does-not-simply",
+        "hide-pain-harold",
+        "you-guys-getting-paid",
+        "facepalm",
+        "gif-5xaoclde64vmf4lqqrk",
+        "exit-ramp",
+        "panik-kalm-panik",
+        "undertaker-behind",
+        "say-the-line-bart",
+        "gif-116a8zosxwa0si",
+        "gif-26brq84rhisrcfvuq",
+        "kalm-panik",
+        "clip-bbb-back-at-it",
+        "clip-bbb-patience",
+        "clip-bbb-changed-things",
+        "clip-tears-of-steel-thinking-it-through",
+        "clip-tears-of-steel-not-buying-it",
+        "clip-coffee-run-overcommitted",
+        "clip-spring-keep-going"
+      ]
+    },
+    {
+      "id": "no-thanks",
+      "title": "No, thanks",
+      "description": "Clear preferences and very little enthusiasm.",
+      "reference_ids": [
+        "drake-preference",
+        "gif-nuq1tz0fhqeeu",
+        "gif-ycllbrn3kx27e",
+        "change-my-mind",
+        "i-dont-think-i-will",
+        "uno-reverse-card",
+        "gif-1dhuzohxkli1g",
+        "clip-tears-of-steel-not-buying-it",
+        "clip-caminandes-3-suspicious"
+      ]
+    },
+    {
+      "id": "open-animation",
+      "title": "HD animation",
+      "description": "Reactions from Big Buck Bunny, Caminandes, Spring, and Coffee Run. Original framing; source credit stays in your download.",
+      "reference_ids": [
+        "clip-spring-small-delight",
+        "clip-caminandes-3-careful-now",
+        "clip-coffee-run-overcommitted",
+        "clip-bbb-back-at-it",
+        "clip-spring-not-so-sure",
+        "clip-caminandes-3-immediate-regret",
+        "clip-coffee-run-finally-home",
+        "clip-bbb-flowers",
+        "clip-spring-heard-something",
+        "clip-caminandes-3-suspicious",
+        "clip-bbb-small-joy",
+        "clip-spring-little-light",
+        "clip-caminandes-3-cold-stare",
+        "clip-bbb-what-now",
+        "clip-spring-keep-going",
+        "clip-caminandes-3-last-snack",
+        "clip-bbb-not-impressed",
+        "clip-spring-made-it",
+        "clip-caminandes-3-big-plans",
+        "clip-bbb-patience",
+        "clip-caminandes-3-already-gone",
+        "clip-bbb-changed-things",
+        "clip-caminandes-3-deflated",
+        "clip-bbb-group-chat",
+        "clip-caminandes-3-sharing",
+        "clip-bbb-waiting",
+        "clip-bbb-processing",
+        "clip-bbb-delayed-fall",
+        "clip-bbb-peace"
+      ]
+    },
+    {
+      "id": "live-action",
+      "title": "Live action",
+      "description": "Real actors, clear reactions, original cinema framing. Licensed excerpts from Tears of Steel.",
+      "reference_ids": [
+        "clip-tears-of-steel-wait-what",
+        "clip-tears-of-steel-too-close",
+        "clip-tears-of-steel-system-surprise",
+        "clip-tears-of-steel-thinking-it-through",
+        "clip-tears-of-steel-not-buying-it"
+      ]
+    }
+  ]
+}

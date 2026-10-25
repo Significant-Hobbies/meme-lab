@@ -1,0 +1,363 @@
+{
+  "version": 2,
+  "sources": {
+    "bbb": {
+      "title": "Big Buck Bunny",
+      "url": "https://download.blender.org/demo/movies/BBB/bbb_sunflower_1080p_30fps_normal.mp4.zip",
+      "archive_sha256": "e320fef389ec749117d0c1583945039266a40f25483881c2ff0d33207e62b362",
+      "source_sha256": "ae51005850b0ff757fe60c3dd7a12d754d3cd2397d87d939b55235e457f97658",
+      "license_url": "https://creativecommons.org/licenses/by/3.0/",
+      "license_source_url": "https://peach.blender.org/about/",
+      "attribution": "Big Buck Bunny \u00b7 (c) copyright Blender Foundation \u00b7 www.bigbuckbunny.org \u00b7 creativecommons.org/licenses/by/3.0/ \u00b7 Excerpt; caption added; audio removed.",
+      "width": 1920,
+      "height": 1080,
+      "fps": 30,
+      "copyright": "(c) copyright Blender Foundation | www.bigbuckbunny.org",
+      "duration_seconds": 634.6,
+      "tags": [
+        "animation",
+        "Big Buck Bunny"
+      ],
+      "edition": "Sunflower render"
+    },
+    "caminandes-3": {
+      "url": "https://video.blender.org/object-storage/web_videos/23f3ef79-15dc-44c5-aa45-cf92e78a4509-1080.mp4",
+      "source_sha256": "5d57bf180186a1e2923d34824aae00f19d3ea658564e6e5ff36636f535375e66",
+      "width": 1920,
+      "height": 1080,
+      "fps": 24,
+      "duration_seconds": 150.14,
+      "title": "Caminandes: Llamigos",
+      "creator": "Blender Foundation",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "license_source_url": "https://studio.blender.org/projects/api/assets/2417/",
+      "copyright": "(CC) Blender Foundation | studio.blender.org",
+      "attribution": "Caminandes: Llamigos \u00b7 (CC) Blender Foundation | studio.blender.org \u00b7 creativecommons.org/licenses/by/4.0/ \u00b7 Excerpt; caption added; audio removed.",
+      "tags": [
+        "animation",
+        "Caminandes: Llamigos"
+      ],
+      "license_evidence": {
+        "url": "https://studio.blender.org/projects/api/assets/2417/",
+        "page_sha256": "d82d204373ec578356035427d6e012d611f483631b2f356fad907933994aa8ea",
+        "statement": "CC-BY",
+        "observed_on": "2026-10-24"
+      }
+    },
+    "coffee-run": {
+      "url": "https://video.blender.org/object-storage/web_videos/ff8fe61b-026f-4f07-b66b-2a790d6f6ab1-804.mp4",
+      "source_sha256": "ae9577a8dac9acea202df72f28999cdbd089fa5cbfbd9d8e9f038e85ce5f56f9",
+      "width": 1920,
+      "height": 804,
+      "fps": 24,
+      "duration_seconds": 184.669002,
+      "title": "Coffee Run",
+      "creator": "Blender Foundation",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "license_source_url": "https://studio.blender.org/projects/coffee-run/pages/licensing/",
+      "copyright": "(CC) Blender Foundation | studio.blender.org",
+      "attribution": "Coffee Run \u00b7 (CC) Blender Foundation | studio.blender.org \u00b7 creativecommons.org/licenses/by/4.0/ \u00b7 Excerpt; caption added; audio removed.",
+      "tags": [
+        "animation",
+        "Coffee Run"
+      ],
+      "license_evidence": {
+        "url": "https://studio.blender.org/projects/coffee-run/pages/licensing/",
+        "page_sha256": "825c5aa987e944009183a802ed3270712102c17a1c99b625ea428e978c4641cd",
+        "statement": "Creative Commons Attribution 4.0",
+        "observed_on": "2026-10-24"
+      }
+    },
+    "spring": {
+      "url": "https://video.blender.org/object-storage/web_videos/3d95fb3d-c866-42c8-9db1-fe82f48ccb95-804.mp4",
+      "source_sha256": "9d11691b30a9fd192205224e9b0b59f918f33043ae600a791c9c6c1909d42309",
+      "width": 1920,
+      "height": 804,
+      "fps": 24,
+      "duration_seconds": 464.167007,
+      "title": "Spring",
+      "creator": "Blender Foundation",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "license_source_url": "https://studio.blender.org/projects/spring/pages/about/",
+      "copyright": "(CC) Blender Foundation | studio.blender.org",
+      "attribution": "Spring \u00b7 (CC) Blender Foundation | studio.blender.org \u00b7 creativecommons.org/licenses/by/4.0/ \u00b7 Excerpt; caption added; audio removed.",
+      "tags": [
+        "animation",
+        "Spring"
+      ],
+      "license_evidence": {
+        "url": "https://studio.blender.org/projects/spring/pages/about/",
+        "page_sha256": "57f05d36963a6f831c27747e94f55be8c3f82546b78fe250348f33acd3669507",
+        "statement": "Creative Commons Attribution 4.0",
+        "observed_on": "2026-10-24"
+      }
+    },
+    "tears-of-steel": {
+      "url": "https://video.blender.org/object-storage/web_videos/8533ea43-4271-4a57-9694-e9d0b35e1aa1-800.mp4",
+      "source_sha256": "727f3af5a80ae9763426eb8ae9b5559b0a266cf5dc20b9442dd1973f90e26193",
+      "width": 1920,
+      "height": 800,
+      "fps": 24,
+      "duration_seconds": 734.215011,
+      "title": "Tears of Steel",
+      "creator": "Blender Foundation",
+      "license_url": "https://creativecommons.org/licenses/by/3.0/",
+      "license_source_url": "https://mango.blender.org/sharing/",
+      "copyright": "(CC) Blender Foundation | www.tearsofsteel.org",
+      "attribution": "Tears of Steel \u00b7 (CC) Blender Foundation | www.tearsofsteel.org \u00b7 creativecommons.org/licenses/by/3.0/ \u00b7 Excerpt; caption added; audio removed.",
+      "tags": [
+        "live action",
+        "Tears of Steel"
+      ],
+      "license_evidence": {
+        "url": "https://mango.blender.org/sharing/",
+        "page_sha256": "c3defc0521e16af0a3afb6a96d084517620adf6434038e6a3a2ba1cf50f86947",
+        "statement": "Creative Commons Attribution 3.0",
+        "observed_on": "2026-10-24"
+      }
+    }
+  },
+  "clips": [
+    {
+      "id": "clip-bbb-back-at-it",
+      "slug": "bbb-back-at-it",
+      "start_seconds": 57,
+      "duration_seconds": 5,
+      "source_id": "bbb"
+    },
+    {
+      "id": "clip-bbb-flowers",
+      "slug": "bbb-flowers",
+      "start_seconds": 68,
+      "duration_seconds": 6,
+      "source_id": "bbb"
+    },
+    {
+      "id": "clip-bbb-small-joy",
+      "slug": "bbb-small-joy",
+      "start_seconds": 82,
+      "duration_seconds": 6,
+      "source_id": "bbb"
+    },
+    {
+      "id": "clip-bbb-what-now",
+      "slug": "bbb-what-now",
+      "start_seconds": 132,
+      "duration_seconds": 4,
+      "source_id": "bbb"
+    },
+    {
+      "id": "clip-bbb-not-impressed",
+      "slug": "bbb-not-impressed",
+      "start_seconds": 161,
+      "duration_seconds": 3,
+      "source_id": "bbb"
+    },
+    {
+      "id": "clip-bbb-patience",
+      "slug": "bbb-patience",
+      "start_seconds": 193,
+      "duration_seconds": 2.5,
+      "source_id": "bbb"
+    },
+    {
+      "id": "clip-bbb-changed-things",
+      "slug": "bbb-changed-things",
+      "start_seconds": 223.7,
+      "duration_seconds": 3.3,
+      "source_id": "bbb"
+    },
+    {
+      "id": "clip-bbb-group-chat",
+      "slug": "bbb-group-chat",
+      "start_seconds": 328,
+      "duration_seconds": 5,
+      "source_id": "bbb"
+    },
+    {
+      "id": "clip-bbb-waiting",
+      "slug": "bbb-waiting",
+      "start_seconds": 373,
+      "duration_seconds": 4,
+      "source_id": "bbb"
+    },
+    {
+      "id": "clip-bbb-processing",
+      "slug": "bbb-processing",
+      "start_seconds": 389,
+      "duration_seconds": 4,
+      "source_id": "bbb"
+    },
+    {
+      "id": "clip-bbb-delayed-fall",
+      "slug": "bbb-delayed-fall",
+      "start_seconds": 437,
+      "duration_seconds": 5,
+      "source_id": "bbb"
+    },
+    {
+      "id": "clip-bbb-peace",
+      "slug": "bbb-peace",
+      "start_seconds": 475,
+      "duration_seconds": 5,
+      "source_id": "bbb"
+    },
+    {
+      "id": "clip-caminandes-3-careful-now",
+      "slug": "caminandes-3-careful-now",
+      "source_id": "caminandes-3",
+      "start_seconds": 10,
+      "duration_seconds": 4
+    },
+    {
+      "id": "clip-caminandes-3-immediate-regret",
+      "slug": "caminandes-3-immediate-regret",
+      "source_id": "caminandes-3",
+      "start_seconds": 15.5,
+      "duration_seconds": 4
+    },
+    {
+      "id": "clip-caminandes-3-suspicious",
+      "slug": "caminandes-3-suspicious",
+      "source_id": "caminandes-3",
+      "start_seconds": 22,
+      "duration_seconds": 4
+    },
+    {
+      "id": "clip-caminandes-3-cold-stare",
+      "slug": "caminandes-3-cold-stare",
+      "source_id": "caminandes-3",
+      "start_seconds": 40,
+      "duration_seconds": 2.8,
+      "poster_fraction": 0.1
+    },
+    {
+      "id": "clip-caminandes-3-last-snack",
+      "slug": "caminandes-3-last-snack",
+      "source_id": "caminandes-3",
+      "start_seconds": 50,
+      "duration_seconds": 4
+    },
+    {
+      "id": "clip-caminandes-3-big-plans",
+      "slug": "caminandes-3-big-plans",
+      "source_id": "caminandes-3",
+      "start_seconds": 73,
+      "duration_seconds": 5,
+      "poster_fraction": 0.1
+    },
+    {
+      "id": "clip-caminandes-3-already-gone",
+      "slug": "caminandes-3-already-gone",
+      "source_id": "caminandes-3",
+      "start_seconds": 88,
+      "duration_seconds": 5
+    },
+    {
+      "id": "clip-caminandes-3-deflated",
+      "slug": "caminandes-3-deflated",
+      "source_id": "caminandes-3",
+      "start_seconds": 104,
+      "duration_seconds": 5
+    },
+    {
+      "id": "clip-caminandes-3-sharing",
+      "slug": "caminandes-3-sharing",
+      "source_id": "caminandes-3",
+      "start_seconds": 125,
+      "duration_seconds": 5
+    },
+    {
+      "id": "clip-spring-small-delight",
+      "slug": "spring-small-delight",
+      "source_id": "spring",
+      "start_seconds": 52,
+      "duration_seconds": 3.8
+    },
+    {
+      "id": "clip-spring-not-so-sure",
+      "slug": "spring-not-so-sure",
+      "source_id": "spring",
+      "start_seconds": 63,
+      "duration_seconds": 5
+    },
+    {
+      "id": "clip-spring-heard-something",
+      "slug": "spring-heard-something",
+      "source_id": "spring",
+      "start_seconds": 134,
+      "duration_seconds": 5,
+      "poster_fraction": 0.1
+    },
+    {
+      "id": "clip-spring-little-light",
+      "slug": "spring-little-light",
+      "source_id": "spring",
+      "start_seconds": 230,
+      "duration_seconds": 5
+    },
+    {
+      "id": "clip-spring-keep-going",
+      "slug": "spring-keep-going",
+      "source_id": "spring",
+      "start_seconds": 292,
+      "duration_seconds": 3.8
+    },
+    {
+      "id": "clip-spring-made-it",
+      "slug": "spring-made-it",
+      "source_id": "spring",
+      "start_seconds": 390,
+      "duration_seconds": 4
+    },
+    {
+      "id": "clip-coffee-run-overcommitted",
+      "slug": "coffee-run-overcommitted",
+      "source_id": "coffee-run",
+      "start_seconds": 8,
+      "duration_seconds": 3.6
+    },
+    {
+      "id": "clip-coffee-run-finally-home",
+      "slug": "coffee-run-finally-home",
+      "source_id": "coffee-run",
+      "start_seconds": 154,
+      "duration_seconds": 6
+    },
+    {
+      "id": "clip-tears-of-steel-thinking-it-through",
+      "slug": "tears-of-steel-thinking-it-through",
+      "source_id": "tears-of-steel",
+      "start_seconds": 203,
+      "duration_seconds": 3.3
+    },
+    {
+      "id": "clip-tears-of-steel-not-buying-it",
+      "slug": "tears-of-steel-not-buying-it",
+      "source_id": "tears-of-steel",
+      "start_seconds": 213,
+      "duration_seconds": 2.5
+    },
+    {
+      "id": "clip-tears-of-steel-too-close",
+      "slug": "tears-of-steel-too-close",
+      "source_id": "tears-of-steel",
+      "start_seconds": 243,
+      "duration_seconds": 5
+    },
+    {
+      "id": "clip-tears-of-steel-wait-what",
+      "slug": "tears-of-steel-wait-what",
+      "source_id": "tears-of-steel",
+      "start_seconds": 324,
+      "duration_seconds": 3.5
+    },
+    {
+      "id": "clip-tears-of-steel-system-surprise",
+      "slug": "tears-of-steel-system-surprise",
+      "source_id": "tears-of-steel",
+      "start_seconds": 373.2,
+      "duration_seconds": 3
+    }
+  ]
+}

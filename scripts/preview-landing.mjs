@@ -7,7 +7,7 @@ import worker from '../worker/src/index.mjs';
 const port = Number(process.argv[2] || 4321);
 const original = process.argv.includes('--original');
 const publicDir = new URL('../worker/public/', import.meta.url);
-const types = { '.html': 'text/html', '.md': 'text/markdown', '.css': 'text/css', '.js': 'text/javascript', '.json': 'application/json', '.png': 'image/png', '.webp': 'image/webp', '.woff2': 'font/woff2', '.txt': 'text/plain' };
+const types = { '.html': 'text/html', '.md': 'text/markdown', '.css': 'text/css', '.js': 'text/javascript', '.json': 'application/json', '.png': 'image/png', '.mp4':'video/mp4', '.jpg': 'image/jpeg', '.webp': 'image/webp', '.woff2': 'font/woff2', '.txt': 'text/plain' };
 const assets = {
   async fetch(request) {
     let path = decodeURIComponent(new URL(request.url).pathname);

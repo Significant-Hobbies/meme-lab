@@ -28,3 +28,9 @@ test('semantic retrieval rejects invalid vectors and empty known results',async(
   await assert.rejects(semanticRetriever({catalogue,embed:async()=>[],query:async()=>[]})('hello'),/invalid vector/);
   await assert.rejects(semanticRetriever({catalogue,embed:async()=>[1],query:async()=>[{id:'unknown'}]})('hello'),/no known/);
 });
+
+ test('aliases resolve to one canonical choice and excluded assets never become candidates',async()=>{
+  const records=[{id:'canonical',catalogue_status:'active'},{id:'alias',canonical_id:'canonical',catalogue_status:'active'},{id:'wrong',catalogue_status:'excluded'},{id:'offline',catalogue_status:'unavailable'},{id:'other',catalogue_status:'active'}];
+  const retrieve=semanticRetriever({catalogue:records,embed:async()=>[1],query:async()=>[{id:'wrong'},{id:'alias'},{id:'canonical'},{id:'offline'},{id:'other'}]});
+  assert.deepEqual((await retrieve('something')).map(record=>record.id),['canonical','other']);
+ });

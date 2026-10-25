@@ -1,4 +1,5 @@
 import {MemeStudio} from './meme-studio.js';
+import {recommendationTrafficClass,reportRecommendationOutcome} from './recommendation-outcomes.js';
 
 const $=selector=>document.querySelector(selector);
 const form=$('#meme-form');
@@ -37,6 +38,13 @@ function media(candidate,className) {
     wrap.append(Object.assign(document.createElement('span'),{className:'media-fallback',textContent:'Preview unavailable'}));
     return wrap;
   }
+  if(candidate.mime_type?.startsWith('video/')&&candidate.id) {
+    const video=Object.assign(document.createElement('video'),{controls:true,muted:true,playsInline:true,preload:'metadata',poster:candidate.preview_url||'',src:'/api/clips/media/'+encodeURIComponent(candidate.id)+(candidate.media_revision?'?v='+candidate.media_revision:'')});
+    video.setAttribute('aria-label',`${displayText(candidate.name)} reaction clip`);
+    wrap.classList.add('video-reaction');
+    wrap.append(video,Object.assign(document.createElement('span'),{className:'media-kind',textContent:'CLIP'}));
+    return wrap;
+  }
   const image=document.createElement('img');
   image.alt=`Meme preview: ${displayText(candidate.name)}`;
   image.referrerPolicy='no-referrer';
@@ -46,10 +54,11 @@ function media(candidate,className) {
   image.src=mediaUrl;
   if(candidate.id) {
     const link=Object.assign(document.createElement('a'),{className:'media-link',href:`/memes/${encodeURIComponent(candidate.id)}`,'aria-label':`Open ${displayText(candidate.name)} meme details`});
+    link.addEventListener('click',()=>reportRecommendationOutcome('detail_open_requested',currentRecommendation,candidate));
     link.append(image);
     wrap.append(link);
   } else wrap.append(image);
-  if(candidate.media_type==='gif') wrap.append(Object.assign(document.createElement('span'),{className:'media-kind',textContent:'GIF'}));
+  if(candidate.media_type==='gif') wrap.append(Object.assign(document.createElement('span'),{className:'media-kind',textContent:'CLIP'}));
   return wrap;
 }
 
@@ -64,6 +73,7 @@ function renderBest(candidate) {
   const rank=Object.assign(document.createElement('span'),{className:`rank${lowConfidence?' low-confidence':''}`,textContent:`${lowConfidence?'LOW CONFIDENCE · ':''}${matchLabel} · ${fitText(candidate)}`});
   const title=document.createElement('h2');
   title.append(Object.assign(document.createElement('a'),{href:`/memes/${encodeURIComponent(candidate.id)}`,textContent:displayText(candidate.name)}));
+  title.firstChild.addEventListener('click',()=>reportRecommendationOutcome('detail_open_requested',currentRecommendation,candidate));
   const signals=Object.assign(document.createElement('p'),{className:'signal-note',textContent:candidate.signal_summary});
   const sourceText=candidate.license_url?'Open original · licensed source':candidate.media_status==='approved'?'Open approved source':'Open source preview · media rights not established';
   const source=document.createElement('p');
@@ -91,6 +101,7 @@ function renderAlternatives(candidates) {
     copy.className='alternative-copy';
     const title=document.createElement('h3');
     title.append(Object.assign(document.createElement('a'),{href:`/memes/${encodeURIComponent(candidate.id)}`,textContent:displayText(candidate.name)}));
+    title.firstChild.addEventListener('click',()=>reportRecommendationOutcome('detail_open_requested',currentRecommendation,candidate));
     copy.append(
       Object.assign(document.createElement('span'),{textContent:`${candidate.perspective&&candidate.perspective!=='best_match'?candidate.perspective_label.toUpperCase():`#${candidate.rank}`} · ${fitText(candidate)}`}),
       title,
@@ -105,8 +116,11 @@ function renderAlternatives(candidates) {
   }
 }
 
-function openStudio(candidate) {
+function openStudio(candidate,{intentional=true}={}) {
   selectedCandidate=candidate;
+  const recommendation=currentRecommendation;
+  if(intentional)reportRecommendationOutcome('candidate_selected',recommendation,candidate);
+  studio.onExportOutcome=outcome=>reportRecommendationOutcome(outcome,recommendation,candidate);
   renderBest(candidate);
   $('#feedback-status').textContent='';
   for(const button of document.querySelectorAll('[data-verdict]')) {button.disabled=false;button.removeAttribute('aria-pressed');}
@@ -130,16 +144,17 @@ async function findMeme() {
   const started=Date.now();
   let responseStatus=0;
   try {
-    const response=await fetch('/api/recommend',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({comment:value})});
+    const response=await fetch('/api/recommend',{method:'POST',headers:{'Content-Type':'application/json','X-Fleet-Traffic':recommendationTrafficClass(location.search)},body:JSON.stringify({comment:value})});
     responseStatus=response.status;
     const data=await response.json();
     if(version!==searchVersion)return;
     if(!response.ok) throw new Error(data.error||'Could not find a meme.');
-    if(data.degraded) window.appHealthLog?.('recommendation.degraded',{level:'warn',title:'Meme picker degraded',props:{route:'/api/recommend',duration_ms:Date.now()-started}});
+    if(data.degraded)reportRecommendationOutcome('degraded',data,null,{durationMs:Date.now()-started});
     if(data.decision==='none') {
       currentRecommendation=data;
       $('#no-match-reason').textContent=data.none_reason;
       showOnly('none');
+      reportRecommendationOutcome('shown',data,null);
       return;
     }
     currentRecommendation=data;
@@ -151,11 +166,12 @@ async function findMeme() {
     $('#feedback-status').textContent='';
     for(const button of document.querySelectorAll('[data-verdict]')) { button.disabled=false;button.removeAttribute('aria-pressed'); }
     showOnly('result');
-    if(data.candidates[0].media_type!=='gif')openStudio(data.candidates[0]);
+    reportRecommendationOutcome('shown',data,selectedCandidate);
+    if(data.candidates[0].media_type!=='gif')openStudio(data.candidates[0],{intentional:false});
     result.scrollIntoView({behavior:'smooth',block:'start'});
   } catch(error) {
     if(version!==searchVersion)return;
-    window.appHealthLog?.('recommendation.failed',{level:'error',title:'Meme picker failed',props:{route:'/api/recommend',status_code:responseStatus,duration_ms:Date.now()-started}});
+    window.appHealthLog?.('recommendation.failed',{level:'error',title:'Meme picker failed',props:{route:'/api/recommend',status_code:responseStatus,duration_ms:Date.now()-started,stage:'browser',traffic_class:recommendationTrafficClass(location.search)}});
     showOnly('form');
     status.textContent=error.message;
   } finally {
@@ -171,12 +187,14 @@ $('#try-again').addEventListener('click',()=>{studio.close();showOnly('form');co
 $('#edit-comment').addEventListener('click',()=>{studio.close();showOnly('form');comment.focus();window.scrollTo({top:0,behavior:'smooth'});});
 for(const button of document.querySelectorAll('[data-verdict]')) button.addEventListener('click',async()=>{
   if(!currentRecommendation?.request_id||!selectedCandidate) return;
+  const recommendation=currentRecommendation,candidate=selectedCandidate,verdict=button.dataset.verdict;
   for(const peer of document.querySelectorAll('[data-verdict]')) peer.disabled=true;
   $('#feedback-status').textContent='Saving…';
   try {
-    const response=await fetch('/api/feedback',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({request_id:currentRecommendation.request_id,verdict:button.dataset.verdict,candidate_id:selectedCandidate.id})});
+    const response=await fetch('/api/feedback',{method:'POST',headers:{'Content-Type':'application/json','X-Fleet-Traffic':recommendationTrafficClass(location.search)},body:JSON.stringify({request_id:recommendation.request_id,verdict,candidate_id:candidate.id})});
     const data=await response.json();
     if(!response.ok) throw new Error(data.error||'Could not save feedback.');
+    reportRecommendationOutcome('feedback_saved',recommendation,candidate,{verdict});
     button.setAttribute('aria-pressed','true');
     $('#feedback-status').textContent='Saved. Thank you.';
   } catch(error) {
