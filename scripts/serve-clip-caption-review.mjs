@@ -73,16 +73,16 @@ const server=createServer(async(req,res)=>{
     const reportSaved=await persist(next=>{
       if(url.pathname==='/vote'){
         if(next.rater.attested)throw Object.assign(Error('This review is already finished.'),{status:409});
-        if(!reviewableIds.has(body.case_id)||!['a','b','tie','neither'].includes(body.choice))throw Error('Choose A, B, tie or neither.');
+        if(!reviewableIds.has(body.case_id)||!['a','b','tie','neither'].includes(body.choice))throw Object.assign(Error('Choose A, B, tie or neither.'),{status:400});
         next.ratings=next.ratings.filter(vote=>vote.case_id!==body.case_id).concat({case_id:body.case_id,choice:body.choice,recorded_at:new Date().toISOString()});
       }else{
-        if(body.attested!==true||!completeData.length||!completeData.every(fixture=>next.ratings.some(vote=>vote.case_id===fixture.id)))throw Error('Review every pair and confirm these are your choices.');
+        if(body.attested!==true||!completeData.length||!completeData.every(fixture=>next.ratings.some(vote=>vote.case_id===fixture.id)))throw Object.assign(Error('Review every pair and confirm these are your choices.'),{status:400});
         next.rater={kind:raterKind,attested:true,attested_at:new Date().toISOString(),method:'Owner choices entered in the local blind review page.'};
       }
       return next;
     });
     return reply(res,200,{saved:review.ratings.length,finished:review.rater.attested,report_saved:reportSaved,description:secondary?'Same situation, audience and style, with different footage. Compare all three or five caption options. These are silent previews. Version names are hidden.':undefined});
-  }catch(error){return reply(res,error.status===409?409:400,{error:error.message});}
+  }catch(error){const status=[400,409].includes(error.status)?error.status:error instanceof SyntaxError?400:500;return reply(res,status,{error:status===500?'Could not complete the request. Try again.':error instanceof SyntaxError?'Invalid JSON.':error.message});}
 });
 server.listen(port,'127.0.0.1',()=>console.log(JSON.stringify({review_url:'http://127.0.0.1:'+port,blind_pairs:completeData.length,excluded_pairs:fixtures.length-completeData.length,human_votes:review.ratings.length,claim_ready:report().claim_ready})));
 for(const signal of ['SIGINT','SIGTERM'])process.on(signal,()=>server.close(()=>process.exit(0)));

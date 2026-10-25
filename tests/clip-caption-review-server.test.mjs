@@ -87,7 +87,7 @@ test('failed durable writes cannot publish votes or lock the review, and concurr
   const {send,port,run}=await startReview(t);const origin='http://127.0.0.1:'+port;
   const data=JSON.parse((await send()).text),temporary=resolve(run,'human-review.json.tmp');
   await mkdir(temporary);
-  assert.equal((await send('/vote',{method:'POST',origin,body:{case_id:data.cases[0].id,choice:'a'}})).status,400);
+  const failure=await send('/vote',{method:'POST',origin,body:{case_id:data.cases[0].id,choice:'a'}});assert.equal(failure.status,500);assert.deepEqual(JSON.parse(failure.text),{error:'Could not complete the request. Try again.'});
   assert.deepEqual(JSON.parse((await send()).text).ratings,[]);
   await assert.rejects(readFile(resolve(run,'human-review.json')),{code:'ENOENT'});
   await rmdir(temporary);
@@ -100,7 +100,7 @@ test('failed durable writes cannot publish votes or lock the review, and concurr
   assert.ok(responses.every(response=>response.status===200));
   const saved=await readFile(resolve(run,'human-review.json'),'utf8');assert.equal(JSON.parse(saved).ratings.length,29);
   await mkdir(temporary);
-  assert.equal((await send('/finish',{method:'POST',origin,body:{attested:true}})).status,400);
+  assert.equal((await send('/finish',{method:'POST',origin,body:{attested:true}})).status,500);
   assert.equal(JSON.parse((await send()).text).finished,false);
   assert.equal(await readFile(resolve(run,'human-review.json'),'utf8'),saved);
   await rmdir(temporary);
