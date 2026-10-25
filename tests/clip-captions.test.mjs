@@ -7,6 +7,8 @@ import {catalogue as currentCatalogue,clipLibrary as unifiedClips} from '../work
 import {clipSource,clipCaptions,clipMedia,validateClipCaptions,validateClipFrames} from '../worker/src/clip-captions.mjs';
 import {planComposition} from '../worker/src/meme-composition.mjs';
 import worker from '../worker/src/index.mjs';
+import {clipWriterOutput} from './fixtures/clip-writer-output.mjs';
+import {selectClipDrafts} from '../worker/src/clip-caption-writer.mjs';
 
 const clip=catalogue.find(record=>record.id==='gif-yrufixsnwfvcxaxpmx');
 const body={candidate_id:clip.id,comment:'The tests passed after I changed nothing and ran them again.',audience:'Developers',tone:'deadpan'};
@@ -14,7 +16,7 @@ const request=(data=body,extra={})=>new Request('https://example.test/api/clips/
 const output={decision:'captions',captions:['Changed nothing. Fixed everything.','The fix was running it again.','My contribution: the up arrow.']};
 const frameBytes=await readFile(new URL('./fixtures/public-ux/frame.jpg',import.meta.url));
 const frames=[.2,.7,1.2].map(at_seconds=>({at_seconds,data_url:'data:image/jpeg;base64,'+frameBytes.toString('base64')}));
-const answer=(value=output,extra={})=>Response.json({model:'served-model',choices:[{finish_reason:'stop',message:{content:JSON.stringify(value)}}],...extra});
+const answer=(value=clipWriterOutput(output.captions),extra={})=>Response.json({model:'served-model',choices:[{finish_reason:'stop',message:{content:JSON.stringify(value)}}],...extra});
 
 test('licensed hosted animations are registered identities and enforce MP4 delivery',async()=>{
   for(const item of unifiedClips.filter(record=>record.media_url.startsWith('/assets/clips/')))
@@ -41,7 +43,7 @@ test('clip generation sends one bounded, attributed automatic request with the s
   let calls=0;
   const response=await clipCaptions(request(),{FREE_AI:{fetch:async req=>{
     calls++;assert.equal(req.headers.get('x-gateway-project-id'),'meme-lab');const data=await req.json();
-    assert.equal(data.model,'auto');assert.equal(data.max_tokens,850);assert.equal(data.reasoning_effort,'low');assert.match(data.messages[0].content,/Caption style: deadpan/);assert.match(data.messages[0].content,/Developers/);assert.ok(data.messages[0].content.includes(JSON.stringify(currentCatalogue.find(record=>record.id===clip.id).name)));assert.equal(data.messages.length,1);return answer();
+    assert.equal(data.model,'auto');assert.equal(data.max_tokens,1200);assert.equal(data.reasoning_effort,'low');assert.match(data.messages[0].content,/Caption style: deadpan/);assert.match(data.messages[1].content,/Developers/);assert.ok(data.messages[1].content.includes(JSON.stringify(currentCatalogue.find(record=>record.id===clip.id).name)));assert.equal(data.messages.length,2);assert.equal(data.messages[0].role,'system');return answer();
   }}});
   assert.equal(calls,1);assert.equal(response.status,200);assert.deepEqual((await response.json()).captions,output.captions);
 });
@@ -81,8 +83,8 @@ test('visual captioning sends three bounded chronological frames with automatic 
   assert.equal(validateClipFrames(frames).length,3);
   for(const invalid of [[],[frames[0]],frames.map(frame=>({...frame,at_seconds:1})),frames.map(frame=>({...frame,data_url:'https://private.invalid/'})),frames.map(frame=>({...frame,data_url:'data:image/jpeg;base64,/9j/AA=='})),frames.map(frame=>({...frame,at_seconds:31}))])assert.throws(()=>validateClipFrames(invalid));
   const response=await clipCaptions(request({...body,frames}),{FREE_AI:{fetch:async req=>{
-    const data=await req.json();assert.equal(data.model,'auto');const content=data.messages[0].content;
-    assert.equal(content.filter(part=>part.type==='image_url').length,3);assert.match(content[0].text,/Inspect the three chronological frames/);assert.match(content[0].text,/emotionally incompatible/);assert.ok(content.every(part=>part.type==='text'||part.image_url.url.startsWith('data:image/jpeg;base64,')));return answer();
+    const data=await req.json();assert.equal(data.model,'auto');const content=data.messages[1].content;
+    assert.equal(content.filter(part=>part.type==='image_url').length,3);assert.match(data.messages[0].content,/Inspect the three chronological frames/);assert.match(data.messages[0].content,/emotionally incompatible/);assert.ok(content.every(part=>part.type==='text'||part.image_url.url.startsWith('data:image/jpeg;base64,')));return answer();
   }}});
   assert.equal(response.status,200);assert.equal((await response.json()).grounding,'visual');
   assert.equal(validateClipCaptions({decision:'reference',captions:[]}).decision,'reference');
@@ -116,4 +118,29 @@ test('video streaming enforces its byte limit without buffering the full clip',a
 
 test('reference pages link directly into gallery creation and CSP admits only local/blob video',async()=>{
   for(const id of [clip.id,'drake-preference']){const response=await worker.fetch(new Request('https://example.test/memes/'+id),{});const html=await response.text();assert.ok(html.includes('/collection?meme='+id));assert.match(response.headers.get('Content-Security-Policy'),/media-src 'self' blob:/);}
+});
+
+test('draft selection returns only three ranked captions and rejects invalid provider selections',()=>{
+  const value=clipWriterOutput(output.captions);value.selected=[2,0,1];
+  assert.deepEqual(selectClipDrafts(value),{decision:'captions',captions:[output.captions[2],output.captions[0],output.captions[1]]});
+  for(const selected of [[0,0,1],[0,1,6],[0,1,1.5],[0,1]])assert.throws(()=>selectClipDrafts({...value,selected}));
+  assert.throws(()=>selectClipDrafts({...value,drafts:value.drafts.slice(0,3)}));
+  assert.throws(()=>selectClipDrafts({...value,decision:'none'}));
+  assert.deepEqual(selectClipDrafts({decision:'reference',drafts:[],selected:[]}),{decision:'reference',captions:[]});
+});
+
+test('the draft protocol preserves public caption and abstention responses without leaking drafts',async()=>{
+  const selected=clipWriterOutput(output.captions);selected.selected=[2,0,1];
+  for(const value of [selected,{decision:'none',drafts:[],selected:[]},{decision:'reference',drafts:[],selected:[]},{decision:'none'},{decision:'reference',captions:[]}]){
+    const response=await clipCaptions(request(),{FREE_AI:{fetch:async()=>answer(value)}});
+    assert.equal(response.status,200);const result=await response.json();
+    assert.equal(result.decision,value.decision);assert.equal(result.candidate_id,clip.id);assert.equal(result.grounding,'catalogue');
+    assert.deepEqual(result.captions,value.decision==='captions'?[output.captions[2],output.captions[0],output.captions[1]]:[]);
+    for(const field of ['drafts','selected','reaction','tension'])assert.equal(Object.hasOwn(result,field),false);
+    if(value.decision!=='captions')assert.ok(result.message);
+  }
+  for(const value of [{...selected,selected:[0,0,1]},{...selected,drafts:selected.drafts.slice(0,5)},{...selected,reaction:''},{...selected,decision:'none'},{decision:'reference',captions:['contradictory']},{decision:'none',drafts:'invalid'},output]){
+    let calls=0;const response=await clipCaptions(request(),{FREE_AI:{fetch:async()=>{calls++;return answer(value);}}});
+    assert.equal(calls,1);assert.equal(response.status,503);assert.deepEqual(Object.keys(await response.json()),['error']);
+  }
 });
