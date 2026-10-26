@@ -128,7 +128,7 @@ form.addEventListener("submit",async event=>{
   finally{if(version===creatorVersion){generating=false;generate.disabled=clipStudio.exporting;generate.textContent="Generate new captions →";}}
 });
 
-search.addEventListener("input",()=>{if(!loading&&failure.hidden){if(collection==="selected"&&search.value.trim())collection="all";filterCollection();}});
+search.addEventListener("input",()=>{if(collection==="selected"&&search.value.trim())collection="all";filterCollection();});
 for(const button of document.querySelectorAll("[data-format]"))button.addEventListener("click",()=>{format=button.dataset.format;filterCollection();});
 for(const button of document.querySelectorAll("[data-mood]"))button.addEventListener("click",()=>{mood=mood===button.dataset.mood?"":button.dataset.mood;filterCollection();});
 $("#collection-sort").addEventListener("change",()=>filterCollection());

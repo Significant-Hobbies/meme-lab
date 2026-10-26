@@ -88,12 +88,14 @@ try:
                 else:
                     route.continue_()
             context.route('**/*', transport)
-            page.goto(base+'/collection?collection=all')
+            page.goto(base+'/collection')
             page.wait_for_function('() => document.querySelector("#collection-grid").getAttribute("aria-busy")==="true"')
             assert page.locator('.collection-skeleton').count() == 24
             assert page.locator('#collection-error').is_hidden()
             assert page.locator('#collection-empty').is_hidden()
             page.locator('#catalogue-search').fill('waiting')
+            page.wait_for_url(lambda url: 'collection=all' in url and 'q=waiting' in url, timeout=3000)
+            assert 'collection=all' in page.url and 'q=waiting' in page.url, page.url
             page.locator('[data-mood="waiting"]').click()
             page.locator('[data-format="image"]').click()
             page.locator('#collection-sort').select_option('name')
@@ -110,6 +112,9 @@ try:
             page.locator('#collection-retry').wait_for(state='visible')
             assert page.locator('#collection-empty').is_hidden()
             assert page.locator('#collection-grid').get_attribute('aria-busy') == 'false'
+            page.locator('#catalogue-search').fill('synthetic waiting')
+            page.wait_for_url(lambda url: 'q=synthetic+waiting' in url, timeout=3000)
+            assert 'q=synthetic+waiting' in page.url, page.url
             page.locator('#collection-sort').select_option('featured')
             assert page.locator('#collection-error').is_visible()
             assert page.locator('#collection-empty').is_hidden()
@@ -118,7 +123,7 @@ try:
             page.locator('#collection-retry').click()
             page.wait_for_function('() => document.querySelector("#collection-grid").getAttribute("aria-busy")==="true"')
             assert page.locator('#collection-retry').is_disabled()
-            assert page.locator('#catalogue-search').input_value() == 'waiting'
+            assert page.locator('#catalogue-search').input_value() == 'synthetic waiting'
             page.wait_for_timeout(600)
             page.evaluate('window.auditRelease=performance.now();window.auditShifts=[]')
             pending.pop().fulfill(json=model)
