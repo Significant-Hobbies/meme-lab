@@ -62,8 +62,10 @@ function render(){
 }
 
 function filterCollection(reset=true){
+  if(reset)page=1;
+  if(loading||!failure.hidden){controls();updateUrl();return;}
   filtered=browseCatalogue(catalogue,{query:search.value,format,reaction:moods[mood]||"",context,intensity,resolution,collection,collections:shelves,sort:$("#collection-sort").value});
-  if(reset)page=1;render();
+  render();
 }
 
 function showLoading(){
@@ -90,7 +92,7 @@ async function loadCollection(){
     const shelfSelect=$("#collection-shelf");shelfSelect.replaceChildren();for(const shelf of [{id:"selected",title:"Selected reactions"},{id:"all",title:"Every reaction"},...shelves])shelfSelect.append(Object.assign(document.createElement("option"),{value:shelf.id,textContent:shelf.title}));
     if(!["all","selected",...shelves.map(shelf=>shelf.id)].includes(collection))collection="all";
     for(const [selector,values,placeholder] of [["#collection-context",taxonomy.contexts,"Any situation"],["#collection-intensity",Object.fromEntries(Object.entries(taxonomy.intensity).filter(([id])=>id!=="unknown")),"Any energy"]]){const select=$(selector);select.replaceChildren(Object.assign(document.createElement("option"),{value:"",textContent:placeholder}));for(const [id,label] of Object.entries(values))select.append(Object.assign(document.createElement("option"),{value:id,textContent:label}));}
-    $(".beta").textContent=catalogue.length.toLocaleString()+" REACTIONS";filterCollection(false);
+    $(".beta").textContent=catalogue.length.toLocaleString()+" REACTIONS";loading=false;filterCollection(false);
     const id=new URL(location.href).searchParams.get("meme");if(id){const meme=catalogue.find(item=>item.id===id||item.alias_ids?.includes(id));if(meme)openCreator(meme);}
   }catch(error){grid.replaceChildren();count.textContent="Collection unavailable";failureMessage.textContent=error.message;failure.hidden=false;empty.hidden=true;pagination.hidden=true;}
   finally{loading=false;retry.disabled=false;grid.setAttribute("aria-busy","false");}
@@ -126,7 +128,7 @@ form.addEventListener("submit",async event=>{
   finally{if(version===creatorVersion){generating=false;generate.disabled=clipStudio.exporting;generate.textContent="Generate new captions →";}}
 });
 
-search.addEventListener("input",()=>{if(!loading&&failure.hidden){if(collection==="selected"&&search.value.trim())collection="all";filterCollection();}});
+search.addEventListener("input",()=>{if(collection==="selected"&&search.value.trim())collection="all";filterCollection();});
 for(const button of document.querySelectorAll("[data-format]"))button.addEventListener("click",()=>{format=button.dataset.format;filterCollection();});
 for(const button of document.querySelectorAll("[data-mood]"))button.addEventListener("click",()=>{mood=mood===button.dataset.mood?"":button.dataset.mood;filterCollection();});
 $("#collection-sort").addEventListener("change",()=>filterCollection());
