@@ -45,3 +45,35 @@ test('exports are bounded, disclose coverage, and allow six crawlers only on pub
   const robots=await(await get('/robots.txt')).text();for(const bot of ['GPTBot','ClaudeBot','Google-Extended','Applebot-Extended','CCBot','Bytespider'])assert.ok(robots.includes('User-agent: '+bot+'\nAllow: /\nDisallow: /api/'));
   assert.match(await(await get('/ai.txt')).text(),/training: allowed on public pages only/);
 });
+
+test('unknown negotiated meme pages return a Markdown 404 and encoded known paths redirect',async()=>{
+  for(const method of ['GET','HEAD']){
+    const response=await get('/memes/does-not-exist',{method,headers:{Accept:'text/markdown'}});
+    assert.equal(response.status,404);assert.match(response.headers.get('content-type'),/text\/markdown/);
+    assert.equal(response.headers.get('cache-control'),'no-store');assert.match(response.headers.get('x-robots-tag'),/noindex/);
+    if(method==='HEAD')assert.equal(await response.text(),'');
+  }
+  for(const suffix of ['','.md']){
+    const response=await get('/memes/%61bsolute-cinema'+suffix,{headers:{Accept:'text/markdown'}});
+    assert.equal(response.status,301);assert.equal(response.headers.get('location'),origin+'/memes/absolute-cinema'+suffix);
+  }
+});
+test('unavailable collection sources return no-store503 for all Markdown forms',async()=>{
+  for(const asset of [()=>new Response('missing',{status:404}),()=>new Response('invalid JSON'),()=>{throw Error('offline');}]){
+    for(const path of ['/collection.md','/collection','/api/md/collection','/llms-full.txt']){
+      for(const method of ['GET','HEAD']){
+        const response=await worker.fetch(new Request(origin+path,{method,headers:{Accept:'text/markdown'}}),{ASSETS:{fetch:asset}},{});
+        assert.equal(response.status,503);assert.equal(response.headers.get('cache-control'),'no-store');
+        assert.match(response.headers.get('content-type'),/text\/markdown/);assert.match(response.headers.get('x-robots-tag'),/noindex/);
+        if(method==='HEAD')assert.equal(await response.text(),'');
+      }
+    }
+  }
+});
+test('partial HTML remains byte-identical with its range metadata',async()=>{
+  const body='<head><title>Partial</title></head>';
+  const range=`bytes 0-${body.length-1}/500`;
+  const response=await worker.fetch(new Request(origin+'/privacy',{headers:{Range:`bytes=0-${body.length-1}`}}),{ASSETS:{fetch:()=>new Response(body,{status:206,headers:{'Content-Type':'text/html','Content-Range':range,'Content-Length':String(body.length)}})}},{});
+  assert.equal(response.status,206);assert.equal(await response.text(),body);
+  assert.equal(response.headers.get('content-range'),range);assert.equal(response.headers.get('content-length'),String(body.length));
+});

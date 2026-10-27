@@ -1,8 +1,9 @@
+// Public copy is generated from authored HTML; legacy static Markdown assets are not serving sources.
 import copy from './public-copy.generated.json' with {type:'json'};
 import {createAgentSurfaceManifest} from './agent-surfaces/manifest.mjs';
 import {createAgentSurfaceHandler,discoveryLinkHeader} from './agent-surfaces/handler.mjs';
 import {absoluteMarkdownLinks} from './agent-surfaces/format.mjs';
-import {markdownPathFor} from './agent-surfaces/http.mjs';
+import {markdownPathFor,markdownResponse} from './agent-surfaces/http.mjs';
 import {catalogueViews,browseCatalogue} from '../public/catalogue-model.js';
 import {creationMediaUrl} from '../public/meme-media.js';
 import {collectionPageSize,collectionDescription,collectionAction,collectionDetail} from '../public/collection-copy.js';
@@ -31,12 +32,18 @@ export function createPublicReadability(records,renderRecord){
     return body==null?null:absoluteMarkdownLinks(body,origin+path);
   }
   return {routes,manifest,loadMarkdown,
-    handle(request,assets){return createAgentSurfaceHandler({manifest,listMarkdownRoutes:()=>routes,loadMarkdown:path=>loadMarkdown(path,assets)})(request);},
+    async handle(request,assets){
+      try{return await createAgentSurfaceHandler({manifest,listMarkdownRoutes:()=>routes,loadMarkdown:path=>loadMarkdown(path,assets)})(request);}
+      catch{
+        const response=markdownResponse('# Markdown temporarily unavailable\n',request,{'Cache-Control':'no-store','CDN-Cache-Control':'no-store','Cloudflare-CDN-Cache-Control':'no-store'});
+        return new Response(response.body,{status:503,headers:response.headers});
+      }
+    },
     sitemap(){return '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'+routes.map(route=>`<url><loc>${escape(route.url)}</loc></url>`).join('\n')+'\n</urlset>\n';},
     robots(){return '# Keep in sync with ai.txt and llms.txt.\n'+['*','GPTBot','ClaudeBot','Google-Extended','Applebot-Extended','CCBot','Bytespider'].map(bot=>`User-agent: ${bot}\nAllow: /\nDisallow: /api/\nAllow: /api/md/\nAllow: /api/ai\nDisallow: /studio\n`).join('\n')+`\nSitemap: ${origin}/sitemap.xml\n`;},
     async advertise(response,path){
       const route=routes.find(route=>route.path===path);
-      if(!route||!response.ok||!response.headers.get('content-type')?.includes('text/html'))return response;
+      if(!route||response.status!==200||!response.headers.get('content-type')?.includes('text/html'))return response;
       let html=await response.text();
       html=html.replace(/<meta\b[^>]*name=["']ai-summary["'][^>]*>/gi,'').replace(/<link\b[^>]*type=["']text\/markdown["'][^>]*>/gi,'');
       const schema=path==='/'?`<script type="application/ld+json">${JSON.stringify({'@context':'https://schema.org','@type':'WebSite',name:'Meme Lab',url:origin}).replaceAll('<','\\u003c')}</script>`:'';

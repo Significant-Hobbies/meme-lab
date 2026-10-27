@@ -1,5 +1,5 @@
 import {createPublicReadability,staticPaths} from './public-readability.mjs';
-import {wantsMarkdown} from './agent-surfaces/http.mjs';
+import {wantsMarkdown,markdownResponse} from './agent-surfaces/http.mjs';
 import {catalogue,clipLibrary,retrievalCatalogue} from './catalogue.mjs';
 import {createGatewayClassifierFetch,hasMultiplePerspectives,humourBelongs,needsSeriousHandling,rankCandidates,rankCandidatesByPerspective,requiresFactualAnswer} from './classification.mjs';
 import {withClassifierDeadline} from './classifier-deadline.mjs';
@@ -210,7 +210,8 @@ function memeMarkdown(record) {
 
 function memeNotFound(request,asMarkdown) {
   if(asMarkdown||wantsMarkdown(request)) {
-    return textResponse('# Not found\n\nThat meme is not in the collection.\n',{status:404,contentType:'text/markdown; charset=utf-8',cacheControl:'no-store'});
+    const response=markdownResponse('# Not found\n\nThat meme is not in the collection.\n',request,{'Cache-Control':'no-store'});
+    return new Response(response.body,{status:404,headers:secureHeaders(response.headers)});
   }
   return pageResponse(notFoundPage(),{status:404,indexable:false,cacheControl:'no-store'});
 }
@@ -469,11 +470,12 @@ export default {
       try { id=decodeURIComponent(slug); }
       catch { return forHead(request,memeNotFound(request,markdownPath)); }
       const record=catalogueById.get(id);
-      if(!record||record.catalogue_status!=='active') return markdownPath||wantsMarkdown(request)?publicReadability.handle(request,env.ASSETS):forHead(request,memeNotFound(request,false));
+      if(!record||record.catalogue_status!=='active') return forHead(request,memeNotFound(request,markdownPath));
       if(record.canonical_id&&record.canonical_id!==id) return forHead(request,Response.redirect(`${SITE_ORIGIN}/memes/${encodeURIComponent(record.canonical_id)}${markdownPath?'.md':''}`,308));
-      if(markdownPath||wantsMarkdown(request)||request.method==='OPTIONS') return publicReadability.handle(request,env.ASSETS);
       const canonicalPath=publicMemePath(record);
-      if(url.pathname!==canonicalPath) return forHead(request,Response.redirect(`${SITE_ORIGIN}${canonicalPath}`,301));
+      const representationPath=canonicalPath+(markdownPath?'.md':'');
+      if(url.pathname!==representationPath) return forHead(request,Response.redirect(`${SITE_ORIGIN}${representationPath}`,301));
+      if(markdownPath||wantsMarkdown(request)||request.method==='OPTIONS') return (await publicReadability.handle(request,env.ASSETS))??forHead(request,memeNotFound(request,true));
       return forHead(request,await publicReadability.advertise(pageResponse(memePage(record)),canonicalPath));
     }
     if(url.pathname==='/api/health'&&isRead) return withEndpointMeasurement(request,env,ctx,'/api/health',()=>forHead(request,json({status:'ok',catalogue:catalogue.length})));
