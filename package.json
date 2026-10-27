@@ -8,7 +8,7 @@
     "node": ">=22"
   },
   "scripts": {
-    "build:landing": "pnpm --dir landing build && node scripts/copy-landing.mjs",
+    "build:landing": "pnpm --dir landing build && node scripts/copy-landing.mjs && pnpm run build:readability",
     "preview:landing": "node scripts/preview-landing.mjs",
     "verify:landing": "node scripts/verify-landing.mjs",
     "build:anna": "node scripts/build-anna.mjs",
@@ -51,7 +51,7 @@
     "deploy:public": "pnpm run build:public && wrangler deploy --tag $(git rev-parse HEAD)",
     "types:worker": "wrangler types worker-configuration.d.ts",
     "test": "node --test tests/*.test.mjs",
-    "check": "node scripts/check-package.mjs && node scripts/check-expansion.mjs && node scripts/build-catalogue-model.mjs --check",
+    "check": "node scripts/check-package.mjs && node scripts/check-expansion.mjs && node scripts/build-catalogue-model.mjs --check && node scripts/build-public-readability.mjs --check",
     "experiment:holdout": "node scripts/run-holdout.mjs",
     "experiment:review": "node scripts/review-holdout.mjs",
     "experiment:summarize": "node scripts/summarize-holdout.mjs",
@@ -76,7 +76,8 @@
     "eval:fit-score:finalists": "FIT_SCORE_RATINGS=fit_score_blind_ratings_v2.jsonl FIT_SCORE_REPORT=fit-score-corrected-finalists-v1 FIT_SCORE_ARMS=raw_30way_jev_fast,ordinal_jev_fast_compact,ordinal_jev_fast_full30,ordinal_jev_fast_full30_compact,ordinal_jev_fast_full30_specific node scripts/run-fit-score-eval.mjs",
     "eval:canonical-gaps": "node scripts/run-live-gap-diagnostic.mjs",
     "build:clips": "node scripts/build-clip-library.mjs",
-    "build:catalogue": "node scripts/build-catalogue-model.mjs"
+    "build:catalogue": "node scripts/build-catalogue-model.mjs",
+    "build:readability": "node scripts/build-public-readability.mjs"
   },
   "devDependencies": {
     "@huggingface/transformers": "^4.3.0",

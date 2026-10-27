@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import worker from '../worker/src/index.mjs';
-import {catalogue as runtimeCatalogue,retrievalCatalogue} from '../worker/src/catalogue.mjs';
+import {catalogue as runtimeCatalogue,clipLibrary,retrievalCatalogue} from '../worker/src/catalogue.mjs';
 import {createGatewayClassifierFetch,FIT_LABELS,hasMultiplePerspectives,humourBelongs,needsSeriousHandling,PERSPECTIVES,rankCandidates,rankCandidatesByPerspective,requiresFactualAnswer} from '../worker/src/classification.mjs';
 import {MINIMUM_VISIBLE_FIT,MINIMUM_VISIBLE_PERSPECTIVE_FIT,validateSelection,normalizeSelection,normalizeRankedSelection,validateRankedSelection,presentSelection,selectionFromRanking} from '../worker/src/recommendation.mjs';
 import {CORE_RESERVE,EMBEDDING_MODEL,mergeWithReserve,retrieveCandidates} from '../worker/src/retrieval.mjs';
@@ -724,7 +724,7 @@ test('SEO routes expose robots, the full sitemap, and crawlable meme details',as
   const sitemap=await worker.fetch(new Request('https://example.test/sitemap.xml'),env);
   assert.equal(sitemap.headers.get('content-type'),'application/xml; charset=utf-8');
   const xml=await sitemap.text();
-  assert.equal((xml.match(/<loc>/g)??[]).length,3+retrievalCatalogue.filter(record=>record.id===record.canonical_id&&record.catalogue_status==='active').length);
+  assert.equal((xml.match(/<loc>/g)??[]).length,5+[...new Map([...runtimeCatalogue,...clipLibrary].map(record=>[record.id,record])).values()].filter(record=>(!record.canonical_id||record.id===record.canonical_id)&&record.catalogue_status==='active').length);
   assert.match(xml,/\/memes\/absolute-cinema<\/loc>/);
 
   const detail=await worker.fetch(new Request('https://example.test/memes/absolute-cinema'),env);

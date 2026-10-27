@@ -45,9 +45,11 @@ test('built home retains the composer contract and Worker markdown negotiation',
   assert.equal(await home.text(), html);
   assert.match(home.headers.get('content-security-policy'), /script-src 'self'/);
   const alternate = await worker.fetch(new Request('https://memes.significanthobbies.com/', { headers: { Accept: 'text/markdown' } }), env);
-  assert.equal(await alternate.text(), markdown);
+  const alternateText=await alternate.text();
+  assert.match(alternateText,/find the meme that fits/);
+  assert.match(alternateText,/https:\/\/memes\.significanthobbies\.com\/privacy/);
   assert.equal(alternate.headers.get('content-type'), 'text/markdown; charset=utf-8');
-  assert.deepEqual(paths, ['/', '/index.md']);
+  assert.deepEqual(paths, ['/']);
 });
 
 function mountEngagement(origin, studioFooter = false, compactFooter = false) {
