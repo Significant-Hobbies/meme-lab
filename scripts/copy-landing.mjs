@@ -50,6 +50,11 @@ for (const name of names) {
     const cssName = `index.${hash}.css`;
     await writeFile(new URL(cssName, assets), css);
     html = html.replaceAll(`/_landing/${name}`, `/_landing/${cssName}`);
+    // Keep the exact transformed rules and cascade position without a blocking fetch.
+    html = html.replace(
+      `<link rel="stylesheet" href="/_landing/${cssName}">`,
+      () => `<style>${css}</style>`,
+    );
     for (const [, reference] of css.matchAll(/url\(["']?([^"')]+)["']?\)/g)) {
       if (reference.startsWith('/_landing/')) names.add(reference.slice('/_landing/'.length));
     }
