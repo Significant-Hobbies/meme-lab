@@ -25,6 +25,19 @@ export function blendFace(original,generated,width,height,region) {
   }
   return output;
 }
+export function validateFaceEdit(original,generated,width,height,region) {
+  let samples=0,blank=0,unchanged=0;
+  const left=Math.floor(region.x*width),right=Math.ceil((region.x+region.width)*width);
+  const top=Math.floor(region.y*height),bottom=Math.ceil((region.y+region.height)*height);
+  for(let y=top;y<bottom;y++)for(let x=left;x<right;x++){
+    if(faceAlpha(x,y,width,height,region)<1)continue;
+    const offset=(y*width+x)*4;if(original[offset+3]===0)continue;
+    samples++;
+    if(generated[offset+3]===0||[181,154,135].every((value,c)=>Math.abs(generated[offset+c]-value)<=6))blank++;
+    if([0,1,2,3].every(c=>Math.abs(generated[offset+c]-original[offset+c])<=2))unchanged++;
+  }
+  if(!samples||blank/samples>.95||unchanged/samples>.99)throw Object.assign(new Error('The model did not fill the selected face.'),{code:'face_not_replaced'});
+}
 async function assertStatic(blob) {
   const bytes=new Uint8Array(await blob.arrayBuffer());
   const ascii=(offset,length)=>String.fromCharCode(...bytes.slice(offset,offset+length));
@@ -128,6 +141,7 @@ export async function composeMeme({original,generatedUrl,region,mode='format'}) 
     originalBitmap=await createImageBitmap(original.blob);
     ctx.clearRect(0,0,canvas.width,canvas.height);
     ctx.drawImage(originalBitmap,0,0);const base=ctx.getImageData(0,0,canvas.width,canvas.height);
+    validateFaceEdit(base.data,edited.data,canvas.width,canvas.height,region);
     ctx.putImageData(new ImageData(blendFace(base.data,edited.data,canvas.width,canvas.height,region),canvas.width,canvas.height),0,0);
     return await canvasBlob(canvas);
   } finally {clearTimeout(timer);originalBitmap?.close();generatedBitmap?.close();}

@@ -48,7 +48,22 @@ export async function verifyCanvas() {
     const region={x:.25,y:.2,width:.4,height:.4};
     const transparent=document.createElement('canvas');transparent.width=transparent.height=200;
     const ctx=transparent.getContext('2d');ctx.fillStyle='#bb6644';ctx.fillRect(20,20,160,160);
+    ctx.clearRect(85,65,10,20);
     const source=await png(transparent),base=await prepareImage(source,{role:'template',region});
+    const solid=document.createElement('canvas');solid.width=solid.height=200;
+    const solidCtx=solid.getContext('2d');solidCtx.fillStyle='#336699';solidCtx.fillRect(0,0,200,200);
+    const solidBlob=await png(solid);
+    globalThis.fetch=async()=>new Response(solidBlob,{headers:{'content-type':'image/png'}});
+    const composed=await pixels(await composeMeme({original:base,generatedUrl:'https://canvas-fixture.example/output.png',region}));
+    const original=await pixels(base.blob);
+    check(composed.every((value,i)=>i%4!==3||value===original[i]),'Template transparency changed');
+    results.push({templateAlpha:'preserved'});
+    for(const [name,response]of [['blank',base.referenceBlob],['unchanged',(await prepareImage(source,{role:'template'})).referenceBlob]]){
+      globalThis.fetch=async()=>new Response(response,{headers:{'content-type':'image/png'}});
+      let error;try{await composeMeme({original:base,generatedUrl:'https://canvas-fixture.example/output.png',region});}catch(e){error=e;}
+      check(error?.code==='face_not_replaced',`${name} face was accepted`);
+      results.push({[name]:'rejected'});
+    }
     const rejected=document.createElement('canvas');rejected.width=300;rejected.height=200;
     const response=await png(rejected);
     globalThis.fetch=async()=>new Response(response,{headers:{'content-type':'image/png'}});

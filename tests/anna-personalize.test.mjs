@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 import {PersonalMemeJob,validateImageFile,validateRegion,remoteImageUrl,cropRegion,shareMeme} from '../anna/personalize.mjs';
-import {blendFace,faceAlpha,faceCrop,validateDimensions,squarePlacement} from '../anna/image-tools.mjs';
+import {blendFace,faceAlpha,faceCrop,validateDimensions,squarePlacement,validateFaceEdit} from '../anna/image-tools.mjs';
 const blob=()=>new Blob([new Uint8Array(40)],{type:'image/png'});
 const region={x:.2,y:.2,width:.3,height:.4};
 function fixture() {
@@ -113,6 +113,14 @@ test('ellipse composition preserves every pixel outside face, including captions
     else if(result[offset]!==original[offset])changed++;
   }
   assert.ok(changed>300);assert.deepEqual([...original.slice(0,4)],[15,30,70,255]);
+});
+test('unchanged faces and unfilled reference ovals cannot be reported as a completed edit',()=>{
+  const width=100,height=80,original=new Uint8ClampedArray(width*height*4),generated=new Uint8ClampedArray(original.length);
+  for(let i=0;i<original.length;i+=4){original.set([75,90,110,255],i);generated.set([181,154,135,255],i);}
+  assert.throws(()=>validateFaceEdit(original,generated,width,height,region),{code:'face_not_replaced'});
+  assert.throws(()=>validateFaceEdit(original,original,width,height,region),{code:'face_not_replaced'});
+  for(let i=0;i<generated.length;i+=4)generated.set([240,120,10,255],i);
+  assert.doesNotThrow(()=>validateFaceEdit(original,generated,width,height,region));
 });
 test('square face crop maps landscape/portrait targets and stays inside original image at edges',()=>{
   for(const [width,height,r] of [[1200,800,region],[768,960,{x:.5,y:.22,width:.25,height:.23}],[100,80,{x:0,y:0,width:.1,height:.1}]]){

@@ -42,6 +42,7 @@ export function generationSize(width,height,{mode='format'}={}) {
 }
 export function imageError(error) {
   const code=String(error?.code||'');
+  if(code==='face_not_replaced')return 'The image model left the selected face unchanged or empty. Try a clearer face photo or adjust the face area before generating again. No automatic retry was made.';
   if(code==='image_delivery_failed')return 'Anna created an image, but the app could not load it. Reopen Meme Lab inside Anna and try again; the completed generation may have used quota.';
   if(code==='output_format_mismatch')return 'The image model changed the meme’s proportions too much. Try a different Anna image model; no automatic retry was made.';
   if(/GRANTED|PERMISSION|32021|32101/i.test(code))return 'Anna has not enabled image generation or uploads for this app. Enable the required access and try again.';
