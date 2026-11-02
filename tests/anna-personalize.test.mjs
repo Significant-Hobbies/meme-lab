@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 import {PersonalMemeJob,validateImageFile,validateRegion,remoteImageUrl,cropRegion,shareMeme} from '../anna/personalize.mjs';
-import {blendFace,faceAlpha,faceCrop,validateDimensions,squarePlacement,validateFaceEdit} from '../anna/image-tools.mjs';
+import {blendFace,faceAlpha,faceCrop,validateDimensions,squarePlacement,validateFaceEdit,returnedIdentity} from '../anna/image-tools.mjs';
 const blob=()=>new Blob([new Uint8Array(40)],{type:'image/png'});
 const region={x:.2,y:.2,width:.3,height:.4};
 function fixture() {
@@ -66,8 +66,9 @@ test('padded whole-meme references keep target geometry and recover the original
     assert.equal(frame.x*2+frame.width,1);assert.equal(frame.y*2+frame.height,1);
     const {calls,args}=fixture();
     args.prepare=async(input,options)=>({blob:input,width,height,...(options.role==='template'?{frame,referenceBlob:blob()}: {})});
-    args.compose=async({original,region:selection,mode})=>{
+    args.compose=async({original,identity,region:selection,mode})=>{
       assert.deepEqual(selection,region);assert.deepEqual(original.frame,frame);assert.equal(mode,'format');
+      assert.equal(identity.blob,args.photo);
       return blob();
     };
     const output=await new PersonalMemeJob().generate(args);
@@ -119,8 +120,19 @@ test('unchanged faces and unfilled reference ovals cannot be reported as a compl
   for(let i=0;i<original.length;i+=4){original.set([75,90,110,255],i);generated.set([181,154,135,255],i);}
   assert.throws(()=>validateFaceEdit(original,generated,width,height,region),{code:'face_not_replaced'});
   assert.throws(()=>validateFaceEdit(original,original,width,height,region),{code:'face_not_replaced'});
-  for(let i=0;i<generated.length;i+=4)generated.set([240,120,10,255],i);
+  for(let i=0;i<generated.length;i+=4)generated.set(i%8?[240,120,10,255]:[20,100,180,255],i);
   assert.doesNotThrow(()=>validateFaceEdit(original,generated,width,height,region));
+  const tinted=new Uint8ClampedArray(generated.length);
+  for(let i=0;i<tinted.length;i+=4)tinted.set([195,165,145,255],i);
+  assert.throws(()=>validateFaceEdit(original,tinted,width,height,region),{code:'face_not_replaced'});
+  for(let y=0;y<height/2;y++)for(let x=0;x<width;x++)generated.set([181,154,135,255],(y*width+x)*4);
+  assert.throws(()=>validateFaceEdit(original,generated,width,height,region),{code:'face_not_replaced'});
+});
+test('a returned identity portrait is distinguished from the template context',()=>{
+  const width=64,height=64,template=new Uint8ClampedArray(width*height*4),identity=new Uint8ClampedArray(template.length);
+  for(let i=0;i<template.length;i+=4){template.set([20,40,70,255],i);identity.set([220,140,90,255],i);}
+  assert.equal(returnedIdentity(identity,template,identity,width,height,region),true);
+  assert.equal(returnedIdentity(template,template,identity,width,height,region),false);
 });
 test('square face crop maps landscape/portrait targets and stays inside original image at edges',()=>{
   for(const [width,height,r] of [[1200,800,region],[768,960,{x:.5,y:.22,width:.25,height:.23}],[100,80,{x:0,y:0,width:.1,height:.1}]]){
