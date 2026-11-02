@@ -1,5 +1,4 @@
 import {validateImageFile,validateRegion,remoteImageUrl,MAX_IMAGE_BYTES} from './personalize.mjs';
-const facePlaceholder=[255,0,255];
 export function validateDimensions(width,height) {
   if(!Number.isInteger(width)||!Number.isInteger(height)||width<48||height<48||width>8192||height>8192||width*height>16_000_000)throw new Error('Use an image between 48 and 8192 pixels, with no more than 16 megapixels.');
 }
@@ -42,7 +41,7 @@ export function validateFaceEdit(original,generated,width,height,region) {
     if(original[offset+3]===0)continue;
     samples++;
     for(let c=0;c<3;c++){const value=generated[offset+c];sum[c]+=value;squares[c]+=value*value;}
-    if(generated[offset+3]===0||generated[offset]>180&&generated[offset+1]<90&&generated[offset+2]>180)blank++;
+    if(generated[offset+3]===0)blank++;
     if([0,1,2,3].every(c=>Math.abs(generated[offset+c]-original[offset+c])<=2))unchanged++;
   }
   const variation=samples?Math.sqrt(squares.reduce((total,value,c)=>total+Math.max(0,value/samples-(sum[c]/samples)**2),0)/3):0;
@@ -124,7 +123,7 @@ export async function prepareImage(blob,{role,region,mode='format'}) {
         // Remove the competing identity from the reference, never the original.
         ctx.save();ctx.beginPath();
         ctx.ellipse((frame.x+(r.x+r.width/2)*frame.width)*reference.width,(frame.y+(r.y+r.height/2)*frame.height)*reference.height,r.width*frame.width*reference.width/2,r.height*frame.height*reference.height/2,0,0,Math.PI*2);
-        ctx.clip();ctx.fillStyle=`rgb(${facePlaceholder.join(',')})`;ctx.fillRect(0,0,reference.width,reference.height);ctx.restore();
+        ctx.clip();ctx.clearRect(0,0,reference.width,reference.height);ctx.restore();
       }
       return {blob:normalized,referenceBlob:await canvasBlob(reference),frame,width:canvas.width,height:canvas.height};
     }

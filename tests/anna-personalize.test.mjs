@@ -117,7 +117,7 @@ test('ellipse composition preserves every pixel outside face, including captions
 });
 test('unchanged faces and unfilled reference ovals cannot be reported as a completed edit',()=>{
   const width=100,height=80,original=new Uint8ClampedArray(width*height*4),generated=new Uint8ClampedArray(original.length);
-  for(let i=0;i<original.length;i+=4){original.set([75,90,110,255],i);generated.set([255,0,255,255],i);}
+  for(let i=0;i<original.length;i+=4)original.set([75,90,110,255],i);
   assert.throws(()=>validateFaceEdit(original,generated,width,height,region),{code:'face_not_replaced'});
   assert.throws(()=>validateFaceEdit(original,original,width,height,region),{code:'face_not_replaced'});
   for(let i=0;i<generated.length;i+=4)generated.set(i%8?[240,120,10,255]:[20,100,180,255],i);
@@ -125,12 +125,12 @@ test('unchanged faces and unfilled reference ovals cannot be reported as a compl
   const tinted=new Uint8ClampedArray(generated.length);
   for(let i=0;i<tinted.length;i+=4)tinted.set([235,25,235,255],i);
   assert.throws(()=>validateFaceEdit(original,tinted,width,height,region),{code:'face_not_replaced'});
-  for(let y=0;y<height/2;y++)for(let x=0;x<width;x++)generated.set([255,0,255,255],(y*width+x)*4);
+  for(let y=0;y<height/2;y++)for(let x=0;x<width;x++)generated.set([0,0,0,0],(y*width+x)*4);
   assert.throws(()=>validateFaceEdit(original,generated,width,height,region),{code:'face_not_replaced'});
   for(let i=0;i<generated.length;i+=4)generated.set(i%8?[240,120,10,255]:[20,100,180,255],i);
   for(let y=0;y<height;y++)for(let x=0;x<width;x++){
     const alpha=faceAlpha(x,y,width,height,region);
-    if(alpha>0&&alpha<1)generated.set([240+(x+y)%4,12,238],(y*width+x)*4);
+    if(alpha>0&&alpha<1)generated.set([0,0,0,0],(y*width+x)*4);
   }
   assert.throws(()=>validateFaceEdit(original,generated,width,height,region),{code:'face_not_replaced'});
 });
@@ -142,6 +142,8 @@ test('a shaded face near the former beige placeholder skin tone remains a valid 
     if(y>=65&&y<75&&(x>=65&&x<78||x>=100&&x<113))generated.set([30,25,25,255],offset);
     if(y>=90&&y<100&&x>=75&&x<105)generated.set([145,45,45,255],offset);
   }
+  assert.doesNotThrow(()=>validateFaceEdit(original,generated,width,height,{x:.2,y:.2,width:.4,height:.4}));
+  for(let y=90;y<96;y++)for(let x=72;x<108;x++)generated.set([205,40,190,255],(y*width+x)*4);
   assert.doesNotThrow(()=>validateFaceEdit(original,generated,width,height,{x:.2,y:.2,width:.4,height:.4}));
 });
 test('a returned identity portrait is distinguished from the template context',()=>{

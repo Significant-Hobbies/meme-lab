@@ -24,7 +24,7 @@ export async function verifyCanvas() {
       const centerX=Math.floor((base.frame.x+(region.x+region.width/2)*base.frame.width)*side);
       const centerY=Math.floor((base.frame.y+(region.y+region.height/2)*base.frame.height)*side);
       const offset=(centerY*side+centerX)*4;
-      check(reference.slice(offset,offset+3).every((value,c)=>value===[255,0,255][c]),'Original identity remains in model reference');
+      check(reference[offset+3]===0,'Original identity remains in model reference');
       const clean=await pixels(base.blob);
       check(clean.every((value,i)=>value===before[i]),'Preparing the reference changed the original');
       const generated=document.createElement('canvas');generated.width=generated.height=1024;
