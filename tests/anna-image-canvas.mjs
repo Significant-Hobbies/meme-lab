@@ -20,6 +20,13 @@ export async function verifyCanvas() {
       ctx.fillStyle='#663322';ctx.fillRect(width*.3,height*.25,width*.25,height*.25);
       const source=await png(canvas),base=await prepareImage(source,{role:'template',region,mode:'format'});
       const before=await pixels(source);
+      const reference=await pixels(base.referenceBlob),side=Math.max(width,height);
+      const centerX=Math.floor((base.frame.x+(region.x+region.width/2)*base.frame.width)*side);
+      const centerY=Math.floor((base.frame.y+(region.y+region.height/2)*base.frame.height)*side);
+      const offset=(centerY*side+centerX)*4;
+      check(reference.slice(offset,offset+3).every((value,c)=>value===[181,154,135][c]),'Original identity remains in model reference');
+      const clean=await pixels(base.blob);
+      check(clean.every((value,i)=>value===before[i]),'Preparing the reference changed the original');
       const generated=document.createElement('canvas');generated.width=generated.height=1024;
       const edit=generated.getContext('2d');edit.fillStyle='#000';edit.fillRect(0,0,1024,1024);
       const frame=base.frame;
@@ -38,6 +45,16 @@ export async function verifyCanvas() {
       check(after.length===before.length,'Output dimensions changed');
       results.push({width,height,changedOutside,changedInside});
     }
+    const region={x:.25,y:.2,width:.4,height:.4};
+    const transparent=document.createElement('canvas');transparent.width=transparent.height=200;
+    const ctx=transparent.getContext('2d');ctx.fillStyle='#bb6644';ctx.fillRect(20,20,160,160);
+    const source=await png(transparent),base=await prepareImage(source,{role:'template',region});
+    const rejected=document.createElement('canvas');rejected.width=300;rejected.height=200;
+    const response=await png(rejected);
+    globalThis.fetch=async()=>new Response(response,{headers:{'content-type':'image/png'}});
+    let error;try{await composeMeme({original:base,generatedUrl:'https://canvas-fixture.example/output.png',region});}catch(e){error=e;}
+    check(error?.code==='output_format_mismatch','Distorted model output was accepted');
+    results.push({distortedOutput:'rejected'});
     return results;
   } finally {globalThis.fetch=nativeFetch;}
 }

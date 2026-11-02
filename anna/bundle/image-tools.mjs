@@ -81,6 +81,13 @@ export async function prepareImage(blob,{role,region,mode='format'}) {
       const reference=document.createElement('canvas');reference.width=reference.height=Math.min(1536,Math.max(canvas.width,canvas.height));
       const ctx=reference.getContext('2d');ctx.fillStyle='#000';ctx.fillRect(0,0,reference.width,reference.height);
       ctx.drawImage(canvas,frame.x*reference.width,frame.y*reference.height,frame.width*reference.width,frame.height*reference.height);
+      if(region){
+        const r=validateRegion(region);
+        // Remove the competing identity from the reference, never the original.
+        ctx.save();ctx.beginPath();
+        ctx.ellipse((frame.x+(r.x+r.width/2)*frame.width)*reference.width,(frame.y+(r.y+r.height/2)*frame.height)*reference.height,r.width*frame.width*reference.width/2,r.height*frame.height*reference.height/2,0,0,Math.PI*2);
+        ctx.clip();ctx.fillStyle='#b59a87';ctx.fillRect(0,0,reference.width,reference.height);ctx.restore();
+      }
       return {blob:normalized,referenceBlob:await canvasBlob(reference),frame,width:canvas.width,height:canvas.height};
     }
     return {blob:normalized,width:canvas.width,height:canvas.height};
@@ -113,13 +120,14 @@ export async function composeMeme({original,generatedUrl,region,mode='format'}) 
     if(mode==='format'){
       const frame=original.frame||{x:0,y:0,width:1,height:1};
       ctx.drawImage(generatedBitmap,frame.x*generatedBitmap.width,frame.y*generatedBitmap.height,frame.width*generatedBitmap.width,frame.height*generatedBitmap.height,0,0,canvas.width,canvas.height);
-      return await canvasBlob(canvas);
+    }else{
+      const crop=original.crop||{x:0,y:0,width:1,height:1};
+      ctx.drawImage(generatedBitmap,0,0,generatedBitmap.width,generatedBitmap.height,crop.x*canvas.width,crop.y*canvas.height,crop.width*canvas.width,crop.height*canvas.height);
     }
-    originalBitmap=await createImageBitmap(original.blob);
-    ctx.drawImage(originalBitmap,0,0);const base=ctx.getImageData(0,0,canvas.width,canvas.height);
-    const crop=original.crop||{x:0,y:0,width:1,height:1};
-    ctx.clearRect(0,0,canvas.width,canvas.height);ctx.drawImage(generatedBitmap,0,0,generatedBitmap.width,generatedBitmap.height,crop.x*canvas.width,crop.y*canvas.height,crop.width*canvas.width,crop.height*canvas.height);
     const edited=ctx.getImageData(0,0,canvas.width,canvas.height);
+    originalBitmap=await createImageBitmap(original.blob);
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    ctx.drawImage(originalBitmap,0,0);const base=ctx.getImageData(0,0,canvas.width,canvas.height);
     ctx.putImageData(new ImageData(blendFace(base.data,edited.data,canvas.width,canvas.height,region),canvas.width,canvas.height),0,0);
     return await canvasBlob(canvas);
   } finally {clearTimeout(timer);originalBitmap?.close();generatedBitmap?.close();}

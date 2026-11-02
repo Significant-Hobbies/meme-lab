@@ -1,5 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import {readFile} from 'node:fs/promises';
 import {PersonalMemeJob,validateImageFile,validateRegion,remoteImageUrl,cropRegion,shareMeme} from '../anna/personalize.mjs';
 import {blendFace,faceAlpha,faceCrop,validateDimensions,squarePlacement} from '../anna/image-tools.mjs';
 const blob=()=>new Blob([new Uint8Array(40)],{type:'image/png'});
@@ -65,12 +66,25 @@ test('padded whole-meme references keep target geometry and recover the original
     assert.equal(frame.x*2+frame.width,1);assert.equal(frame.y*2+frame.height,1);
     const {calls,args}=fixture();
     args.prepare=async(input,options)=>({blob:input,width,height,...(options.role==='template'?{frame,referenceBlob:blob()}: {})});
+    args.compose=async({original,region:selection,mode})=>{
+      assert.deepEqual(selection,region);assert.deepEqual(original.frame,frame);assert.equal(mode,'format');
+      return blob();
+    };
     const output=await new PersonalMemeJob().generate(args);
     const request=calls.find(c=>c[0]==='generate')[1];
     assert.equal(request.size,'1024x1024');
     assert.match(request.prompt,/including identical padding/);
+    assert.match(request.prompt,/blank oval/);
+    assert.match(request.prompt,/illustrated avatar/);
+    assert.match(request.prompt,/no drawn selection outlines/);
     assert.ok(request.prompt.includes('x='+(frame.x+region.x*frame.width).toFixed(3)));
     assert.equal(output.width,width);assert.equal(output.height,height);
+  }
+});
+test('the Anna upload bundle contains the exact personalization engines under test',async()=>{
+  for(const file of ['image-tools.mjs','personalize.mjs']){
+    const source=await readFile(new URL('../anna/'+file,import.meta.url),'utf8');
+    assert.equal(await readFile(new URL('../anna/bundle/'+file,import.meta.url),'utf8'),source);
   }
 });
 test('missing capability, failed second upload and malformed model output do not fake success',async()=>{
