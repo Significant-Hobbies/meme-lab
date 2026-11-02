@@ -127,6 +127,12 @@ test('unchanged faces and unfilled reference ovals cannot be reported as a compl
   assert.throws(()=>validateFaceEdit(original,tinted,width,height,region),{code:'face_not_replaced'});
   for(let y=0;y<height/2;y++)for(let x=0;x<width;x++)generated.set([255,0,255,255],(y*width+x)*4);
   assert.throws(()=>validateFaceEdit(original,generated,width,height,region),{code:'face_not_replaced'});
+  for(let i=0;i<generated.length;i+=4)generated.set(i%8?[240,120,10,255]:[20,100,180,255],i);
+  for(let y=0;y<height;y++)for(let x=0;x<width;x++){
+    const alpha=faceAlpha(x,y,width,height,region);
+    if(alpha>0&&alpha<1)generated.set([240+(x+y)%4,12,238],(y*width+x)*4);
+  }
+  assert.throws(()=>validateFaceEdit(original,generated,width,height,region),{code:'face_not_replaced'});
 });
 test('a shaded face near the former beige placeholder skin tone remains a valid edit',()=>{
   const width=200,height=200,original=new Uint8ClampedArray(width*height*4),generated=new Uint8ClampedArray(original.length);

@@ -31,7 +31,7 @@ function* faceSamples(width,height,region) {
   const top=Math.floor(region.y*height),bottom=Math.ceil((region.y+region.height)*height);
   const step=Math.max(1,Math.floor(Math.sqrt((right-left)*(bottom-top))/96));
   for(let y=top;y<bottom;y+=step)for(let x=left;x<right;x+=step){
-    if(faceAlpha(x,y,width,height,region)<1)continue;
+    if(faceAlpha(x,y,width,height,region)<=0)continue;
     yield (y*width+x)*4;
   }
 }
@@ -42,11 +42,11 @@ export function validateFaceEdit(original,generated,width,height,region) {
     if(original[offset+3]===0)continue;
     samples++;
     for(let c=0;c<3;c++){const value=generated[offset+c];sum[c]+=value;squares[c]+=value*value;}
-    if(generated[offset+3]===0||facePlaceholder.every((value,c)=>Math.abs(generated[offset+c]-value)<=6))blank++;
+    if(generated[offset+3]===0||generated[offset]>180&&generated[offset+1]<90&&generated[offset+2]>180)blank++;
     if([0,1,2,3].every(c=>Math.abs(generated[offset+c]-original[offset+c])<=2))unchanged++;
   }
   const variation=samples?Math.sqrt(squares.reduce((total,value,c)=>total+Math.max(0,value/samples-(sum[c]/samples)**2),0)/3):0;
-  if(!samples||blank/samples>.2||unchanged/samples>.99||variation<12)throw Object.assign(new Error('The model did not fill the selected face.'),{code:'face_not_replaced'});
+  if(!samples||blank/samples>.01||unchanged/samples>.99||variation<12)throw Object.assign(new Error('The model did not fill the selected face.'),{code:'face_not_replaced'});
 }
 export function returnedIdentity(generated,template,identity,width,height,region) {
   let templateDifference=0,identityDifference=0,samples=0;
