@@ -1,4 +1,5 @@
 import {validateImageFile,validateRegion,remoteImageUrl,MAX_IMAGE_BYTES} from './personalize.mjs';
+const facePlaceholder=[255,0,255];
 export function validateDimensions(width,height) {
   if(!Number.isInteger(width)||!Number.isInteger(height)||width<48||height<48||width>8192||height>8192||width*height>16_000_000)throw new Error('Use an image between 48 and 8192 pixels, with no more than 16 megapixels.');
 }
@@ -25,18 +26,23 @@ export function blendFace(original,generated,width,height,region) {
   }
   return output;
 }
-export function validateFaceEdit(original,generated,width,height,region) {
-  let samples=0,blank=0,unchanged=0;
-  const sum=[0,0,0],squares=[0,0,0];
+function* faceSamples(width,height,region) {
   const left=Math.floor(region.x*width),right=Math.ceil((region.x+region.width)*width);
   const top=Math.floor(region.y*height),bottom=Math.ceil((region.y+region.height)*height);
   const step=Math.max(1,Math.floor(Math.sqrt((right-left)*(bottom-top))/96));
   for(let y=top;y<bottom;y+=step)for(let x=left;x<right;x+=step){
     if(faceAlpha(x,y,width,height,region)<1)continue;
-    const offset=(y*width+x)*4;if(original[offset+3]===0)continue;
+    yield (y*width+x)*4;
+  }
+}
+export function validateFaceEdit(original,generated,width,height,region) {
+  let samples=0,blank=0,unchanged=0;
+  const sum=[0,0,0],squares=[0,0,0];
+  for(const offset of faceSamples(width,height,region)){
+    if(original[offset+3]===0)continue;
     samples++;
     for(let c=0;c<3;c++){const value=generated[offset+c];sum[c]+=value;squares[c]+=value*value;}
-    if(generated[offset+3]===0||[181,154,135].every((value,c)=>Math.abs(generated[offset+c]-value)<=6))blank++;
+    if(generated[offset+3]===0||facePlaceholder.every((value,c)=>Math.abs(generated[offset+c]-value)<=6))blank++;
     if([0,1,2,3].every(c=>Math.abs(generated[offset+c]-original[offset+c])<=2))unchanged++;
   }
   const variation=samples?Math.sqrt(squares.reduce((total,value,c)=>total+Math.max(0,value/samples-(sum[c]/samples)**2),0)/3):0;
@@ -106,9 +112,7 @@ export async function prepareImage(blob,{role,region,mode='format'}) {
       if(region){
         const r=validateRegion(region),ctx=canvas.getContext('2d'),pixels=ctx.getImageData(0,0,canvas.width,canvas.height).data;
         let visible=false;
-        for(let y=Math.floor(r.y*canvas.height);y<Math.ceil((r.y+r.height)*canvas.height)&&!visible;y++)for(let x=Math.floor(r.x*canvas.width);x<Math.ceil((r.x+r.width)*canvas.width);x++){
-          if(faceAlpha(x,y,canvas.width,canvas.height,r)>=1&&pixels[(y*canvas.width+x)*4+3]>0){visible=true;break;}
-        }
+        for(const offset of faceSamples(canvas.width,canvas.height,r))if(pixels[offset+3]>0){visible=true;break;}
         if(!visible)throw Object.assign(new Error('Choose a face area with visible image content.'),{code:'face_area_transparent'});
       }
       const frame=squarePlacement(canvas.width,canvas.height);
@@ -120,7 +124,7 @@ export async function prepareImage(blob,{role,region,mode='format'}) {
         // Remove the competing identity from the reference, never the original.
         ctx.save();ctx.beginPath();
         ctx.ellipse((frame.x+(r.x+r.width/2)*frame.width)*reference.width,(frame.y+(r.y+r.height/2)*frame.height)*reference.height,r.width*frame.width*reference.width/2,r.height*frame.height*reference.height/2,0,0,Math.PI*2);
-        ctx.clip();ctx.fillStyle='#b59a87';ctx.fillRect(0,0,reference.width,reference.height);ctx.restore();
+        ctx.clip();ctx.fillStyle=`rgb(${facePlaceholder.join(',')})`;ctx.fillRect(0,0,reference.width,reference.height);ctx.restore();
       }
       return {blob:normalized,referenceBlob:await canvasBlob(reference),frame,width:canvas.width,height:canvas.height};
     }
