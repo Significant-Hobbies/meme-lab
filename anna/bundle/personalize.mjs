@@ -42,6 +42,7 @@ export function generationSize(width,height,{mode='format'}={}) {
 }
 export function imageError(error) {
   const code=String(error?.code||'');
+  if(code==='image_job_status_unavailable'||code==='image_job_submit_unconfirmed')return 'Anna could not confirm the image job. It may still finish and use image quota. No second image request was made.';
   if(code==='image_job_timeout')return 'Anna’s image job did not finish in time. This attempt may have used image quota. No automatic retry was made.';
   if(code==='face_not_replaced')return 'The image model did not produce a usable face replacement. This attempt may have used image quota. Adjust the face area or choose another photo before generating again. No automatic retry was made.';
   if(code==='face_area_transparent')return 'The selected face area is transparent. Choose the visible face before generating. No image request was made.';
@@ -54,26 +55,34 @@ export function imageError(error) {
 }
 export async function generateAnnaImage(anna,request,{fresh=()=>{},onStage=()=>{},wait=ms=>new Promise(resolve=>setTimeout(resolve,ms)),now=()=>Date.now()}={}) {
   if(typeof anna.image.generateAsync!=='function'||typeof anna.image.getJob!=='function')return await anna.image.generate(request,{timeoutMs:120000});
-  let jobId;
+  let jobId,terminal=false;
   try {
     const submitted=await anna.image.generateAsync({...request,idempotencyKey:crypto.randomUUID(),clientTag:'make-this-me'},{timeoutMs:30000});
-    jobId=submitted?.jobId;
-    if(typeof jobId!=='string'||!jobId.startsWith('ijob_')||jobId.length>200)throw new Error('Anna returned an invalid image job.');
+    const id=submitted?.jobId;
+    if(typeof id!=='string'||!id.startsWith('ijob_')||id.length>200)throw Object.assign(new Error('Anna returned an invalid image job.'),{code:'image_job_submit_unconfirmed'});
+    jobId=id;
     fresh();
-    const deadline=now()+9*60*1000;let previous;
+    const deadline=now()+9*60*1000;let previous,failures=0;
     for(let polls=0;polls<108&&now()<deadline;polls++){
-      const job=await anna.image.getJob({jobId},{timeoutMs:30000});fresh();
+      let job;
+      try{job=await anna.image.getJob({jobId},{timeoutMs:30000});failures=0;}
+      catch{fresh();if(++failures>=3)throw Object.assign(new Error('Anna could not confirm the image job status.'),{code:'image_job_status_unavailable'});await wait(5000*failures);fresh();continue;}
+      fresh();
       if(job?.jobId!==jobId)throw new Error('Anna returned a different image job.');
-      if(job.state==='succeeded')return {...job.result,model:job.result?.model||job.request?.model};
-      if(['failed','cancelled','expired'].includes(job.state))throw Object.assign(new Error('Anna could not complete the image job.'),{code:job.error?.code||'APP_PROVIDER_ERROR'});
+      if(job.state==='succeeded'){terminal=true;return {...job.result,model:job.result?.model||job.request?.model};}
+      if(['failed','cancelled','expired'].includes(job.state)){terminal=true;throw Object.assign(new Error('Anna could not complete the image job.'),{code:job.error?.code||'APP_PROVIDER_ERROR'});}
       if(!['queued','running'].includes(job.state))throw new Error('Anna returned an invalid image job state.');
       if(job.state!==previous){onStage(job.state==='queued'?'Waiting for Anna’s image model':'Creating your face in the meme');previous=job.state;}
       await wait(5000);fresh();
     }
     throw Object.assign(new Error('Anna’s image job timed out.'),{code:'image_job_timeout'});
   } catch(error) {
-    if(jobId&&(error?.name==='AbortError'||error?.code==='image_job_timeout')&&typeof anna.image.cancelJob==='function'){
+    if(jobId&&!terminal&&typeof anna.image.cancelJob==='function'){
       try{await anna.image.cancelJob({jobId},{timeoutMs:5000});}catch{}
+    }
+    if(!terminal&&error?.code!=='selection_changed'&&error?.code!=='image_job_timeout'){
+      const code=jobId?'image_job_status_unavailable':(!error?.code||error.code==='transport'||error.name==='AbortError')?'image_job_submit_unconfirmed':null;
+      if(code)throw Object.assign(new Error(error?.message||'Anna could not confirm the image job.',{cause:error}),{code});
     }
     throw error;
   }
@@ -86,7 +95,7 @@ export class PersonalMemeJob {
     if(!['format','face-patch'].includes(mode))throw new Error('Unsupported image workflow.');
     validateImageFile(photo);validateImageFile(template);const area=validateRegion(region);
     if((typeof anna?.image?.generate!=='function'&&!(typeof anna?.image?.generateAsync==='function'&&typeof anna?.image?.getJob==='function'))||typeof anna?.upload?.inline!=='function')throw new Error('Anna image generation and upload access are required.');
-    const revision=this.#revision;const fresh=()=>{if(revision!==this.#revision)throw new DOMException('Selection changed','AbortError');};
+    const revision=this.#revision;const fresh=()=>{if(revision!==this.#revision)throw Object.assign(new Error('Selection changed'),{name:'AbortError',code:'selection_changed'});};
     this.#running=true;
     try {
       onStage('Preparing images');

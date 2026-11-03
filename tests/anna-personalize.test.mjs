@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
-import {PersonalMemeJob,validateImageFile,validateRegion,remoteImageUrl,cropRegion,shareMeme,generateAnnaImage} from '../anna/personalize.mjs';
+import {PersonalMemeJob,validateImageFile,validateRegion,remoteImageUrl,cropRegion,shareMeme,generateAnnaImage,imageError} from '../anna/personalize.mjs';
 import {blendFace,faceAlpha,faceCrop,validateDimensions,squarePlacement,validateFaceEdit,returnedIdentity} from '../anna/image-tools.mjs';
 const blob=()=>new Blob([new Uint8Array(40)],{type:'image/png'});
 const region={x:.2,y:.2,width:.3,height:.4};
@@ -63,6 +63,29 @@ test('async polling has a deadline and rejects mismatched job results',async()=>
   assert.equal(cancelled,1);
   anna.image.getJob=async()=>({jobId:'ijob_other',state:'succeeded',result:{images:[]}});
   await assert.rejects(generateAnnaImage(anna,{prompt:'test'}),/different image job/);
+  assert.equal(cancelled,2);
+});
+test('a missed status poll recovers without resubmitting the image job',async()=>{
+  let submits=0,polls=0,cancels=0;
+  const anna={image:{generateAsync:async()=>{submits++;return {jobId:'ijob_poll'};},getJob:async()=>{if(++polls===1)throw Object.assign(new Error('rate limited'),{code:'429'});return {jobId:'ijob_poll',state:'succeeded',result:{images:[{url:'https://cdn.anna.partners/result.png'}]}};},cancelJob:async()=>{cancels++;}}};
+  const result=await generateAnnaImage(anna,{prompt:'test'},{wait:async()=>{}});
+  assert.equal(result.images.length,1);assert.equal(submits,1);assert.equal(polls,2);assert.equal(cancels,0);
+});
+test('unavailable status polls stop, request cancellation and explain uncertain completion',async()=>{
+  let polls=0,cancels=0;
+  const anna={image:{generateAsync:async()=>({jobId:'ijob_unavailable'}),getJob:async()=>{polls++;throw new DOMException('SDK timeout','AbortError');},cancelJob:async()=>{cancels++;throw new Error('running');}}};
+  await assert.rejects(generateAnnaImage(anna,{prompt:'test'},{wait:async()=>{}}),error=>{
+    assert.equal(error.code,'image_job_status_unavailable');assert.match(imageError(error),/may still finish/);assert.doesNotMatch(imageError(error),/selection changed|quota is unavailable/i);return true;
+  });
+  assert.equal(polls,3);assert.equal(cancels,1);
+});
+test('an unconfirmed submission never resubmits and warns that quota may still be used',async()=>{
+  let submits=0;
+  const anna={image:{generateAsync:async()=>{submits++;throw new DOMException('SDK timeout','AbortError');},getJob:()=>assert.fail('No known job to poll')}};
+  await assert.rejects(generateAnnaImage(anna,{prompt:'test'}),error=>{
+    assert.equal(error.code,'image_job_submit_unconfirmed');assert.match(imageError(error),/may still finish/);return true;
+  });
+  assert.equal(submits,1);
 });
 test('quota/permission/provider failure is not retried and never produces a result',async()=>{
   for(const code of ['APP_QUOTA_EXCEEDED','APP_NOT_GRANTED','APP_PROVIDER_ERROR']){
