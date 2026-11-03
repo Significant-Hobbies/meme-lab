@@ -50,7 +50,8 @@ export function imageError(error) {
   if(code==='output_format_mismatch')return 'The image model changed the meme’s proportions too much. Try a different Anna image model; no automatic retry was made.';
   if(/GRANTED|PERMISSION|32021|32101/i.test(code))return 'Anna has not enabled image generation or uploads for this app. Enable the required access and try again.';
   if(/QUOTA|429|32102/.test(code))return 'Your Anna image quota is unavailable or exhausted. No fallback provider was called.';
-  if(error?.name==='AbortError')return 'The selection changed. Generate again with the current photo and face area.';
+  if(code==='selection_changed')return 'The selection changed. Generate again with the current photo and face area.';
+  if(error?.name==='AbortError')return 'Anna’s request timed out. Completion could not be confirmed and image quota may have been used. No automatic retry was made.';
   return 'The image could not be created. Check Anna’s image provider and try again. This attempt may have used image quota.';
 }
 export async function generateAnnaImage(anna,request,{fresh=()=>{},onStage=()=>{},wait=ms=>new Promise(resolve=>setTimeout(resolve,ms)),now=()=>Date.now()}={}) {

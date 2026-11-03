@@ -87,6 +87,14 @@ test('an unconfirmed submission never resubmits and warns that quota may still b
   });
   assert.equal(submits,1);
 });
+test('legacy SDK timeouts are distinct from an actual changed selection',async()=>{
+  const {args}=fixture();let submits=0;
+  args.anna.image.generate=async()=>{submits++;throw new DOMException('SDK timeout','AbortError');};
+  await assert.rejects(new PersonalMemeJob().generate(args),error=>{
+    assert.match(imageError(error),/timed out/);assert.doesNotMatch(imageError(error),/selection changed/i);return true;
+  });
+  assert.equal(submits,1);assert.match(imageError({code:'selection_changed',name:'AbortError'}),/selection changed/i);
+});
 test('quota/permission/provider failure is not retried and never produces a result',async()=>{
   for(const code of ['APP_QUOTA_EXCEEDED','APP_NOT_GRANTED','APP_PROVIDER_ERROR']){
     const {calls,args}=fixture();let attempts=0;args.anna.image.generate=async()=>{attempts++;throw Object.assign(new Error('signed private provider detail'),{code});};
