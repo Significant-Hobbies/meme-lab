@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
-import {PersonalMemeJob,validateImageFile,validateRegion,remoteImageUrl,cropRegion,shareMeme} from '../anna/personalize.mjs';
+import {PersonalMemeJob,validateImageFile,validateRegion,remoteImageUrl,cropRegion,shareMeme,generateAnnaImage} from '../anna/personalize.mjs';
 import {blendFace,faceAlpha,faceCrop,validateDimensions,squarePlacement,validateFaceEdit,returnedIdentity} from '../anna/image-tools.mjs';
 const blob=()=>new Blob([new Uint8Array(40)],{type:'image/png'});
 const region={x:.2,y:.2,width:.3,height:.4};
@@ -24,6 +24,45 @@ test('uses two bounded uploads, one generation and no storage/analytics writes',
   assert.equal(calls[2][1].n,1);assert.equal(calls[2][1].reference_image_urls.length,2);
   assert.match(calls[2][1].prompt,/Preserve all other characters/);
   assert.equal(calls[1][1].filename,'portrait.png');
+});
+test('async generation submits one idempotent job and polls the result without a second render',async()=>{
+  const {calls,args}=fixture();let polls=0;const id='ijob_test';
+  args.anna.image.generate=()=>assert.fail('Must not fall back to synchronous generation');
+  args.anna.image.generateAsync=async request=>{calls.push(['async',request]);return {jobId:id,state:'queued'};};
+  args.anna.image.getJob=async()=>++polls===1?{jobId:id,state:'running'}:{jobId:id,state:'succeeded',request:{model:'test-job-model'},result:{images:[{url:'https://cdn.anna.partners/output.png'}]}};
+  const result=await new PersonalMemeJob().generate({...args,wait:async()=>{}});
+  assert.deepEqual(calls.map(c=>c[0]),['upload','upload','async']);assert.equal(polls,2);
+  assert.equal(calls[2][1].n,1);assert.match(calls[2][1].idempotencyKey,/^[a-f0-9-]{36}$/);
+  assert.equal(result.model,'test-job-model');
+});
+test('failed async submission or terminal job never falls back or composes a result',async()=>{
+  for(const failure of ['submit','job']){
+    const {args}=fixture();let submits=0;
+    args.anna.image.generate=()=>assert.fail('No second generation after async failure');
+    args.anna.image.generateAsync=async()=>{submits++;if(failure==='submit')throw Object.assign(new Error('provider'),{code:'APP_PROVIDER_ERROR'});return {jobId:'ijob_failed'};};
+    args.anna.image.getJob=async()=>({jobId:'ijob_failed',state:'failed',error:{code:'APP_PROVIDER_ERROR'}});
+    args.compose=()=>assert.fail('Failed job must not be composed');
+    await assert.rejects(new PersonalMemeJob().generate({...args,wait:async()=>{}}),{code:'APP_PROVIDER_ERROR'});
+    assert.equal(submits,1);
+  }
+});
+test('changed selections discard and request cancellation of the async job',async()=>{
+  const job=new PersonalMemeJob(),{args}=fixture();let cancelled=0;
+  args.anna.image.generateAsync=async()=>({jobId:'ijob_stale'});
+  args.anna.image.getJob=async()=>{job.invalidate();return {jobId:'ijob_stale',state:'running'};};
+  args.anna.image.cancelJob=async({jobId})=>{assert.equal(jobId,'ijob_stale');cancelled++;};
+  args.compose=()=>assert.fail('Stale job must not be composed');
+  await assert.rejects(job.generate({...args,wait:async()=>{}}),{name:'AbortError'});
+  assert.equal(cancelled,1);
+});
+test('async polling has a deadline and rejects mismatched job results',async()=>{
+  let cancelled=0;
+  const anna={image:{generateAsync:async()=>({jobId:'ijob_deadline'}),getJob:async()=>({jobId:'ijob_deadline',state:'running'}),cancelJob:async()=>{cancelled++;}}};
+  let time=0;
+  await assert.rejects(generateAnnaImage(anna,{prompt:'test'},{now:()=>time,wait:async()=>{time+=10*60*1000;}}),{code:'image_job_timeout'});
+  assert.equal(cancelled,1);
+  anna.image.getJob=async()=>({jobId:'ijob_other',state:'succeeded',result:{images:[]}});
+  await assert.rejects(generateAnnaImage(anna,{prompt:'test'}),/different image job/);
 });
 test('quota/permission/provider failure is not retried and never produces a result',async()=>{
   for(const code of ['APP_QUOTA_EXCEEDED','APP_NOT_GRANTED','APP_PROVIDER_ERROR']){

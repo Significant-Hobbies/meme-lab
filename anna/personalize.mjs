@@ -42,6 +42,7 @@ export function generationSize(width,height,{mode='format'}={}) {
 }
 export function imageError(error) {
   const code=String(error?.code||'');
+  if(code==='image_job_timeout')return 'Anna’s image job did not finish in time. This attempt may have used image quota. No automatic retry was made.';
   if(code==='face_not_replaced')return 'The image model did not produce a usable face replacement. This attempt may have used image quota. Adjust the face area or choose another photo before generating again. No automatic retry was made.';
   if(code==='face_area_transparent')return 'The selected face area is transparent. Choose the visible face before generating. No image request was made.';
   if(code==='image_delivery_failed')return 'Anna created an image, but the app could not load it. Reopen Meme Lab inside Anna and try again; the completed generation may have used quota.';
@@ -51,14 +52,40 @@ export function imageError(error) {
   if(error?.name==='AbortError')return 'The selection changed. Generate again with the current photo and face area.';
   return 'The image could not be created. Check Anna’s image provider and try again. This attempt may have used image quota.';
 }
+export async function generateAnnaImage(anna,request,{fresh=()=>{},onStage=()=>{},wait=ms=>new Promise(resolve=>setTimeout(resolve,ms)),now=()=>Date.now()}={}) {
+  if(typeof anna.image.generateAsync!=='function'||typeof anna.image.getJob!=='function')return await anna.image.generate(request,{timeoutMs:120000});
+  let jobId;
+  try {
+    const submitted=await anna.image.generateAsync({...request,idempotencyKey:crypto.randomUUID(),clientTag:'make-this-me'},{timeoutMs:30000});
+    jobId=submitted?.jobId;
+    if(typeof jobId!=='string'||!jobId.startsWith('ijob_')||jobId.length>200)throw new Error('Anna returned an invalid image job.');
+    fresh();
+    const deadline=now()+9*60*1000;let previous;
+    for(let polls=0;polls<108&&now()<deadline;polls++){
+      const job=await anna.image.getJob({jobId},{timeoutMs:30000});fresh();
+      if(job?.jobId!==jobId)throw new Error('Anna returned a different image job.');
+      if(job.state==='succeeded')return {...job.result,model:job.result?.model||job.request?.model};
+      if(['failed','cancelled','expired'].includes(job.state))throw Object.assign(new Error('Anna could not complete the image job.'),{code:job.error?.code||'APP_PROVIDER_ERROR'});
+      if(!['queued','running'].includes(job.state))throw new Error('Anna returned an invalid image job state.');
+      if(job.state!==previous){onStage(job.state==='queued'?'Waiting for Anna’s image model':'Creating your face in the meme');previous=job.state;}
+      await wait(5000);fresh();
+    }
+    throw Object.assign(new Error('Anna’s image job timed out.'),{code:'image_job_timeout'});
+  } catch(error) {
+    if(jobId&&(error?.name==='AbortError'||error?.code==='image_job_timeout')&&typeof anna.image.cancelJob==='function'){
+      try{await anna.image.cancelJob({jobId},{timeoutMs:5000});}catch{}
+    }
+    throw error;
+  }
+}
 export class PersonalMemeJob {
   #revision=0;#running=false;
   invalidate(){this.#revision++;}
-  async generate({anna,photo,template,region,prepare,encode,compose,mode='format',onStage=()=>{}}) {
+  async generate({anna,photo,template,region,prepare,encode,compose,mode='format',onStage=()=>{},wait,now}) {
     if(this.#running)throw new Error('An image is already being created. Wait for it to finish.');
     if(!['format','face-patch'].includes(mode))throw new Error('Unsupported image workflow.');
     validateImageFile(photo);validateImageFile(template);const area=validateRegion(region);
-    if(typeof anna?.image?.generate!=='function'||typeof anna?.upload?.inline!=='function')throw new Error('Anna image generation and upload access are required.');
+    if((typeof anna?.image?.generate!=='function'&&!(typeof anna?.image?.generateAsync==='function'&&typeof anna?.image?.getJob==='function'))||typeof anna?.upload?.inline!=='function')throw new Error('Anna image generation and upload access are required.');
     const revision=this.#revision;const fresh=()=>{if(revision!==this.#revision)throw new DOMException('Selection changed','AbortError');};
     this.#running=true;
     try {
@@ -79,7 +106,7 @@ export class PersonalMemeJob {
       const photoUrl=await upload(input,'image_input');
       onStage('Creating your face in the meme');
       // One user-requested image, no automatic retry and no separate provider.
-      const result=await anna.image.generate({prompt,n:1,reference_image_urls:[templateUrl,photoUrl],size,modelPreferences:{hints:[{name:'google/gemini-2.5-flash-image'}]}},{timeoutMs:120000});fresh();
+      const result=await generateAnnaImage(anna,{prompt,n:1,reference_image_urls:[templateUrl,photoUrl],size,modelPreferences:{hints:[{name:'google/gemini-2.5-flash-image'}]}},{fresh,onStage,wait,now});fresh();
       if(!Array.isArray(result?.images)||result.images.length!==1)throw new Error('Anna did not return one image.');
       const generated=remoteImageUrl(result.images[0]?.url);
       onStage('Preserving the original meme around your face');
