@@ -37,17 +37,30 @@ try:
    assert page.locator('#personal-output-actions').is_hidden()
    page.locator('#personal-clear').click();assert page.locator('#personal-generate').is_disabled()
    page.locator('#personal-close').click();assert page.locator('#personal-editor').is_hidden()
-   page.locator('#open-personal').click()
-   assert page.locator('[data-anna-reactions]').count()>=3,'Anna reaction navigation targets are missing'
-   if width<768:page.get_by_role('button',name='Open menu',exact=True).click()
-   page.locator('[data-anna-reactions]:visible').first.click();assert page.locator('#personal-editor').is_hidden()
+   assert page.locator('[data-anna-reactions]').count()==3,'Anna reaction navigation targets are missing'
+   assert page.locator('[data-anna-home]').count()==1,'Anna brand navigation target is missing'
+   navigation=[]
+   for editing in [True,False]:
+    for target in ['nav','footer','brand','back']:
+     if editing:page.locator('#open-personal').click()
+     if target=='nav':
+      if width<768:page.get_by_role('button',name='Open menu',exact=True).click()
+      page.locator('[data-anna-reactions]').nth(1 if width<768 else 0).click()
+     elif target=='footer':page.locator('[data-anna-reactions]').last.click()
+     elif target=='brand':page.locator('[data-anna-home]').click()
+     elif editing:page.locator('#personal-close').click()
+     else:assert page.locator('#personal-close').is_hidden()
+     assert page.locator('#personal-editor').is_hidden(),f'{target} kept editor open'
+     assert page.locator('#meme-form').is_visible(),f'{target} did not return to reactions'
+     assert page.locator(':popover-open').count()==0,f'{target} left the mobile menu open'
+     navigation.append({'target':target,'initialEditorOpen':editing,'finalView':'reactions','popoverOpen':False,'action':'click' if editing or target!='back' else 'hidden control verified'})
    assert page.locator('#meme-form').is_visible()
    assert page.evaluate('document.documentElement.scrollWidth<=innerWidth'),f'Overflow at {width}'
    assert not errors,errors
    assert not failed,failed
    page.goto(base+'/anna/bundle/privacy.html');assert page.locator('h1').inner_text()=='Meme Lab on Anna'
    assert page.locator('.topbar').evaluate("el=>getComputedStyle(el).display")=='grid','Privacy page lost its base styling'
-   results.append({'privacyStyle':'passed','navigationClose':'passed','width':width,'editorOpenUploadConsentClearClose':'passed','pageErrors':errors,'localAssetFailures':failed,'generationRequested':False,'externalRequestsBlocked':True})
+   results.append({'navigationCases':navigation,'privacyStyle':'passed','navigationClose':'passed','width':width,'editorOpenUploadConsentClearClose':'passed','pageErrors':errors,'localAssetFailures':failed,'generationRequested':False,'externalRequestsBlocked':True})
    page.close()
   browser.close()
  (OUT/'bundle-browser.json').write_text(json.dumps(results,indent=2)+'\n');print(json.dumps(results,indent=2))

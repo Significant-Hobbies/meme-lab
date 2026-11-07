@@ -23,7 +23,7 @@ export function initializePersonalEditor(annaReady) {
   function close(){document.body.classList.remove('page-personalizing');$('personal-editor').hidden=true;$('open-personal').classList.remove('active');$('open-personal').removeAttribute('aria-current');for(const link of reactions){link.classList.add('active');link.setAttribute('aria-current','page');}$('open-personal').focus();}
   $('personal-zoom').onclick=()=>{const expanded=$('personal-comparison').classList.toggle('expanded');$('personal-zoom').setAttribute('aria-expanded',String(expanded));$('personal-zoom').textContent=expanded?'Compact previews':'Enlarge previews';};
   $('open-personal').onclick=open;$('personal-entry').onclick=open;$('personal-close').onclick=close;
-  for(const link of reactions)link.addEventListener('click',event=>{if(document.body.classList.contains('page-personalizing')){event.preventDefault();link.closest('[popover]')?.hidePopover();close();}});
+  for(const link of [...reactions,...document.querySelectorAll('[data-anna-home]')])link.addEventListener('click',event=>{link.closest('[popover]')?.hidePopover();if(document.body.classList.contains('page-personalizing')){event.preventDefault();close();}});
   async function choose(role,file) {
     invalidate();const version=++selections[role];const input=$(`personal-${role}`);input.setCustomValidity('');input.removeAttribute('aria-invalid');
     if(role==='photo'){photo=null;if(photoUrl)URL.revokeObjectURL(photoUrl);photoUrl=null;$('personal-photo-preview').hidden=true;}

@@ -9,6 +9,7 @@ html=html.replace(/<script\b[^>]*>[\s\S]*?<\/script>\s*/g,'')
   .replace('Better to say nothing.','No meme fits this request.')
   .replace('href="/app.css"','href="./app.css"')
   .replace('href="/meme-studio.css"','href="./meme-studio.css"')
+  .replace(/(<header\b[^>]*>[\s\S]*?<a )href="\/"/,'$1href="#" data-anna-home')
   .replaceAll(/<a href="\/"([^>]*)>find a reaction<\/a>/g,'<a href="#" data-anna-reactions$1>find a reaction</a>')
   .replaceAll('href="/"','href="#"')
   .replaceAll('href="/privacy"','href="./privacy.html"')
@@ -72,7 +73,7 @@ await writeFile(new URL('landing.css',out),css);
 html=styles.length?html.replace(styles[0][0],'href="./landing.css"'):html.replace(inline[0][0],'<link rel="stylesheet" href="./landing.css">');
 html=html.replaceAll(/(href|src)="\/(?!\/)([^"]*)"/g,(_,attribute,path)=>`${attribute}="https://memes.significanthobbies.com/${path}"`);
 html=html.replace('</head>','<link rel="stylesheet" href="./app.css"><link rel="stylesheet" href="./meme-studio.css"></head>');
-if((html.match(/data-anna-reactions/g)||[]).length<3)throw new Error('Website navigation adapter changed; review the Anna build.');
+if((html.match(/data-anna-reactions/g)||[]).length!==3||(html.match(/data-anna-home/g)||[]).length!==1)throw new Error('Website navigation adapter changed; review the Anna build.');
 for(const id of ['meme-form','open-personal','personal-entry','personal-editor','saved-reactions'])if(!html.includes(`id="${id}"`))throw new Error(`Anna build is missing ${id}.`);
 await writeFile(new URL('index.html',out),html);
 await writeFile(new URL('app.js',out),app);

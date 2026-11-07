@@ -91,6 +91,7 @@ jobs:
         run: |
           node scripts/build-anna.mjs
           git diff --exit-code -- anna/bundle
+          test -z "$(git status --porcelain -- anna/bundle)"
       - run: pnpm run build:landing
       - run: pnpm run check
       - run: pnpm test
