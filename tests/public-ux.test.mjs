@@ -16,6 +16,6 @@ test('own privacy route serves the app disclosure with security headers',async()
  const response=await worker.fetch(new Request('https://memes.significanthobbies.com/privacy'),{ASSETS:{fetch:async request=>{
   paths.push(new URL(request.url).pathname);return new Response(html,{headers:{'Content-Type':'text/html'}});
  }}});
- assert.equal(response.status,200);assert.deepEqual(paths,['/privacy.html']);
+ assert.equal(response.status,200);assert.deepEqual(paths,['/privacy']);
  assert.match(await response.text(),/30 days/);assert.match(response.headers.get('content-security-policy'),/script-src 'self'/);
 });

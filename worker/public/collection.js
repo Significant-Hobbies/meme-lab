@@ -1,3 +1,4 @@
+import {collectionPageSize,collectionDescription,collectionAction,collectionDetail} from "./collection-copy.js";
 import {MemeStudio} from "./meme-studio.js";
 import {ClipStudio} from "./clip-studio.js";
 import {creationMediaUrl} from "./meme-media.js";
@@ -18,12 +19,12 @@ let page=Math.max(1,Number.parseInt(params.get("page"),10)||1),loading=false,cat
 let shelves=[],collection=params.get("collection")||(["q","type","mood","context","intensity","resolution","meme"].some(key=>params.has(key))?"all":"selected");
 let context=Object.hasOwn(taxonomy.contexts,params.get("context"))?params.get("context"):"",intensity=["quiet","expressive","exaggerated"].includes(params.get("intensity"))?params.get("intensity"):"";
 let resolution=["720","1080"].includes(params.get("resolution"))?params.get("resolution"):"";
-const pageSize=24;
+const pageSize=collectionPageSize;
 search.value=params.get("q")||"";
 $("#collection-sort").value=params.get("sort")==="name"?"name":"featured";
 
 function updateUrl(){const url=new URL(location.href);for(const [key,value] of Object.entries({q:search.value.trim(),type:format==="all"?"":format,mood,collection,context,intensity,resolution,page:page===1?"":page,sort:$("#collection-sort").value==="featured"?"":"name"})){if(value)url.searchParams.set(key,String(value));else url.searchParams.delete(key);}history.replaceState(null,"",url);}
-function controls(){if(context||intensity||resolution)$("#collection-refine").open=true;for(const button of document.querySelectorAll("[data-format]"))button.setAttribute("aria-pressed",String(button.dataset.format===format));for(const button of document.querySelectorAll("[data-mood]"))button.setAttribute("aria-pressed",String(button.dataset.mood===mood));$("#collection-clear").hidden=!search.value&&!mood&&!context&&!intensity&&!resolution&&format==="all"&&collection==="selected";$("#collection-shelf").value=collection;$("#collection-context").value=context;$("#collection-intensity").value=intensity;$("#collection-resolution").value=resolution;const shelf=shelves.find(shelf=>shelf.id===collection);$("#collection-shelf-description").textContent=shelf?.description||(collection==="selected"?"A considered starting point. Explore the full catalog whenever you want.":"Explore the full catalog by feeling, situation, and format.");}
+function controls(){if(context||intensity||resolution)$("#collection-refine").open=true;for(const button of document.querySelectorAll("[data-format]"))button.setAttribute("aria-pressed",String(button.dataset.format===format));for(const button of document.querySelectorAll("[data-mood]"))button.setAttribute("aria-pressed",String(button.dataset.mood===mood));$("#collection-clear").hidden=!search.value&&!mood&&!context&&!intensity&&!resolution&&format==="all"&&collection==="selected";$("#collection-shelf").value=collection;$("#collection-context").value=context;$("#collection-intensity").value=intensity;$("#collection-resolution").value=resolution;const shelf=shelves.find(shelf=>shelf.id===collection);$("#collection-shelf-description").textContent=collectionDescription(shelves,collection);}
 
 function imageFor(meme,index){
   const frame=Object.assign(document.createElement("div"),{className:"collection-media"});
@@ -52,8 +53,8 @@ function render(){
     const tags=Object.assign(document.createElement("div"),{className:"tag-list"});
     for(const tag of meme.tags.slice(0,2)){const button=Object.assign(document.createElement("button"),{type:"button",textContent:tag});button.addEventListener("click",()=>{search.value=tag;filterCollection();});tags.append(button);}
     const editable=meme.media_type==="gif"||creationMediaUrl(meme);
-    const create=Object.assign(document.createElement("button"),{type:"button",className:"collection-create-button",textContent:meme.media_type==="gif"?"Caption this clip →":editable?"Make this meme →":"Use original reaction →"});create.addEventListener("click",()=>openCreator(meme));
-    const detail=meme.quality?.state==="measured"?`${meme.quality.width} × ${meme.quality.height}${meme.provenance?.source_title?" · "+meme.provenance.source_title:" source"}`:"Source size unchecked";
+    const create=Object.assign(document.createElement("button"),{type:"button",className:"collection-create-button",textContent:collectionAction(meme,editable)});create.addEventListener("click",()=>openCreator(meme));
+    const detail=collectionDetail(meme);
     copy.append(title,Object.assign(document.createElement("p"),{className:"collection-source-detail",textContent:detail}),Object.assign(document.createElement("p"),{textContent:meme.message}),tags,create);card.append(imageFor(meme,index),copy);fragment.append(card);
   }
   grid.replaceChildren(fragment);empty.hidden=items.length!==0;

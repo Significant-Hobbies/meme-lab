@@ -1,3 +1,5 @@
+import {createPublicReadability,staticPaths} from './public-readability.mjs';
+import {wantsMarkdown,markdownResponse} from './agent-surfaces/http.mjs';
 import {catalogue,clipLibrary,retrievalCatalogue} from './catalogue.mjs';
 import {createGatewayClassifierFetch,hasMultiplePerspectives,humourBelongs,needsSeriousHandling,rankCandidates,rankCandidatesByPerspective,requiresFactualAnswer} from './classification.mjs';
 import {withClassifierDeadline} from './classifier-deadline.mjs';
@@ -17,20 +19,6 @@ const catalogueById=new Map([...catalogue,...clipLibrary].map(record=>[record.id
 const CLASSIFIER_MODEL='free-ai:auto';
 const RETRIEVAL_FALLBACK_MODEL='vector-retrieval-fallback';
 const SITE_ORIGIN='https://memes.significanthobbies.com';
-const PUBLIC_ROUTES=['/','/collection','/how-it-works'];
-const MARKDOWN_ALTERNATES={'/':'/index.md','/collection':'/collection.md','/collection.html':'/collection.md','/how-it-works':'/how-it-works.md','/how-it-works.html':'/how-it-works.md'};
-
-function wantsMarkdown(request) {
-  const accept=(request.headers.get('accept')||'').toLowerCase();
-  if(!accept.includes('text/markdown')&&!accept.includes('text/x-markdown')) return false;
-  if(!accept.includes('text/html')) return true;
-  const mdIndex=accept.indexOf('text/markdown');
-  const htmlIndex=accept.indexOf('text/html');
-  if(mdIndex===-1) return false;
-  if(htmlIndex===-1) return true;
-  return mdIndex<htmlIndex;
-}
-
 function forHead(request,response) {
   if(request.method!=='HEAD') return response;
   return new Response(null,{status:response.status,statusText:response.statusText,headers:response.headers});
@@ -45,11 +33,12 @@ function agentCatalog(origin=SITE_ORIGIN) {
     llmsFull:`${origin}/llms-full.txt`,
     sitemap:`${origin}/sitemap.xml`,
     robots:`${origin}/robots.txt`,
-    markdown:{suffix:'.md',negotiation:true},
+    markdown:{suffix:'.md',negotiation:true,catalog:origin+'/api/md/_catalog'},
     surfaces:[
       {id:'home',url:`${origin}/`,md:`${origin}/index.md`,kind:'static',description:'Paste a comment and get the best-matching meme.'},
       {id:'collection',url:`${origin}/collection`,md:`${origin}/collection.md`,kind:'collection',description:'Browse meme templates and measured reaction clips; create an image or captioned video.'},
       {id:'how-it-works',url:`${origin}/how-it-works`,md:`${origin}/how-it-works.md`,kind:'static',description:'How retrieval, ranking and evaluation work.'},
+      ...staticPaths.filter(path=>!['/','/collection','/how-it-works'].includes(path)).map(path=>({id:path.slice(1),url:origin+path,md:origin+path+'.md',kind:'static'})),
       {id:'meme',url:`${origin}/memes/{id}`,md:`${origin}/memes/{id}.md`,kind:'dynamic',description:'One reference page per catalogued meme; replace {id} with a sitemap meme id.'}
     ],
     auth:{public:true,notes:'Public surfaces need no authentication. The /api/recommend and /api/feedback endpoints are POST-only and excluded.'}
@@ -205,28 +194,29 @@ function memeMarkdown(record) {
     '',
     record.message,
     '',
-    `- What it expresses: ${record.relational_pattern}`,
-    `- Example: ${record.example_context}`,
-    `- When not to use it: ${record.near_miss_context}`
+    ...(record.catalogue_scope!=='gallery'||record.catalogue_profile?[`- What it expresses: ${record.relational_pattern}`,`- Example: ${record.example_context}`,`- When not to use it: ${record.near_miss_context}`]:[])
   ];
+  if(record.video_evidence)lines.push(`- Source dimensions: ${record.video_evidence.width} × ${record.video_evidence.height} encoded pixels · ${record.video_evidence.fps} fps · ${record.video_evidence.duration.toFixed(1)} seconds`);
+  if(record.catalogue_scope==='gallery'&&!allowedIds.has(record.id))lines.push('- About this reaction: This clip is available to browse and caption. It has not been evaluated for automatic recommendations.');
+  if(record.media_type==='gif'||creationMediaUrl(record))lines.push(`[${record.media_type==='gif'?'Caption this clip':'Make this meme'}](${SITE_ORIGIN}/collection?meme=${encodeURIComponent(record.id)})`);
+  lines.push(`[Find a meme for your situation](${SITE_ORIGIN}/)`);
+  if(record.attribution)lines.push(record.attribution);
   if(record.tags?.length) lines.push(`- Tags: ${record.tags.join(', ')}`);
   if(media) lines.push(`- Media: ${media}`);
-  if(record.image_url) lines.push(`- Source: ${record.image_url} (${sourceNote})`);
+  if(record.image_url) lines.push(`- Source: ${record.provenance?.source_url||record.image_url} (${sourceNote})`);
   lines.push(`- Page: ${canonical}`,`- Collection: ${SITE_ORIGIN}/collection`,'');
   return lines.join('\n');
 }
 
 function memeNotFound(request,asMarkdown) {
   if(asMarkdown||wantsMarkdown(request)) {
-    return textResponse('# Not found\n\nThat meme is not in the collection.\n',{status:404,contentType:'text/markdown; charset=utf-8',cacheControl:'no-store'});
+    const response=markdownResponse('# Not found\n\nThat meme is not in the collection.\n',request,{'Cache-Control':'no-store'});
+    return new Response(response.body,{status:404,headers:secureHeaders(response.headers)});
   }
   return pageResponse(notFoundPage(),{status:404,indexable:false,cacheControl:'no-store'});
 }
 
-function sitemap() {
-  const urls=[...PUBLIC_ROUTES,...retrievalCatalogue.filter(record=>record.id===record.canonical_id&&record.catalogue_status==='active').map(publicMemePath)];
-  return `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls.map(path=>`  <url><loc>${SITE_ORIGIN}${path}</loc></url>`).join('\n')}\n</urlset>\n`;
-}
+const publicReadability=createPublicReadability([...catalogueById.values()],memeMarkdown);
 
 function safeError(error) {
   return error instanceof Error?error.message:String(error);
@@ -466,10 +456,10 @@ export default {
     if(url.pathname==='/api/anna/composition') return withEndpointMeasurement(request,env,ctx,'/api/anna/composition',()=>annaComposition(request,env));
     if(url.pathname==='/api/anna/shortlist') return withEndpointMeasurement(request,env,ctx,'/api/anna/shortlist',()=>annaShortlist(request,env));
     if(url.pathname==='/api/anna/events') return withEndpointMeasurement(request,env,ctx,'/api/anna/events',()=>annaEvent(request,env,ctx));
-    if(isRead&&url.pathname==='/robots.txt') return forHead(request,textResponse(`User-agent: *\nAllow: /\nDisallow: /api/\n\nSitemap: ${SITE_ORIGIN}/sitemap.xml\n`));
-    if(isRead&&url.pathname==='/sitemap.xml') return forHead(request,textResponse(sitemap(),{contentType:'application/xml; charset=utf-8'}));
+    if(isRead&&url.pathname==='/robots.txt') return forHead(request,textResponse(publicReadability.robots()));
+    if(isRead&&url.pathname==='/sitemap.xml') return forHead(request,textResponse(publicReadability.sitemap(),{contentType:'application/xml; charset=utf-8'}));
     if(isRead&&url.pathname==='/api/ai') {
-      const origin=url.origin;
+      const origin=SITE_ORIGIN;
       return forHead(request,textResponse(`${JSON.stringify(agentCatalog(origin),null,2)}\n`,{contentType:'application/json; charset=utf-8',cacheControl:'public, max-age=300'}));
     }
     if(isRead&&url.pathname.startsWith('/memes/')) {
@@ -482,28 +472,17 @@ export default {
       const record=catalogueById.get(id);
       if(!record||record.catalogue_status!=='active') return forHead(request,memeNotFound(request,markdownPath));
       if(record.canonical_id&&record.canonical_id!==id) return forHead(request,Response.redirect(`${SITE_ORIGIN}/memes/${encodeURIComponent(record.canonical_id)}${markdownPath?'.md':''}`,308));
-      if(markdownPath||wantsMarkdown(request)) {
-        return forHead(request,textResponse(memeMarkdown(record),{contentType:'text/markdown; charset=utf-8'}));
-      }
       const canonicalPath=publicMemePath(record);
-      if(url.pathname!==canonicalPath) return forHead(request,Response.redirect(`${SITE_ORIGIN}${canonicalPath}`,301));
-      return forHead(request,pageResponse(memePage(record)));
+      const representationPath=canonicalPath+(markdownPath?'.md':'');
+      if(url.pathname!==representationPath) return forHead(request,Response.redirect(`${SITE_ORIGIN}${representationPath}`,301));
+      if(markdownPath||wantsMarkdown(request)||request.method==='OPTIONS') return (await publicReadability.handle(request,env.ASSETS))??forHead(request,memeNotFound(request,true));
+      return forHead(request,await publicReadability.advertise(pageResponse(memePage(record)),canonicalPath));
     }
     if(url.pathname==='/api/health'&&isRead) return withEndpointMeasurement(request,env,ctx,'/api/health',()=>forHead(request,json({status:'ok',catalogue:catalogue.length})));
     if(isRead&&(url.pathname==='/studio'||url.pathname==='/studio/')) return forHead(request,new Response(null,{status:302,headers:secureHeaders(new Headers({Location:'/#meme-form'}))}));
-    if(isRead&&url.pathname==='/privacy') {
-      const assetUrl=new URL(url);assetUrl.pathname='/privacy.html';
-      return forHead(request,secureAsset(await env.ASSETS.fetch(new Request(assetUrl,request))));
-    }
-    const markdownAlternate=MARKDOWN_ALTERNATES[url.pathname];
-    if(isRead&&markdownAlternate&&wantsMarkdown(request)) {
-      const mdUrl=new URL(url);
-      mdUrl.pathname=markdownAlternate;
-      const mdAsset=await env.ASSETS.fetch(new Request(mdUrl.toString(),request));
-      if(mdAsset.ok) {
-        return forHead(request,new Response(mdAsset.body,{status:200,headers:secureHeaders(new Headers({'Cache-Control':'public, max-age=21600','Content-Type':'text/markdown; charset=utf-8'}))}));
-      }
-    }
+    const publicResponse=await publicReadability.handle(request,env.ASSETS);
+    if(publicResponse)return publicResponse;
+    if(isRead&&staticPaths.includes(url.pathname))return forHead(request,await publicReadability.advertise(secureAsset(await env.ASSETS.fetch(request)),url.pathname));
     if(url.pathname==='/api/recommend'&&request.method==='POST') {
       return withEndpointMeasurement(request,env,ctx,'/api/recommend',()=>{
         const origin=request.headers.get('origin');
