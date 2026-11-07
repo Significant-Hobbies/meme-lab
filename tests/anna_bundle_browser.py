@@ -37,11 +37,17 @@ try:
    assert page.locator('#personal-output-actions').is_hidden()
    page.locator('#personal-clear').click();assert page.locator('#personal-generate').is_disabled()
    page.locator('#personal-close').click();assert page.locator('#personal-editor').is_hidden()
+   page.locator('#open-personal').click()
+   assert page.locator('[data-anna-reactions]').count()>=3,'Anna reaction navigation targets are missing'
+   if width<768:page.get_by_role('button',name='Open menu',exact=True).click()
+   page.locator('[data-anna-reactions]:visible').first.click();assert page.locator('#personal-editor').is_hidden()
    assert page.locator('#meme-form').is_visible()
    assert page.evaluate('document.documentElement.scrollWidth<=innerWidth'),f'Overflow at {width}'
    assert not errors,errors
    assert not failed,failed
-   results.append({'width':width,'editorOpenUploadConsentClearClose':'passed','pageErrors':errors,'localAssetFailures':failed,'generationRequested':False,'externalRequestsBlocked':True})
+   page.goto(base+'/anna/bundle/privacy.html');assert page.locator('h1').inner_text()=='Meme Lab on Anna'
+   assert page.locator('.topbar').evaluate("el=>getComputedStyle(el).display")=='grid','Privacy page lost its base styling'
+   results.append({'privacyStyle':'passed','navigationClose':'passed','width':width,'editorOpenUploadConsentClearClose':'passed','pageErrors':errors,'localAssetFailures':failed,'generationRequested':False,'externalRequestsBlocked':True})
    page.close()
   browser.close()
  (OUT/'bundle-browser.json').write_text(json.dumps(results,indent=2)+'\n');print(json.dumps(results,indent=2))

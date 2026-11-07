@@ -87,6 +87,10 @@ jobs:
           node-version: 22
           cache: pnpm
       - run: pnpm install --frozen-lockfile
+      - name: Verify committed Anna bundle
+        run: |
+          node scripts/build-anna.mjs
+          git diff --exit-code -- anna/bundle
       - run: pnpm run build:landing
       - run: pnpm run check
       - run: pnpm test

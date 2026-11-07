@@ -9,6 +9,7 @@ html=html.replace(/<script\b[^>]*>[\s\S]*?<\/script>\s*/g,'')
   .replace('Better to say nothing.','No meme fits this request.')
   .replace('href="/app.css"','href="./app.css"')
   .replace('href="/meme-studio.css"','href="./meme-studio.css"')
+  .replaceAll(/<a href="\/"([^>]*)>find a reaction<\/a>/g,'<a href="#" data-anna-reactions$1>find a reaction</a>')
   .replaceAll('href="/"','href="#"')
   .replaceAll('href="/privacy"','href="./privacy.html"')
   .replaceAll('href="/index.md"','href="https://memes.significanthobbies.com/index.md"')
@@ -71,6 +72,7 @@ await writeFile(new URL('landing.css',out),css);
 html=styles.length?html.replace(styles[0][0],'href="./landing.css"'):html.replace(inline[0][0],'<link rel="stylesheet" href="./landing.css">');
 html=html.replaceAll(/(href|src)="\/(?!\/)([^"]*)"/g,(_,attribute,path)=>`${attribute}="https://memes.significanthobbies.com/${path}"`);
 html=html.replace('</head>','<link rel="stylesheet" href="./app.css"><link rel="stylesheet" href="./meme-studio.css"></head>');
+if((html.match(/data-anna-reactions/g)||[]).length<3)throw new Error('Website navigation adapter changed; review the Anna build.');
 for(const id of ['meme-form','open-personal','personal-entry','personal-editor','saved-reactions'])if(!html.includes(`id="${id}"`))throw new Error(`Anna build is missing ${id}.`);
 await writeFile(new URL('index.html',out),html);
 await writeFile(new URL('app.js',out),app);
@@ -79,6 +81,7 @@ await writeFile(new URL('app.css',out),(await readFile(new URL('app.css',out),'u
 for(const file of ['captions.mjs','caption-completion.mjs','ranking.mjs','library.mjs','interactions.mjs','engagement.mjs','personal-editor.mjs','personalize.mjs','image-tools.mjs','creations.mjs']) await copyFile(new URL('anna/'+file,root),new URL(file,out));
 await writeFile(new URL('meme-studio.js',out),(await readFile(new URL('worker/public/meme-studio.js',root),'utf8')).replace('Caption drafts stay in this tab.','Editable drafts stay in this tab. Downloading saves the finished PNG privately to Anna.'));
 await writeFile(new URL('captions.mjs',out),(await readFile(new URL('anna/captions.mjs',root),'utf8')).replace('../worker/src/caption-core.mjs','./caption-core.mjs'));
-await writeFile(new URL('privacy.html',out),(await readFile(new URL('worker/public/anna-privacy.html',root),'utf8')).replace('href="/app.css"','href="./app.css"')
+await copyFile(new URL('worker/public/app.css',root),new URL('privacy.css',out));
+await writeFile(new URL('privacy.html',out),(await readFile(new URL('worker/public/anna-privacy.html',root),'utf8')).replace('href="/app.css"','href="./privacy.css"')
   .replace('href="/meme-studio.css"','href="./meme-studio.css"').replaceAll('href="/"','href="https://memes.significanthobbies.com/"'));
 console.log('Anna bundle built from the approved Studio interface.');
