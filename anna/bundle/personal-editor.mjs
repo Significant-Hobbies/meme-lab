@@ -6,6 +6,7 @@ const $=id=>document.getElementById(id);
 const button=(label,handler)=>{const b=document.createElement('button');b.type='button';b.className='reference-action';b.textContent=label;b.onclick=handler;return b;};
 export function initializePersonalEditor(annaReady) {
   const job=new PersonalMemeJob(),savedByBlob=new WeakMap();
+  const reactions=[...document.querySelectorAll('[data-anna-reactions]')];
   let photo,template,output,photoUrl,templateUrl,outputUrl,busy=false,revision=0,libraryGeneration=0,libraryCursor=null;
   const selections={photo:0,template:0};
   const announce=(text,error=false)=>{$('personal-status').textContent=text;$('personal-status').dataset.error=String(error);};
@@ -18,11 +19,11 @@ export function initializePersonalEditor(annaReady) {
     const r=region();const area=$('personal-face-area');Object.assign(area.style,{left:`${r.x*100}%`,top:`${r.y*100}%`,width:`${r.width*100}%`,height:`${r.height*100}%`});
     for(const name of ['x','y','width','height'])$(`face-${name}-value`).textContent=$(`face-${name}`).value+'%';$('face-size').value=$('face-width').value;$('face-size-value').textContent=$('face-width').value+'%';
   };
-  function open(){document.body.classList.add('page-personalizing');$('personal-editor').hidden=false;$('open-personal').classList.add('active');$('open-personal').setAttribute('aria-current','page');document.querySelector('.site-nav a.active')?.classList.remove('active');document.querySelector('.site-nav a[aria-current]')?.removeAttribute('aria-current');$('personal-title').focus();$('personal-editor').scrollIntoView({block:'start',behavior:'auto'});}
-  function close(){document.body.classList.remove('page-personalizing');$('personal-editor').hidden=true;$('open-personal').classList.remove('active');$('open-personal').removeAttribute('aria-current');const reactions=document.querySelector('.site-nav a');reactions.classList.add('active');reactions.setAttribute('aria-current','page');reactions.focus();}
+  function open(){document.body.classList.add('page-personalizing');$('personal-editor').hidden=false;$('open-personal').classList.add('active');$('open-personal').setAttribute('aria-current','page');for(const link of reactions){link.classList.remove('active');link.removeAttribute('aria-current');}$('personal-title').focus();$('personal-editor').scrollIntoView({block:'start',behavior:'auto'});}
+  function close(){document.body.classList.remove('page-personalizing');$('personal-editor').hidden=true;$('open-personal').classList.remove('active');$('open-personal').removeAttribute('aria-current');for(const link of reactions){link.classList.add('active');link.setAttribute('aria-current','page');}$('open-personal').focus();}
   $('personal-zoom').onclick=()=>{const expanded=$('personal-comparison').classList.toggle('expanded');$('personal-zoom').setAttribute('aria-expanded',String(expanded));$('personal-zoom').textContent=expanded?'Compact previews':'Enlarge previews';};
   $('open-personal').onclick=open;$('personal-entry').onclick=open;$('personal-close').onclick=close;
-  document.querySelector('.site-nav a').addEventListener('click',event=>{if(document.body.classList.contains('page-personalizing')){event.preventDefault();close();}});
+  for(const link of [...reactions,...document.querySelectorAll('[data-anna-home]')])link.addEventListener('click',event=>{link.closest('[popover]')?.hidePopover();if(document.body.classList.contains('page-personalizing')){event.preventDefault();close();}});
   async function choose(role,file) {
     invalidate();const version=++selections[role];const input=$(`personal-${role}`);input.setCustomValidity('');input.removeAttribute('aria-invalid');
     if(role==='photo'){photo=null;if(photoUrl)URL.revokeObjectURL(photoUrl);photoUrl=null;$('personal-photo-preview').hidden=true;}

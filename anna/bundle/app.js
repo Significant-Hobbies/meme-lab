@@ -5,6 +5,7 @@ import {decorateResults,initializeInteractions} from './interactions.mjs';
 import {reportEvent} from './engagement.mjs';
 import {recommendOnAnna} from './ranking.mjs';
 import {MemeStudio} from './meme-studio.js';
+const reportRecommendationOutcome=()=>{};
 
 const $=selector=>document.querySelector(selector);
 const form=$('#meme-form');
@@ -43,6 +44,13 @@ function media(candidate,className) {
     wrap.append(Object.assign(document.createElement('span'),{className:'media-fallback',textContent:'Preview unavailable'}));
     return wrap;
   }
+  if(candidate.mime_type?.startsWith('video/')&&candidate.id) {
+    const video=Object.assign(document.createElement('video'),{controls:true,muted:true,playsInline:true,preload:'metadata',poster:candidate.preview_url||'',src:'https://memes.significanthobbies.com/api/clips/media/'+encodeURIComponent(candidate.id)+(candidate.media_revision?'?v='+candidate.media_revision:'')});
+    video.setAttribute('aria-label',`${displayText(candidate.name)} reaction clip`);
+    wrap.classList.add('video-reaction');
+    wrap.append(video,Object.assign(document.createElement('span'),{className:'media-kind',textContent:'CLIP'}));
+    return wrap;
+  }
   const image=document.createElement('img');
   image.alt=`Meme preview: ${displayText(candidate.name)}`;
   image.referrerPolicy='no-referrer';
@@ -52,10 +60,11 @@ function media(candidate,className) {
   image.src=mediaUrl;
   if(candidate.id) {
     const link=Object.assign(document.createElement('a'),{className:'media-link',href:`https://memes.significanthobbies.com/memes/${encodeURIComponent(candidate.id)}`,target:"_blank",rel:"noopener noreferrer",'aria-label':`Open ${displayText(candidate.name)} meme details`});
+    link.addEventListener('click',()=>reportRecommendationOutcome('detail_open_requested',currentRecommendation,candidate));
     link.append(image);
     wrap.append(link);
   } else wrap.append(image);
-  if(candidate.media_type==='gif') wrap.append(Object.assign(document.createElement('span'),{className:'media-kind',textContent:'GIF'}));
+  if(candidate.media_type==='gif') wrap.append(Object.assign(document.createElement('span'),{className:'media-kind',textContent:'CLIP'}));
   return wrap;
 }
 
@@ -70,6 +79,7 @@ function renderBest(candidate) {
   const rank=Object.assign(document.createElement('span'),{className:`rank${lowConfidence?' low-confidence':''}`,textContent:`${lowConfidence?'LOW CONFIDENCE · ':''}${matchLabel} · ${fitText(candidate)}`});
   const title=document.createElement('h2');
   title.append(Object.assign(document.createElement('a'),{href:`https://memes.significanthobbies.com/memes/${encodeURIComponent(candidate.id)}`,target:"_blank",rel:"noopener noreferrer",textContent:displayText(candidate.name)}));
+  title.firstChild.addEventListener('click',()=>reportRecommendationOutcome('detail_open_requested',currentRecommendation,candidate));
   const signals=Object.assign(document.createElement('p'),{className:'signal-note',textContent:candidate.signal_summary});
   const sourceText=candidate.license_url?'Open original · licensed source':candidate.media_status==='approved'?'Open approved source':'Open source preview · media rights not established';
   const source=document.createElement('p');
@@ -97,6 +107,7 @@ function renderAlternatives(candidates) {
     copy.className='alternative-copy';
     const title=document.createElement('h3');
     title.append(Object.assign(document.createElement('a'),{href:`https://memes.significanthobbies.com/memes/${encodeURIComponent(candidate.id)}`,target:"_blank",rel:"noopener noreferrer",textContent:displayText(candidate.name)}));
+    title.firstChild.addEventListener('click',()=>reportRecommendationOutcome('detail_open_requested',currentRecommendation,candidate));
     copy.append(
       Object.assign(document.createElement('span'),{textContent:`${candidate.perspective&&candidate.perspective!=='best_match'?candidate.perspective_label.toUpperCase():`#${candidate.rank}`} · ${fitText(candidate)}`}),
       title,
@@ -111,8 +122,11 @@ function renderAlternatives(candidates) {
   }
 }
 
-function openStudio(candidate) {
+function openStudio(candidate,{intentional=true}={}) {
   selectedCandidate=candidate;
+  const recommendation=currentRecommendation;
+  if(intentional)reportRecommendationOutcome('candidate_selected',recommendation,candidate);
+  studio.onExportOutcome=outcome=>reportRecommendationOutcome(outcome,recommendation,candidate);
   renderBest(candidate);
   $('#feedback-status').textContent='';
   for(const button of document.querySelectorAll('[data-verdict]')) {button.disabled=false;button.removeAttribute('aria-pressed');}
@@ -137,13 +151,15 @@ async function findMeme() {
   let responseStatus=0;
   try {
     const data=await recommendOnAnna(value,{anna:await annaReady});
-    if(data.degraded) window.appHealthLog?.('recommendation.degraded',{level:'warn',title:'Meme picker degraded',props:{route:'/api/recommend',duration_ms:Date.now()-started}});
+    if(version!==searchVersion)return;
+    if(data.degraded)reportRecommendationOutcome('degraded',data,null,{durationMs:Date.now()-started});
     if(data.decision==='none') {
       currentRecommendation=data;
       $('#no-match-reason').textContent=data.none_reason;
       void reportEvent('run_none');
       showOnly('none');
       noMatch.scrollIntoView({behavior:'smooth',block:'start'});
+      reportRecommendationOutcome('shown',data,null);
       return;
     }
     currentRecommendation=data;
@@ -157,11 +173,11 @@ async function findMeme() {
     $('#feedback-status').textContent='';
     for(const button of document.querySelectorAll('[data-verdict]')) { button.disabled=false;button.removeAttribute('aria-pressed'); }
     showOnly('result');
-    if(data.candidates[0].media_type!=='gif')openStudio(data.candidates[0]);
+    reportRecommendationOutcome('shown',data,selectedCandidate);
+    if(data.candidates[0].media_type!=='gif')openStudio(data.candidates[0],{intentional:false});
     result.scrollIntoView({behavior:'smooth',block:'start'});
   } catch(error) {
     if(version!==searchVersion)return;
-    window.appHealthLog?.('recommendation.failed',{level:'error',title:'Meme picker failed',props:{route:'/api/recommend',status_code:responseStatus,duration_ms:Date.now()-started}});
     showOnly('form');
     status.textContent=error.message;
     status.scrollIntoView({behavior:'smooth',block:'nearest'});

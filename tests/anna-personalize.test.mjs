@@ -1,7 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {PersonalMemeJob,validateImageFile,validateRegion,remoteImageUrl,cropRegion,shareMeme} from '../anna/personalize.mjs';
-import {blendFace,faceAlpha,faceCrop,validateDimensions,squarePlacement} from '../anna/image-tools.mjs';
+import {readFile} from 'node:fs/promises';
+import {PersonalMemeJob,validateImageFile,validateRegion,remoteImageUrl,cropRegion,shareMeme,generateAnnaImage,imageError} from '../anna/personalize.mjs';
+import {blendFace,faceAlpha,faceCrop,validateDimensions,squarePlacement,validateFaceEdit,returnedIdentity} from '../anna/image-tools.mjs';
 const blob=()=>new Blob([new Uint8Array(40)],{type:'image/png'});
 const region={x:.2,y:.2,width:.3,height:.4};
 function fixture() {
@@ -23,6 +24,76 @@ test('uses two bounded uploads, one generation and no storage/analytics writes',
   assert.equal(calls[2][1].n,1);assert.equal(calls[2][1].reference_image_urls.length,2);
   assert.match(calls[2][1].prompt,/Preserve all other characters/);
   assert.equal(calls[1][1].filename,'portrait.png');
+});
+test('async generation submits one idempotent job and polls the result without a second render',async()=>{
+  const {calls,args}=fixture();let polls=0;const id='ijob_test';
+  args.anna.image.generate=()=>assert.fail('Must not fall back to synchronous generation');
+  args.anna.image.generateAsync=async request=>{calls.push(['async',request]);return {jobId:id,state:'queued'};};
+  args.anna.image.getJob=async()=>++polls===1?{jobId:id,state:'running'}:{jobId:id,state:'succeeded',request:{model:'test-job-model'},result:{images:[{url:'https://cdn.anna.partners/output.png'}]}};
+  const result=await new PersonalMemeJob().generate({...args,wait:async()=>{}});
+  assert.deepEqual(calls.map(c=>c[0]),['upload','upload','async']);assert.equal(polls,2);
+  assert.equal(calls[2][1].n,1);assert.match(calls[2][1].idempotencyKey,/^[a-f0-9-]{36}$/);
+  assert.equal(result.model,'test-job-model');
+});
+test('failed async submission or terminal job never falls back or composes a result',async()=>{
+  for(const failure of ['submit','job']){
+    const {args}=fixture();let submits=0;
+    args.anna.image.generate=()=>assert.fail('No second generation after async failure');
+    args.anna.image.generateAsync=async()=>{submits++;if(failure==='submit')throw Object.assign(new Error('provider'),{code:'APP_PROVIDER_ERROR'});return {jobId:'ijob_failed'};};
+    args.anna.image.getJob=async()=>({jobId:'ijob_failed',state:'failed',error:{code:'APP_PROVIDER_ERROR'}});
+    args.compose=()=>assert.fail('Failed job must not be composed');
+    await assert.rejects(new PersonalMemeJob().generate({...args,wait:async()=>{}}),{code:'APP_PROVIDER_ERROR'});
+    assert.equal(submits,1);
+  }
+});
+test('changed selections discard and request cancellation of the async job',async()=>{
+  const job=new PersonalMemeJob(),{args}=fixture();let cancelled=0;
+  args.anna.image.generateAsync=async()=>({jobId:'ijob_stale'});
+  args.anna.image.getJob=async()=>{job.invalidate();return {jobId:'ijob_stale',state:'running'};};
+  args.anna.image.cancelJob=async({jobId})=>{assert.equal(jobId,'ijob_stale');cancelled++;};
+  args.compose=()=>assert.fail('Stale job must not be composed');
+  await assert.rejects(job.generate({...args,wait:async()=>{}}),{name:'AbortError'});
+  assert.equal(cancelled,1);
+});
+test('async polling has a deadline and rejects mismatched job results',async()=>{
+  let cancelled=0;
+  const anna={image:{generateAsync:async()=>({jobId:'ijob_deadline'}),getJob:async()=>({jobId:'ijob_deadline',state:'running'}),cancelJob:async()=>{cancelled++;}}};
+  let time=0;
+  await assert.rejects(generateAnnaImage(anna,{prompt:'test'},{now:()=>time,wait:async()=>{time+=10*60*1000;}}),{code:'image_job_timeout'});
+  assert.equal(cancelled,1);
+  anna.image.getJob=async()=>({jobId:'ijob_other',state:'succeeded',result:{images:[]}});
+  await assert.rejects(generateAnnaImage(anna,{prompt:'test'}),/different image job/);
+  assert.equal(cancelled,2);
+});
+test('a missed status poll recovers without resubmitting the image job',async()=>{
+  let submits=0,polls=0,cancels=0;
+  const anna={image:{generateAsync:async()=>{submits++;return {jobId:'ijob_poll'};},getJob:async()=>{if(++polls===1)throw Object.assign(new Error('rate limited'),{code:'429'});return {jobId:'ijob_poll',state:'succeeded',result:{images:[{url:'https://cdn.anna.partners/result.png'}]}};},cancelJob:async()=>{cancels++;}}};
+  const result=await generateAnnaImage(anna,{prompt:'test'},{wait:async()=>{}});
+  assert.equal(result.images.length,1);assert.equal(submits,1);assert.equal(polls,2);assert.equal(cancels,0);
+});
+test('unavailable status polls stop, request cancellation and explain uncertain completion',async()=>{
+  let polls=0,cancels=0;
+  const anna={image:{generateAsync:async()=>({jobId:'ijob_unavailable'}),getJob:async()=>{polls++;throw new DOMException('SDK timeout','AbortError');},cancelJob:async()=>{cancels++;throw new Error('running');}}};
+  await assert.rejects(generateAnnaImage(anna,{prompt:'test'},{wait:async()=>{}}),error=>{
+    assert.equal(error.code,'image_job_status_unavailable');assert.match(imageError(error),/may still finish/);assert.doesNotMatch(imageError(error),/selection changed|quota is unavailable/i);return true;
+  });
+  assert.equal(polls,3);assert.equal(cancels,1);
+});
+test('an unconfirmed submission never resubmits and warns that quota may still be used',async()=>{
+  let submits=0;
+  const anna={image:{generateAsync:async()=>{submits++;throw new DOMException('SDK timeout','AbortError');},getJob:()=>assert.fail('No known job to poll')}};
+  await assert.rejects(generateAnnaImage(anna,{prompt:'test'}),error=>{
+    assert.equal(error.code,'image_job_submit_unconfirmed');assert.match(imageError(error),/may still finish/);return true;
+  });
+  assert.equal(submits,1);
+});
+test('legacy SDK timeouts are distinct from an actual changed selection',async()=>{
+  const {args}=fixture();let submits=0;
+  args.anna.image.generate=async()=>{submits++;throw new DOMException('SDK timeout','AbortError');};
+  await assert.rejects(new PersonalMemeJob().generate(args),error=>{
+    assert.match(imageError(error),/timed out/);assert.doesNotMatch(imageError(error),/selection changed/i);return true;
+  });
+  assert.equal(submits,1);assert.match(imageError({code:'selection_changed',name:'AbortError'}),/selection changed/i);
 });
 test('quota/permission/provider failure is not retried and never produces a result',async()=>{
   for(const code of ['APP_QUOTA_EXCEEDED','APP_NOT_GRANTED','APP_PROVIDER_ERROR']){
@@ -65,12 +136,26 @@ test('padded whole-meme references keep target geometry and recover the original
     assert.equal(frame.x*2+frame.width,1);assert.equal(frame.y*2+frame.height,1);
     const {calls,args}=fixture();
     args.prepare=async(input,options)=>({blob:input,width,height,...(options.role==='template'?{frame,referenceBlob:blob()}: {})});
+    args.compose=async({original,identity,region:selection,mode})=>{
+      assert.deepEqual(selection,region);assert.deepEqual(original.frame,frame);assert.equal(mode,'format');
+      assert.equal(identity.blob,args.photo);
+      return blob();
+    };
     const output=await new PersonalMemeJob().generate(args);
     const request=calls.find(c=>c[0]==='generate')[1];
     assert.equal(request.size,'1024x1024');
     assert.match(request.prompt,/including identical padding/);
+    assert.match(request.prompt,/blank oval/);
+    assert.match(request.prompt,/illustrated avatar/);
+    assert.match(request.prompt,/no drawn selection outlines/);
     assert.ok(request.prompt.includes('x='+(frame.x+region.x*frame.width).toFixed(3)));
     assert.equal(output.width,width);assert.equal(output.height,height);
+  }
+});
+test('the Anna upload bundle contains the exact personalization engines under test',async()=>{
+  for(const file of ['image-tools.mjs','personalize.mjs']){
+    const source=await readFile(new URL('../anna/'+file,import.meta.url),'utf8');
+    assert.equal(await readFile(new URL('../anna/bundle/'+file,import.meta.url),'utf8'),source);
   }
 });
 test('missing capability, failed second upload and malformed model output do not fake success',async()=>{
@@ -99,6 +184,43 @@ test('ellipse composition preserves every pixel outside face, including captions
     else if(result[offset]!==original[offset])changed++;
   }
   assert.ok(changed>300);assert.deepEqual([...original.slice(0,4)],[15,30,70,255]);
+});
+test('unchanged faces and unfilled reference ovals cannot be reported as a completed edit',()=>{
+  const width=100,height=80,original=new Uint8ClampedArray(width*height*4),generated=new Uint8ClampedArray(original.length);
+  for(let i=0;i<original.length;i+=4)original.set([75,90,110,255],i);
+  assert.throws(()=>validateFaceEdit(original,generated,width,height,region),{code:'face_not_replaced'});
+  assert.throws(()=>validateFaceEdit(original,original,width,height,region),{code:'face_not_replaced'});
+  for(let i=0;i<generated.length;i+=4)generated.set(i%8?[240,120,10,255]:[20,100,180,255],i);
+  assert.doesNotThrow(()=>validateFaceEdit(original,generated,width,height,region));
+  const tinted=new Uint8ClampedArray(generated.length);
+  for(let i=0;i<tinted.length;i+=4)tinted.set([235,25,235,255],i);
+  assert.throws(()=>validateFaceEdit(original,tinted,width,height,region),{code:'face_not_replaced'});
+  for(let y=0;y<height/2;y++)for(let x=0;x<width;x++)generated.set([0,0,0,0],(y*width+x)*4);
+  assert.throws(()=>validateFaceEdit(original,generated,width,height,region),{code:'face_not_replaced'});
+  for(let i=0;i<generated.length;i+=4)generated.set(i%8?[240,120,10,255]:[20,100,180,255],i);
+  for(let y=0;y<height;y++)for(let x=0;x<width;x++){
+    const alpha=faceAlpha(x,y,width,height,region);
+    if(alpha>0&&alpha<1)generated.set([0,0,0,0],(y*width+x)*4);
+  }
+  assert.throws(()=>validateFaceEdit(original,generated,width,height,region),{code:'face_not_replaced'});
+});
+test('a shaded face near the former beige placeholder skin tone remains a valid edit',()=>{
+  const width=200,height=200,original=new Uint8ClampedArray(width*height*4),generated=new Uint8ClampedArray(original.length);
+  for(let y=0;y<height;y++)for(let x=0;x<width;x++){
+    const offset=(y*width+x)*4,shade=Math.round(24*x/width-12),noise=(x*17+y*13)%7-3;
+    original.set([75,90,110,255],offset);generated.set([181+shade+noise,154+shade+noise,135+shade+noise,255],offset);
+    if(y>=65&&y<75&&(x>=65&&x<78||x>=100&&x<113))generated.set([30,25,25,255],offset);
+    if(y>=90&&y<100&&x>=75&&x<105)generated.set([145,45,45,255],offset);
+  }
+  assert.doesNotThrow(()=>validateFaceEdit(original,generated,width,height,{x:.2,y:.2,width:.4,height:.4}));
+  for(let y=90;y<96;y++)for(let x=72;x<108;x++)generated.set([205,40,190,255],(y*width+x)*4);
+  assert.doesNotThrow(()=>validateFaceEdit(original,generated,width,height,{x:.2,y:.2,width:.4,height:.4}));
+});
+test('a returned identity portrait is distinguished from the template context',()=>{
+  const width=64,height=64,template=new Uint8ClampedArray(width*height*4),identity=new Uint8ClampedArray(template.length);
+  for(let i=0;i<template.length;i+=4){template.set([20,40,70,255],i);identity.set([220,140,90,255],i);}
+  assert.equal(returnedIdentity(identity,template,identity,width,height,region),true);
+  assert.equal(returnedIdentity(template,template,identity,width,height,region),false);
 });
 test('square face crop maps landscape/portrait targets and stays inside original image at edges',()=>{
   for(const [width,height,r] of [[1200,800,region],[768,960,{x:.5,y:.22,width:.25,height:.23}],[100,80,{x:0,y:0,width:.1,height:.1}]]){

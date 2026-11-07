@@ -1,0 +1,8 @@
+<!doctype html><meta charset="utf-8"><title>Anna image canvas regression</title>
+<pre id="result">Running</pre>
+<script type="module">
+import {verifyCanvas} from './anna-image-canvas.mjs';
+try{window.canvasResult={passed:true,results:await verifyCanvas()};}
+catch(error){window.canvasResult={passed:false,error:error.message};}
+document.querySelector('pre').textContent=JSON.stringify(window.canvasResult,null,2);
+</script>

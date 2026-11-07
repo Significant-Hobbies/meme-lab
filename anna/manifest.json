@@ -56,7 +56,10 @@
         "delete"
       ],
       "image": [
-        "generate"
+        "generate",
+        "generateAsync",
+        "getJob",
+        "cancelJob"
       ],
       "upload": [
         "inline"

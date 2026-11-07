@@ -25,6 +25,37 @@ export function blendFace(original,generated,width,height,region) {
   }
   return output;
 }
+function* faceSamples(width,height,region) {
+  const left=Math.floor(region.x*width),right=Math.ceil((region.x+region.width)*width);
+  const top=Math.floor(region.y*height),bottom=Math.ceil((region.y+region.height)*height);
+  const step=Math.max(1,Math.floor(Math.sqrt((right-left)*(bottom-top))/96));
+  for(let y=top;y<bottom;y+=step)for(let x=left;x<right;x+=step){
+    if(faceAlpha(x,y,width,height,region)<=0)continue;
+    yield (y*width+x)*4;
+  }
+}
+export function validateFaceEdit(original,generated,width,height,region) {
+  let samples=0,blank=0,unchanged=0;
+  const sum=[0,0,0],squares=[0,0,0];
+  for(const offset of faceSamples(width,height,region)){
+    if(original[offset+3]===0)continue;
+    samples++;
+    for(let c=0;c<3;c++){const value=generated[offset+c];sum[c]+=value;squares[c]+=value*value;}
+    if(generated[offset+3]===0)blank++;
+    if([0,1,2,3].every(c=>Math.abs(generated[offset+c]-original[offset+c])<=2))unchanged++;
+  }
+  const variation=samples?Math.sqrt(squares.reduce((total,value,c)=>total+Math.max(0,value/samples-(sum[c]/samples)**2),0)/3):0;
+  if(!samples||blank/samples>.01||unchanged/samples>.99||variation<12)throw Object.assign(new Error('The model did not fill the selected face.'),{code:'face_not_replaced'});
+}
+export function returnedIdentity(generated,template,identity,width,height,region) {
+  let templateDifference=0,identityDifference=0,samples=0;
+  for(let y=0;y<height;y++)for(let x=0;x<width;x++){
+    if(faceAlpha(x,y,width,height,region)>0)continue;
+    const offset=(y*width+x)*4;
+    for(let c=0;c<3;c++){templateDifference+=Math.abs(generated[offset+c]-template[offset+c]);identityDifference+=Math.abs(generated[offset+c]-identity[offset+c]);samples++;}
+  }
+  return templateDifference>samples*5&&identityDifference<templateDifference*.5;
+}
 async function assertStatic(blob) {
   const bytes=new Uint8Array(await blob.arrayBuffer());
   const ascii=(offset,length)=>String.fromCharCode(...bytes.slice(offset,offset+length));
@@ -77,10 +108,23 @@ export async function prepareImage(blob,{role,region,mode='format'}) {
       return {blob:normalized,referenceBlob:await canvasBlob(reference),crop,width:canvas.width,height:canvas.height};
     }
     if(role==='template'&&mode==='format') {
+      if(region){
+        const r=validateRegion(region),ctx=canvas.getContext('2d'),pixels=ctx.getImageData(0,0,canvas.width,canvas.height).data;
+        let visible=false;
+        for(const offset of faceSamples(canvas.width,canvas.height,r))if(pixels[offset+3]>0){visible=true;break;}
+        if(!visible)throw Object.assign(new Error('Choose a face area with visible image content.'),{code:'face_area_transparent'});
+      }
       const frame=squarePlacement(canvas.width,canvas.height);
       const reference=document.createElement('canvas');reference.width=reference.height=Math.min(1536,Math.max(canvas.width,canvas.height));
       const ctx=reference.getContext('2d');ctx.fillStyle='#000';ctx.fillRect(0,0,reference.width,reference.height);
       ctx.drawImage(canvas,frame.x*reference.width,frame.y*reference.height,frame.width*reference.width,frame.height*reference.height);
+      if(region){
+        const r=validateRegion(region);
+        // Remove the competing identity from the reference, never the original.
+        ctx.save();ctx.beginPath();
+        ctx.ellipse((frame.x+(r.x+r.width/2)*frame.width)*reference.width,(frame.y+(r.y+r.height/2)*frame.height)*reference.height,r.width*frame.width*reference.width/2,r.height*frame.height*reference.height/2,0,0,Math.PI*2);
+        ctx.clip();ctx.clearRect(0,0,reference.width,reference.height);ctx.restore();
+      }
       return {blob:normalized,referenceBlob:await canvasBlob(reference),frame,width:canvas.width,height:canvas.height};
     }
     return {blob:normalized,width:canvas.width,height:canvas.height};
@@ -89,9 +133,9 @@ export async function prepareImage(blob,{role,region,mode='format'}) {
 export function encodeImage(blob) {
   return new Promise((resolve,reject)=>{const reader=new FileReader();reader.onload=()=>resolve(String(reader.result).split(',')[1]);reader.onerror=()=>reject(new Error('Could not read the image.'));reader.readAsDataURL(blob);});
 }
-export async function composeMeme({original,generatedUrl,region,mode='format'}) {
+export async function composeMeme({original,identity,generatedUrl,region,mode='format'}) {
   const controller=new AbortController();const timer=setTimeout(()=>controller.abort(),30000);
-  let generatedBitmap,originalBitmap;
+  let generatedBitmap,originalBitmap,templateReference,identityReference;
   try {
     let response;
     try{response=await fetch(remoteImageUrl(generatedUrl),{credentials:'omit',signal:controller.signal});}
@@ -109,19 +153,29 @@ export async function composeMeme({original,generatedUrl,region,mode='format'}) 
     const expectedAspect=original.frame?1:original.width/original.height;
     if(mode==='format'&&Math.abs((generatedBitmap.width/generatedBitmap.height)/expectedAspect-1)>.15)throw Object.assign(new Error('Anna changed the meme format’s proportions too much.'),{code:'output_format_mismatch'});
     if(!['format','face-patch'].includes(mode))throw new Error('Unsupported image workflow.');
+    if(mode==='format'&&original.referenceBlob&&identity?.referenceBlob){
+      templateReference=await createImageBitmap(original.referenceBlob);identityReference=await createImageBitmap(identity.referenceBlob);
+      const sample=document.createElement('canvas');sample.width=sample.height=64;const context=sample.getContext('2d',{willReadFrequently:true});
+      const pixels=bitmap=>{context.clearRect(0,0,64,64);context.drawImage(bitmap,0,0,64,64);return context.getImageData(0,0,64,64).data;};
+      const frame=original.frame||{x:0,y:0,width:1,height:1};
+      const area={x:frame.x+region.x*frame.width,y:frame.y+region.y*frame.height,width:region.width*frame.width,height:region.height*frame.height};
+      if(returnedIdentity(pixels(generatedBitmap),pixels(templateReference),pixels(identityReference),64,64,area))throw Object.assign(new Error('The model returned the identity photo instead of the meme.'),{code:'face_not_replaced'});
+    }
     const canvas=document.createElement('canvas');canvas.width=original.width;canvas.height=original.height;const ctx=canvas.getContext('2d',{willReadFrequently:true});
     if(mode==='format'){
       const frame=original.frame||{x:0,y:0,width:1,height:1};
       ctx.drawImage(generatedBitmap,frame.x*generatedBitmap.width,frame.y*generatedBitmap.height,frame.width*generatedBitmap.width,frame.height*generatedBitmap.height,0,0,canvas.width,canvas.height);
-      return await canvasBlob(canvas);
+    }else{
+      const crop=original.crop||{x:0,y:0,width:1,height:1};
+      ctx.drawImage(generatedBitmap,0,0,generatedBitmap.width,generatedBitmap.height,crop.x*canvas.width,crop.y*canvas.height,crop.width*canvas.width,crop.height*canvas.height);
     }
-    originalBitmap=await createImageBitmap(original.blob);
-    ctx.drawImage(originalBitmap,0,0);const base=ctx.getImageData(0,0,canvas.width,canvas.height);
-    const crop=original.crop||{x:0,y:0,width:1,height:1};
-    ctx.clearRect(0,0,canvas.width,canvas.height);ctx.drawImage(generatedBitmap,0,0,generatedBitmap.width,generatedBitmap.height,crop.x*canvas.width,crop.y*canvas.height,crop.width*canvas.width,crop.height*canvas.height);
     const edited=ctx.getImageData(0,0,canvas.width,canvas.height);
+    originalBitmap=await createImageBitmap(original.blob);
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    ctx.drawImage(originalBitmap,0,0);const base=ctx.getImageData(0,0,canvas.width,canvas.height);
+    validateFaceEdit(base.data,edited.data,canvas.width,canvas.height,region);
     ctx.putImageData(new ImageData(blendFace(base.data,edited.data,canvas.width,canvas.height,region),canvas.width,canvas.height),0,0);
     return await canvasBlob(canvas);
-  } finally {clearTimeout(timer);originalBitmap?.close();generatedBitmap?.close();}
+  } finally {clearTimeout(timer);originalBitmap?.close();generatedBitmap?.close();templateReference?.close();identityReference?.close();}
 }
 export const composeFace=args=>composeMeme({...args,mode:'face-patch'});
