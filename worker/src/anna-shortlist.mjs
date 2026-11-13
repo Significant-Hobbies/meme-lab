@@ -19,7 +19,7 @@ export async function annaShortlist(request,env) {
   if(denied)return denied;
   try {
     const records=await retrieveCandidates(env,comment,30);
-    const publicCandidates=presentSelection({decision:'meme',confidence:'low',candidates:records.map(record=>({id:record.id,score:0}))}).candidates;
+    const publicCandidates=presentSelection({decision:'meme',confidence:'low',candidates:records.map(record=>({id:record.id,score:0}))},{assetBaseUrl:request.url}).candidates;
     return json({
       decision:'shortlist',
       serious_hint:needsSeriousHandling(comment),
