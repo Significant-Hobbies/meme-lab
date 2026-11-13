@@ -380,7 +380,7 @@ async function recommend(request,env,ctx) {
     const degraded=ranking_mode==='retrieval_fallback'||ranking_mode==='general_fallback';
     console.log(JSON.stringify({event:'recommendation',status:degraded?'degraded':'ok',duration_ms:Date.now()-started,decision:selection.decision,confidence:selection.confidence,candidate_count:selection.candidates.length,classifier_gate,classifier_ranked:ranking_mode!=='retrieval_fallback',ranking_mode}));
     const perspectives=new Map((ranked??[]).filter(record=>record.perspective).map(record=>[record.id,{perspective:record.perspective,perspective_label:record.perspective_label}]));
-    const recommendation=presentSelection(selection,{perspectives});
+    const recommendation=presentSelection(selection,{perspectives,assetBaseUrl:request.url});
     if(degraded) reportPickerHealth(env,ctx,'recommendation.degraded',{route:'/api/recommend',ranking_mode,classifier_gate,duration_ms:Date.now()-started,recommendation_id:recommendation.request_id,stage:'server',traffic_class:requestTrafficClass(request)});
     let feedback_enabled=true;
     try { await persistRecommendation(env,recommendation,comment,ranking_model); }

@@ -119,7 +119,13 @@ export function selectionFromRanking(ranked,{minimumVisibleFit=MINIMUM_VISIBLE_F
   };
 }
 
-export function presentSelection(selection,{perspectives=new Map()}={}) {
+export function publicClipUrl(value,baseUrl) {
+  if(!baseUrl||typeof value!=='string'||!value.startsWith('/assets/clips/')) return value;
+  const resolved=new URL(value,baseUrl);
+  return resolved.origin===new URL(baseUrl).origin&&resolved.pathname.startsWith('/assets/clips/')?resolved.href:value;
+}
+
+export function presentSelection(selection,{perspectives=new Map(),assetBaseUrl}={}) {
   return {
     request_id:crypto.randomUUID(),
     decision:selection.decision,
@@ -127,8 +133,12 @@ export function presentSelection(selection,{perspectives=new Map()}={}) {
     none_reason:selection.decision==='none'?selection.none_reason:'',
     candidates:selection.candidates.map((candidate,rank)=>{
       const perspective=perspectives.get(candidate.id);
+      const record=publicById.get(candidate.id);
       return {
-        ...publicById.get(candidate.id),
+        ...record,
+        image_url:publicClipUrl(record?.image_url,assetBaseUrl),
+        media_url:publicClipUrl(record?.media_url,assetBaseUrl),
+        preview_url:publicClipUrl(record?.preview_url,assetBaseUrl),
         rank:rank+1,
         ...(candidate.reason?{reason:candidate.reason}:{}),
         score:candidate.score,
