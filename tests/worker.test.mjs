@@ -57,6 +57,7 @@ test('public worker returns a validated known meme without exposing prompt data'
   assert.equal(body.candidates[0].asset_quality,50);
   assert.equal(body.candidates[0].media_type,'image');
   assert.equal(body.candidates[0].media_url,body.candidates[0].image_url);
+  assert.equal(body.candidates[0].media_url,runtimeCatalogue.find(record=>record.id==='waiting-skeleton').media_url);
   assert.equal(body.candidates[0].preview_url,body.candidates[0].image_url);
   assert.equal(body.candidates[0].source_url,body.candidates[0].image_url);
   assert.match(body.candidates[0].signal_summary,/source pixels · source preview/);assert.doesNotMatch(body.candidates[0].signal_summary,/\/100|reviewed image/);
@@ -64,6 +65,31 @@ test('public worker returns a validated known meme without exposing prompt data'
   assert.equal(body.feedback_enabled,true);
   assert(!JSON.stringify(body).includes('CATALOGUE_JSON'));
   assert.equal(stored.find(entry=>entry.sql.includes('INSERT INTO recommendations'))?.values[4],'free-ai:auto');
+});
+
+test('public recommendation and Anna shortlist resolve owned clip media at the request origin',async()=>{
+  const id='clip-caminandes-3-already-gone';
+  const record=retrievalCatalogue.find(candidate=>candidate.id===id);
+  assert(record);
+  assert.equal(record.media_url,'/assets/clips/caminandes-3-already-gone.mp4');
+  const clipEnv={...env,MEME_INDEX:{query:async()=>({matches:[{id:'owned-clip',metadata:{catalogue_id:id}}]})}};
+  for(const path of ['/api/recommend','/api/anna/shortlist']) {
+    const request=new Request('https://meme-api.test'+path,{
+      method:'POST',
+      headers:{'Content-Type':'application/json',Origin:path.includes('/anna/')?'https://anna.partners':'https://meme-api.test'},
+      body:JSON.stringify({comment:'I opened the fridge again hoping new snacks would appear.'})
+    });
+    const response=await worker.fetch(request,clipEnv);
+    assert.equal(response.status,200,path);
+    const candidate=(await response.json()).candidates.find(item=>item.id===id);
+    assert(candidate,path);
+    assert.equal(candidate.media_url,'https://meme-api.test/assets/clips/caminandes-3-already-gone.mp4',path);
+    assert.equal(candidate.image_url,'https://meme-api.test/assets/clips/caminandes-3-already-gone.jpg',path);
+    assert.equal(candidate.preview_url,candidate.image_url,path);
+    assert.equal(candidate.mime_type,'video/mp4',path);
+  }
+  assert.equal(record.media_url,'/assets/clips/caminandes-3-already-gone.mp4');
+  assert.equal(record.preview_url,'/assets/clips/caminandes-3-already-gone.jpg');
 });
 
 test('managed classification uses the gateway even when the legacy static TypeSafe key is configured',async()=>{
