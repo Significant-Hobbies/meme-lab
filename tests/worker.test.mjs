@@ -4,7 +4,7 @@ import {readFileSync} from 'node:fs';
 import worker from '../worker/src/index.mjs';
 import {catalogue as runtimeCatalogue,clipLibrary,retrievalCatalogue} from '../worker/src/catalogue.mjs';
 import {createGatewayClassifierFetch,FIT_LABELS,hasMultiplePerspectives,humourBelongs,needsSeriousHandling,PERSPECTIVES,rankCandidates,rankCandidatesByPerspective,requiresFactualAnswer} from '../worker/src/classification.mjs';
-import {MINIMUM_VISIBLE_FIT,MINIMUM_VISIBLE_PERSPECTIVE_FIT,validateSelection,normalizeSelection,normalizeRankedSelection,validateRankedSelection,presentSelection,selectionFromRanking} from '../worker/src/recommendation.mjs';
+import {MINIMUM_VISIBLE_FIT,MINIMUM_VISIBLE_PERSPECTIVE_FIT,validateSelection,normalizeSelection,normalizeRankedSelection,validateRankedSelection,presentSelection,selectionFromRanking,publicClipUrl} from '../worker/src/recommendation.mjs';
 import {CORE_RESERVE,EMBEDDING_MODEL,mergeWithReserve,retrieveCandidates} from '../worker/src/retrieval.mjs';
 import {reciprocalRankFuse} from '../worker/src/rank-fusion.mjs';
 import {rankRelevanceCandidates,staticCandidateSignals} from '../worker/src/candidate-signals.mjs';
@@ -65,6 +65,15 @@ test('public worker returns a validated known meme without exposing prompt data'
   assert.equal(body.feedback_enabled,true);
   assert(!JSON.stringify(body).includes('CATALOGUE_JSON'));
   assert.equal(stored.find(entry=>entry.sql.includes('INSERT INTO recommendations'))?.values[4],'free-ai:auto');
+});
+
+test('public clip URLs retain catalogue ownership and external URL boundaries',()=>{
+  const base='https://meme-api.test/api/recommend';
+  for(const value of [undefined,'//evil.test/assets/clips/x.mp4','/assets/clips/../../x','/assets/clips/%2e%2e/%2e%2e/x','/unowned/x.mp4','https://external.test/x.mp4?revision=1']) {
+    assert.equal(publicClipUrl(value,base),value);
+  }
+  assert.equal(publicClipUrl('/assets/clips/x.mp4'),'/assets/clips/x.mp4');
+  assert.equal(publicClipUrl('/assets/clips/x.mp4',base),'https://meme-api.test/assets/clips/x.mp4');
 });
 
 test('public recommendation and Anna shortlist resolve owned clip media at the request origin',async()=>{

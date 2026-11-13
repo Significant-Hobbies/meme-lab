@@ -119,7 +119,7 @@ export function selectionFromRanking(ranked,{minimumVisibleFit=MINIMUM_VISIBLE_F
   };
 }
 
-function publicClipUrl(value,baseUrl) {
+export function publicClipUrl(value,baseUrl) {
   if(!baseUrl||typeof value!=='string'||!value.startsWith('/assets/clips/')) return value;
   const resolved=new URL(value,baseUrl);
   return resolved.origin===new URL(baseUrl).origin&&resolved.pathname.startsWith('/assets/clips/')?resolved.href:value;
