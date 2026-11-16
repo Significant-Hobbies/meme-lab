@@ -9,7 +9,7 @@
   "devDependencies": {
     "@astrojs/react": "7.0.0",
     "@saas-maker/motion": "github:sass-maker/ui-library#v0.1.14&path:/packages/motion",
-    "@saas-maker/templates": "github:sass-maker/ui-library#v0.1.14&path:/packages/templates",
+    "@saas-maker/templates": "github:sass-maker/ui-library#fleet-feedback-retry-20261023-45222b86b022&path:/packages/templates",
     "@saas-maker/ui": "github:sass-maker/ui-library#v0.1.14&path:/packages/ui",
     "@tailwindcss/vite": "4.3.3",
     "astro": "7.3.5",
