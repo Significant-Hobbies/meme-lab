@@ -29,7 +29,7 @@ html=html.replace('<p id="status" class="status"', '<p class="personal-entry"><b
 html=html.replace('<section id="loading"', (await readFile(new URL('anna/personal-editor.html',root),'utf8'))+'\n<section id="loading"');
 html=html.replace('</body>','  <script type="module" src="./app.js"></script>\n</body>');
 html=html.replace('<section id="no-match" class="no-match" hidden>','<section id="no-match" class="no-match" hidden role="status" aria-live="polite">');
-for(const file of ['meme-studio.js','meme-renderer.js','meme-studio.css','meme-media.js'])await copyFile(new URL('worker/public/'+file,root),new URL(file,out));
+for(const file of ['meme-studio.js','meme-renderer.js','meme-studio.css','meme-media.js','reference-link.js'])await copyFile(new URL('worker/public/'+file,root),new URL(file,out));
 for(const file of ['caption-core.mjs','caption-brief.mjs','meme-templates.mjs'])await copyFile(new URL('worker/src/'+file,root),new URL(file,out));
 await writeFile(new URL('meme-templates.mjs',out),(await readFile(new URL('meme-templates.mjs',out),'utf8')).replace('../public/meme-media.js','./meme-media.js'));
 let app=await readFile(new URL('worker/public/app.js',root),'utf8');
