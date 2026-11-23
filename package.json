@@ -51,7 +51,7 @@
     "deploy:public": "pnpm run build:public && wrangler deploy --tag $(git rev-parse HEAD)",
     "types:worker": "wrangler types worker-configuration.d.ts",
     "test": "node --test tests/*.test.mjs",
-    "check": "node scripts/check-package.mjs && node scripts/check-expansion.mjs && node scripts/build-catalogue-model.mjs --check && node scripts/build-public-readability.mjs --check",
+    "check": "node scripts/inline-collection-css.mjs --check && node scripts/check-package.mjs && node scripts/check-expansion.mjs && node scripts/build-catalogue-model.mjs --check && node scripts/build-public-readability.mjs --check",
     "experiment:holdout": "node scripts/run-holdout.mjs",
     "experiment:review": "node scripts/review-holdout.mjs",
     "experiment:summarize": "node scripts/summarize-holdout.mjs",
