@@ -11,6 +11,8 @@ export async function reportPickerProbe(result,{key,fetchImpl=fetch,runUrl,relea
     props[`${fixture.case}_status`]=fixture.status==='passed'?'passed':'failed';
     if(Number.isInteger(fixture.status_code)&&fixture.status_code>=100&&fixture.status_code<=599)
       props[`${fixture.case}_status_code`]=fixture.status_code;
+    if(fixture.status==='failed'&&['retrieval_budget_unavailable','ranking_unavailable','http_error'].includes(fixture.failure_kind))
+      props[`${fixture.case}_failure_kind`]=fixture.failure_kind;
     if(typeof fixture.degraded==='boolean') props[`${fixture.case}_degraded`]=fixture.degraded;
     if(typeof fixture.fallback==='boolean') props[`${fixture.case}_fallback`]=fixture.fallback;
     if(['high','medium','low'].includes(fixture.confidence)) props[`${fixture.case}_confidence`]=fixture.confidence;
