@@ -1,3 +1,4 @@
+import {setReferenceLink} from './reference-link.js';
 import {collectionPageSize,collectionDescription,collectionAction,collectionDetail} from "./collection-copy.js";
 import {MemeStudio} from "./meme-studio.js";
 import {ClipStudio} from "./clip-studio.js";
@@ -105,7 +106,7 @@ function openCreator(meme){
   staticStudio.close();clipStudio.close();selected=meme;generating=false;generate.disabled=false;generate.textContent="Generate captions →";createStatus.textContent="";
   $("#collection-create-title").textContent=meme.name;
   const preview=$(".collection-selected img");preview.hidden=false;preview.onerror=()=>{preview.hidden=true;};preview.src=meme.preview_url||meme.media_url||meme.image_url;preview.alt=meme.name;
-  $(".collection-selected p").textContent=meme.message;$(".collection-selected a").href=`/memes/${encodeURIComponent(meme.id)}`;
+  $(".collection-selected p").textContent=meme.message;setReferenceLink($(".collection-selected"),`/memes/${encodeURIComponent(meme.id)}`,"Reference details ↗");
   if(!dialog.open)dialog.showModal();dialog.scrollTop=0;
   const url=new URL(location.href);url.searchParams.set("meme",meme.id);history.replaceState(null,"",url);
   if(meme.media_type==="gif")void clipStudio.open(meme);
