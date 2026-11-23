@@ -43,7 +43,7 @@ test('bounded cause fields reach App Health while unknown text is excluded',asyn
   let body;
   await reportPickerProbe({status:'failed',results:[
     {case:'perspectives',status:'failed',degraded:true,fallback:false,confidence:'low',ranking_mode:'perspective',perspectives_complete:true},
-    {case:'general',status:'failed',confidence:'private secret',ranking_mode:'private prompt',fallback:'private',perspectives_complete:'private'}
+    {case:'general',status:'failed',confidence:'private secret',ranking_mode:'private prompt',failure_kind:'private cause',fallback:'private',perspectives_complete:'private'}
   ]},{key:'test-key',fetchImpl:async(_url,init)=>{body=JSON.parse(init.body);return new Response(null,{status:202});}});
   const props=body.logs[0].props;
   assert.equal(props.perspectives_fallback,false);assert.equal(props.perspectives_confidence,'low');
@@ -120,4 +120,36 @@ for(const [name,key,ingestStatus,exitStatus,reportStatus] of [
   assert.equal(output.app_health.status,reportStatus);
   assert.equal(child.stdout.includes('test-key'),false);
   assert.equal(child.stdout.includes('I opened'),false);
+});
+
+test('unavailable picker responses retain the HTTP status and only recognized causes',async()=>{
+  const {probePicker}=await import('../scripts/probe-production-picker.mjs');
+  const examples=[
+    [503,{error:'Meme matching is temporarily unavailable. Try again shortly.'},'retrieval_budget_unavailable'],
+    [503,{error:'Meme ranking is temporarily unavailable. Try again shortly.'},'ranking_unavailable'],
+    [503,{error:'private-provider-detail'},'http_error'],
+    [502,'private-provider-detail','http_error'],
+    [429,{error:'Meme ranking is temporarily unavailable. Try again shortly.'},'http_error']
+  ];
+  for(const [status,payload,cause] of examples) {
+    const result=await probePicker('https://example.test',async()=>typeof payload==='string'
+      ?new Response(payload,{status}):Response.json(payload,{status}));
+    assert.equal(result.status,'failed');
+    for(const item of result.results) {
+      assert.equal(item.status_code,status);
+      assert.equal(item.failure_kind,cause);
+      assert.equal('degraded' in item,false);
+      assert.equal('perspectives_complete' in item,false);
+    }
+    let props;
+    await reportPickerProbe(result,{key:'test-key',fetchImpl:async(_url,init)=>{
+      props=JSON.parse(init.body).logs[0].props;
+      return new Response(null,{status:202});
+    }});
+    for(const fixture of ['general','perspectives']) {
+      assert.equal(props[fixture+'_failure_kind'],cause);
+      assert.equal(props[fixture+'_degraded'],undefined);
+    }
+    assert.doesNotMatch(JSON.stringify({result,props}),/private-provider-detail/);
+  }
 });

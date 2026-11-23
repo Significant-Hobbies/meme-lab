@@ -6,6 +6,15 @@ export const pickerCases=[
   {id:'perspectives',comment:'I told my coworker the deadline was today and he started another coffee break.'}
 ];
 
+// Match only the two public 503 responses emitted by the recommendation route.
+function httpFailureKind(status,body) {
+  if(status===503) {
+    if(body?.error==='Meme matching is temporarily unavailable. Try again shortly.') return 'retrieval_budget_unavailable';
+    if(body?.error==='Meme ranking is temporarily unavailable. Try again shortly.') return 'ranking_unavailable';
+  }
+  return 'http_error';
+}
+
 export async function probePicker(origin='https://memes.significanthobbies.com',fetchImpl=fetch) {
   const results=[];
   for(const fixture of pickerCases) {
@@ -18,9 +27,18 @@ export async function probePicker(origin='https://memes.significanthobbies.com',
       });
       const ray=response.headers.get('cf-ray');
       if(/^[0-9a-f]{16,32}-[A-Z]{3}$/.test(ray??'')) ray_id=ray;
+      if(!response.ok) {
+        const body=await response.json().catch(()=>null);
+        results.push({
+          case:fixture.id,status:'failed',status_code:response.status,
+          failure_kind:httpFailureKind(response.status,body),
+          ...(ray_id?{ray_id}:{}),duration_ms:Date.now()-started
+        });
+        continue;
+      }
       const body=await response.json();
       const candidates=body?.candidates;
-      const valid=response.ok&&body.decision==='meme'&&Array.isArray(candidates)&&candidates.length===5
+      const valid=body.decision==='meme'&&Array.isArray(candidates)&&candidates.length===5
         &&new Set(candidates.map(candidate=>candidate.id)).size===5
         &&candidates.every(candidate=>typeof candidate.id==='string'&&candidate.id&&typeof candidate.media_url==='string'&&/^https:\/\//.test(candidate.media_url)&&Number.isFinite(candidate.score));
       const perspectives=new Set((candidates??[]).map(candidate=>candidate.perspective));
