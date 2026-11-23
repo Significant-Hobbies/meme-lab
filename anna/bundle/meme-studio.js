@@ -1,3 +1,4 @@
+import {setReferenceLink} from './reference-link.js';
 import {clampBox,renderMeme} from './meme-renderer.js';
 
 export class MemeStudio {
@@ -10,7 +11,7 @@ export class MemeStudio {
       <div class="studio-grid"><aside class="studio-layers" aria-label="Text layers"><h3>Text layers</h3><div class="studio-layer-list"></div><button type="button" data-action="add">+ Add text</button></aside>
       <div class="studio-workspace"><div class="studio-frame"><canvas aria-label="Meme image preview">The meme preview. All captions can also be read and edited in the text controls.</canvas><div class="studio-selection" hidden><button class="studio-move" type="button" aria-label="Move selected caption with arrow keys"></button><button class="studio-resize" type="button" aria-label="Resize selected caption with arrow keys"></button></div></div><p class="studio-canvas-note">Loading the original image…</p><button type="button" data-action="reload-image" hidden>Retry image</button></div>
       <aside class="studio-inspector" aria-label="Caption controls"><h3>Selected text</h3><label>Caption<textarea class="studio-text" maxlength="280" rows="3" placeholder="Your caption…"></textarea></label><p class="studio-role"></p><h3>Position & size</h3><div class="studio-numbers">${[['x','X (%)'],['y','Y (%)'],['width','Width (%)'],['height','Height (%)']].map(([field,label])=>`<label>${label}<input type="number" data-field="${field}" min="0" max="100" step="1"></label>`).join('')}</div><div class="studio-format"><label>Max text size<input type="number" data-field="fontSize" min="10" max="240" step="1"></label><label>Rotation (°)<input type="number" data-field="rotation" min="-20" max="20" step="1"></label></div><label>Text style<select class="studio-style"><option value="plain">Black text</option><option value="outlined">White with outline</option></select></label><p class="studio-help">Drag a text box to move it. Drag its corner to resize. Use arrow keys when focused, or the position fields.</p><div class="studio-edit-actions"><button type="button" data-action="reset">Reset placement</button><button type="button" data-action="remove">Remove text</button></div></aside></div>
-      <div class="studio-footer"><p class="studio-placement"></p><a class="studio-source" target="_blank" rel="noopener noreferrer">Open original source</a></div><p class="studio-privacy">Editable drafts stay in this tab. Downloading saves the finished PNG privately to Anna. Your situation and the template are processed by the AI provider for captioning. Review the wording before sharing.</p>`;
+      <div class="studio-footer"><p class="studio-placement"></p></div><p class="studio-privacy">Editable drafts stay in this tab. Downloading saves the finished PNG privately to Anna. Your situation and the template are processed by the AI provider for captioning. Review the wording before sharing.</p>`;
     this.$=selector=>host.querySelector(selector);
     this.canvas=this.$('canvas');
     for(const action of ['regenerate','download','add','reset','remove','reload-image']) this.$(`[data-action="${action}"]`).addEventListener('click',()=>this[action==='reload-image'?'reloadImage':action]());
@@ -47,8 +48,8 @@ export class MemeStudio {
     this.$('#studio-heading').textContent=candidate.name;
     this.$('.studio-context').textContent=candidate.from_collection?'Selected from the collection · editable caption draft':`${candidate.perspective_label||'Best match'} · ${candidate.fit_label||'weak'} fit`;
     this.$('.studio-placement').textContent='Writing captions for this template’s structure…';
-    this.$('.studio-source').href=candidate.source_url||candidate.image_url;
-    this.$('.studio-source').textContent=candidate.license_url?'Open licensed source':'Open source preview · media rights not established';
+    setReferenceLink(this.$('.studio-footer'), candidate.source_url || candidate.image_url,
+      candidate.license_url ? 'Open licensed source' : 'Open source preview · media rights not established', { className: 'studio-source', newTab: true });
     this.message('Writing your captions and loading the original image…');
     this.$('.studio-canvas-note').textContent='Loading the original image…';
     this.canvas.width=1;this.canvas.height=1;this.$('.studio-frame').hidden=true;
