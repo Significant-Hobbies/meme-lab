@@ -16,7 +16,7 @@ export async function reportPickerProbe(result,{key,fetchImpl=fetch,runUrl,relea
     if(typeof fixture.degraded==='boolean') props[`${fixture.case}_degraded`]=fixture.degraded;
     if(typeof fixture.fallback==='boolean') props[`${fixture.case}_fallback`]=fixture.fallback;
     if(['high','medium','low'].includes(fixture.confidence)) props[`${fixture.case}_confidence`]=fixture.confidence;
-    if(['general','perspective','general_fallback','retrieval_fallback'].includes(fixture.ranking_mode)) props[`${fixture.case}_ranking_mode`]=fixture.ranking_mode;
+    if(['general','perspective','general_fallback','retrieval_fallback','catalogue_suggestions'].includes(fixture.ranking_mode)) props[`${fixture.case}_ranking_mode`]=fixture.ranking_mode;
     if(fixture.case==='perspectives'&&typeof fixture.perspectives_complete==='boolean') props.perspectives_complete=fixture.perspectives_complete;
     if(Number.isFinite(fixture.duration_ms)&&fixture.duration_ms>=0)
       props[`${fixture.case}_duration_ms`]=Math.min(Math.round(fixture.duration_ms),600000);
