@@ -44,7 +44,13 @@ const unsupported=[
   'They replied k to the six-paragraph message I spent an hour writing.',
   'The fridge is on the patio.',
   'I checked the fridge twice. My friend brought snacks and I was hoping they could help move it.',
-  'I have been waiting for approval for hours to have surgery.'
+  'I have been waiting for approval for hours to have surgery.',
+  'After a long day I came home exhausted and found my cat dead on the couch.',
+  'After a long day I came home exhausted and my partner hit me again.',
+  'I had a long day of chemo and collapsed on the couch.',
+  'I was waiting for hours for the biopsy results download.',
+  'I am suicidal and stuck waiting for hours for approval.',
+  'I opened the fridge again hoping for food because we cannot afford groceries.'
 ];
 
 test('local gallery suggestions cover bounded themes and reject held-out reversals and serious or unsupported situations',()=>{
@@ -107,7 +113,7 @@ test('live Worker route uses the gallery suggestion branch after one refused res
     assert.equal(body.decision,'meme');
     assert.equal(body.ranking_mode,'catalogue_suggestions');
     assert.equal(body.degraded,true);
-    assert.equal(body.feedback_enabled,true);
+    assert.equal(body.feedback_enabled,false);
     assert.equal(body.confidence,'low');
     assert.deepEqual(body.candidates.map(({id})=>id),['clip-caminandes-3-already-gone','clip-caminandes-3-deflated']);
     for(const clip of body.candidates){
@@ -115,7 +121,7 @@ test('live Worker route uses the gallery suggestion branch after one refused res
       assert.equal(clip.perspective,'best_match');
       assert.equal(clip.score,0);
     }
-    assert.deepEqual(calls,{budget:1,index:0,ai:0,rank:0,saves:1,limit:0});
+    assert.deepEqual(calls,{budget:1,index:0,ai:0,rank:0,saves:0,limit:0});
     await Promise.all(pending);
     const logs=delivered.filter(entry=>entry.url.endsWith('/v1/logs')).flatMap(entry=>entry.payload.logs);
     assert.deepEqual(logs.map(log=>log.event).sort(),['recommendation.created','recommendation.degraded']);
@@ -172,7 +178,7 @@ test('monitor reports gallery suggestions as a separate degraded result without 
   const result=await probePicker('https://memes.example.test',(url,init)=>worker.fetch(new Request(url,init),env));
   assert.equal(result.status,'failed');
   assert.ok(result.results.every(item=>item.status_code===200&&item.ranking_mode==='catalogue_suggestions'&&item.degraded));
-  assert.deepEqual(calls,{budget:2,index:0,ai:0,rank:0,saves:2,limit:0});
+  assert.deepEqual(calls,{budget:2,index:0,ai:0,rank:0,saves:0,limit:0});
   let logged;
   const reported=await reportPickerProbe(result,{key:'test-only',fetchImpl:async(_url,req)=>{
     logged=JSON.parse(req.body).logs[0];

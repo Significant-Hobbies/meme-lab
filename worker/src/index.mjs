@@ -283,16 +283,6 @@ async function saveFeedback(request,env,ctx) {
   return json({saved:true,verdict:body.verdict});
 }
 
-async function storeRecommendationForFeedback(env,recommendation,comment,model) {
-  try {
-    await persistRecommendation(env,recommendation,comment,model);
-    return true;
-  } catch(error) {
-    console.error(JSON.stringify({event:'recommendation_store',status:'error',error:safeError(error)}));
-    return false;
-  }
-}
-
 async function recommend(request,env,ctx) {
   if(request.headers.get('content-type')?.split(';')[0]!=='application/json') return json({error:'Expected JSON.'},415);
   const contentLength=Number(request.headers.get('content-length')??0);
@@ -388,7 +378,12 @@ async function recommend(request,env,ctx) {
     const perspectives=new Map((ranked??[]).filter(record=>record.perspective).map(record=>[record.id,{perspective:record.perspective,perspective_label:record.perspective_label}]));
     const recommendation=presentSelection(selection,{perspectives,assetBaseUrl:request.url});
     if(degraded) reportPickerHealth(env,ctx,'recommendation.degraded',{route:'/api/recommend',ranking_mode,classifier_gate,duration_ms:Date.now()-started,recommendation_id:recommendation.request_id,stage:'server',traffic_class:requestTrafficClass(request)});
-    const feedback_enabled=await storeRecommendationForFeedback(env,recommendation,comment,ranking_model);
+    let feedback_enabled=true;
+    try { await persistRecommendation(env,recommendation,comment,ranking_model); }
+    catch(error) {
+      feedback_enabled=false;
+      console.error(JSON.stringify({event:'recommendation_store',status:'error',error:safeError(error)}));
+    }
     reportRecommendationCreated(request,env,ctx,recommendation,{ranking_mode,classifier_gate});
     return json({...recommendation,feedback_enabled,degraded,ranking_mode});
   } catch(error) {
@@ -398,13 +393,12 @@ async function recommend(request,env,ctx) {
       const ranking_mode=CATALOGUE_SUGGESTIONS;
       const selection={decision:'meme',confidence:'low',candidates:clips.map(clip=>({id:clip.id,score:0,fit_label:'weak'}))};
       const recommendation=presentSelection(selection,{assetBaseUrl:request.url});
-      const feedback_enabled=await storeRecommendationForFeedback(env,recommendation,comment,ranking_mode);
       reportPickerHealth(env,ctx,'recommendation.degraded',{
         route:'/api/recommend',ranking_mode,failure_kind:error.reason,duration_ms:Date.now()-started,
         recommendation_id:recommendation.request_id,stage:'server',traffic_class:requestTrafficClass(request)
       });
       reportRecommendationCreated(request,env,ctx,recommendation,{ranking_mode,classifier_gate:'not_run'});
-      return json({...recommendation,feedback_enabled,degraded:true,ranking_mode});
+      return json({...recommendation,feedback_enabled:false,degraded:true,ranking_mode});
     }
     console.error(JSON.stringify({event:'recommendation',status:'error',duration_ms:Date.now()-started,error:safeError(error)}));
     return json({error:'The meme picker had a wobble. Try again.'},502);
