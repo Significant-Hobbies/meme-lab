@@ -45,11 +45,6 @@ const motifs=[
     clips:['clip-coffee-run-finally-home']
   },
   {
-    words:'door doorbell rang knocked sit sat down took take break quiet rest every time minute delivery driver',
-    cues:[/\b(?:doorbell rang|knocked on the door|delivery driver knocked(?!\s+(?:me|him|her|them|us|it|\w+ down)\b))\b/i,/\b(?:sit down|sat down|took a break|rest|quiet)\b/i,/\b(?:finally|just|again|every time)\b/i],
-    clips:['clip-bbb-peace']
-  },
-  {
     words:'coworker colleague meeting said could should been email e mail message scheduled booked another follow up about',
     cues:[/\bmeeting\b/i,/\b(?:could|should) have been an? (?:e-?mail|message)\b/i,/\b(?:scheduled|booked)\s+(?:another|a follow[- ]up)\b/i],
     clips:['clip-bbb-not-impressed','clip-tears-of-steel-wait-what']
