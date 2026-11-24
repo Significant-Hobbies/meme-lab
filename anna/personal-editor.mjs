@@ -1,6 +1,6 @@
 import {PersonalMemeJob,validateImageFile,shareMeme,imageError} from './personalize.mjs';
 import {prepareImage,encodeImage,composeMeme} from './image-tools.mjs';
-import {persistMeme,downloadSavedMeme,removeSavedMeme,listSavedMemePage,readSavedMeme,SavedMemeConflictError} from './creations.mjs';
+import {persistMeme,downloadSavedMeme,removeSavedMeme,listSavedMemePage,readSavedMeme,SavedMemeConflictError,SavedMemeRecoveryError} from './creations.mjs';
 import {reportEvent} from './engagement.mjs';
 const $=id=>document.getElementById(id);
 const button=(label,handler)=>{const b=document.createElement('button');b.type='button';b.className='reference-action';b.textContent=label;b.onclick=handler;return b;};
@@ -13,7 +13,7 @@ export function initializePersonalEditor(annaReady) {
   const libraryMessage=text=>{$('personal-library-status').textContent=text;};
   const region=()=>({x:Number($('face-x').value)/100,y:Number($('face-y').value)/100,width:Number($('face-width').value)/100,height:Number($('face-height').value)/100});
   const updateGenerate=()=>{$('personal-zoom').disabled=!template;$('personal-generate').disabled=busy||!photo||!template||!$('personal-consent').checked;$('personal-output-empty').querySelector('span').textContent=photo&&template?'Choose the face area, then generate your version.':!photo&&!template?'Add your meme and photo to begin.':!photo?'Add your photo to create your version.':'Add a meme image to create your version.';};
-  const resetOutput=()=>{if(outputUrl)URL.revokeObjectURL(outputUrl);outputUrl=null;output=null;$('personal-output').removeAttribute('src');$('personal-output').hidden=true;$('personal-output-empty').hidden=false;$('personal-output-actions').hidden=true;$('personal-model').textContent='';$('personal-saved-note').hidden=true;};
+  const resetOutput=()=>{if(outputUrl)URL.revokeObjectURL(outputUrl);outputUrl=null;output=null;$('personal-output').removeAttribute('src');$('personal-output').hidden=true;$('personal-output-empty').hidden=false;$('personal-output-actions').hidden=true;$('personal-save-copy').hidden=true;$('personal-model').textContent='';$('personal-saved-note').hidden=true;};
   const invalidate=()=>{revision++;job.invalidate();resetOutput();updateGenerate();};
   const drawRegion=()=>{
     const r=region();const area=$('personal-face-area');Object.assign(area.style,{left:`${r.x*100}%`,top:`${r.y*100}%`,width:`${r.width*100}%`,height:`${r.height*100}%`});
@@ -59,6 +59,7 @@ export function initializePersonalEditor(annaReady) {
     finally{busy=false;$('personal-editor').setAttribute('aria-busy','false');updateGenerate();}
   };
   async function save(blob) {
+    if(output===blob)$('personal-save-copy').hidden=true;
     let entry=savedByBlob.get(blob);
     const recover=Boolean(entry);
     if(!entry){
@@ -78,12 +79,23 @@ export function initializePersonalEditor(annaReady) {
     const blob=output;if(!blob)return;control.disabled=true;
     try{await work(blob);}
     catch(error){
+      if(output!==blob)return;
       if(error instanceof SavedMemeConflictError)announce('Anna has a different image at this save location. Choose Save to Anna to save your version as a separate file.',true);
+      else if(error instanceof SavedMemeRecoveryError){
+        $('personal-save-copy').hidden=false;
+        announce('Anna could not check the earlier save. Check My personal memes before saving a separate copy.',true);
+      }
       else announce(control.id==='personal-download'?'Download could not start. Check Anna file access and try again. Your version is still available here.':'Saving could not be confirmed. Check Anna file access and storage quota, then try again.',true);
     }
     finally{control.disabled=false;}
   }
-  $('personal-save').onclick=()=>void withOutput($('personal-save'),async blob=>{await save(blob);if(output===blob){$('personal-saved-note').hidden=false;$('personal-save').textContent='Saved to Anna';announce('Saved privately to your Anna account.');}void reportEvent('saved_creation');await refreshLibrary();});
+  async function saveToLibrary(blob){await save(blob);if(output===blob){$('personal-saved-note').hidden=false;$('personal-save').textContent='Saved to Anna';announce('Saved privately to your Anna account.');}void reportEvent('saved_creation');await refreshLibrary();}
+  $('personal-save').onclick=()=>void withOutput($('personal-save'),saveToLibrary);
+  $('personal-save-copy').onclick=()=>void withOutput($('personal-save-copy'),async blob=>{
+    if($('personal-save-copy').hidden||savedByBlob.get(blob)?.promise)return;
+    savedByBlob.delete(blob);
+    await saveToLibrary(blob);
+  });
   $('personal-download').onclick=()=>void withOutput($('personal-download'),async blob=>{const entry=await save(blob);await downloadSavedMeme(await annaReady,entry.path);if(output===blob){$('personal-saved-note').hidden=false;announce('Anna opened the image download. Your version is saved privately too.');}void reportEvent('download_started');await refreshLibrary();});
   $('personal-share').onclick=()=>void withOutput($('personal-share'),async blob=>{
     let result;try{result=await shareMeme(blob);}catch{announce('Sharing is unavailable. Download the PNG, then attach it in your chat.');return;}if(result==='cancelled')return;

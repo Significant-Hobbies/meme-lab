@@ -4,13 +4,21 @@ function validPath(path){if(typeof path!=='string'||!pathPattern.test(path))thro
 export class SavedMemeConflictError extends Error {
   constructor(){super('A different file already uses this path.');}
 }
+export class SavedMemeRecoveryError extends Error {
+  constructor(cause){super('Anna could not confirm the earlier save.',{cause});}
+}
 export async function persistMeme(anna,blob,{fetchImpl=fetch,id=crypto.randomUUID(),signal,recover=false}={}) {
   if(!(blob instanceof Blob)||blob.type!=='image/png'||blob.size<12||blob.size>MAX_IMAGE_BYTES)throw new Error('Choose a generated PNG meme smaller than 8 MB.');
   const path=validPath(`creations/${id}.png`);
   if(typeof anna?.files?.upload_init!=='function'||typeof anna?.files?.upload_finalize!=='function')throw new Error('Anna file storage access is required to save this meme.');
   if(recover){
-    const existing=await recoverSavedMeme(anna,path,blob,fetchImpl);
-    if(existing)return existing;
+    try{
+      const existing=await recoverSavedMeme(anna,path,blob,fetchImpl);
+      if(existing)return existing;
+    }catch(error){
+      if(error instanceof SavedMemeConflictError)throw error;
+      throw new SavedMemeRecoveryError(error);
+    }
   }
   const ticket=await anna.files.upload_init({path,content_type:'image/png',size:blob.size,ttl_seconds:300,metadata:{kind:'personal-meme'}});
   const url=remoteImageUrl(ticket?.put_url);

@@ -8,6 +8,7 @@ SDK="export const AnnaAppRuntime={connect:async()=>({entryPayload:{},on(){},stor
 
 SAVE_SDK = """
 window.fixtureSavePaths=[];
+window.fixturePreventRecovery=false;
 const files=new Map();
 export const AnnaAppRuntime={connect:async()=>({
  entryPayload:{},on(){},
@@ -15,7 +16,10 @@ export const AnnaAppRuntime={connect:async()=>({
  upload:{inline:async()=>({download_url:'https://fixture.example/input.png'})},
  image:{generate:async()=>({images:[{url:'https://fixture.example/edit.png'}]})},
  files:{
-  list:async({prefix})=>({items:[...files.values()].filter(item=>item.path.startsWith(prefix))}),
+  list:async({prefix})=>{
+    if(window.fixturePreventRecovery&&prefix!=='creations/')throw new Error('Temporary list outage');
+    return {items:[...files.values()].filter(item=>item.path.startsWith(prefix))};
+  },
   upload_init:async args=>{
     if(files.has(args.path))throw new Error('Path already exists');
     return {put_url:'https://fixture.example/'+args.path,headers:{}};
@@ -32,7 +36,7 @@ export const AnnaAppRuntime={connect:async()=>({
 })};
 """
 
-def check_save_retry(browser, base):
+def check_save_retry(browser, base, recovery_unavailable=False):
  page=browser.new_page(viewport={'width':768,'height':900})
  errors=[]
  page.on('pageerror',lambda error:errors.append(str(error)))
@@ -77,15 +81,26 @@ def check_save_retry(browser, base):
   page.locator('#personal-save').click()
   page.get_by_text('Saving could not be confirmed.',exact=False).wait_for()
   assert page.locator('#personal-saved-note').is_hidden()
+  separate=page.get_by_role('button',name='Save a separate copy')
+  assert not separate.is_visible()
+  if recovery_unavailable:page.evaluate('window.fixturePreventRecovery=true')
   page.locator('#personal-save').click()
+  if recovery_unavailable:
+   page.get_by_text('Anna could not check the earlier save.',exact=False).wait_for()
+   separate.wait_for(state='visible')
+   assert len(uploaded)==1, 'An uncertain recovery may not start another upload on its own'
+   separate.click()
   page.locator('#personal-saved-note').wait_for(state='visible')
   paths=page.evaluate('window.fixtureSavePaths')
-  assert len(paths)==1, 'An already committed upload must not be written again'
-  assert len(uploaded)==1 and next(iter(uploaded.values())).startswith(b'\x89PNG')
+  expected=2 if recovery_unavailable else 1
+  assert len(set(paths))==len(paths)==expected
+  assert len(uploaded)==expected and len(set(uploaded.values()))==1
+  assert next(iter(uploaded.values())).startswith(b'\x89PNG')
   page.locator('#personal-library article').first.wait_for(state='visible')
-  assert page.locator('#personal-library article').count()==1
+  assert page.locator('#personal-library article').count()==expected
+  assert not separate.is_visible()
   assert not errors,errors
-  return {'saveConfirmDelay':'recovered','saveClicks':2,'finalizeCalls':1,'privateObjects':1,'libraryItems':1}
+  return {'saveConfirmDelay':'separate copy requested' if recovery_unavailable else 'recovered','finalizeCalls':expected,'privateObjects':expected,'libraryItems':expected}
  finally:
   page.close()
 
@@ -146,6 +161,7 @@ try:
    results.append({'navigationCases':navigation,'privacyStyle':'passed','navigationClose':'passed','width':width,'editorOpenUploadConsentClearClose':'passed','pageErrors':errors,'localAssetFailures':failed,'generationRequested':False,'externalRequestsBlocked':True})
    page.close()
   save_retry=check_save_retry(browser,base)
+  explicit_copy=check_save_retry(browser,base,recovery_unavailable=True)
   browser.close()
- (OUT/'bundle-browser.json').write_text(json.dumps(results,indent=2)+'\n');print(json.dumps({'viewports':results,'saveRetry':save_retry},indent=2))
+ (OUT/'bundle-browser.json').write_text(json.dumps(results,indent=2)+'\n');print(json.dumps({'viewports':results,'saveRetry':save_retry,'explicitCopy':explicit_copy},indent=2))
 finally:server.shutdown();server.server_close()
