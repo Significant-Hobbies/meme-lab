@@ -6,7 +6,7 @@ import {reportPickerProbe} from '../scripts/report-production-picker.mjs';
 import {recommendOnAnna} from '../anna/ranking.mjs';
 import {suggestCatalogueClips} from '../worker/src/catalogue-suggestions.mjs';
 
-const heldOutCases=[
+const curatorCases=[
   ['I opened the refrigerator twice hoping for leftovers.', 'clip-caminandes-3-deflated'],
   ['I checked the fridge four times hoping for snacks.', 'clip-caminandes-3-deflated'],
   ['My friend ate the last chocolate brownie and asked why I sighed.', 'clip-caminandes-3-already-gone'],
@@ -59,8 +59,8 @@ const unsupported=[
   'I opened the fridge again hoping for food because we cannot afford groceries.'
 ];
 
-test('local gallery suggestions cover bounded themes and reject held-out reversals and serious or unsupported situations',()=>{
-  for(const [comment,expected] of heldOutCases){
+test('local gallery suggestions match curator examples and abstain for reversals, serious inputs and unsupported phrasing',()=>{
+  for(const [comment,expected] of curatorCases){
     const clips=suggestCatalogueClips(comment);
     assert.equal(clips[0]?.id,expected,comment);
     assert.ok(clips.length>=1&&clips.length<=2,comment);
