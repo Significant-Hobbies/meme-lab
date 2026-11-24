@@ -76,6 +76,7 @@ export async function recommendOnAnna(comment,{anna,fetchImpl=fetch,signal}={}) 
     throw new Error('Anna’s AI model is temporarily unavailable. Check your model settings or retry.');
   }
   const result=decodeRanking(completion,shortlist.candidates);
+  if(shortlist.retrieval_mode==='curated_catalogue')result.retrieval_mode=shortlist.retrieval_mode;
   if(!shortlist.perspectives)for(const candidate of result.candidates){candidate.perspective='best_match';candidate.perspective_label='Best match';}
   return result;
 }

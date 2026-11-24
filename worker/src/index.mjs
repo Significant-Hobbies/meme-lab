@@ -5,7 +5,8 @@ import {createGatewayClassifierFetch,hasMultiplePerspectives,humourBelongs,needs
 import {withClassifierDeadline} from './classifier-deadline.mjs';
 import {MAX_RECOMMENDATIONS,presentSelection,selectionFromRanking} from './recommendation.mjs';
 import {retrieveCandidates} from './retrieval.mjs';
-import {classifierUnavailable,reportPickerHealth} from './recommendation-health.mjs';
+import {CATALOGUE_SUGGESTIONS,suggestCatalogueClips} from './catalogue-suggestions.mjs';
+import {classifierUnavailable,reportPickerHealth,requestTrafficClass} from './recommendation-health.mjs';
 import {BudgetUnavailableError} from './ai-budget.mjs';
 import {endpointFor,pingFor} from './ping.mjs';
 import {annaEvent} from './anna-events.mjs';
@@ -253,11 +254,6 @@ async function persistRecommendation(env,recommendation,comment,model=CLASSIFIER
     .run();
 }
 
-function requestTrafficClass(request) {
-  const value=request.headers.get('x-fleet-traffic');
-  return value==='qa'||value==='internal'?value:'unclassified';
-}
-
 function reportRecommendationCreated(request,env,ctx,recommendation,details) {
   ctx?.waitUntil(pingFor(env)('recommendation.created',{
     title:`decision: ${recommendation.decision}`,
@@ -391,7 +387,19 @@ async function recommend(request,env,ctx) {
     reportRecommendationCreated(request,env,ctx,recommendation,{ranking_mode,classifier_gate});
     return json({...recommendation,feedback_enabled,degraded,ranking_mode});
   } catch(error) {
-    if(error instanceof BudgetUnavailableError) throw error;
+    if(error instanceof BudgetUnavailableError) {
+      const clips=suggestCatalogueClips(comment);
+      if(!clips.length)throw error;
+      const ranking_mode=CATALOGUE_SUGGESTIONS;
+      const selection={decision:'meme',confidence:'low',candidates:clips.map(clip=>({id:clip.id,score:0,fit_label:'weak'}))};
+      const recommendation=presentSelection(selection,{assetBaseUrl:request.url});
+      reportPickerHealth(env,ctx,'recommendation.degraded',{
+        route:'/api/recommend',ranking_mode,failure_kind:error.reason,duration_ms:Date.now()-started,
+        recommendation_id:recommendation.request_id,stage:'server',traffic_class:requestTrafficClass(request)
+      });
+      reportRecommendationCreated(request,env,ctx,recommendation,{ranking_mode,classifier_gate:'not_run'});
+      return json({...recommendation,feedback_enabled:false,degraded:true,ranking_mode});
+    }
     console.error(JSON.stringify({event:'recommendation',status:'error',duration_ms:Date.now()-started,error:safeError(error)}));
     return json({error:'The meme picker had a wobble. Try again.'},502);
   }
@@ -462,7 +470,7 @@ export default {
       return forHead(request,new Response(response.body,{status:response.status,headers}));
     });
     if(url.pathname==='/api/anna/composition') return withEndpointMeasurement(request,env,ctx,'/api/anna/composition',()=>annaComposition(request,env));
-    if(url.pathname==='/api/anna/shortlist') return withEndpointMeasurement(request,env,ctx,'/api/anna/shortlist',()=>annaShortlist(request,env));
+    if(url.pathname==='/api/anna/shortlist') return withEndpointMeasurement(request,env,ctx,'/api/anna/shortlist',()=>annaShortlist(request,env,ctx));
     if(url.pathname==='/api/anna/events') return withEndpointMeasurement(request,env,ctx,'/api/anna/events',()=>annaEvent(request,env,ctx));
     if(isRead&&url.pathname==='/robots.txt') return forHead(request,textResponse(publicReadability.robots()));
     if(isRead&&url.pathname==='/sitemap.xml') return forHead(request,textResponse(publicReadability.sitemap(),{contentType:'application/xml; charset=utf-8'}));

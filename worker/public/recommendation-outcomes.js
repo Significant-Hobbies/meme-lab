@@ -1,5 +1,5 @@
 const events=new Set(['degraded','shown','detail_open_requested','candidate_selected','feedback_saved','download_requested','export_failed']);
-const modes=new Set(['general','perspective','general_fallback','retrieval_fallback']);
+const modes=new Set(['general','perspective','general_fallback','retrieval_fallback','catalogue_suggestions']);
 
 export function recommendationTrafficClass(search='') {
   const params=new URLSearchParams(search);

@@ -20,6 +20,7 @@ let selectedCandidate=null;
 let submittedSituation='';
 let searchVersion=0;
 const studio=new MemeStudio($('#meme-studio'),{generateDraft:async(body,{signal})=>composeOnAnna(body,{anna:await annaReady,signal}),mediaBase:'https://memes.significanthobbies.com',downloadBlob:async blob=>{const anna=await annaReady;const entry=await persistMeme(anna,blob);await downloadSavedMeme(anna,entry.path);}});
+const isCatalogueSuggestion=()=>currentRecommendation?.ranking_mode==='catalogue_suggestions';
 const fitText=candidate=>`${candidate.fit_label||'weak'}`.toUpperCase()+' FIT';
 const displayText=value=>String(value??'')
   .replace(/&#(\d+);/g,(_,code)=>String.fromCodePoint(Number(code)))
@@ -76,7 +77,7 @@ function renderBest(candidate) {
   const lowConfidence=currentRecommendation?.confidence==='low';
   const perspectiveAware=candidate.perspective&&candidate.perspective!=='best_match';
   const matchLabel=perspectiveAware?candidate.perspective_label.toUpperCase():candidate.rank===1?'BEST MATCH':'SELECTED TEMPLATE';
-  const rank=Object.assign(document.createElement('span'),{className:`rank${lowConfidence?' low-confidence':''}`,textContent:`${lowConfidence?'LOW CONFIDENCE · ':''}${matchLabel} · ${fitText(candidate)}`});
+  const rank=Object.assign(document.createElement('span'),{className:`rank${lowConfidence?' low-confidence':''}`,textContent:isCatalogueSuggestion()?'GALLERY SUGGESTION':`${lowConfidence?'LOW CONFIDENCE · ':''}${matchLabel} · ${fitText(candidate)}`});
   const title=document.createElement('h2');
   title.append(Object.assign(document.createElement('a'),{href:`https://memes.significanthobbies.com/memes/${encodeURIComponent(candidate.id)}`,target:"_blank",rel:"noopener noreferrer",textContent:displayText(candidate.name)}));
   title.firstChild.addEventListener('click',()=>reportRecommendationOutcome('detail_open_requested',currentRecommendation,candidate));
@@ -88,7 +89,14 @@ function renderBest(candidate) {
     const link=Object.assign(document.createElement('a'),{textContent:sourceText,href:candidate.source_url,target:'_blank',rel:'noopener noreferrer'});
     source.append(link);
   } else source.textContent=sourceText;
-  copy.append(rank,title,signals,source);
+  copy.append(rank,title);
+  if(isCatalogueSuggestion())copy.append(Object.assign(document.createElement('p'),{
+    className:'signal-note',textContent:'Full matching is temporarily unavailable. Try this clip from the gallery.'
+  }));
+  if(currentRecommendation?.retrieval_mode==='curated_catalogue')copy.append(Object.assign(document.createElement('p'),{
+    className:'signal-note',textContent:'Anna ranked a small selection of gallery clips. Full catalogue matching is temporarily unavailable.'
+  }));
+  copy.append(signals,source);
   if(candidate.media_type==='gif')copy.append(Object.assign(document.createElement('a'),{className:'primary',href:`https://memes.significanthobbies.com/collection?meme=${encodeURIComponent(candidate.id)}`,target:"_blank",rel:"noopener noreferrer",textContent:'Caption this clip →'}));
   host.append(media(candidate,'hero-media'),copy);
 }
@@ -98,8 +106,8 @@ function renderAlternatives(candidates) {
   host.replaceChildren();
   $('#alternatives-wrap').hidden=!candidates.length;
   const perspectiveAware=candidates.some(candidate=>candidate.perspective&&candidate.perspective!=='best_match');
-  $('#alternatives-title').textContent=perspectiveAware?'OTHER PERSPECTIVES':'ALSO FITS';
-  $('#alternatives-subtitle').textContent=perspectiveAware?'Different angles, ranked by fit.':'Four backups, ranked by fit.';
+  $('#alternatives-title').textContent=isCatalogueSuggestion()?'MORE GALLERY SUGGESTIONS':perspectiveAware?'OTHER PERSPECTIVES':'ALSO FITS';
+  $('#alternatives-subtitle').textContent=isCatalogueSuggestion()?'Clips to browse from the same theme.':perspectiveAware?'Different angles, ranked by fit.':'Four backups, ranked by fit.';
   for(const candidate of candidates) {
     const card=document.createElement('article');
     card.className='alternative';
@@ -109,7 +117,7 @@ function renderAlternatives(candidates) {
     title.append(Object.assign(document.createElement('a'),{href:`https://memes.significanthobbies.com/memes/${encodeURIComponent(candidate.id)}`,target:"_blank",rel:"noopener noreferrer",textContent:displayText(candidate.name)}));
     title.firstChild.addEventListener('click',()=>reportRecommendationOutcome('detail_open_requested',currentRecommendation,candidate));
     copy.append(
-      Object.assign(document.createElement('span'),{textContent:`${candidate.perspective&&candidate.perspective!=='best_match'?candidate.perspective_label.toUpperCase():`#${candidate.rank}`} · ${fitText(candidate)}`}),
+      Object.assign(document.createElement('span'),{textContent:isCatalogueSuggestion()?'GALLERY SUGGESTION':`${candidate.perspective&&candidate.perspective!=='best_match'?candidate.perspective_label.toUpperCase():`#${candidate.rank}`} · ${fitText(candidate)}`}),
       title,
       Object.assign(document.createElement('p'),{className:'signal-note',textContent:candidate.signal_summary})
     );

@@ -45,7 +45,7 @@ export async function probePicker(origin='https://memes.significanthobbies.com',
       const perspectives_complete=['self','other','situation'].every(perspective=>perspectives.has(perspective));
       const degraded=body.degraded===true||body.confidence==='low'||(fixture.id==='perspectives'&&!perspectives_complete);
       const confidence=['high','medium','low'].includes(body.confidence)?body.confidence:null;
-      const ranking_mode=['general','perspective','general_fallback','retrieval_fallback'].includes(body.ranking_mode)?body.ranking_mode:null;
+      const ranking_mode=['general','perspective','general_fallback','retrieval_fallback','catalogue_suggestions'].includes(body.ranking_mode)?body.ranking_mode:null;
       const failed=!valid||degraded;
       results.push({case:fixture.id,status:failed?'failed':'passed',status_code:response.status,degraded,fallback:body.degraded===true,confidence,ranking_mode,...(fixture.id==='perspectives'?{perspectives_complete}:{}),...(failed&&ray_id?{ray_id}:{}),duration_ms:Date.now()-started});
     } catch {
