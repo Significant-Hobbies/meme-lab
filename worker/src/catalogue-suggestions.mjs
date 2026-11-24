@@ -40,13 +40,13 @@ const motifs=[
     clips:['clip-spring-made-it']
   },
   {
-    words:'home sofa couch long day shift all wiped exhausted tired collapsed finally reach reached sat down',
-    cues:[/\b(?:home|sofa|couch)\b/i,/\b(?:long day|long shift|all day)\b/i,/\b(?:wiped|exhausted|tired|collapsed)\b/i],
+    words:'home sofa couch long day shift all wiped exhausted tired finally reach reached sat down',
+    cues:[/\b(?:home|sofa|couch)\b/i,/\b(?:long day|long shift|all day)\b/i,/\b(?:wiped|exhausted|tired)\b/i],
     clips:['clip-coffee-run-finally-home']
   },
   {
-    words:'interrupted doorbell rang knocked sit sat down took take break quiet rest peace every time minute delivery driver',
-    cues:[/\b(?:interrupted|doorbell rang|knocked)\b/i,/\b(?:sit down|sat down|took a break|rest|quiet|peace)\b/i,/\b(?:finally|just|again|every time)\b/i],
+    words:'door doorbell rang knocked sit sat down took take break quiet rest every time minute delivery driver',
+    cues:[/\b(?:doorbell rang|knocked on the door|delivery driver knocked(?!\s+(?:me|him|her|them|us|it|\w+ down)\b))\b/i,/\b(?:sit down|sat down|took a break|rest|quiet)\b/i,/\b(?:finally|just|again|every time)\b/i],
     clips:['clip-bbb-peace']
   },
   {
