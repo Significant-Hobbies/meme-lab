@@ -59,9 +59,19 @@ export function initializePersonalEditor(annaReady) {
     finally{busy=false;$('personal-editor').setAttribute('aria-busy','false');updateGenerate();}
   };
   async function save(blob) {
-    let promise=savedByBlob.get(blob);
-    if(!promise){promise=annaReady.then(anna=>persistMeme(anna,blob)).catch(error=>{savedByBlob.delete(blob);throw error;});savedByBlob.set(blob,promise);}
-    return await promise;
+    let entry=savedByBlob.get(blob);
+    const recover=Boolean(entry);
+    if(!entry){
+      entry={id:crypto.randomUUID(),promise:null};
+      savedByBlob.set(blob,entry);
+    }
+    // A failed confirmation can follow a committed upload. Preserve the file
+    // identity while the user retries saving the same generated image.
+    if(!entry.promise)entry.promise=annaReady.then(anna=>persistMeme(anna,blob,{id:entry.id,recover})).catch(error=>{
+      entry.promise=null;
+      throw error;
+    });
+    return await entry.promise;
   }
   async function withOutput(control,work) {
     const blob=output;if(!blob)return;control.disabled=true;
@@ -90,7 +100,7 @@ export function initializePersonalEditor(annaReady) {
         const note=document.createElement('p');const date=new Date(entry.updated_at);note.textContent=Number.isNaN(date.getTime())?'Saved personal meme':`Saved ${date.toLocaleDateString()}`;
         const controls=document.createElement('div');controls.className='reference-actions';
         const act=(label,work)=>button(label,async event=>{const b=event.currentTarget;b.disabled=true;try{await work();}catch{libraryMessage('Could not complete that action. Check Anna file access and try again.');}finally{b.disabled=false;}});
-        const removeButton=act('Remove',async()=>{const confirm=act('Confirm removal',async()=>{await removeSavedMeme(anna,entry);const blob=output,cached=blob&&savedByBlob.get(blob);if(cached&&(await cached).path===entry.path){savedByBlob.delete(blob);$('personal-saved-note').hidden=true;$('personal-save').textContent='Save to Anna';}await refreshLibrary();libraryMessage('Removed from your Anna library.');});const cancel=button('Keep meme',()=>{confirm.replaceWith(removeButton);cancel.remove();libraryMessage('Kept in your Anna library.');});removeButton.replaceWith(confirm);confirm.after(cancel);libraryMessage('Remove this saved PNG? Source uploads and previously shared copies are separate.');});
+        const removeButton=act('Remove',async()=>{const confirm=act('Confirm removal',async()=>{await removeSavedMeme(anna,entry);const blob=output,cached=blob&&savedByBlob.get(blob);if(cached&&`creations/${cached.id}.png`===entry.path){savedByBlob.delete(blob);$('personal-saved-note').hidden=true;$('personal-save').textContent='Save to Anna';}await refreshLibrary();libraryMessage('Removed from your Anna library.');});const cancel=button('Keep meme',()=>{confirm.replaceWith(removeButton);cancel.remove();libraryMessage('Kept in your Anna library.');});removeButton.replaceWith(confirm);confirm.after(cancel);libraryMessage('Remove this saved PNG? Source uploads and previously shared copies are separate.');});
         controls.append(act('Download',async()=>{await downloadSavedMeme(anna,entry.path);libraryMessage('Anna opened the download.');void reportEvent('download_started');}),act('Prepare share',async()=>{const blob=await readSavedMeme(anna,entry.path);const ready=button('Share image',async()=>{try{const result=await shareMeme(blob);if(result==='download_required')libraryMessage('Download the image, then attach it in your chat.');else if(result==='shared'){libraryMessage('Image share completed.');void reportEvent('image_share_completed');}}catch{libraryMessage('Sharing is unavailable. Download the image, then attach it in your chat.');}});controls.querySelectorAll('button')[1].replaceWith(ready);libraryMessage('Image ready. Choose Share image to open your browser’s sharing menu.');}),removeButton);
         card.append(image,note,controls);host.append(card);
         void anna.files.download_url({path:entry.path}).then(result=>{if(generation===libraryGeneration&&typeof result.get_url==='string')image.src=result.get_url;}).catch(()=>{image.alt='Preview unavailable; you can still download this saved meme.';});
