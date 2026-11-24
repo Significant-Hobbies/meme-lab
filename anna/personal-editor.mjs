@@ -1,6 +1,6 @@
 import {PersonalMemeJob,validateImageFile,shareMeme,imageError} from './personalize.mjs';
 import {prepareImage,encodeImage,composeMeme} from './image-tools.mjs';
-import {persistMeme,downloadSavedMeme,removeSavedMeme,listSavedMemePage,readSavedMeme} from './creations.mjs';
+import {persistMeme,downloadSavedMeme,removeSavedMeme,listSavedMemePage,readSavedMeme,SavedMemeConflictError} from './creations.mjs';
 import {reportEvent} from './engagement.mjs';
 const $=id=>document.getElementById(id);
 const button=(label,handler)=>{const b=document.createElement('button');b.type='button';b.className='reference-action';b.textContent=label;b.onclick=handler;return b;};
@@ -76,7 +76,10 @@ export function initializePersonalEditor(annaReady) {
   async function withOutput(control,work) {
     const blob=output;if(!blob)return;control.disabled=true;
     try{await work(blob);}
-    catch{announce(control.id==='personal-download'?'Download could not start. Check Anna file access and try again. Your version is still available here.':'Saving could not be confirmed. Check Anna file access and storage quota, then try again.',true);}
+    catch(error){
+      if(error instanceof SavedMemeConflictError)announce('Anna has a different file at this save location. Check My personal memes or generate a new version to save separately.',true);
+      else announce(control.id==='personal-download'?'Download could not start. Check Anna file access and try again. Your version is still available here.':'Saving could not be confirmed. Check Anna file access and storage quota, then try again.',true);
+    }
     finally{control.disabled=false;}
   }
   $('personal-save').onclick=()=>void withOutput($('personal-save'),async blob=>{await save(blob);if(output===blob){$('personal-saved-note').hidden=false;$('personal-save').textContent='Saved to Anna';announce('Saved privately to your Anna account.');}void reportEvent('saved_creation');await refreshLibrary();});

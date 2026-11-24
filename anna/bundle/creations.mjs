@@ -1,6 +1,9 @@
 import {MAX_IMAGE_BYTES,remoteImageUrl} from './personalize.mjs';
 const pathPattern=/^creations\/[a-f0-9-]{36}\.png$/;
 function validPath(path){if(typeof path!=='string'||!pathPattern.test(path))throw new Error('Invalid saved meme.');return path;}
+export class SavedMemeConflictError extends Error {
+  constructor(){super('A different file already uses this path.');}
+}
 export async function persistMeme(anna,blob,{fetchImpl=fetch,id=crypto.randomUUID(),signal,recover=false}={}) {
   if(!(blob instanceof Blob)||blob.type!=='image/png'||blob.size<12||blob.size>MAX_IMAGE_BYTES)throw new Error('Choose a generated PNG meme smaller than 8 MB.');
   const path=validPath(`creations/${id}.png`);
@@ -27,11 +30,11 @@ async function recoverSavedMeme(anna,path,blob,fetchImpl) {
     if(page.next_cursor)throw new Error('Anna could not confirm the earlier save.');
     return null;
   }
-  if(entry.size_bytes!==blob.size||entry.content_type!=='image/png'||entry.metadata?.kind!=='personal-meme'||typeof entry.etag!=='string'||!entry.etag)throw new Error('A different file already uses this path.');
+  if(entry.size_bytes!==blob.size||entry.content_type!=='image/png'||entry.metadata?.kind!=='personal-meme'||typeof entry.etag!=='string'||!entry.etag)throw new SavedMemeConflictError();
   const saved=await readSavedMeme(anna,path,{fetchImpl});
   const [expected,actual]=await Promise.all([blob.arrayBuffer(),saved.arrayBuffer()]);
   const actualBytes=new Uint8Array(actual);
-  if(expected.byteLength!==actual.byteLength||!new Uint8Array(expected).every((byte,index)=>byte===actualBytes[index]))throw new Error('A different file already uses this path.');
+  if(expected.byteLength!==actual.byteLength||!new Uint8Array(expected).every((byte,index)=>byte===actualBytes[index]))throw new SavedMemeConflictError();
   return {path,etag:entry.etag,bytes:blob.size};
 }
 export async function downloadSavedMeme(anna,path) {
