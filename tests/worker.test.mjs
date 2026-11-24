@@ -299,6 +299,60 @@ test('configured App Health endpoint telemetry measures supported routes without
   }
 });
 
+test('picker reports a fixed budget reason and preserves the public retry response',async()=>{
+  const monthKey=new Date().toISOString().slice(0,7);
+  const requests=[];
+  const originalFetch=globalThis.fetch;
+  globalThis.fetch=async(url,options)=>{
+    requests.push({url,body:JSON.parse(options.body)});
+    return new Response(null,{status:202});
+  };
+  try {
+    for(const [fetchBudget,reason] of [
+      [async()=>Response.json({allowed:false,monthKey,baselineVerified:true,used:44_999_000,remaining:1000,retryAfter:7200}), 'budget_exhausted'],
+      [async()=>Response.json({error:'Verified monthly Vectorize baseline unavailable'},{status:503}), 'verified_baseline_unavailable'],
+      [async()=>Response.json({error:'PRIVATE_PROVIDER_BODY'},{status:503}), 'reservation_http_error'],
+      [async()=>{throw new Error('PRIVATE_TRANSPORT_ERROR');}, 'reservation_transport_error'],
+      [async()=>Response.json(null), 'invalid_reservation_receipt'],
+      [async()=>Response.json({allowed:true,monthKey:'2020-01',baselineVerified:true,used:3840,remaining:44_996_160,retryAfter:0}), 'stale_reservation_period'],
+      [null, 'binding_missing'],
+    ]) {
+      const pending=[];
+      const request=new Request('https://example.test/api/recommend?private=PRIVATE_QUERY',{
+        method:'POST',
+        headers:{'Content-Type':'application/json','X-Fleet-Traffic':'qa'},
+        body:JSON.stringify({comment:'PRIVATE_COMMENT_SENTINEL'}),
+      });
+      let inferenceCalls=0;
+      const blocked={
+        ...env,APP_HEALTH_INGEST_KEY:'test-key',
+        NEURON_BUDGET:fetchBudget&&{idFromName:name=>name,get:()=>({fetch:fetchBudget})},
+        FREE_AI:{run:async()=>{inferenceCalls++;return env.FREE_AI.run();}},
+        MEME_INDEX:{query:async()=>{inferenceCalls++;return env.MEME_INDEX.query();}},
+      };
+      const response=await worker.fetch(request,blocked,{waitUntil:promise=>pending.push(promise)});
+      assert.equal(response.status,503,reason);
+      assert.equal(response.headers.get('Retry-After'),'60');
+      assert.deepEqual(await response.json(),{error:'Meme matching is temporarily unavailable. Try again shortly.'});
+      assert.equal(inferenceCalls,0,reason);
+      await Promise.all(pending);
+      const attempts=requests.splice(0);
+      const logs=attempts.filter(entry=>entry.url==='https://ingest.sassmaker.com/v1/logs').flatMap(entry=>entry.body.logs);
+      assert.equal(logs.length,1,reason);
+      assert.equal(logs[0].event,'endpoint.failed');
+      assert.equal(logs[0].props.failure_kind,reason);
+      assert.equal(logs[0].props.traffic_class,'qa');
+      const measurements=attempts.filter(entry=>entry.url==='https://ingest.sassmaker.com/v1/ingest').flatMap(entry=>entry.body.events);
+      assert.equal(measurements.length,1,reason);
+      assert.equal(measurements[0].status_code,503);
+      assert.equal('failure_kind' in measurements[0],false);
+      assert.doesNotMatch(JSON.stringify(attempts),/PRIVATE_|44999000|44996160|recommendation_id/);
+    }
+  } finally {
+    globalThis.fetch=originalFetch;
+  }
+});
+
 test('public worker rejects empty, oversized, cross-origin, and unknown API requests',async()=>{
   const empty=await worker.fetch(new Request('https://example.test/api/recommend',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({comment:'   '})}),env);
   assert.equal(empty.status,400);
