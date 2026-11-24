@@ -30,8 +30,9 @@ async function recoverSavedMeme(anna,path,blob,fetchImpl) {
     if(page.next_cursor)throw new Error('Anna could not confirm the earlier save.');
     return null;
   }
-  if(entry.size_bytes!==blob.size||entry.content_type!=='image/png'||entry.metadata?.kind!=='personal-meme'||typeof entry.etag!=='string'||!entry.etag)throw new SavedMemeConflictError();
+  if(entry.content_type!=='image/png'||entry.metadata?.kind!=='personal-meme'||typeof entry.etag!=='string'||!entry.etag)throw new Error('Anna could not confirm the earlier save.');
   const saved=await readSavedMeme(anna,path,{fetchImpl});
+  if(saved.size!==entry.size_bytes)throw new Error('Anna could not confirm the earlier save.');
   const [expected,actual]=await Promise.all([blob.arrayBuffer(),saved.arrayBuffer()]);
   const actualBytes=new Uint8Array(actual);
   if(expected.byteLength!==actual.byteLength||!new Uint8Array(expected).every((byte,index)=>byte===actualBytes[index]))throw new SavedMemeConflictError();

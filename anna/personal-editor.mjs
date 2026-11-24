@@ -68,7 +68,8 @@ export function initializePersonalEditor(annaReady) {
     // A failed confirmation can follow a committed upload. Preserve the file
     // identity while the user retries saving the same generated image.
     if(!entry.promise)entry.promise=annaReady.then(anna=>persistMeme(anna,blob,{id:entry.id,recover})).catch(error=>{
-      entry.promise=null;
+      if(error instanceof SavedMemeConflictError&&savedByBlob.get(blob)===entry)savedByBlob.delete(blob);
+      else entry.promise=null;
       throw error;
     });
     return await entry.promise;
@@ -77,7 +78,7 @@ export function initializePersonalEditor(annaReady) {
     const blob=output;if(!blob)return;control.disabled=true;
     try{await work(blob);}
     catch(error){
-      if(error instanceof SavedMemeConflictError)announce('Anna has a different file at this save location. Check My personal memes or generate a new version to save separately.',true);
+      if(error instanceof SavedMemeConflictError)announce('Anna has a different image at this save location. Choose Save to Anna to save your version as a separate file.',true);
       else announce(control.id==='personal-download'?'Download could not start. Check Anna file access and try again. Your version is still available here.':'Saving could not be confirmed. Check Anna file access and storage quota, then try again.',true);
     }
     finally{control.disabled=false;}

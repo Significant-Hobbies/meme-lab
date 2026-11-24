@@ -27,8 +27,10 @@ test('a save retry uploads only when the earlier file is absent',async()=>{
   const png=new Blob([bytes],{type:'image/png'});
   const calls=[];
   let items=[];
+  let next_cursor=null;
+  let stored=bytes;
   const anna={files:{
-    list:async args=>{assert.equal(args.prefix,path);return {items};},
+    list:async args=>{assert.equal(args.prefix,path);return {items,next_cursor};},
     upload_init:async args=>{assert.equal(args.path,path);calls.push('init');return {put_url:'https://cdn.anna.partners/put',headers:{}};},
     upload_finalize:async args=>{calls.push('finalize');return {path:args.path,etag:'v1',size_bytes:bytes.length};},
     download_url:async args=>{assert.equal(args.path,path);return {get_url:'https://cdn.anna.partners/saved.png'};},
@@ -36,15 +38,23 @@ test('a save retry uploads only when the earlier file is absent',async()=>{
   const fetchImpl=async(_url,{method})=>{
     if(method==='PUT')return new Response(null);
     calls.push('read');
-    return new Response(Uint8Array.from(bytes,(byte,index)=>index===11?5:byte));
+    return new Response(stored);
   };
   const retry=()=>persistMeme(anna,png,{id,fetchImpl,recover:true});
   const saved=await retry();
   assert.deepEqual(saved,{path,etag:'v1',bytes:bytes.length});
   assert.deepEqual(calls,['init','finalize']);
-  items=[{path,etag:'v1',size_bytes:bytes.length,content_type:'image/png',metadata:{kind:'personal-meme'}}];
+  next_cursor='opaque-next-page';
+  await assert.rejects(retry(),/could not confirm/);
+  const entry={path,etag:'v1',size_bytes:bytes.length,content_type:'image/png',metadata:{kind:'personal-meme'}};
+  items=[{...entry,metadata:null}];
+  await assert.rejects(retry(),/could not confirm/);
+  assert.deepEqual(calls,['init','finalize']);
+  items=[entry];
+  assert.deepEqual(await retry(),saved);
+  stored=Uint8Array.from(bytes,(byte,index)=>index===11?5:byte);
   await assert.rejects(retry(),/A different file already uses this path/);
-  assert.deepEqual(calls,['init','finalize','read']);
+  assert.deepEqual(calls,['init','finalize','read','read']);
 });
 test('download and removal are bounded to this feature’s paths and preserve storage concurrency',async()=>{
   const path=`creations/${id}.png`;let download,remove;
