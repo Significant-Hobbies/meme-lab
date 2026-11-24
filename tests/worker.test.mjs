@@ -314,7 +314,7 @@ test('picker reports a fixed budget reason and preserves the public retry respon
       [async()=>Response.json({error:'PRIVATE_PROVIDER_BODY'},{status:503}), 'reservation_http_error'],
       [async()=>{throw new Error('PRIVATE_TRANSPORT_ERROR');}, 'reservation_transport_error'],
       [async()=>Response.json(null), 'invalid_reservation_receipt'],
-      [async()=>Response.json({allowed:true,monthKey:'2020-01',baselineVerified:true,used:3840,remaining:44_996_160,retryAfter:0}), 'stale_reservation_period'],
+      [async()=>Response.json({allowed:true,monthKey:'2020-01',baselineVerified:true,used:3840,remaining:44_996_160,retryAfter:0}), 'reservation_period_mismatch'],
       [null, 'binding_missing'],
     ]) {
       const pending=[];

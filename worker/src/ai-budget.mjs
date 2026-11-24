@@ -36,7 +36,7 @@ export async function reserveRetrievalBudget(env) {
     ||receipt.used+receipt.remaining!==MONTHLY_VECTORIZE_CAP) {
     throw new BudgetUnavailableError('invalid_reservation_receipt');
   }
-  if(receipt.monthKey!==monthKey) throw new BudgetUnavailableError('stale_reservation_period');
+  if(receipt.monthKey!==monthKey) throw new BudgetUnavailableError('reservation_period_mismatch');
   if(receipt.allowed===false&&receipt.remaining<RETRIEVAL_DIMENSIONS
     &&Number.isSafeInteger(receipt.retryAfter)&&receipt.retryAfter>0) {
     throw new BudgetUnavailableError('budget_exhausted');
