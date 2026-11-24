@@ -391,7 +391,7 @@ async function recommend(request,env,ctx) {
     reportRecommendationCreated(request,env,ctx,recommendation,{ranking_mode,classifier_gate});
     return json({...recommendation,feedback_enabled,degraded,ranking_mode});
   } catch(error) {
-    if(error instanceof BudgetUnavailableError) return json({error:'Meme matching is temporarily unavailable. Try again shortly.'},503,{'Retry-After':'60'});
+    if(error instanceof BudgetUnavailableError) throw error;
     console.error(JSON.stringify({event:'recommendation',status:'error',duration_ms:Date.now()-started,error:safeError(error)}));
     return json({error:'The meme picker had a wobble. Try again.'},502);
   }
@@ -402,8 +402,12 @@ function secureAsset(response) {
   return new Response(response.body,{status:response.status,statusText:response.statusText,headers});
 }
 
-function queueEndpointMeasurement(request,env,ctx,route,status_code,startedAt) {
-  if(status_code>=500) reportPickerHealth(env,ctx,'endpoint.failed',{method:request.method,route,status_code,duration_ms:Date.now()-startedAt,stage:'server',traffic_class:requestTrafficClass(request)});
+function queueEndpointMeasurement(request,env,ctx,route,status_code,startedAt,failureKind) {
+  if(status_code>=500) {
+    const props={method:request.method,route,status_code,duration_ms:Date.now()-startedAt,stage:'server',traffic_class:requestTrafficClass(request)};
+    if(failureKind) props.failure_kind=failureKind;
+    reportPickerHealth(env,ctx,'endpoint.failed',props);
+  }
   if(!env.APP_HEALTH_INGEST_KEY||typeof ctx?.waitUntil!=='function') return;
   ctx.waitUntil(endpointFor(env)({
     method:request.method,
@@ -420,6 +424,10 @@ async function withEndpointMeasurement(request,env,ctx,route,handler) {
     queueEndpointMeasurement(request,env,ctx,route,response.status,startedAt);
     return response;
   } catch(error) {
+    if(route==='/api/recommend'&&error instanceof BudgetUnavailableError) {
+      queueEndpointMeasurement(request,env,ctx,route,503,startedAt,error.reason);
+      return json({error:'Meme matching is temporarily unavailable. Try again shortly.'},503,{'Retry-After':'60'});
+    }
     queueEndpointMeasurement(request,env,ctx,route,500,startedAt);
     throw error;
   }

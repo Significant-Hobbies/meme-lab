@@ -22,7 +22,7 @@ export async function probePicker(origin='https://memes.significanthobbies.com',
     let ray_id=null;
     try {
       const response=await fetchImpl(new URL('/api/recommend',origin),{
-        method:'POST',headers:{'Content-Type':'application/json'},
+        method:'POST',headers:{'Content-Type':'application/json','X-Fleet-Traffic':'qa'},
         body:JSON.stringify({comment:fixture.comment}),signal:AbortSignal.timeout(30_000)
       });
       const ray=response.headers.get('cf-ray');

@@ -20,6 +20,7 @@ test('probe outcomes reach App Health as explicit synthetic, privacy-bounded log
   assert.equal(log.event,'production.probe.passed');
   assert.equal(log.level,'info');
   assert.equal(log.props.synthetic,true);
+  assert.equal(log.props.traffic_class,'qa');
   assert.equal(log.props.general_status,'passed');
   assert.equal(log.props.release,'a'.repeat(40));
   assert.equal(log.props.run_url,'https://github.com/Significant-Hobbies/meme-lab/actions/runs/123');
@@ -96,6 +97,7 @@ const preload=Buffer.from(`globalThis.fetch=async(url,init)=>{
     return new Response(null,{status:Number(process.env.MOCK_LOG_STATUS??202)});
   }
   if(new URL(url).hostname!=='memes.significanthobbies.com')throw new Error('Unexpected request');
+  if(new Headers(init.headers).get('X-Fleet-Traffic')!=='qa')throw new Error('Expected QA request attribution');
   return Response.json({decision:'meme',confidence:'high',degraded:false,candidates:Array.from({length:5},(_,index)=>({
     id:'meme-'+index,media_url:'https://example.invalid/preview'+index,score:.9-index*.05,
     perspective:['self','other','situation','self','other'][index]

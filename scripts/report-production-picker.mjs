@@ -5,7 +5,7 @@ export async function reportPickerProbe(result,{key,fetchImpl=fetch,runUrl,relea
   if(!['passed','failed'].includes(result?.status)||!Array.isArray(result?.results))
     return {status:'failed',reason:'invalid_probe_result'};
   const failed=result.status==='failed';
-  const props={monitor:'public-picker',synthetic:true,route:'/api/recommend'};
+  const props={monitor:'public-picker',synthetic:true,traffic_class:'qa',route:'/api/recommend'};
   for(const fixture of result.results) {
     if(!['general','perspectives'].includes(fixture.case)) continue;
     props[`${fixture.case}_status`]=fixture.status==='passed'?'passed':'failed';
