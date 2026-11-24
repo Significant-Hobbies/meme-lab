@@ -21,6 +21,41 @@ test('denied quota, failed PUT and unconfirmed storage do not report saved succe
   files.upload_init=async()=>{throw Object.assign(new Error('quota'),{code:'quota_exceeded'});};let requests=0;
   await assert.rejects(persistMeme({files},blob,{id,fetchImpl:async()=>{requests++;}}),{code:'quota_exceeded'});assert.equal(requests,0);
 });
+test('a save retry uploads only when the earlier file is absent',async()=>{
+  const path=`creations/${id}.png`;
+  const bytes=Uint8Array.of(137,80,78,71,13,10,26,10,1,2,3,4);
+  const png=new Blob([bytes],{type:'image/png'});
+  const calls=[];
+  let items=[];
+  let next_cursor=null;
+  let stored=bytes;
+  const anna={files:{
+    list:async args=>{assert.equal(args.prefix,path);return {items,next_cursor};},
+    upload_init:async args=>{assert.equal(args.path,path);calls.push('init');return {put_url:'https://cdn.anna.partners/put',headers:{}};},
+    upload_finalize:async args=>{calls.push('finalize');return {path:args.path,etag:'v1',size_bytes:bytes.length};},
+    download_url:async args=>{assert.equal(args.path,path);return {get_url:'https://cdn.anna.partners/saved.png'};},
+  }};
+  const fetchImpl=async(_url,{method})=>{
+    if(method==='PUT')return new Response(null);
+    calls.push('read');
+    return new Response(stored);
+  };
+  const retry=()=>persistMeme(anna,png,{id,fetchImpl,recover:true});
+  const saved=await retry();
+  assert.deepEqual(saved,{path,etag:'v1',bytes:bytes.length});
+  assert.deepEqual(calls,['init','finalize']);
+  next_cursor='opaque-next-page';
+  await assert.rejects(retry(),/could not confirm/);
+  const entry={path,etag:'v1',size_bytes:bytes.length,content_type:'image/png',metadata:{kind:'personal-meme'}};
+  items=[{...entry,metadata:null}];
+  await assert.rejects(retry(),/could not confirm/);
+  assert.deepEqual(calls,['init','finalize']);
+  items=[entry];
+  assert.deepEqual(await retry(),saved);
+  stored=Uint8Array.from(bytes,(byte,index)=>index===11?5:byte);
+  await assert.rejects(retry(),/A different file already uses this path/);
+  assert.deepEqual(calls,['init','finalize','read','read']);
+});
 test('download and removal are bounded to this feature’s paths and preserve storage concurrency',async()=>{
   const path=`creations/${id}.png`;let download,remove;
   const anna={files:{download:async args=>{download=args;return {ok:true};},delete:async args=>{remove=args;return {deleted:true};}}};

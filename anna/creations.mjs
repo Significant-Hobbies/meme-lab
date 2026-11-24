@@ -1,10 +1,25 @@
 import {MAX_IMAGE_BYTES,remoteImageUrl} from './personalize.mjs';
 const pathPattern=/^creations\/[a-f0-9-]{36}\.png$/;
 function validPath(path){if(typeof path!=='string'||!pathPattern.test(path))throw new Error('Invalid saved meme.');return path;}
-export async function persistMeme(anna,blob,{fetchImpl=fetch,id=crypto.randomUUID(),signal}={}) {
+export class SavedMemeConflictError extends Error {
+  constructor(){super('A different file already uses this path.');}
+}
+export class SavedMemeRecoveryError extends Error {
+  constructor(cause){super('Anna could not confirm the earlier save.',{cause});}
+}
+export async function persistMeme(anna,blob,{fetchImpl=fetch,id=crypto.randomUUID(),signal,recover=false}={}) {
   if(!(blob instanceof Blob)||blob.type!=='image/png'||blob.size<12||blob.size>MAX_IMAGE_BYTES)throw new Error('Choose a generated PNG meme smaller than 8 MB.');
   const path=validPath(`creations/${id}.png`);
   if(typeof anna?.files?.upload_init!=='function'||typeof anna?.files?.upload_finalize!=='function')throw new Error('Anna file storage access is required to save this meme.');
+  if(recover){
+    try{
+      const existing=await recoverSavedMeme(anna,path,blob,fetchImpl);
+      if(existing)return existing;
+    }catch(error){
+      if(error instanceof SavedMemeConflictError)throw error;
+      throw new SavedMemeRecoveryError(error);
+    }
+  }
   const ticket=await anna.files.upload_init({path,content_type:'image/png',size:blob.size,ttl_seconds:300,metadata:{kind:'personal-meme'}});
   const url=remoteImageUrl(ticket?.put_url);
   if(!ticket.headers||typeof ticket.headers!=='object'||Object.values(ticket.headers).some(value=>typeof value!=='string'))throw new Error('Anna returned an invalid upload ticket.');
@@ -14,6 +29,22 @@ export async function persistMeme(anna,blob,{fetchImpl=fetch,id=crypto.randomUUI
   const result=await anna.files.upload_finalize({path,size_bytes:blob.size,...(etag?{etag}:{})});
   if(result?.path!==path||result.size_bytes!==blob.size||typeof result.etag!=='string'||!result.etag)throw new Error('Anna did not confirm the saved meme.');
   return {path,etag:result.etag,bytes:blob.size};
+}
+async function recoverSavedMeme(anna,path,blob,fetchImpl) {
+  const page=await anna.files.list({prefix:path,limit:2});
+  if(!Array.isArray(page?.items))throw new Error('Anna could not confirm the earlier save.');
+  const entry=page.items.find(item=>item?.path===path);
+  if(!entry){
+    if(page.next_cursor)throw new Error('Anna could not confirm the earlier save.');
+    return null;
+  }
+  if(entry.content_type!=='image/png'||entry.metadata?.kind!=='personal-meme'||typeof entry.etag!=='string'||!entry.etag)throw new Error('Anna could not confirm the earlier save.');
+  const saved=await readSavedMeme(anna,path,{fetchImpl});
+  if(saved.size!==entry.size_bytes)throw new Error('Anna could not confirm the earlier save.');
+  const [expected,actual]=await Promise.all([blob.arrayBuffer(),saved.arrayBuffer()]);
+  const actualBytes=new Uint8Array(actual);
+  if(expected.byteLength!==actual.byteLength||!new Uint8Array(expected).every((byte,index)=>byte===actualBytes[index]))throw new SavedMemeConflictError();
+  return {path,etag:entry.etag,bytes:blob.size};
 }
 export async function downloadSavedMeme(anna,path) {
   // The Anna host triggers the download outside the iframe sandbox.
